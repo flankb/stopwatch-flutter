@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:learnwords/models/category_info.dart';
 import 'package:learnwords/models/persistent_type.dart';
-import 'package:learnwords/resources/floor_repository.dart';
 import 'package:learnwords/scope_models/learn_words_model.dart';
 
 import 'fake_repos.dart';
@@ -18,7 +17,6 @@ void main() {
 
     setUp(() async {
       _testModel = LearnWordsModel(categoryRepository: FakeCategoriesRepository(),
-          databaseRepository: FakeDatabaseRepository(),
           dictRepository: FakeWordRepository());
 
       await _testModel.loadAllModelAsync();
@@ -45,7 +43,6 @@ void main() {
       expect(words.contains(word.orig), equals(true));
 
       //Сохраняем закладку, проверяем, что закладка сохранена
-      await _testModel.saveBookmarkAsync("way");
 
       await _testModel.loadBookmarksAsync();
       debugPrint("_testModel.selectedCategory.name " + _testModel.selectedCategory.name);
@@ -59,18 +56,8 @@ void main() {
       expect(len2, lessThan(len));
       expect(_testModel.getWordIndex(word), equals(0), reason: "Error") ;
 
-      await _testModel.addWordToFavCategoryAsync(word.orig);
 
-      var categFeatured = CategoryInfo(name: Featured, persistentType: PersistentType.Database);
 
-      await _testModel.updateCategoryAsync(categFeatured);
-
-      debugPrint("_testModel.selectedCategory.name " + _testModel.selectedCategory.name);
-      expect(_testModel.wordsDict.length, greaterThan(0));
-
-      await _testModel.removeWordFromFavCategoryAsync(word.orig);
-      await _testModel.updateCategoryAsync(category);
-      await _testModel.updateCategoryAsync(categFeatured);
 
       expect(_testModel.wordsDict.length, equals(0));
     });

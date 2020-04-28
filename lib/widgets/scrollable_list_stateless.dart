@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:learnwords/models/word_dict.dart';
-import 'package:learnwords/resources/floor_repository.dart';
 import 'package:learnwords/scope_models/learn_words_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -45,12 +44,12 @@ class ScrollableListStateless extends StatelessWidget {
           int bookmark = await model.getBookmarkIndexAsync();
           debugPrint("model.getBookmarkAsync() " + bookmark.toString());
 
-          var df = await model.databaseRepository.getBookMarksAsync();
+          //var df = await model.databaseRepository.getBookMarksAsync();
 
-          debugPrint("df.forEach ---------------------" + df.length.toString());
+          /*debugPrint("df.forEach ---------------------" + df.length.toString());
           df.forEach((lw) {
             debugPrint("df.forEach ${lw.id} ${lw.category} ${lw.word}");
-          });
+          });*/
 
           if (bookmark >= 0 &&
               bookmark <
@@ -150,7 +149,7 @@ class ScrollableListStateless extends StatelessWidget {
                                   current.isFav = !current.isFav;
                                   model.updateWordDictState(current);
 
-                                  if (!current.isFav && model.selectedCategory.name == Featured) {
+                                  if (!current.isFav && model.selectedCategory.name == "Featured") {
                                     model.removeWordDictFromList(current);
                                   }
 

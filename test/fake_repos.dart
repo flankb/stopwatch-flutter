@@ -6,10 +6,8 @@ import 'package:learnwords/model/database_models.dart';
 import 'package:learnwords/models/category_info.dart';
 import 'package:learnwords/models/persistent_type.dart';
 import 'package:learnwords/models/word_dict.dart';
-import 'package:learnwords/resources/base/base_database_repository.dart';
 import 'package:learnwords/resources/base/base_word_category_repository.dart';
 import 'package:learnwords/resources/base/base_word_repository.dart';
-import 'package:learnwords/resources/floor_repository.dart';
 import 'package:mockito/mockito.dart';
 
 class FakeWordRepository extends Fake implements BaseWordRepository {
@@ -44,63 +42,6 @@ class FakeWordRepository extends Fake implements BaseWordRepository {
   }
 }
 
-class FakeDatabaseRepository extends Fake implements BaseDatabaseRepository {
-  //List<String> _favors;
-  List<LastWord> _bookmarks;
-  List<CategoryInfo> _categories;
-  List<MlCategoryWord> _links;
-  List<Category> _categoriesDb;
-
-  FakeDatabaseRepository(): super() {
-    //_favors = List<String>();
-    _bookmarks = List<LastWord>();
-    _categories = List<CategoryInfo>();
-    _links = List<MlCategoryWord>();
-    _categoriesDb = List<Category>();
-  }
-
-  @override
-  Future addWordToFavCategoryAsync(String orig) async {
-    //_favors.add(orig);
-
-    _links.add(MlCategoryWord(id: 0, categoryId: 0, word: orig));
-  }
-
-  @override
-  Future createDatabase() async {
-    Category fav = Category(id: 0, name: Featured);
-    _categoriesDb.add(fav);
-  }
-
-  @override
-  Future<List<LastWord>> getBookMarksAsync() async {
-    return _bookmarks;
-  }
-
-  @override
-  Future<List<CategoryInfo>> getCategoriesAsync() async {
-    return _categories;
-  }
-
-  @override
-  Future<List<String>> getWordsByCategoryAsync(CategoryInfo categoryInfo) async {
-    var category = _categoriesDb.firstWhere((_) => _.name == categoryInfo.name, orElse: null); //TODO Выдать сущность БД
-
-    return _links.where((_) => _.categoryId == category.id).map((_) => _.word).toList();
-  }
-
-  @override
-  Future removeWordFromFavCategoryAsync(String orig) async {
-    var categoriesToRemove = _links.where((_) => _.word == orig).toList();
-    categoriesToRemove.forEach((c) => _links.remove(c));
-  }
-
-  @override
-  Future saveBookmarkAsync(CategoryInfo categoryInfo, String word) async {
-    var newBookMark = LastWord(id: _bookmarks.length + 1, word: word, category: categoryInfo.name);
-    return _bookmarks.add(newBookMark);
-  }
-}
 
 class FakeCategoriesRepository extends Fake implements BaseWordCategoryRepository {
   List<CategoryInfo> _categories;

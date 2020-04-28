@@ -5,7 +5,6 @@ import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:learnwords/about_page.dart';
 import 'package:learnwords/resources/dict_parser_repository.dart';
-import 'package:learnwords/resources/floor_repository.dart';
 import 'package:learnwords/resources/word_category_repository.dart';
 import 'package:learnwords/scope_models/learn_words_model.dart';
 import 'package:learnwords/util/custom_search.dart';
@@ -202,8 +201,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
     // Предполагается, что код здесь вызывается только на старте приложения
     productModel = LearnWordsModel(
         dictRepository: DictParserRepository(),
-        categoryRepository: WordCategoryRepository(),
-        databaseRepository: FloorRepository());
+        categoryRepository: WordCategoryRepository());
 
     await productModel.loadAllModelAsync();
   }

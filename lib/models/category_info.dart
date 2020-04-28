@@ -15,11 +15,11 @@ class CategoryInfo {
     this.locale = 'ru'
   });
 
-  CategoryInfo.fromDatabase(Category model) :
+  /*CategoryInfo.fromDatabase(Category model) :
       name = model.name,
       persistentType = PersistentType.Database,
       translation = model.translation,
-      locale = 'ru';
+      locale = 'ru';*/
 
   CategoryInfo.empty() :
       name = "",

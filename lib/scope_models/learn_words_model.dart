@@ -13,11 +13,9 @@ import 'package:learnwords/models/category_info.dart';
 import 'package:learnwords/models/persistent_type.dart';
 import 'package:learnwords/models/word.dart';
 import 'package:learnwords/models/word_dict.dart';
-import 'package:learnwords/resources/base/base_database_repository.dart';
 import 'package:learnwords/resources/base/base_repository.dart';
 import 'package:learnwords/resources/base/base_word_category_repository.dart';
 import 'package:learnwords/resources/base/base_word_repository.dart';
-import 'package:learnwords/resources/floor_repository.dart';
 import 'package:learnwords/resources/words_json_repository.dart';
 import 'package:learnwords/resources/dict_parser_repository.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -48,36 +46,18 @@ class LearnWordsModel extends Model {
   //final BaseWordsRepository repository;
   final BaseWordRepository dictRepository;
   final BaseWordCategoryRepository categoryRepository;
-  final BaseDatabaseRepository databaseRepository; // TODO Хотелось бы сделать private
 
   //static int lastScrollPosition = 0;
 
   LearnWordsModel({@required this.dictRepository,
-    @required this.categoryRepository,
-    @required this.databaseRepository});
+    @required this.categoryRepository});
 
   Future loadAllModelAsync() async {
-    await databaseRepository.createDatabase()
-        .then((_) => loadBookmarksAsync())
-        .then((_) => loadOtherDataAsync())
-        .then((_) => loadCategoriesAsync())
-        .then((_) => loadWordDictAsync());
+
 
     //loadOtherDataAsync()
     //loadCategoriesAsync();
     //loadWordDictAsync();
-  }
-
-  Future addWordToFavCategoryAsync(String orig) async {
-    await databaseRepository.addWordToFavCategoryAsync(orig);
-  }
-
-  Future removeWordFromFavCategoryAsync(String orig) async {
-    await databaseRepository.removeWordFromFavCategoryAsync(orig);
-  }
-
-  Future saveBookmarkAsync(String word) async {
-    await databaseRepository.saveBookmarkAsync(_selectedCategory, word);
   }
 
   /*Future getBookmarkByCategory() async {
@@ -112,10 +92,10 @@ class LearnWordsModel extends Model {
 
   Map<String, String> _bookmarks = Map();
   Future loadBookmarksAsync() async {
-    var bookmarksData = await databaseRepository.getBookMarksAsync();
+    //var bookmarksData = await databaseRepository.getBookMarksAsync();
     // https://stackoverflow.com/questions/16831535/how-to-convert-a-list-into-a-map-in-dart
 
-    _bookmarks = groupBy(bookmarksData, (LastWord obj) => obj.category).map((k, v) => MapEntry(k, v.first.word));
+    //_bookmarks = groupBy(bookmarksData, (LastWord obj) => obj.category).map((k, v) => MapEntry(k, v.first.word));
 
     //map((k, v) => MapEntry(k, v.map((item) { item.remove('release_date'); return item;}).toList()));
     //https://stackoverflow.com/questions/54029370/flutter-dart-how-to-groupby-list-of-maps
@@ -180,17 +160,17 @@ class LearnWordsModel extends Model {
           categoryWords = await categoryRepository.getWordsByCategoryAsync(_selectedCategory);
         }
         else {
-          categoryWords = await databaseRepository.getWordsByCategoryAsync(_selectedCategory);
+          //categoryWords = await databaseRepository.getWordsByCategoryAsync(_selectedCategory);
         }
         
         _wordsDict = await dictRepository.getSpecificWordsAsync(categoryWords);
 
         // Определить избранные слова и проставить отметки
-        var featuredWords = await databaseRepository.getWordsByCategoryAsync(CategoryInfo(name: Featured, translation: "Избранные"));
+        //var featuredWords = await databaseRepository.getWordsByCategoryAsync(CategoryInfo(name: Featured, translation: "Избранные"));
 
-        if (featuredWords != null) {
+        /*if (featuredWords != null) {
           _wordsDict.where((_) => featuredWords.contains(_.orig)).forEach((_) => _.isFav = true);
-        }
+        }*/
       }
 
       _isLoading = false;
@@ -201,7 +181,7 @@ class LearnWordsModel extends Model {
     _isLoadingCategories = true;
 
     // Здесь необходимо вытащить категории из базы данных и присоединить их в общую кучу
-    _categories = await databaseRepository.getCategoriesAsync();
+    //_categories = await databaseRepository.getCategoriesAsync();
     _categories.addAll(await categoryRepository.getCategoriesAsync());
 
     _selectedCategory = await categoryRepository.getSelectedCategoryAsync();
@@ -220,10 +200,10 @@ class LearnWordsModel extends Model {
     final index = _wordsDict.indexWhere((e) => e.orig == wordDict.orig);
     if (index >= 0) {
       if (wordDict.isFav) {
-        databaseRepository.addWordToFavCategoryAsync(wordDict.orig);
+        //databaseRepository.addWordToFavCategoryAsync(wordDict.orig);
       }
       else {
-        databaseRepository.removeWordFromFavCategoryAsync(wordDict.orig);
+        //databaseRepository.removeWordFromFavCategoryAsync(wordDict.orig);
       }
       
       _wordsDict[index] = wordDict; //TODO Рефакторить
