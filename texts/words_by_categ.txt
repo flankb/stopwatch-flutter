@@ -1,0 +1,1239 @@
+#Adverbs
+A
+abnormally
+absentmindedly
+accidentally
+actually
+after
+afterwards
+almost
+already
+always
+angrily
+annually
+anxiously
+arrogantly
+awkwardly
+B
+badly
+bashfully
+beautifully
+bitterly
+bleakly
+blindly
+blissfully
+boldly
+boastfully
+boldly
+bravely
+briefly
+brightly
+briskly
+busily
+C
+calmly
+carefully
+carelessly
+cautiously
+certainly
+cheerfully
+clearly
+cleverly
+closely
+coaxingly
+coldly
+colorfully
+commonly
+continually
+coolly
+correctly
+courageously
+crossly
+cruelly
+curiously
+D
+daily
+daintily
+daringly
+dearly
+deeply
+defiantly
+deftly
+deliberately
+delightfully
+diligently
+dimly
+docilely
+doubtfully
+dreamily
+during
+E
+eagerly
+early
+easily
+elegantly
+energetically
+enormously
+enthusiastically
+equally
+especially
+even
+evenly
+eventually
+every
+everywhere
+exactly
+excitedly
+extremely
+F
+fairly
+faithfully
+famously
+far
+fast
+fatally
+ferociously
+fervently
+fiercely
+fiery
+finally
+fondly
+foolishly
+fortunately
+frankly
+frantically
+freely
+frenetically
+fully
+furiously
+G
+generally
+generously
+gently
+gladly
+gleefully
+gracefully
+gratefully
+greatly
+greedily
+H
+happily
+hastily
+harmoniously
+hastily
+healthily
+heavily
+helpfully
+highly
+honestly
+hopelessly
+horizontally
+hourly
+hungrily
+hurriedly
+I
+icily
+immediately
+impatiently
+incorrectly
+innocently
+inquisitively
+instantly
+intensely
+intently
+interestingly
+inwardly
+irritably
+J
+jaggedly
+jealously
+jovially
+joyfully
+joylessly
+joyously
+jubilantly
+judgmentally
+just
+justly
+K
+keenly
+kiddingly
+kindheartedly
+kindly
+knavishly
+knottily
+knowingly
+knowledgeably
+kookily
+L
+late
+later
+lazily
+less
+lightly
+likely
+limply
+lively
+loftily
+longingly
+loosely
+loudly
+lovingly
+loyally
+luckily
+M
+madly
+magically
+mainly
+majestically
+meaningfully
+mechanically
+merrily
+miserably
+mockingly
+monthly
+more
+mortally
+mostly
+mysteriously
+N
+naturally
+nearly
+neatly
+needily
+nervously
+never
+next
+nicely
+noisily
+not
+now
+O
+obediently
+obnoxiously
+oddly
+offensively
+officially
+often
+only
+openly
+optimistically
+outrageously
+overconfidently
+P
+painfully
+partially
+patiently
+perfectly
+physically
+plainly
+playfully
+politely
+poorly
+positively
+potentially
+powerfully
+promptly
+properly
+punctually
+Q
+quaintly
+queasily
+questionably
+questioningly
+quicker
+quickly
+quietly
+quirkily
+quizzically
+R
+rapidly
+rarely
+readily
+really
+reassuringly
+recklessly
+regularly
+reluctantly
+repeatedly
+reproachfully
+restfully
+richly
+righteously
+rightfully
+rigidly
+roughly
+rudely
+ruthlessly
+S
+sadly
+safely
+scarcely
+scarily
+searchingly
+sedately
+seemingly
+seldom
+selfishly
+separately
+seriously
+shakily
+sharply
+sheepishly
+shrilly
+shyly
+silently
+sleepily
+slowly
+slyly
+smoothly
+softly
+solemnly
+solidly
+sometimes
+soon
+steadily
+speedily
+stealthily
+sternly
+strenuously
+strictly
+successfully
+suddenly
+surely
+surprisingly
+suspiciously
+sweetly
+swiftly
+sympathetically
+T
+tenderly
+tensely
+terribly
+thankfully
+thoroughly
+thoughtfully
+tightly
+today
+tomorrow
+too
+tremendously
+truly
+truthfully
+U
+ultimately
+unabashedly
+unbearably
+unethically
+unexpectedly
+unfortunately
+uniformly
+unimpressively
+unnaturally
+unnecessarily
+upbeat
+upliftingly
+upright
+upside-down
+upward
+upwardly
+urgently
+usefully
+uselessly
+usually
+utterly
+V
+vacantly
+vaguely
+vainly
+valiantly
+vastly
+verbally
+vertically
+very
+viciously
+victoriously
+violently
+vivaciously
+voluntarily
+W
+warmly
+weakly
+wearily
+weekly
+well
+wetly
+while
+wholly
+wiggly
+wildly
+willfully
+wisely
+woefully
+worriedly
+wrongly
+Y
+yearly
+yearningly
+yesterday
+youthfully
+Z
+zanily
+zealously
+zestfully
+zestily
+#Animal
+A
+aardvark
+abalone
+African wild cat
+albatross
+algae
+agouti
+alpaca
+amoeba
+American bison
+amphibian
+ant
+anteater
+antelope
+ape
+aphid
+arachnid
+arctic fox
+arctic wolf
+armadillo
+arthropod
+aye-aye
+B
+baboon
+badger
+bandicoot
+barnacle
+barracuda
+bass
+bat
+bear
+beaver
+bedbug
+bee
+bilby
+bison
+bivalve
+black bear
+black bear hamster
+blackbird
+bluebird
+bluejay
+blue whale
+bobcat
+bongo
+bonobo
+bowhead whale
+brittle star
+brown bear
+bug
+buffalo
+bull
+bullfrog
+bumblebee
+bushbaby
+butterfly
+C
+camel
+canary
+cape buffalo
+capybera
+caracal
+cardinal
+caribou
+carnivora
+carpenter ant
+cassowary
+cat
+caterpillar
+cattle
+cavy
+cheetah
+chickadee
+chicken
+chimipanzee
+chinchilla
+chipmunk
+chiton
+chrysalis
+cicada
+clam
+coati
+cockatoo
+cod
+coelacanth
+cockroach
+collared peccary
+colugo
+conch
+copepod
+coral
+cougar
+cow
+coyote
+coypu
+crab
+crane
+cricket
+crow
+crustacean
+cuttlefish
+cutworm
+D
+damselfly
+deer
+dhole
+diatom
+dingo
+dodo
+dog
+dogfish
+dolphin
+donkey
+dove
+dragonfly
+dromedary
+duck
+dugong
+duck-billed platypus
+E
+eagle
+earthworm
+earwig
+echidna
+eel
+egg
+egret
+ekaltadelta
+eland
+elephant
+elephant seal
+elk
+emu
+ermine
+F
+falcon
+ferret
+finch
+fin whale
+fireant
+firefly
+fish
+flamingo
+flatworm
+flea
+flounder
+fly
+flying fish
+flying squirrel
+fossa
+fowl
+fox
+frog
+fruit bat
+G
+galagos
+gar
+gazelle
+gerbil
+giant squid
+gibbon
+giraffe
+gnat
+gnu
+goat
+goldfinch
+goose
+gopher
+gorilla
+grasshopper
+gray whale
+great apes
+grizzly bear
+groundhog
+grouper
+grouse
+grub
+guinea pig
+gull
+H
+hammerhead shark
+hamster
+hares
+harp seal
+hawk
+hedgehog
+hen
+hermit crab
+heron
+herring
+hippo
+hippopotamus
+honey bee
+hornet
+horse
+horseshoe crab
+housefly
+howler monkey
+human being
+hummingbird
+humpback whale
+hyena
+hyrax
+I
+ibis
+imago
+impala
+insect
+insectivores
+isopod
+J
+jaguar
+javelina
+jay
+jellyfish
+jumping bean
+junebug
+junco
+K
+kakapo
+kangaroo
+katydid
+killer whale
+kinkajou
+kiwi
+koala
+kookaburra
+krill
+Kudu
+L
+ladybug
+lagomorph
+larva
+lemming
+lemur
+leopard
+lice
+limpet
+lion
+llama
+lobster
+locust
+loggerehad turtle
+longhorn
+loon
+lorikeet
+loris
+louse
+lynx
+M
+macaque
+macaw
+mackerel
+maggot
+mako shark
+mallard duck
+mammal
+mammoth
+manatee
+mandrill
+man-o'-war
+manta ray
+mantid
+marine mammals
+marmoset
+marmot
+marsupial
+mastodon
+meadowlark
+mealworm
+meerkat
+merganser
+midge
+mink
+mice
+mockingbird
+mole
+mollusk
+monarch butterfly
+mongoose
+monkey
+moose
+moray eel
+morpho butterfly
+mosquito
+moth
+mouse
+mudpuppy
+musk ox
+muskrat
+mussels
+mustelids
+N
+nabarlek
+naked mole-rat
+nandu
+narwhal
+nautilus
+newt
+numbat
+nuthatch
+nutria
+nymph
+O
+ocelot
+octopus
+okapi
+onager
+opossum
+orangutan
+orca
+oriole
+oryx
+ostrich
+otter
+owl
+ox
+oxpecker
+oyster
+P
+panda
+pangolin
+panther
+parakeet
+parrot
+peacock
+peafowl
+pelican
+penguin
+petrel
+pig
+pika
+pinniped
+placental
+plankton
+platypus
+plover
+polar bear
+polliwog
+pompano
+porcupine
+porpoise
+primates
+pronghorn
+protozoan
+pufferfish
+puffin
+puma
+pupa
+Q
+quagga
+quail
+queen conch
+quetzal
+quokka
+quoll
+R
+rabbit
+raccoon
+rat
+ray
+red kangaroo
+red panda
+reindeer
+reptile
+rhea
+rhino
+rhinoceros
+right whale
+ring-tailed lemur
+ringtail possum
+river otter
+roadrunner
+roach
+robin
+rodent
+rooster
+roundworm
+S
+sailfish
+salamander
+salmon
+sand dollar
+sandpiper
+scallop
+scorpion
+sea anemone
+sea cow
+seal
+sealion
+sea otter
+sea cucumber
+sea star
+sea turtle
+sea urchin
+sea worm
+serval
+sheep
+shrew
+shrimp
+siamang
+silkworm
+silverfish
+skipper
+skunk
+sloth
+snail
+snapper
+sparrow
+spider
+spiny anteater
+sponge
+springtail
+squirrel
+starfish
+starling
+stingray
+stonefly
+stork
+sugar glider
+sunfish
+swallowtail butterfly
+swan
+swift
+swordfish
+T
+tadpole
+tamarin
+tanager
+tapir
+tarantula
+tarpon
+tarsier
+Tasmanian devil
+Tasmanian tiger
+termite
+tern
+three-toed sloth
+thrip
+tick
+tiger
+toad
+tortoise
+toucan
+treefrog
+treeshrew
+tsetse fly
+tuna
+turkey
+turtle
+U
+umbrellabird
+ungulates
+urchin
+V
+vampire bat
+viceroy butterfly
+Virginia opossum
+vulture
+W
+wallaby
+walkingstick
+walrus
+warthog
+wasp
+waterbug
+weasel
+weddell seal
+weevil
+whale
+whale shark
+whelk
+wildebeest
+wolverine
+woodland caribou
+woodpecker
+wolf
+wombat
+worm
+woodcheck
+wren
+X
+xenops
+Y
+yak
+yellowjacket
+Z
+zebra
+zooplankton
+zorilla
+zorro
+#Astronomy
+A
+albedo
+Alpha Centauri
+apogee
+asteroid
+astronaut
+astronomer
+astronomy
+B
+background radiation
+binary star
+black hole
+C
+cluster
+comet
+conjunction
+constellation
+corona
+cosmonaut
+crater
+D
+dark matter
+day
+dwarf planet
+E
+Earth
+eclipse
+ecliptic
+escape velocity
+F
+flare
+G
+galaxy
+geosynchronous
+gibbous
+H
+hydrogen
+helium
+Hubble
+I
+ionosphere
+J
+Jupiter
+K
+Kepler
+Kuiper
+L
+light-year
+local group
+lunar
+M
+magnitude
+Mars
+mass
+Mercury
+meteor
+meteor shower
+meteorite
+meteoroid
+Milky Way
+moon
+N
+nadir
+NASA
+nebula
+Neptune
+neutron star
+nova
+O
+observatory
+Oort
+opposition
+orbit
+P
+parallax
+parsec
+penumbra
+perigee
+perihelion
+perturbation
+phase
+planet
+planetary nebula
+planetoid
+Pluto
+pulsar
+Q
+quasar
+R
+radiant
+radiation
+revolve
+rocket
+S
+satellite
+shooting star
+solar
+solar system
+solar wind
+solstice
+space
+space station
+star
+sun
+sunspot
+supernova
+T
+telemetry
+telescope
+U
+umbra
+Uranus
+V
+vacuum
+Van Allen belt
+Venus
+Z
+zenith
+#Driving
+A
+accelerate
+accelerator
+accident
+airbag
+alley
+arterial road
+asphalt
+auto
+automatic transmission
+automobile
+avenue
+B
+back-up
+back seat
+back seat driver
+barrier
+bicycle
+bike
+boulevard
+brakes
+bridge
+bus
+C
+car
+carpool
+carpool lane
+causeway
+caution
+chauffeur
+circle
+cloverleaf
+clutch
+cobblestone
+construction
+court
+crash
+cruise control
+cul-de-sac
+curve
+D
+danger
+dead end
+defensive driving
+dent
+detour
+diamond lane
+dirt road
+do not enter sign
+double parked
+drive
+driver
+driver's ed
+driver's education
+driver's license
+driveway
+E
+electric car
+emergency
+emission
+entrance ramp
+exhaust
+exit
+exit ramp
+expressway
+F
+fast
+fast lane
+fender
+fill it up
+flat-bed truck
+flat tire
+freeway
+fuel
+fuel efficiency
+fuel tank
+G
+garage
+gas
+gasoline
+gas tank
+gear
+gearshift
+global positioning system
+go
+GPS
+gravel road
+green light
+gridlock
+gutter
+H
+hairpin curve
+headlights
+high-beam
+high-occupancy vehicle lane
+high-octane gas
+highway
+highway patrol
+hill
+HOV lane
+hybrid
+I
+idling
+impact
+indicator
+insurance
+interchange
+intersection
+interstate highway
+J
+jackknifing
+K
+kilometer
+kilometers per hour
+kph
+L
+lane
+learner's permit
+left turn
+license
+lights
+loop
+low-beam
+M
+manual transmission
+map
+mass transit
+merge
+mile
+mile marker
+miles per gallon
+miles per hour
+motor
+motorcycle
+motorway
+mph
+N
+no parking
+no stopping
+O
+oil
+oncoming traffic
+one-way
+overpass
+P
+parallel parking
+park
+parking lot
+parking meter
+parking spot
+parking ticket
+parkway
+pass
+pavement
+pedal
+pedestrian
+pedestrian crossing
+police
+pot hole
+R
+railroad crossing
+ramp
+red light
+registration
+rest area
+rest stop
+reverse
+ride
+right turn
+road
+road closed
+road crew
+road rage
+road trip
+roadway
+rollover
+roundabout
+rush hour
+S
+safety
+scenery
+scenic route
+school zone
+s-curve
+seatbelt
+semi
+shoulder
+sidewalk
+sign
+skid
+slow
+snow plow
+speed
+speed bump
+speed limit
+speeding
+speeding ticket
+speedometer
+state patrol
+steer
+steering wheel
+stop
+stop sign
+street
+street sign
+superhighway
+SUV
+switchbacks
+T
+terrace
+test drive
+ticket
+tire
+toll
+toll road
+tow truck
+traffic
+traffic jam
+traffic light
+traffic sign
+transmission
+transportation
+truck
+truck route
+truck stop
+tunnel
+turn
+turn signal
+U
+under construction
+underpass
+u-turn
+V
+van pool
+vehicle
+W
+warning
+wide load
+Y
+yellow light
+yield
+Z
+zebra crossing

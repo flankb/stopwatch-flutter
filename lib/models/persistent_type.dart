@@ -1,0 +1,5 @@
+
+enum PersistentType {
+  File,
+  Database
+}
