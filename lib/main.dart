@@ -34,7 +34,7 @@ RateMyApp rateMyApp = RateMyApp(
   minLaunches: 3,
   remindDays: 3,
   remindLaunches: 3,
-  googlePlayIdentifier: 'com.garnetjuice.template',
+  googlePlayIdentifier: 'com.garnetjuice.stopwatch',
   appStoreIdentifier: '585027354',
 );
 
@@ -153,7 +153,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
     switch (choice.settingsType) {
       case SettingsType.Review:
         LaunchReview.launch(
-          androidAppId: "com.garnetjuice.template",
+          androidAppId: "com.garnetjuice.stopwatch",
           iOSAppId: "585027354",
         );
         break;

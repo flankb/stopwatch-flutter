@@ -1,4 +1,4 @@
-package com.garnetjuice.template
+package com.garnetjuice.stopwatch
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity
