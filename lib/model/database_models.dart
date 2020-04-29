@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:learnwords/models/stopwatch_status.dart';
 import 'package:path/path.dart' as p;
 import 'package:moor/moor.dart';
 import 'package:moor_ffi/moor_ffi.dart';
@@ -17,11 +18,16 @@ class Laps extends Table {
 
 class Measures extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get elapsed => integer()();
+  IntColumn get elapsed => integer().withDefault(Constant(0))();
   DateTimeColumn get dateCreated => dateTime()();
-  IntColumn get status => integer()();
-  TextColumn get comment => text()();
+  DateTimeColumn get dateRefreshed => dateTime()();
+  TextColumn get status => text().withLength(max: 16)();
+  TextColumn get comment => text().nullable()();
 }
+
+/*class MeasureSessions extends Table{
+  IntColumn get id => integer().autoIncrement()();
+}*/
 
 class Tags extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -37,7 +43,7 @@ LazyDatabase _openConnection() {
     // put the database file, called db.sqlite here, into the documents folder
     // for your app.
     final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'db.sqlite'));
+    final file = File(p.join(dbFolder.path, 'database.sqlite'));
     return VmDatabase(file);
   });
 }
@@ -51,4 +57,48 @@ class MyDatabase extends _$MyDatabase {
   // are covered later in this readme.
   @override
   int get schemaVersion => 1;
+
+  Future<List<Measure>> getMeasuresByStatusAsync(String status) {
+    return (select(measures)..where((m) => m.status.equals(status))).get();
+  }
+
+  // returns the generated id
+  Future<int> createNewMeasureAsync() {
+    Measure measure = Measure(id: null,
+        elapsed: 0,
+        dateCreated: DateTime.now(),
+        dateRefreshed: DateTime.now(),
+        status: StopwatchStatus.Paused.toString());
+
+    return into(measures).insert(measure);
+  }
+
+  Future<int> addNewLapAsync(Measure measure) {
+    Lap lap = Lap(id: null, measureId: measure.id, overall: 0, comment: null);
+    return into(laps).insert(lap);
+  }
+
+  Future updateMeasureAsync(Measure measure) {
+    // using replace will update all fields from the entry that are not marked as a primary key.
+    // it will also make sure that only the entry with the same primary key will be updated.
+    // Here, this means that the row that has the same id as entry will be updated to reflect
+    // the entry's title, content and category. As it set's its where clause automatically, it
+    // can not be used together with where.
+    return update(measures).replace(measure);
+  }
+
+  Future updateLapAsync(Lap lap) {
+    // using replace will update all fields from the entry that are not marked as a primary key.
+    // it will also make sure that only the entry with the same primary key will be updated.
+    // Here, this means that the row that has the same id as entry will be updated to reflect
+    // the entry's title, content and category. As it set's its where clause automatically, it
+    // can not be used together with where.
+    return update(laps).replace(lap);
+  }
+
+  Future<List<Lap>> getLapsByMeasureAsync(Measure measure) {
+    return (select(laps)..where((l) => l.measureId.equals(measure.id))).get();
+  }
+
+
 }

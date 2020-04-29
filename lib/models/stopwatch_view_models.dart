@@ -1,11 +1,12 @@
 
 class LapViewModel {
+  final int id;
   final int order;
   final int difference;
   final int overall;
   final String comment;
 
-  LapViewModel({this.order, this.difference, this.overall, this.comment});
+  LapViewModel({this.id, this.order, this.difference, this.overall, this.comment});
 
   @override
   String toString() {
@@ -50,11 +51,12 @@ class LapViewModel {
 }
 
 class MeasureViewModel {
+  final int id;
   final String elapsedTime;
   final String elapsedTimeLap;
   final String comment;
 
-  MeasureViewModel({this.elapsedTime, this.elapsedTimeLap, this.comment});
+  MeasureViewModel({this.id, this.elapsedTime, this.elapsedTimeLap, this.comment});
 
   Map<String, dynamic> toMap() {
     return {

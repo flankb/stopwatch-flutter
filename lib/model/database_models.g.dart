@@ -250,14 +250,16 @@ class Measure extends DataClass implements Insertable<Measure> {
   final int id;
   final int elapsed;
   final DateTime dateCreated;
-  final int status;
+  final DateTime dateRefreshed;
+  final String status;
   final String comment;
   Measure(
       {@required this.id,
       @required this.elapsed,
       @required this.dateCreated,
+      @required this.dateRefreshed,
       @required this.status,
-      @required this.comment});
+      this.comment});
   factory Measure.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -270,7 +272,10 @@ class Measure extends DataClass implements Insertable<Measure> {
           intType.mapFromDatabaseResponse(data['${effectivePrefix}elapsed']),
       dateCreated: dateTimeType
           .mapFromDatabaseResponse(data['${effectivePrefix}date_created']),
-      status: intType.mapFromDatabaseResponse(data['${effectivePrefix}status']),
+      dateRefreshed: dateTimeType
+          .mapFromDatabaseResponse(data['${effectivePrefix}date_refreshed']),
+      status:
+          stringType.mapFromDatabaseResponse(data['${effectivePrefix}status']),
       comment:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}comment']),
     );
@@ -282,7 +287,8 @@ class Measure extends DataClass implements Insertable<Measure> {
       id: serializer.fromJson<int>(json['id']),
       elapsed: serializer.fromJson<int>(json['elapsed']),
       dateCreated: serializer.fromJson<DateTime>(json['dateCreated']),
-      status: serializer.fromJson<int>(json['status']),
+      dateRefreshed: serializer.fromJson<DateTime>(json['dateRefreshed']),
+      status: serializer.fromJson<String>(json['status']),
       comment: serializer.fromJson<String>(json['comment']),
     );
   }
@@ -293,7 +299,8 @@ class Measure extends DataClass implements Insertable<Measure> {
       'id': serializer.toJson<int>(id),
       'elapsed': serializer.toJson<int>(elapsed),
       'dateCreated': serializer.toJson<DateTime>(dateCreated),
-      'status': serializer.toJson<int>(status),
+      'dateRefreshed': serializer.toJson<DateTime>(dateRefreshed),
+      'status': serializer.toJson<String>(status),
       'comment': serializer.toJson<String>(comment),
     };
   }
@@ -308,6 +315,9 @@ class Measure extends DataClass implements Insertable<Measure> {
       dateCreated: dateCreated == null && nullToAbsent
           ? const Value.absent()
           : Value(dateCreated),
+      dateRefreshed: dateRefreshed == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dateRefreshed),
       status:
           status == null && nullToAbsent ? const Value.absent() : Value(status),
       comment: comment == null && nullToAbsent
@@ -320,12 +330,14 @@ class Measure extends DataClass implements Insertable<Measure> {
           {int id,
           int elapsed,
           DateTime dateCreated,
-          int status,
+          DateTime dateRefreshed,
+          String status,
           String comment}) =>
       Measure(
         id: id ?? this.id,
         elapsed: elapsed ?? this.elapsed,
         dateCreated: dateCreated ?? this.dateCreated,
+        dateRefreshed: dateRefreshed ?? this.dateRefreshed,
         status: status ?? this.status,
         comment: comment ?? this.comment,
       );
@@ -335,6 +347,7 @@ class Measure extends DataClass implements Insertable<Measure> {
           ..write('id: $id, ')
           ..write('elapsed: $elapsed, ')
           ..write('dateCreated: $dateCreated, ')
+          ..write('dateRefreshed: $dateRefreshed, ')
           ..write('status: $status, ')
           ..write('comment: $comment')
           ..write(')'))
@@ -346,8 +359,10 @@ class Measure extends DataClass implements Insertable<Measure> {
       id.hashCode,
       $mrjc(
           elapsed.hashCode,
-          $mrjc(dateCreated.hashCode,
-              $mrjc(status.hashCode, comment.hashCode)))));
+          $mrjc(
+              dateCreated.hashCode,
+              $mrjc(dateRefreshed.hashCode,
+                  $mrjc(status.hashCode, comment.hashCode))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -355,6 +370,7 @@ class Measure extends DataClass implements Insertable<Measure> {
           other.id == this.id &&
           other.elapsed == this.elapsed &&
           other.dateCreated == this.dateCreated &&
+          other.dateRefreshed == this.dateRefreshed &&
           other.status == this.status &&
           other.comment == this.comment);
 }
@@ -363,35 +379,39 @@ class MeasuresCompanion extends UpdateCompanion<Measure> {
   final Value<int> id;
   final Value<int> elapsed;
   final Value<DateTime> dateCreated;
-  final Value<int> status;
+  final Value<DateTime> dateRefreshed;
+  final Value<String> status;
   final Value<String> comment;
   const MeasuresCompanion({
     this.id = const Value.absent(),
     this.elapsed = const Value.absent(),
     this.dateCreated = const Value.absent(),
+    this.dateRefreshed = const Value.absent(),
     this.status = const Value.absent(),
     this.comment = const Value.absent(),
   });
   MeasuresCompanion.insert({
     this.id = const Value.absent(),
-    @required int elapsed,
+    this.elapsed = const Value.absent(),
     @required DateTime dateCreated,
-    @required int status,
-    @required String comment,
-  })  : elapsed = Value(elapsed),
-        dateCreated = Value(dateCreated),
-        status = Value(status),
-        comment = Value(comment);
+    @required DateTime dateRefreshed,
+    @required String status,
+    this.comment = const Value.absent(),
+  })  : dateCreated = Value(dateCreated),
+        dateRefreshed = Value(dateRefreshed),
+        status = Value(status);
   MeasuresCompanion copyWith(
       {Value<int> id,
       Value<int> elapsed,
       Value<DateTime> dateCreated,
-      Value<int> status,
+      Value<DateTime> dateRefreshed,
+      Value<String> status,
       Value<String> comment}) {
     return MeasuresCompanion(
       id: id ?? this.id,
       elapsed: elapsed ?? this.elapsed,
       dateCreated: dateCreated ?? this.dateCreated,
+      dateRefreshed: dateRefreshed ?? this.dateRefreshed,
       status: status ?? this.status,
       comment: comment ?? this.comment,
     );
@@ -416,11 +436,8 @@ class $MeasuresTable extends Measures with TableInfo<$MeasuresTable, Measure> {
   @override
   GeneratedIntColumn get elapsed => _elapsed ??= _constructElapsed();
   GeneratedIntColumn _constructElapsed() {
-    return GeneratedIntColumn(
-      'elapsed',
-      $tableName,
-      false,
-    );
+    return GeneratedIntColumn('elapsed', $tableName, false,
+        defaultValue: Constant(0));
   }
 
   final VerificationMeta _dateCreatedMeta =
@@ -437,16 +454,26 @@ class $MeasuresTable extends Measures with TableInfo<$MeasuresTable, Measure> {
     );
   }
 
-  final VerificationMeta _statusMeta = const VerificationMeta('status');
-  GeneratedIntColumn _status;
+  final VerificationMeta _dateRefreshedMeta =
+      const VerificationMeta('dateRefreshed');
+  GeneratedDateTimeColumn _dateRefreshed;
   @override
-  GeneratedIntColumn get status => _status ??= _constructStatus();
-  GeneratedIntColumn _constructStatus() {
-    return GeneratedIntColumn(
-      'status',
+  GeneratedDateTimeColumn get dateRefreshed =>
+      _dateRefreshed ??= _constructDateRefreshed();
+  GeneratedDateTimeColumn _constructDateRefreshed() {
+    return GeneratedDateTimeColumn(
+      'date_refreshed',
       $tableName,
       false,
     );
+  }
+
+  final VerificationMeta _statusMeta = const VerificationMeta('status');
+  GeneratedTextColumn _status;
+  @override
+  GeneratedTextColumn get status => _status ??= _constructStatus();
+  GeneratedTextColumn _constructStatus() {
+    return GeneratedTextColumn('status', $tableName, false, maxTextLength: 16);
   }
 
   final VerificationMeta _commentMeta = const VerificationMeta('comment');
@@ -457,13 +484,13 @@ class $MeasuresTable extends Measures with TableInfo<$MeasuresTable, Measure> {
     return GeneratedTextColumn(
       'comment',
       $tableName,
-      false,
+      true,
     );
   }
 
   @override
   List<GeneratedColumn> get $columns =>
-      [id, elapsed, dateCreated, status, comment];
+      [id, elapsed, dateCreated, dateRefreshed, status, comment];
   @override
   $MeasuresTable get asDslTable => this;
   @override
@@ -480,14 +507,20 @@ class $MeasuresTable extends Measures with TableInfo<$MeasuresTable, Measure> {
     if (d.elapsed.present) {
       context.handle(_elapsedMeta,
           elapsed.isAcceptableValue(d.elapsed.value, _elapsedMeta));
-    } else if (isInserting) {
-      context.missing(_elapsedMeta);
     }
     if (d.dateCreated.present) {
       context.handle(_dateCreatedMeta,
           dateCreated.isAcceptableValue(d.dateCreated.value, _dateCreatedMeta));
     } else if (isInserting) {
       context.missing(_dateCreatedMeta);
+    }
+    if (d.dateRefreshed.present) {
+      context.handle(
+          _dateRefreshedMeta,
+          dateRefreshed.isAcceptableValue(
+              d.dateRefreshed.value, _dateRefreshedMeta));
+    } else if (isInserting) {
+      context.missing(_dateRefreshedMeta);
     }
     if (d.status.present) {
       context.handle(
@@ -498,8 +531,6 @@ class $MeasuresTable extends Measures with TableInfo<$MeasuresTable, Measure> {
     if (d.comment.present) {
       context.handle(_commentMeta,
           comment.isAcceptableValue(d.comment.value, _commentMeta));
-    } else if (isInserting) {
-      context.missing(_commentMeta);
     }
     return context;
   }
@@ -525,8 +556,12 @@ class $MeasuresTable extends Measures with TableInfo<$MeasuresTable, Measure> {
       map['date_created'] =
           Variable<DateTime, DateTimeType>(d.dateCreated.value);
     }
+    if (d.dateRefreshed.present) {
+      map['date_refreshed'] =
+          Variable<DateTime, DateTimeType>(d.dateRefreshed.value);
+    }
     if (d.status.present) {
-      map['status'] = Variable<int, IntType>(d.status.value);
+      map['status'] = Variable<String, StringType>(d.status.value);
     }
     if (d.comment.present) {
       map['comment'] = Variable<String, StringType>(d.comment.value);
