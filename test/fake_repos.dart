@@ -3,13 +3,9 @@
 import 'dart:collection';
 
 import 'package:learnwords/model/database_models.dart';
-import 'package:learnwords/models/category_info.dart';
-import 'package:learnwords/models/persistent_type.dart';
-import 'package:learnwords/models/word_dict.dart';
-import 'package:learnwords/resources/base/base_word_category_repository.dart';
-import 'package:learnwords/resources/base/base_word_repository.dart';
 import 'package:mockito/mockito.dart';
 
+/*
 class FakeWordRepository extends Fake implements BaseWordRepository {
   List<WordDict> _words;
 
@@ -89,3 +85,4 @@ class FakeCategoriesRepository extends Fake implements BaseWordCategoryRepositor
     _selectedCategory = category;
   }
 }
+*/

@@ -4,10 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:learnwords/about_page.dart';
-import 'package:learnwords/resources/dict_parser_repository.dart';
-import 'package:learnwords/resources/word_category_repository.dart';
-import 'package:learnwords/scope_models/learn_words_model.dart';
-import 'package:learnwords/util/custom_search.dart';
 import 'package:learnwords/widgets/circular.dart';
 import 'package:preferences/preferences.dart';
 import 'package:rate_my_app/rate_my_app.dart';
@@ -173,7 +169,6 @@ class _MyTabPageState extends State<MyTabPageStateful>
     // Causes the app to rebuild with the new _selectedChoice.
   }
 
-  LearnWordsModel productModel;
   CaptionModel captionModel;
 
   ItemScrollController _categoryScrollController;
@@ -197,13 +192,6 @@ class _MyTabPageState extends State<MyTabPageStateful>
   }
 
   Future _onCreateAsync() async {
-    captionModel = CaptionModel();
-    // Предполагается, что код здесь вызывается только на старте приложения
-    productModel = LearnWordsModel(
-        dictRepository: DictParserRepository(),
-        categoryRepository: WordCategoryRepository());
-
-    await productModel.loadAllModelAsync();
   }
 
   _showRateDialog(BuildContext context) {
@@ -289,11 +277,11 @@ class _MyTabPageState extends State<MyTabPageStateful>
                     //add FALSE as value on the stream
                     //appBarController.stream.add(true);
                     //_scrollController.scrollTo(index: 1000, duration: Duration(seconds: 1)); // TODO Из CustomSearchDelegate не работает
-                    var customSearchDelegate = CustomSearchDelegate(
+                    /*var customSearchDelegate = CustomSearchDelegate(
                         scopedModel: productModel,
-                        scrollController: ItemScrollController());
+                    scrollController: ItemScrollController());
 
-                    var result = await showSearch(context: context, delegate: customSearchDelegate);
+                    var result = await showSearch(context: context, delegate: customSearchDelegate);*/
                   },
                 ),
                 // action button
@@ -314,131 +302,91 @@ class _MyTabPageState extends State<MyTabPageStateful>
             children: tabsTemplate.map((String text) {
               //final String label = tab.text.toLowerCase();
               return text == 'КАТЕГОРИИ'
-                  ? ScopedModel<LearnWordsModel>(
-                      model: productModel,
-                      child:
-                          Center(child: ScopedModelDescendant<LearnWordsModel>(
-                        builder: (BuildContext context, Widget child,
-                            LearnWordsModel model) {
+                  ? Center(child: Row(
+                        children: <Widget>[
+                          true
+                              ? SizedBox(
+                                  //width: 120,
+                                  height: 40,
+                                  child: RawMaterialButton(
+                                    onPressed: () {
+                                    },
+                                    child: Padding(
 
-                          return (model.isLoadingCategories)
-                              ? const CenterCircularWidget()
-                              : Stack(
-                                  children: [
-                                    Positioned(
-                                      right: 16.0,
-                                      bottom: 16.0,
-                                      child: Row(
-                                        children: <Widget>[
-                                          model.selectedCategory.name != ""
-                                              ? SizedBox(
-                                                  //width: 120,
-                                                  height: 40,
-                                                  child: RawMaterialButton(
-                                                    onPressed: () {
-                                                    },
-                                                    child: Padding(
+                                      child: Text(
+                                        "ВЕСЬ СЛОВАРЬ",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                            fontWeight:
+                                                FontWeight.bold),
+                                      ), padding: EdgeInsets.symmetric(horizontal: 4.0),
+                                    ),
+                                    shape:
+                                        RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius
+                                                    .circular(
+                                                        20.0)),
+                                    elevation: 2.0,
+                                    fillColor: Theme.of(context)
+                                        .primaryColor,
+                                    padding:
+                                        const EdgeInsets.all(
+                                            5.0),
+                                  ),
+                                )
+                              : SizedBox.shrink(),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          true
+                              ? SizedBox(
+                                  height: 50,
+                                  width: 50,
+                                  child: RawMaterialButton(
+                                    onPressed: () {
+                                    },
+                                    child: new Icon(
+                                      Icons.gps_not_fixed,
+                                      color: Theme.of(context)
+                                          .primaryColor ,
+                                      size: 25.0,
+                                    ),
+                                    shape: new CircleBorder(),
+                                    elevation: 2.0,
+                                    fillColor: Colors.white,
+                                    padding:
+                                        const EdgeInsets.all(
+                                            5.0),
+                                  ),
+                                )
+                              : SizedBox.shrink(),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          SizedBox(
+                            height: 50,
+                            width: 50,
+                            child: RawMaterialButton(
 
-                                                      child: Text(
-                                                        "ВЕСЬ СЛОВАРЬ",
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight.bold),
-                                                      ), padding: EdgeInsets.symmetric(horizontal: 4.0),
-                                                    ),
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20.0)),
-                                                    elevation: 2.0,
-                                                    fillColor: Theme.of(context)
-                                                        .primaryColor,
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            5.0),
-                                                  ),
-                                                )
-                                              : SizedBox.shrink(),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          model.selectedCategory.name != ""
-                                              ? SizedBox(
-                                                  height: 50,
-                                                  width: 50,
-                                                  child: RawMaterialButton(
-                                                    onPressed: () {
-                                                      final index = model
-                                                          .getCurrentCategoryIndex();
+                              onPressed: () {
+                              },
+                              child: new Icon(
+                                Icons.keyboard_arrow_up,
+                                color:  Theme.of(context).primaryColor,
+                                size: 25.0,
+                              ),
+                              shape: new CircleBorder(),
+                              elevation: 2.0,
+                              fillColor:  Colors.white,
+                              padding: const EdgeInsets.all(5.0),
+                            ),
+                          )
 
-                                                      if (index >= -1) {
-                                                        _categoryScrollController
-                                                            .scrollTo(
-                                                                index: index,
-                                                                duration:
-                                                                    Duration(
-                                                                        seconds:
-                                                                            1));
-                                                      }
-                                                    },
-                                                    child: new Icon(
-                                                      Icons.gps_not_fixed,
-                                                      color: Theme.of(context)
-                                                          .primaryColor ,
-                                                      size: 25.0,
-                                                    ),
-                                                    shape: new CircleBorder(),
-                                                    elevation: 2.0,
-                                                    fillColor: Colors.white,
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            5.0),
-                                                  ),
-                                                )
-                                              : SizedBox.shrink(),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          SizedBox(
-                                            height: 50,
-                                            width: 50,
-                                            child: RawMaterialButton(
+                        ],
+                      )
 
-                                              onPressed: () {
-                                                if(!model.isLoadingCategories){
-                                                  _categoryScrollController.scrollTo(index: 0, duration: Duration(seconds: 1));
-                                                }
-                                              },
-                                              child: new Icon(
-                                                Icons.keyboard_arrow_up,
-                                                color:  Theme.of(context).primaryColor,
-                                                size: 25.0,
-                                              ),
-                                              shape: new CircleBorder(),
-                                              elevation: 2.0,
-                                              fillColor:  Colors.white,
-                                              padding: const EdgeInsets.all(5.0),
-                                            ),
-                                          )
-
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                );
-                        },
-                      )))
-                  : ScopedModel<LearnWordsModel>(
-                      model: productModel,
-                      child: Center(child:
-                          new ScopedModelDescendant<LearnWordsModel>(builder:
-                              (BuildContext context, Widget child,
-                                  LearnWordsModel model) {
-                      return Container();
-                      })));
+                      ) : Container();
             }).toList(),
           ),
         ),
@@ -449,7 +397,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     debugPrint("AppLifecycleState " + state.toString());
-    if (state == AppLifecycleState.inactive && productModel != null) {
+    if (state == AppLifecycleState.inactive ) {
 
     }
   }

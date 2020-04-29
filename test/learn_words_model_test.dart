@@ -1,15 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:learnwords/models/category_info.dart';
-import 'package:learnwords/models/persistent_type.dart';
-import 'package:learnwords/scope_models/learn_words_model.dart';
 
 import 'fake_repos.dart';
-
+/*
 // Варианты запуска тестов:
 // flutter test test/counter_test.dart
 // dart test/fetch_post_test.dart  //(Mockito)
 //
+
 
 void main() {
   group("Main scope model tests", () {
@@ -70,4 +68,4 @@ void main() {
       expect(_testModel.searchResult.length, greaterThan(0));
     });
   });
-}
+}*/

@@ -1,5 +1,0 @@
-
-enum PersistentType {
-  File,
-  Database
-}

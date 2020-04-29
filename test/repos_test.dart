@@ -2,10 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:learnwords/resources/dict_parser_repository.dart';
-import 'package:learnwords/resources/word_category_repository.dart';
 import 'package:sqflite_ffi_test/sqflite_ffi_test.dart';
 
+/*
 void main() {
   group('Repositories tests', ()
   {
@@ -37,3 +36,4 @@ void main() {
     });*/
   });
 }
+*/
