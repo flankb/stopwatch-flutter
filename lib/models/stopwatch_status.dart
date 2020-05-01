@@ -1,5 +1,7 @@
 
 enum StopwatchStatus{
+  Ready,
+
   Paused,
 
   Started,

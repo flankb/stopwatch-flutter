@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:learnwords/dao/database_dao.dart';
 import 'package:learnwords/model/database_models.dart';
 import 'package:sqflite_ffi_test/sqflite_ffi_test.dart';
 

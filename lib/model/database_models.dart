@@ -12,22 +12,26 @@ part 'database_models.g.dart';
 class Laps extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get measureId => integer().named('measure_id').customConstraint('REFERENCES measures(id) ON DELETE CASCADE')();
+  IntColumn get difference => integer()();
+  IntColumn get order => integer()();
   IntColumn get overall => integer()();
   TextColumn get comment => text()();
+}
+
+class MeasureSessions extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get measureId => integer().named('measure_id').customConstraint('REFERENCES measures(id) ON DELETE CASCADE')();
+  DateTimeColumn get started => dateTime()();
+  DateTimeColumn get finished => dateTime().nullable()();
 }
 
 class Measures extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get elapsed => integer().withDefault(Constant(0))();
   DateTimeColumn get dateCreated => dateTime()();
-  DateTimeColumn get dateRefreshed => dateTime()();
   TextColumn get status => text().withLength(max: 16)();
   TextColumn get comment => text().nullable()();
 }
-
-/*class MeasureSessions extends Table{
-  IntColumn get id => integer().autoIncrement()();
-}*/
 
 class Tags extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -48,7 +52,7 @@ LazyDatabase _openConnection() {
   });
 }
 
-@UseMoor(tables: [Laps, Measures, Tags])
+@UseMoor(tables: [Laps, Measures, MeasureSessions, Tags])
 class MyDatabase extends _$MyDatabase {
   // we tell the database where to store the data with this constructor
   MyDatabase() : super(_openConnection());
@@ -67,24 +71,37 @@ class MyDatabase extends _$MyDatabase {
     Measure measure = Measure(id: null,
         elapsed: 0,
         dateCreated: DateTime.now(),
-        dateRefreshed: DateTime.now(),
-        status: StopwatchStatus.Paused.toString());
+        status: StopwatchStatus.Ready.toString());
 
     return into(measures).insert(measure);
   }
 
-  Future<int> addNewLapAsync(Measure measure) {
-    Lap lap = Lap(id: null, measureId: measure.id, overall: 0, comment: null);
+  Future<int> addNewLapAsync(Lap lap) {
     return into(laps).insert(lap);
   }
 
+  Future<int> addNewMeasureSession(MeasureSession measureSession) {
+    return into(measureSessions).insert(measureSession);
+  }
+
+  Future<List<MeasureSession>> getMeasureSessions(int measureId) {
+    return (select(measureSessions)..where((m) => m.id.equals(measureId))).get();
+  }
+
+  /*
+  Future<int> addNewMeasureSession(Table table){ // TODO Что-то придумать, чтобы избежать дублирования методов в разных слоях
+    final t = select(table).get();
+  }*/
+
   Future updateMeasureAsync(Measure measure) {
+    //into(measures).insert(measure).
+
     // using replace will update all fields from the entry that are not marked as a primary key.
     // it will also make sure that only the entry with the same primary key will be updated.
     // Here, this means that the row that has the same id as entry will be updated to reflect
     // the entry's title, content and category. As it set's its where clause automatically, it
     // can not be used together with where.
-    return update(measures).replace(measure);
+    return update(measures).replace(measure); //TODO Возможно заменить на insert.replace!
   }
 
   Future updateLapAsync(Lap lap) {
@@ -99,6 +116,4 @@ class MyDatabase extends _$MyDatabase {
   Future<List<Lap>> getLapsByMeasureAsync(Measure measure) {
     return (select(laps)..where((l) => l.measureId.equals(measure.id))).get();
   }
-
-
 }

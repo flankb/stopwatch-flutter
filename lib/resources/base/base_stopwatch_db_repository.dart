@@ -6,11 +6,17 @@ abstract class BaseStopwatchRepository {
 
   Future<int> createNewMeasureAsync();
 
-  Future<int> addNewLapAsync(Measure measure);
+  Future<int> addNewLapAsync(Lap lap);
 
   Future updateMeasureAsync(Measure measure);
 
   Future updateLapAsync(Lap lap);
 
   Future<List<Lap>> getLapsByMeasureAsync(Measure measure);
+
+  Future<int> addNewMeasureSession(MeasureSession measureSession);
+
+  Future<int> updateMeasureSession(MeasureSession measureSession);
+
+  Future<List<MeasureSession>> getMeasureSessions(int measureId);
 }
