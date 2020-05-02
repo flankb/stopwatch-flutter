@@ -26,8 +26,8 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     MeasureEvent event,
   ) async* {
     // Для каждого события что-то делаем и возвращаем состояние
-    if (event is TickEvent){
-
+    if (event is TickEvent) {
+      yield* _mapTickToState(event);
     } if (event is MeasureStartedEvent) {
       yield* _mapStartedToState(event);
     } else if (event is MeasurePausedEvent) {
@@ -35,26 +35,34 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     } else if (event is MeasureFinishedEvent) {
       yield* _mapFinishedToState(event);
     } else if (event is LapAddedEvent) {
-
+      yield* _mapLapAddedToState(event);
     }
   }
 
-  Stream<MeasureState> _mapLapAddedToState(LapAddedEvent event) async* {
-    if (state is MeasureStartedState || state is MeasurePausedState) {
-      // Вычислить сколько всего прошло времени со старта секундомера
+  Stream<MeasureState> _mapTickToState(TickEvent tick) async* {
+    state.measure.elapsed = tick.duration; // TODO ?????
+    yield MeasureStartedState(state.measure);
+  }
 
+  Stream<MeasureState> _mapLapAddedToState(LapAddedEvent event) async* {
+    if (state is MeasureStartedState) {
+      yield MeasureUpdatingState(state.measure);
       // Сбросить счётчик времени круга
       state.measure.elapsedLap = 0;
+
+      final lapProps = state.measure.getNewLapDiffAndOverall(DateTime.now());
 
       LapViewModel newLap = LapViewModel();
       newLap.measureId = state.measure.id;
       newLap.difference = 0; //TODO Вычислить разницу с предыдущим кругом
       newLap.order = state.measure.laps.length + 1;
-      newLap.overall = state.measure.getOverallLapElapsed(DateTime.now());
+      newLap.difference = lapProps[0];
+      newLap.overall = lapProps[1];
 
+      state.measure.laps.add(newLap);
       newLap.id = await _stopwatchRepository.addNewLapAsync(newLap.toEntity());
 
-      yield MeasureReadyState(state.measure);
+      yield MeasureStartedState(state.measure);
     }
     else {
       throw Exception("Wrong state!");

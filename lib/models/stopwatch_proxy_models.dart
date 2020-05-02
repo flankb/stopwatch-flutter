@@ -114,7 +114,7 @@ class MeasureViewModel extends BaseStopwatchEntity {
     return 0;
   }
 
-  int getOverallLapElapsed(DateTime dateNow) {
+  List<int> getNewLapDiffAndOverall(DateTime dateNow) {
     final base = getSumOfElapsed();
     final lastSession = getLastUnfinishedSession();
 
@@ -122,7 +122,12 @@ class MeasureViewModel extends BaseStopwatchEntity {
       throw Exception("Last session must not be a null!");
     }
 
-    return base + dateNow.difference(lastSession.started).inMilliseconds;
+    final newOverall = base + dateNow.difference(lastSession.started).inMilliseconds;
+    // Здесь же можно найти разницу с предыдущим кругом
+    final prevLapOverall = laps.any((_) => true) ? laps.last.overall : 0;
+    final difference = newOverall - prevLapOverall;
+
+    return [difference, newOverall];
   }
 
   MeasureSessionViewModel getLastUnfinishedSession() {
