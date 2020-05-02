@@ -18,6 +18,7 @@ class MeasureReadyState extends MeasureState {
 }
 
 class MeasureUpdatingState extends MeasureState {
+  // Пока можно это состояние присваивать при старте программы перед загрузкой секундомера
   MeasureUpdatingState(MeasureViewModel measure) : super(measure);
 }
 

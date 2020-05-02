@@ -58,7 +58,7 @@ class LapViewModel extends BaseStopwatchEntity {
 }
 
 class MeasureSessionViewModel {
-  final int id;
+  int id;
   int measureId;
   DateTime started;
   DateTime finished;

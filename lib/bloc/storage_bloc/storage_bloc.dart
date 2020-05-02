@@ -25,31 +25,43 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
         final measures = await stopwatchRepository.getMeasuresByStatusAsync(StopwatchStatus.Finished.toString());
         final resultList = measures.map((m) => MeasureViewModel.fromEntity(m)).toList();
         
-        yield ReadyStorageState(resultList, resultList);
+        yield ReadyStorageState(resultList);
       } else if (openStorageEvent.entityType == LapViewModel) {
           final laps = (await stopwatchRepository
               .getLapsByMeasureAsync(openStorageEvent.measureId))
               .map((l) => LapViewModel.fromEntity(l))
               .toList();
 
-          yield ReadyStorageState(laps, laps);
+          yield ReadyStorageState(laps);
       }
     } if (event is RequestEditEvent) {
-      if (state is ReadyStorageState) {
+      if (state is AvailableListState) {
         final entity = event.entity;
-        final list1 = (state as ReadyStorageState).allEntities;
-        final list2 = (state as ReadyStorageState).filteredEntities;
+        final list1 = (state as AvailableListState).allEntities;
 
-        yield ReadyStorageState(list1, list2, editableEntity: entity);
+        yield ReadyStorageState(list1, editableEntity: entity); //TODO Что если был Filtering ???
       }
       else {
         throw Exception("Wrong state for edit!");
       }
     } if (event is FilterStorageEvent) {
+      if (state is AvailableListState) {
+        final filteredList = (state as AvailableListState).allEntities
+        .where((_) => _.comment.contains(event.query)).toList();
+
+        yield FilteringState((state as AvailableListState).allEntities, filteredList);
+      }
+      else{
+        throw Exception("Wrong state for filtering!");
+      }
 
     }
     else if (event is ApplyChangesEvent) {
-      //yield* _mapPausedToState(event);
+      if (event.entity is LapViewModel){
+        await stopwatchRepository.updateLapAsync((event.entity as LapViewModel).toEntity());
+      } else if (event.entity is MeasureViewModel) {
+        await stopwatchRepository.updateMeasureAsync((event.entity as MeasureViewModel).toEntity());
+      }
     }
   }
 }

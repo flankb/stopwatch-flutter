@@ -9,7 +9,13 @@ class MeasureBaseEvent extends MeasureEvent {
   List<Object> get props => null;
 }
 
-class MeasureStartedEvent extends MeasureBaseEvent { }
+class MeasureOpenedEvent extends MeasureBaseEvent{}
+
+class MeasureStartedEvent extends MeasureBaseEvent {
+  final bool resume;
+
+  MeasureStartedEvent({this.resume});
+}
 
 class MeasurePausedEvent extends MeasureBaseEvent { }
 

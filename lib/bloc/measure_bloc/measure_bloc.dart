@@ -19,7 +19,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
   MeasureBloc(this._ticker, this._stopwatchRepository);
 
   @override
-  MeasureState get initialState => MeasureReadyState(MeasureViewModel());
+  MeasureState get initialState => MeasureUpdatingState(null);
 
   @override
   Stream<MeasureState> mapEventToState(
@@ -28,14 +28,45 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     // Для каждого события что-то делаем и возвращаем состояние
     if (event is TickEvent) {
       yield* _mapTickToState(event);
-    } if (event is MeasureStartedEvent) {
-      yield* _mapStartedToState(event);
+    } else if (event is MeasureOpenedEvent) {
+      yield* _mapOpenedToState(event);
+    } else if (event is MeasureStartedEvent) {
+      yield* _mapStartedToState(event, resume: event.resume);
     } else if (event is MeasurePausedEvent) {
       yield* _mapPausedToState(event);
     } else if (event is MeasureFinishedEvent) {
       yield* _mapFinishedToState(event);
     } else if (event is LapAddedEvent) {
       yield* _mapLapAddedToState(event);
+    }
+  }
+
+  Stream<MeasureState> _mapOpenedToState(MeasureOpenedEvent event) async* {
+    // Прочитать измерение с БД со всеми кругами и сессиями
+    final measuresStarted = await _stopwatchRepository.getMeasuresByStatusAsync(StopwatchStatus.Started.toString());
+    final measuredPaused = await _stopwatchRepository.getMeasuresByStatusAsync(StopwatchStatus.Started.toString());
+
+    List<Measure> combine = List<Measure>();
+
+    combine.addAll(measuresStarted);
+    combine.addAll(measuredPaused);
+
+    if (combine.length == 0) {
+      yield MeasureReadyState(MeasureViewModel()); // Если в БД ниче нет, то ReadyState
+    }
+    else {
+      if (combine.length > 1) {
+        throw Exception("Не может быть больше одного актуального измерения");
+      }
+
+      final measure = MeasureViewModel.fromEntity(combine.single);
+
+      if (measure.status == StopwatchStatus.Started) {  // Если есть в статусе Запущено, то ReadyState, а затем в add(startEvent)
+        yield MeasureReadyState(measure);
+        add(MeasureStartedEvent(resume : true));
+      } else if (measure.status == StopwatchStatus.Paused) {
+        yield MeasurePausedState(measure);// Если есть в статусе Пауза, то PausedState
+      }
     }
   }
 
@@ -89,7 +120,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     }
   }
 
-  Stream<MeasureState> _mapStartedToState(MeasureEvent event) async* {
+  Stream<MeasureState> _mapStartedToState(MeasureEvent event, {bool resume = false}) async* {
     if (state is MeasureReadyState || state is MeasurePausedState) {
       yield MeasureUpdatingState(state.measure);
       // Устанавливаем поля в модели, делаем запись в репозитории
@@ -100,12 +131,14 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
         state.measure.dateCreated = nowDate;
       }
 
-      final session = MeasureSessionViewModel(id: state.measure.id, started: nowDate);
-      state.measure.sessions.add(session);
+      if (!resume) {
+        final session = MeasureSessionViewModel(id: state.measure.id, started: nowDate);
+        state.measure.sessions.add(session);
 
-      // Если в БД есть такая запись - то обновить, иначе создать новую
-      await _stopwatchRepository.updateMeasureAsync(state.measure.toEntity());
-      await _stopwatchRepository.addNewMeasureSession(session.toEntity());
+        // Если в БД есть такая запись - то обновить, иначе создать новую
+        state.measure.id = await _stopwatchRepository.updateMeasureAsync(state.measure.toEntity());
+        session.id = await _stopwatchRepository.addNewMeasureSession(session.toEntity());
+      }
 
       _tickerSubscription?.cancel();
       _tickerSubscription = _ticker

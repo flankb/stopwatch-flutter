@@ -12,7 +12,24 @@ class InitialStorageState extends StorageState {
 
 class LoadingStorageState extends InitialStorageState { }
 
-class ReadyStorageState extends InitialStorageState {
+abstract class AvailableListState {
+   final List<BaseStopwatchEntity> allEntities;
+
+  AvailableListState(this.allEntities);
+}
+
+class ReadyStorageState extends InitialStorageState implements AvailableListState {
+  final List<BaseStopwatchEntity> allEntities;
+
+  final BaseStopwatchEntity editableEntity;
+
+  @override
+  List<Object> get props => [allEntities, editableEntity];
+
+  ReadyStorageState(this.allEntities, {this.editableEntity});
+}
+
+class FilteringState extends InitialStorageState implements AvailableListState {
   final List<BaseStopwatchEntity> allEntities;
   final List<BaseStopwatchEntity> filteredEntities;
 
@@ -21,5 +38,5 @@ class ReadyStorageState extends InitialStorageState {
   @override
   List<Object> get props => [allEntities, filteredEntities, editableEntity];
 
-  ReadyStorageState(this.allEntities, this.filteredEntities, {this.editableEntity});
+  FilteringState(this.allEntities, this.filteredEntities, {this.editableEntity});
 }
