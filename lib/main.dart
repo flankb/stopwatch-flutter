@@ -114,7 +114,7 @@ class MyTabPageStateful extends StatefulWidget {
 
 class _MyTabPageState extends State<MyTabPageStateful>
     with
-        AppReviewer,
+        //AppReviewer,
         //AutomaticKeepAliveClientMixin,
         WidgetsBindingObserver,
         AfterLayoutMixin<MyTabPageStateful> {

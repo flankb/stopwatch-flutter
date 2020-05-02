@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    String version = '1.0.0';
+    String version = '1.0.1'; // Использовать https://pub.dev/packages/package_info
 
     return Scaffold(
       appBar: AppBar(
