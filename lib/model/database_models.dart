@@ -113,7 +113,7 @@ class MyDatabase extends _$MyDatabase {
     return update(laps).replace(lap);
   }
 
-  Future<List<Lap>> getLapsByMeasureAsync(Measure measure) {
-    return (select(laps)..where((l) => l.measureId.equals(measure.id))).get();
+  Future<List<Lap>> getLapsByMeasureAsync(int measureId) {
+    return (select(laps)..where((l) => l.measureId.equals(measureId))).get();
   }
 }

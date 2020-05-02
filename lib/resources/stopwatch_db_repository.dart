@@ -25,7 +25,7 @@ class StopwatchRepository implements BaseStopwatchRepository {
   }
 
   Future<int> createNewMeasureAsync() {
-    final u =  _database.measures;
+    //final u =  _database.measures;
 
 
     return _database.createNewMeasureAsync();
@@ -43,8 +43,8 @@ class StopwatchRepository implements BaseStopwatchRepository {
     return _database.updateLapAsync(lap);
   }
 
-  Future<List<Lap>> getLapsByMeasureAsync(Measure measure) {
-    return _database.getLapsByMeasureAsync(measure);
+  Future<List<Lap>> getLapsByMeasureAsync(int measureId) {
+    return _database.getLapsByMeasureAsync(measureId);
   }
 
   @override

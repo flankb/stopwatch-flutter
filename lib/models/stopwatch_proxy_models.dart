@@ -30,6 +30,10 @@ class LapViewModel extends BaseStopwatchEntity {
         overall: entity.overall);
   }
 
+  /*static Type getClassType(){
+    return LapViewModel().runtimeType;
+  }*/
+
   @override
   String toString() {
     return 'LapViewModel{order: $order, difference: $difference, overall: $overall, comment: $comment}';
