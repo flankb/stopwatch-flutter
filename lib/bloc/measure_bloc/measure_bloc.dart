@@ -60,6 +60,14 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       }
 
       final measure = MeasureViewModel.fromEntity(combine.single);
+      final sessions = (await _stopwatchRepository.getMeasureSessions(measure.id))
+                    .map((_) => MeasureSessionViewModel.fromEntity(_));
+
+      final laps = (await _stopwatchRepository.getLapsByMeasureAsync(measure.id))
+                    .map((_) => LapViewModel.fromEntity(_));
+
+      measure.laps.addAll(laps);
+      measure.sessions.addAll(sessions);
 
       if (measure.status == StopwatchStatus.Started) {  // Если есть в статусе Запущено, то ReadyState, а затем в add(startEvent)
         yield MeasureReadyState(measure);
