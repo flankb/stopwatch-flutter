@@ -1,6 +1,7 @@
 
 import 'package:learnwords/model/database_models.dart';
 import 'package:learnwords/models/stopwatch_status.dart';
+import 'package:learnwords/util/time_displayer.dart';
 
 abstract class BaseStopwatchEntity {
   int id;
@@ -14,6 +15,14 @@ class LapViewModel extends BaseStopwatchEntity {
   int order;
   int difference;
   int overall;
+
+  String differenceTime() {
+    return TimeDisplayer.formatAll(Duration(milliseconds: difference));
+  }
+
+  String overallTime() {
+    return TimeDisplayer.formatAll(Duration(milliseconds: overall));
+  }
 
   LapViewModel({int id, String comment, this.measureId, this.order, this.difference, this.overall}) : super(id: id, comment : comment);
 
@@ -92,12 +101,12 @@ class MeasureViewModel extends BaseStopwatchEntity {
     this.status = StopwatchStatus.Ready,
     this.dateCreated}) : super(id: id, comment : comment);
 
-  String elapsedTime(){
-    return elapsed.toString();
+  List<String> elapsedTime() {
+    return [TimeDisplayer.format(Duration(milliseconds: elapsed)), TimeDisplayer.formatMills(Duration(milliseconds: elapsed))];
   }
 
-  String elapsedTimeLap(){
-    return elapsedLap.toString();
+  List<String> elapsedTimeLap() {
+    return [TimeDisplayer.format(Duration(milliseconds: elapsedLap)), TimeDisplayer.formatMills(Duration(milliseconds: elapsedLap))];
   }
 
   int getSumOfElapsed() {
@@ -106,13 +115,7 @@ class MeasureViewModel extends BaseStopwatchEntity {
     return elapsed;
   }
 
-  int getDifferernceWithPreviousLap(DateTime dateNow){
-    if(!laps.any((_) => true)){
 
-    }
-
-    return 0;
-  }
 
   List<int> getNewLapDiffAndOverall(DateTime dateNow) {
     final base = getSumOfElapsed();
