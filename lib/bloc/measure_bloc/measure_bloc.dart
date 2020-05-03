@@ -93,7 +93,6 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
       LapViewModel newLap = LapViewModel();
       newLap.measureId = state.measure.id;
-      newLap.difference = 0; //TODO Вычислить разницу с предыдущим кругом
       newLap.order = state.measure.laps.length + 1;
       newLap.difference = lapProps[0];
       newLap.overall = lapProps[1];
