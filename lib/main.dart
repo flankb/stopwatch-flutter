@@ -180,9 +180,16 @@ class _MyTabPageState extends State<MyTabPageStateful>
     WidgetsBinding.instance.addObserver(this);
 
     _categoryScrollController = ItemScrollController();
-
+    captionModel = CaptionModel();
     _onCreateAsync();
     debugPrint('initState();');
+  }
+
+  @override
+  void reassemble(){
+    super.reassemble();
+
+    captionModel = CaptionModel();
   }
 
   @override

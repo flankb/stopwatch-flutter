@@ -21,14 +21,16 @@ class OpenStorageEvent extends StorageEvent {
 
 class RequestEditEvent extends StorageEvent {
   final BaseStopwatchEntity entity;
-
   RequestEditEvent(this.entity);
 }
 
 class FilterStorageEvent extends StorageEvent {
   final String query;
+  final DateTime dateFrom;
+  final DateTime dateTo;
+  final Type entityType;
 
-  FilterStorageEvent(this.query);
+  FilterStorageEvent(this.query, this.dateFrom, this.dateTo, this.entityType);
 }
 
 class ApplyChangesEvent extends StorageEvent {
