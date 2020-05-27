@@ -5,6 +5,7 @@ import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:learnwords/about_page.dart';
 import 'package:learnwords/widgets/circular.dart';
+import 'package:learnwords/widgets/stopwatch_body.dart';
 import 'package:preferences/preferences.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -173,6 +174,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
 
   ItemScrollController _categoryScrollController;
   bool categoryInited = false;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -243,6 +245,12 @@ class _MyTabPageState extends State<MyTabPageStateful>
     }
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     debugPrint('Main page loaded!');
@@ -254,150 +262,30 @@ class _MyTabPageState extends State<MyTabPageStateful>
 
     final tabsTemplate = ['КАТЕГОРИИ', 'ВЕСЬ СЛОВАРЬ'];
 
-    return DefaultTabController( //TODO Удалить при создании нового приложения
-      length: tabsTemplate.length,
-      child: ScopedModel<CaptionModel>(
-        model: captionModel,
-        /*create: (BuildContext context) {
-          return Caption();
-        },*/
-        child: Scaffold(
-          appBar: AppBar(
-              bottom: TabBar(
-                tabs: [
-                  Tab(text: 'ВКЛАДКА 1'),
-                  ScopedModelDescendant<CaptionModel>(
-                    builder: (BuildContext context, Widget child,
-                        CaptionModel model) {
-                      return Tab(text: model.caption);
-                    },
-                  ),
-                ],
-              ),
-              title: Text('Шаблон'),
-              actions: <Widget>[
-                // action button
-                IconButton(
-                  icon: Icon(choices[0].icon),
-                  onPressed: () async {
-                    //This is where You change to SEARCH MODE. To hide, just
-                    //add FALSE as value on the stream
-                    //appBarController.stream.add(true);
-                    //_scrollController.scrollTo(index: 1000, duration: Duration(seconds: 1)); // TODO Из CustomSearchDelegate не работает
-                    /*var customSearchDelegate = CustomSearchDelegate(
-                        scopedModel: productModel,
-                    scrollController: ItemScrollController());
+    // Подсказки по разметке:
+    // https://medium.com/flutter-community/flutter-expanded-widget-e203590f00cf
 
-                    var result = await showSearch(context: context, delegate: customSearchDelegate);*/
-                  },
-                ),
-                // action button
-                // overflow menu
-                PopupMenuButton<Choice>(
-                  onSelected: _select,
-                  itemBuilder: (BuildContext context) {
-                    return choices.skip(1).map((Choice choice) {
-                      return PopupMenuItem<Choice>(
-                        value: choice,
-                        child: Text(choice.title),
-                      );
-                    }).toList();
-                  },
-                ),
-              ]),
-          body: TabBarView(
-            children: tabsTemplate.map((String text) {
-              //final String label = tab.text.toLowerCase();
-              return text == 'КАТЕГОРИИ'
-                  ? Center(child: Row(
-                        children: <Widget>[
-                          true
-                              ? SizedBox(
-                                  //width: 120,
-                                  height: 40,
-                                  child: RawMaterialButton(
-                                    onPressed: () {
-                                    },
-                                    child: Padding(
-
-                                      child: Text(
-                                        "ВЕСЬ СЛОВАРЬ",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                            fontWeight:
-                                                FontWeight.bold),
-                                      ), padding: EdgeInsets.symmetric(horizontal: 4.0),
-                                    ),
-                                    shape:
-                                        RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius
-                                                    .circular(
-                                                        20.0)),
-                                    elevation: 2.0,
-                                    fillColor: Theme.of(context)
-                                        .primaryColor,
-                                    padding:
-                                        const EdgeInsets.all(
-                                            5.0),
-                                  ),
-                                )
-                              : SizedBox.shrink(),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          true
-                              ? SizedBox(
-                                  height: 50,
-                                  width: 50,
-                                  child: RawMaterialButton(
-                                    onPressed: () {
-                                    },
-                                    child: new Icon(
-                                      Icons.gps_not_fixed,
-                                      color: Theme.of(context)
-                                          .primaryColor ,
-                                      size: 25.0,
-                                    ),
-                                    shape: new CircleBorder(),
-                                    elevation: 2.0,
-                                    fillColor: Colors.white,
-                                    padding:
-                                        const EdgeInsets.all(
-                                            5.0),
-                                  ),
-                                )
-                              : SizedBox.shrink(),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          SizedBox(
-                            height: 50,
-                            width: 50,
-                            child: RawMaterialButton(
-
-                              onPressed: () {
-                              },
-                              child: new Icon(
-                                Icons.keyboard_arrow_up,
-                                color:  Theme.of(context).primaryColor,
-                                size: 25.0,
-                              ),
-                              shape: new CircleBorder(),
-                              elevation: 2.0,
-                              fillColor:  Colors.white,
-                              padding: const EdgeInsets.all(5.0),
-                            ),
-                          )
-
-                        ],
-                      )
-
-                      ) : Container();
-            }).toList(),
-          ),
-        ),
-      ),
+    return Scaffold(
+      body: StopwatchBody(),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.refresh),
+              title: Text('Сброс'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.list),
+              title: Text('История'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              title: Text('Настройки'),
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          //selectedItemColor: Colors.amber[800],
+          onTap: _onItemTapped,
+        )
     );
   }
 
