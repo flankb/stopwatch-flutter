@@ -35,8 +35,7 @@ RateMyApp rateMyApp = RateMyApp(
 );
 
 void main() async {
-  WidgetsFlutterBinding
-      .ensureInitialized(); // This allows to use async methods in the main method without any problem.
+  WidgetsFlutterBinding.ensureInitialized(); // This allows to use async methods in the main method without any problem.
 
   // https://github.com/Skyost/rate_my_app/blob/master/example/lib/main.dart
   await rateMyApp.init();

@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:launch_review/launch_review.dart';
 import 'package:learnwords/pages/about_page.dart';
 import 'package:learnwords/pages/history_page.dart';
 import 'package:learnwords/pages/settings_page.dart';
@@ -66,7 +67,10 @@ class ButtonsBar extends StatelessWidget{
               onSelected: (WhyFarther result) {
                 switch(result){
                   case WhyFarther.review:
-
+                    LaunchReview.launch(
+                      androidAppId: "com.garnetjuice.stopwatch",
+                      iOSAppId: "585027354",
+                    );
                     break;
                   case WhyFarther.about:
                     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) { return AboutPage(); }));
