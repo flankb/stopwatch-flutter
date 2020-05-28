@@ -6,9 +6,22 @@ class ButtonsBar extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.redAccent,
+
+      //color: Colors.redAccent,
       height: 56,
       width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+        //borderRadius: BorderRadius.circular(8.0),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black,
+            blurRadius: 2.0,
+            spreadRadius: 0.0,
+            offset: Offset(2.0, 2.0), // shadow direction: bottom right
+          )
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: Row(
@@ -40,11 +53,13 @@ class ButtonsBar extends StatelessWidget{
               },
             ),
 
-            IconButton(
-              icon: Icon(Icons.more_horiz),
-              tooltip: 'Menu',
-              onPressed: () {
-              },
+            InkWell(
+              child: IconButton(
+                icon: Icon(Icons.more_horiz),
+                tooltip: 'Menu',
+                onPressed: () {
+                },
+              ),
             )
           ],
         ),

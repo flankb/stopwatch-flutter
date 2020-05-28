@@ -267,25 +267,6 @@ class _MyTabPageState extends State<MyTabPageStateful>
 
     return Scaffold(
       body: StopwatchBody(),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.refresh),
-              title: Text('Сброс'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.list),
-              title: Text('История'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              title: Text('Настройки'),
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          //selectedItemColor: Colors.amber[800],
-          onTap: _onItemTapped,
-        )
     );
   }
 
