@@ -1,12 +1,17 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:learnwords/pages/about_page.dart';
+import 'package:learnwords/pages/history_page.dart';
+import 'package:learnwords/pages/settings_page.dart';
+
+// This is the type used by the popup menu below.
+enum WhyFarther { review, about }
 
 class ButtonsBar extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Container(
-
       //color: Colors.redAccent,
       height: 56,
       width: MediaQuery.of(context).size.width,
@@ -43,6 +48,7 @@ class ButtonsBar extends StatelessWidget{
               icon: Icon(Icons.list),
               tooltip: 'История',
               onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) { return HistoryPage(); }));
               },
             ),
 
@@ -50,16 +56,33 @@ class ButtonsBar extends StatelessWidget{
               icon: Icon(Icons.settings),
               tooltip: 'Settings',
               onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) { return SettingsPage(); }));
               },
             ),
 
-            InkWell(
-              child: IconButton(
-                icon: Icon(Icons.more_horiz),
-                tooltip: 'Menu',
-                onPressed: () {
-                },
-              ),
+            // This menu button widget updates a _selection field (of type WhyFarther,
+            // not shown here).
+            PopupMenuButton<WhyFarther>(
+              onSelected: (WhyFarther result) {
+                switch(result){
+                  case WhyFarther.review:
+
+                    break;
+                  case WhyFarther.about:
+                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) { return AboutPage(); }));
+                    break;
+                }
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<WhyFarther>>[
+                const PopupMenuItem<WhyFarther>(
+                  value: WhyFarther.review,
+                  child: Text('Оценить приложение'),
+                ),
+                const PopupMenuItem<WhyFarther>(
+                  value: WhyFarther.about,
+                  child: Text('О программе'),
+                ),
+              ],
             )
           ],
         ),
