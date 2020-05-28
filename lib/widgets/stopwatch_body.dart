@@ -1,11 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:learnwords/fake/fake_data_fabric.dart';
+import 'package:learnwords/models/stopwatch_proxy_models.dart';
+import 'package:learnwords/util/time_displayer.dart';
 
 import 'buttons_bar.dart';
 
 class StopwatchBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    List items = ["00:01", "00:03", "00:05"];
+    List<LapViewModel> items = FakeDataFabric.mainPageLaps();
 
     return Column(
       children: <Widget>[
@@ -32,7 +36,19 @@ class StopwatchBody extends StatelessWidget {
           child: ListView.builder(
             itemCount: items.length,
             itemBuilder: (BuildContext context, int index) {
-              return ListTile(leading: Text((index + 1).toString()), title: Text(items[index]));
+              final lap = items[index];
+
+              return ListTile(leading: Text(lap.order.toString()),
+                  title: Align(
+                    alignment: Alignment.topLeft,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Text("+${lap.differenceTime()}"),
+                        Text(lap.overallTime())
+                      ],
+                    ),
+                  ));
             },
           ),
         ),

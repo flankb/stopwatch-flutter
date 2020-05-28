@@ -6,7 +6,7 @@ class FakeDataFabric {
     final list = [
       LapViewModel(id: 0, comment: "", measureId: 0, order: 1, difference: 5000, overall: 5000),
       LapViewModel(id: 1, comment: "", measureId: 0, order: 2, difference: 2000, overall: 7000),
-      LapViewModel(id: 2, comment: "", measureId: 0, order: 2, difference: 3000, overall: 10000)
+      LapViewModel(id: 2, comment: "", measureId: 0, order: 3, difference: 3000, overall: 10000)
     ];
 
     return list;
