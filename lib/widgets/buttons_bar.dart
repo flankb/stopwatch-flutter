@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:launch_review/launch_review.dart';
+import 'package:learnwords/models/stopwatch_proxy_models.dart';
 import 'package:learnwords/pages/about_page.dart';
 import 'package:learnwords/pages/history_page.dart';
 import 'package:learnwords/pages/settings_page.dart';
@@ -49,7 +50,7 @@ class ButtonsBar extends StatelessWidget{
               icon: Icon(Icons.list),
               tooltip: 'История',
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) { return HistoryPage(); }));
+                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) { return HistoryPage(pageType: MeasureViewModel, entityId: -1,); }));
               },
             ),
 
