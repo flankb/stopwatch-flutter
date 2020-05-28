@@ -3,7 +3,7 @@ import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:launch_review/launch_review.dart';
-import 'package:learnwords/about_page.dart';
+import 'file:///D:/Android/Projects/stopwatch-flutter/lib/pages/about_page.dart';
 import 'package:learnwords/widgets/circular.dart';
 import 'package:learnwords/widgets/stopwatch_body.dart';
 import 'package:preferences/preferences.dart';
@@ -15,7 +15,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 //import 'package:scrollable_positioned_list/scrollable_positioned_list.dart' as scrollList;
 
-import 'settings_page.dart';
+import 'pages/settings_page.dart';
 import 'util_mixins/rate_app_mixin.dart';
 
 // Рефакторинг

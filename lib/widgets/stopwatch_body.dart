@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'buttons_bar.dart';
+
 class StopwatchBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -52,7 +54,7 @@ class StopwatchBody extends StatelessWidget {
                       onPressed: () {},
                       fillColor: Colors.red,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
+                        borderRadius: BorderRadius.all(Radius.circular(0)),
                       ),
                     ),
                   ),
@@ -71,15 +73,16 @@ class StopwatchBody extends StatelessWidget {
                         )),
                       ),
                       onPressed: () {},
-                      fillColor: Colors.black12,
+                      fillColor: Colors.white30,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
+                        borderRadius: BorderRadius.all(Radius.circular(0)),
                       ),
                     ),
                   ),
                 ))
           ],
         ),
+        ButtonsBar()
       ],
     );
   }
