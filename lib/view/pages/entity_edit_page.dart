@@ -35,7 +35,7 @@ class EditFormState extends State<EditForm> {
   //
   // Note: This is a `GlobalKey<FormState>`,
   // not a GlobalKey<MyCustomFormState>.
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>(); // TODO У формы обязательно должен быть ключ!!!
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +48,7 @@ class EditFormState extends State<EditForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TextFormField(
+
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Поле не может быть пустым!';
@@ -63,8 +64,7 @@ class EditFormState extends State<EditForm> {
                   // otherwise.
                   if (_formKey.currentState.validate()) {
                     // If the form is valid, display a Snackbar.
-                    Scaffold.of(context)
-                        .showSnackBar(SnackBar(content: Text('Обработка данных..')));
+                    //Scaffold.of(context).showSnackBar(SnackBar(content: Text('Обработка данных..')));
                   }
                 },
                 child: Text('Сохранить'),
