@@ -3,9 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
-import 'package:learnwords/pages/about_page.dart';
-import 'package:learnwords/pages/history_page.dart';
-import 'package:learnwords/pages/settings_page.dart';
+import 'package:learnwords/view/pages/about_page.dart';
+import 'package:learnwords/view/pages/history_page.dart';
+import 'package:learnwords/view/pages/settings_page.dart';
 
 // This is the type used by the popup menu below.
 enum WhyFarther { review, about }
