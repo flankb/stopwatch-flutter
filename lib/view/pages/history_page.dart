@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:learnwords/fake/fake_data_fabric.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
+import 'package:learnwords/view/dialogs/filter_dialog.dart';
 
 import 'entity_edit_page.dart';
 
@@ -66,8 +67,9 @@ class HistoryPage extends StatelessWidget {
             child: SizedBox(
               width: 150,
               child: RawMaterialButton(
-                onPressed: () {
-
+                onPressed: () async {
+                  final result = await showDialog(context: context, builder: (context) => FilterDialog());
+                  // Для получения результата: Navigator.pop(context, _controller.text);
                 },
                 child: Padding(
                   child: Row(
