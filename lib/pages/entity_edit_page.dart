@@ -3,9 +3,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class EntityEditPage extends StatelessWidget {
+  final Type entityType;
+  final int entityId;
+
+  const EntityEditPage({Key key, this.entityType, this.entityId}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return EditForm();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Редактирование измерения"),
+      ),
+      body: EditForm()
+    );
   }
 }
 
@@ -32,33 +42,36 @@ class EditFormState extends State<EditForm> {
     // Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          TextFormField(
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: RaisedButton(
-              onPressed: () {
-                // Validate returns true if the form is valid, or false
-                // otherwise.
-                if (_formKey.currentState.validate()) {
-                  // If the form is valid, display a Snackbar.
-                  Scaffold.of(context)
-                      .showSnackBar(SnackBar(content: Text('Processing Data')));
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            TextFormField(
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Поле не может быть пустым!';
                 }
+                return null;
               },
-              child: Text('Submit'),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: RaisedButton(
+                onPressed: () {
+                  // Validate returns true if the form is valid, or false
+                  // otherwise.
+                  if (_formKey.currentState.validate()) {
+                    // If the form is valid, display a Snackbar.
+                    Scaffold.of(context)
+                        .showSnackBar(SnackBar(content: Text('Обработка данных..')));
+                  }
+                },
+                child: Text('Сохранить'),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

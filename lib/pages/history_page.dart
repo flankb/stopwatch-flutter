@@ -3,6 +3,8 @@ import 'package:flutter/widgets.dart';
 import 'package:learnwords/fake/fake_data_fabric.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
 
+import 'entity_edit_page.dart';
+
 class HistoryPage extends StatelessWidget {
   final Type pageType;
   final int entityId;
@@ -31,6 +33,11 @@ class HistoryPage extends StatelessWidget {
             BaseStopwatchEntity entity = data[index];
 
             return InkWell(
+              onLongPress: () => {
+                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                  return EntityEditPage(entityType: pageType, entityId: entity.id);
+                }))
+              },
               onTap: () => {
                 if (pageType == MeasureViewModel)
                   {
