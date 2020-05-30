@@ -10,26 +10,31 @@ class SettingsPage extends StatelessWidget {
         title: Text("Настройки"),
       ),
       body: PreferencePage([
-        PreferenceTitle('Общие'),
-        DropdownPreference(
-          'Стартовая страница',
-          'start_page',
-          defaultVal: 'Timeline',
-          displayValues: ['Посты', 'По времени', 'Личные сообщения'],
-          values: ['Posts', 'Timeline', 'Private Messages'],
+
+        SwitchPreference(
+          'Звук',
+          'sound',
+          defaultVal: true,
         ),
-        PreferenceTitle('Персонализация'),
-        RadioPreference(
-          'Светлая тема',
-          'light',
-          'ui_theme',
-          isDefault: true,
+        SwitchPreference(
+          'Вибрация',
+          'vibration',
+          defaultVal: true,
         ),
-        RadioPreference(
-          'Тёмная тема',
-          'dark',
-          'ui_theme',
+        SwitchPreference(
+          'Блокировка экрана',
+          'screen_block',
+          defaultVal: true,
+          desc: "Вкл",
         ),
+        TextFieldPreference(
+          'E-mail',
+          'email',
+
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          autofocus: false,
+          maxLines: 1,
+        )
       ])
     );
   }
