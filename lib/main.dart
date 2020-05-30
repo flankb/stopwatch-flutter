@@ -259,7 +259,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
       _showRateDialog(context);
     });
 
-    final tabsTemplate = ['КАТЕГОРИИ', 'ВЕСЬ СЛОВАРЬ'];
+    //final tabsTemplate = ['КАТЕГОРИИ', 'ВЕСЬ СЛОВАРЬ'];
 
     // Подсказки по разметке:
     // https://medium.com/flutter-community/flutter-expanded-widget-e203590f00cf
