@@ -1,8 +1,12 @@
 
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:launch_review/launch_review.dart';
+import 'package:learnwords/bloc/measure_bloc/bloc.dart';
+import 'package:learnwords/resources/stopwatch_db_repository.dart';
+import 'package:learnwords/util/ticker.dart';
 import 'package:learnwords/view/pages/about_page.dart';
 import 'package:learnwords/view/pages/settings_page.dart';
 import 'package:learnwords/widgets/circular.dart';
@@ -175,13 +179,17 @@ class _MyTabPageState extends State<MyTabPageStateful>
   bool categoryInited = false;
   int _selectedIndex = 0;
 
+  MeasureBloc measureBloc;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
     _categoryScrollController = ItemScrollController();
-    captionModel = CaptionModel();
+
+    _init();
+
     _onCreateAsync();
     debugPrint('initState();');
   }
@@ -190,7 +198,17 @@ class _MyTabPageState extends State<MyTabPageStateful>
   void reassemble(){
     super.reassemble();
 
-    captionModel = CaptionModel();
+    _init();
+  }
+
+  _init() {
+    if (captionModel != null) {
+      captionModel = CaptionModel();
+    }
+
+    if (measureBloc != null) {
+      measureBloc = MeasureBloc(Ticker(), StopwatchRepository());
+    }
   }
 
   @override
@@ -264,8 +282,13 @@ class _MyTabPageState extends State<MyTabPageStateful>
     // Подсказки по разметке:
     // https://medium.com/flutter-community/flutter-expanded-widget-e203590f00cf
 
+    // BlocProvider.of<FilteredTodosBloc>(context).add(FilterUpdated(filter));
+
+    //(child: StopwatchBody()),
     return Scaffold(
-      body: StopwatchBody(),
+      body: BlocProvider(create:
+          (BuildContext context) => measureBloc,
+          child : StopwatchBody())
     );
   }
 
