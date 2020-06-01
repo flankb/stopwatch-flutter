@@ -9,6 +9,8 @@ class TimeDisplayer {
 
   static formatAll(Duration d) => d.toString();
 
+  static format2(Duration d) => d.toString().split('.').first.padLeft(8, "0");
+
   static String toHumanString(int milliseconds) {
     /*if (milliseconds < dayMills) {
 

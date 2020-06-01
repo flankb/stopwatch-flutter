@@ -20,13 +20,33 @@ class StopwatchBody extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  "00:00",
-                  style: TextStyle(fontSize: 24),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.ideographic,
+                  children: <Widget>[
+                    Text(
+                      "00:00,",
+                      style: TextStyle(fontSize: 30),
+                    ),
+                    Text(
+                      "00",
+                      style: TextStyle(fontSize: 16),
+                    )
+                  ],
                 ),
-                Text(
-                  "00:00",
-                  style: TextStyle(fontSize: 34),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.ideographic,
+                  children: <Widget>[
+                    Text(
+                      "00:00,",
+                      style: TextStyle(fontSize: 44),
+                    ),
+                    Text(
+                      "00",
+                      style: TextStyle(fontSize: 26),
+                    )
+                  ],
                 )
               ],
             ),
@@ -38,7 +58,9 @@ class StopwatchBody extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               final lap = items[index];
 
-              return ListTile(leading: Text(lap.order.toString()),
+              return ListTile(
+                  
+                  leading: Text(lap.order.toString()),
                   title: Align(
                     alignment: Alignment.topLeft,
                     child: Column(
@@ -64,7 +86,7 @@ class StopwatchBody extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.all(16),
                         child: Text("Старт", style: TextStyle(
-                          fontSize: 22, color: Colors.white
+                          fontSize: 28, color: Colors.white
                         ),),
                       ),
                       onPressed: () {},
@@ -85,7 +107,7 @@ class StopwatchBody extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.all(16),
                         child: Text("Круг", style: TextStyle(
-                            fontSize: 22, color: Colors.black
+                            fontSize: 28, color: Colors.black
                         )),
                       ),
                       onPressed: () {},
