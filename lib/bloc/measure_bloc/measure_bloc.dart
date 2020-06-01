@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:learnwords/model/database_models.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
 import 'package:learnwords/models/stopwatch_status.dart';
@@ -19,12 +22,14 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
   MeasureBloc(this._ticker, this._stopwatchRepository);
 
   @override
-  MeasureState get initialState => MeasureUpdatingState(null);
+  MeasureState get initialState => MeasureUpdatingState(MeasureViewModel());
 
   @override
   Stream<MeasureState> mapEventToState(
     MeasureEvent event,
   ) async* {
+    debugPrint("Current state " + state.toString() + "Bloc event: "+ event.toString());
+
     // Для каждого события что-то делаем и возвращаем состояние
     if (event is TickEvent) {
       yield* _mapTickToState(event);
@@ -43,8 +48,8 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
   Stream<MeasureState> _mapOpenedToState(MeasureOpenedEvent event) async* {
     // Прочитать измерение с БД со всеми кругами и сессиями
-    final measuresStarted = await _stopwatchRepository.getMeasuresByStatusAsync(StopwatchStatus.Started.toString());
-    final measuredPaused = await _stopwatchRepository.getMeasuresByStatusAsync(StopwatchStatus.Started.toString());
+    final measuresStarted = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Started.toString()));
+    final measuredPaused = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Started));
 
     List<Measure> combine = List<Measure>();
 
@@ -138,12 +143,22 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
         state.measure.dateCreated = nowDate;
       }
 
+      var targetMeasure = state.measure;
+
+      // Если сущности не было, то необходимо создать и получить идентификатор
+      if (state.measure.id == null) {
+        final id = await _stopwatchRepository.createNewMeasureAsync();
+        final measure = (await _stopwatchRepository.getMeasuresByIdAsync(id)).single;
+
+        targetMeasure = MeasureViewModel.fromEntity(measure);
+      }
+
       if (!resume) {
-        final session = MeasureSessionViewModel(id: state.measure.id, started: nowDate);
+        final session = MeasureSessionViewModel(id: state.measure.id, started: nowDate); // TODO id здесь пустой
         state.measure.sessions.add(session);
 
         // Если в БД есть такая запись - то обновить, иначе создать новую
-        state.measure.id = await _stopwatchRepository.updateMeasureAsync(state.measure.toEntity());
+        //state.measure.id = await _stopwatchRepository.updateMeasureAsync(state.measure.toEntity());
         session.id = await _stopwatchRepository.addNewMeasureSession(session.toEntity());
       }
 
@@ -152,7 +167,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
           .tick(ticks: state.measure.elapsed)
           .listen((duration) => add(TickEvent(duration)));
 
-      yield MeasureStartedState(state.measure);
+      yield MeasureStartedState(targetMeasure);
     }
     else {
       throw Exception("Wrong state!");

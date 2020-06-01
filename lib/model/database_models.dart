@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:learnwords/models/stopwatch_status.dart';
 import 'package:path/path.dart' as p;
 import 'package:moor/moor.dart';
@@ -66,12 +67,16 @@ class MyDatabase extends _$MyDatabase {
     return (select(measures)..where((m) => m.status.equals(status))).get();
   }
 
+  Future<List<Measure>> getMeasuresByIdsync(int id) {
+    return (select(measures)..where((m) => m.id.equals(id))).get();
+  }
+
   // returns the generated id
   Future<int> createNewMeasureAsync() {
     Measure measure = Measure(id: null,
         elapsed: 0,
         dateCreated: DateTime.now(),
-        status: StopwatchStatus.Ready.toString());
+        status: describeEnum(StopwatchStatus.Ready));
 
     return into(measures).insert(measure);
   }

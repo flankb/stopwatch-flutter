@@ -20,6 +20,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 //import 'package:scrollable_positioned_list/scrollable_positioned_list.dart' as scrollList;
 
+import 'models/stopwatch_status.dart';
 import 'util_mixins/rate_app_mixin.dart';
 
 // Рефакторинг
@@ -197,7 +198,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
   @override
   void reassemble(){
     super.reassemble();
-    debugPrint('reassemble');
+    debugPrint('reassemble' + " " + describeEnum(StopwatchStatus.Ready));
 
     _init();
   }
@@ -209,7 +210,10 @@ class _MyTabPageState extends State<MyTabPageStateful>
 
     if (measureBloc == null) {
       measureBloc = MeasureBloc(Ticker(), StopwatchRepository());
+      measureBloc.add(MeasureOpenedEvent());
     }
+
+
   }
 
   @override

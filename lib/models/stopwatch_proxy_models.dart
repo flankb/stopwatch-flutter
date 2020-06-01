@@ -1,4 +1,5 @@
 
+import 'package:flutter/foundation.dart';
 import 'package:learnwords/model/database_models.dart';
 import 'package:learnwords/models/stopwatch_status.dart';
 import 'package:learnwords/util/time_displayer.dart';
@@ -24,7 +25,7 @@ class LapViewModel extends BaseStopwatchEntity {
     return TimeDisplayer.format2(Duration(milliseconds: overall));
   }
 
-  LapViewModel({int id, String comment, this.measureId, this.order, this.difference, this.overall}) : super(id: id, comment : comment);
+  LapViewModel({int id, String comment, this.measureId, this.order, this.difference = 0, this.overall = 0}) : super(id: id, comment : comment);
 
   Lap toEntity() {
     return Lap(id: id, measureId: measureId, order: order, difference : difference, comment: comment, overall: overall);
@@ -96,7 +97,8 @@ class MeasureViewModel extends BaseStopwatchEntity {
 
   MeasureViewModel({int id,
     String comment,
-    this.elapsed,
+    this.elapsed = 0,
+    this.elapsedLap = 0,
     this.laps,
     this.status = StopwatchStatus.Ready,
     this.dateCreated}) : super(id: id, comment : comment);
@@ -144,7 +146,7 @@ class MeasureViewModel extends BaseStopwatchEntity {
 
   static MeasureViewModel fromEntity(Measure entity) {
     return MeasureViewModel(id: entity.id,
-        status: StopwatchStatus.values.firstWhere((e) => e.toString() == entity.status),
+        status: StopwatchStatus.values.firstWhere((e) => describeEnum(e) == entity.status),
         dateCreated: entity.dateCreated,
         elapsed: entity.elapsed);
   }

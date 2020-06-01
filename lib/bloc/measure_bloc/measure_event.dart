@@ -14,7 +14,7 @@ class MeasureOpenedEvent extends MeasureBaseEvent{}
 class MeasureStartedEvent extends MeasureBaseEvent {
   final bool resume;
 
-  MeasureStartedEvent({this.resume});
+  MeasureStartedEvent({this.resume = false});
 }
 
 class MeasurePausedEvent extends MeasureBaseEvent { }

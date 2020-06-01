@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
 import 'package:learnwords/models/stopwatch_status.dart';
 import 'package:learnwords/resources/stopwatch_db_repository.dart';
@@ -23,7 +24,7 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
       // Загрузим список сущностей
       final openStorageEvent = event;
       if (openStorageEvent.entityType == MeasureViewModel) {
-        final measures = await stopwatchRepository.getMeasuresByStatusAsync(StopwatchStatus.Finished.toString());
+        final measures = await stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished));
         final resultList = measures.map((m) => MeasureViewModel.fromEntity(m)).toList();
 
         yield ReadyStorageState(resultList);
