@@ -197,16 +197,17 @@ class _MyTabPageState extends State<MyTabPageStateful>
   @override
   void reassemble(){
     super.reassemble();
+    debugPrint('reassemble');
 
     _init();
   }
 
   _init() {
-    if (captionModel != null) {
+    if (captionModel == null) {
       captionModel = CaptionModel();
     }
 
-    if (measureBloc != null) {
+    if (measureBloc == null) {
       measureBloc = MeasureBloc(Ticker(), StopwatchRepository());
     }
   }
@@ -285,10 +286,13 @@ class _MyTabPageState extends State<MyTabPageStateful>
     // BlocProvider.of<FilteredTodosBloc>(context).add(FilterUpdated(filter));
 
     //(child: StopwatchBody()),
+
+    debugPrint("measureBloc == null " + (measureBloc == null).toString());
+
     return Scaffold(
       body: BlocProvider(create:
           (BuildContext context) => measureBloc,
-          child : StopwatchBody())
+          child : StopwatchBody(measureBloc: measureBloc,))
     );
   }
 

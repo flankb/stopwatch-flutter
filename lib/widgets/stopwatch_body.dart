@@ -10,9 +10,14 @@ import 'package:learnwords/util/time_displayer.dart';
 import 'buttons_bar.dart';
 
 class StopwatchBody extends StatelessWidget {
+  final MeasureBloc measureBloc;
+
+  const StopwatchBody({Key key, this.measureBloc}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     List<LapViewModel> items = FakeDataFabric.mainPageLaps();
+    //var measureBloc = BlocProvider.of<MeasureBloc>(context);
 
     return BlocBuilder<MeasureBloc, MeasureState>(builder: (BuildContext context, MeasureState state) {
       return Column(
@@ -29,11 +34,11 @@ class StopwatchBody extends StatelessWidget {
                     textBaseline: TextBaseline.ideographic,
                     children: <Widget>[
                       Text(
-                        "00:00,",
+                        measureBloc.state.measure.elapsedTime()[0],
                         style: TextStyle(fontSize: 30),
                       ),
                       Text(
-                        "00",
+                        measureBloc.state.measure.elapsedTime()[1],
                         style: TextStyle(fontSize: 16),
                       )
                     ],
@@ -90,7 +95,13 @@ class StopwatchBody extends StatelessWidget {
                             style: TextStyle(fontSize: 28, color: Colors.white),
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          if (state is MeasureReadyState || state is MeasurePausedState){
+                            measureBloc.add(MeasureStartedEvent());
+                          } else if (state is MeasureStartedState) {
+                            measureBloc.add(MeasurePausedEvent());
+                          }
+                        },
                         fillColor: Colors.red,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(0)),
@@ -109,7 +120,9 @@ class StopwatchBody extends StatelessWidget {
                           padding: EdgeInsets.all(16),
                           child: Text("Круг", style: TextStyle(fontSize: 28, color: Colors.black)),
                         ),
-                        onPressed: () {},
+                        onPressed: state is MeasureStartedState ? () {
+                          measureBloc.add(LapAddedEvent());
+                        } : null,
                         fillColor: Colors.white30,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(0)),
