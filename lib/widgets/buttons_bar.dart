@@ -50,6 +50,15 @@ class ButtonsBar extends StatelessWidget {
               // Так же можно обернуть в InkWell
 
               IconButton(
+                icon: Icon(Icons.ac_unit),
+                color: Colors.blue,
+                tooltip: 'Ready state',
+                onPressed: () {
+                  BlocProvider.of<MeasureBloc>(context).add(MeasureOpenedEvent());
+                },
+              ),
+
+              IconButton(
                 icon: Icon(Icons.refresh),
                 tooltip: 'Сброс',
                 onPressed: () {

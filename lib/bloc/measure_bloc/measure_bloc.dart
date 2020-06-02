@@ -145,17 +145,26 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
       var targetMeasure = state.measure;
 
+      debugPrint(targetMeasure.toString());
+
       // Если сущности не было, то необходимо создать и получить идентификатор
       if (state.measure.id == null) {
+
+
         final id = await _stopwatchRepository.createNewMeasureAsync();
         final measure = (await _stopwatchRepository.getMeasuresByIdAsync(id)).single;
+
+        debugPrint("id " + id.toString());
+        debugPrint("id15 " + measure.id.toString());
 
         targetMeasure = MeasureViewModel.fromEntity(measure);
       }
 
       if (!resume) {
-        final session = MeasureSessionViewModel(id: state.measure.id, started: nowDate); // TODO id здесь пустой
-        state.measure.sessions.add(session);
+        final session = MeasureSessionViewModel(id: null, measureId: targetMeasure.id, started: nowDate); // TODO id здесь пустой
+        targetMeasure.sessions.add(session);
+
+        debugPrint("id2 " + session.measureId.toString());
 
         // Если в БД есть такая запись - то обновить, иначе создать новую
         //state.measure.id = await _stopwatchRepository.updateMeasureAsync(state.measure.toEntity());

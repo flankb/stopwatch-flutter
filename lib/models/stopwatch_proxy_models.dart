@@ -85,6 +85,11 @@ class MeasureSessionViewModel {
         started: entity.started,
         finished: entity.finished);
   }
+
+  @override
+  String toString() {
+    return 'MeasureSessionViewModel{id: $id, measureId: $measureId, started: $started, finished: $finished}';
+  }
 }
 
 class MeasureViewModel extends BaseStopwatchEntity {
@@ -117,8 +122,6 @@ class MeasureViewModel extends BaseStopwatchEntity {
     return elapsed;
   }
 
-
-
   List<int> getNewLapDiffAndOverall(DateTime dateNow) {
     final base = getSumOfElapsed();
     final lastSession = getLastUnfinishedSession();
@@ -149,5 +152,10 @@ class MeasureViewModel extends BaseStopwatchEntity {
         status: StopwatchStatus.values.firstWhere((e) => describeEnum(e) == entity.status),
         dateCreated: entity.dateCreated,
         elapsed: entity.elapsed);
+  }
+
+  @override
+  String toString() {
+    return 'MeasureViewModel{id: $id, elapsed: $elapsed, elapsedLap: $elapsedLap, dateCreated: $dateCreated, status: $status}';
   }
 }

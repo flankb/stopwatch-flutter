@@ -68,7 +68,9 @@ class StopwatchBody extends StatelessWidget {
                 final lap = items[index];
 
                 return ListTile(
-                    leading: Text(lap.order.toString()),
+                    leading: SizedBox(
+                        width: 20,
+                        child: Text(lap.order.toString())),
                     title: Align(
                       alignment: Alignment.topLeft,
                       child: Column(
