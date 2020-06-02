@@ -2,6 +2,7 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:learnwords/bloc/measure_bloc/bloc.dart';
@@ -21,6 +22,7 @@ import 'package:flutter/material.dart';
 //import 'package:scrollable_positioned_list/scrollable_positioned_list.dart' as scrollList;
 
 import 'models/stopwatch_status.dart';
+import 'generated/l10n.dart';
 import 'util_mixins/rate_app_mixin.dart';
 
 // Рефакторинг
@@ -66,6 +68,14 @@ class MyApp extends StatelessWidget {
             // Notice that the counter didn't reset back to zero; the application
             // is not restarted.
             primarySwatch: Colors.deepOrange),
+
+        localizationsDelegates: [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
         home: MyTabPageStateful() //MyHomePage(title: 'Flutter Demo Home Page'),
         );
   }

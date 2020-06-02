@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:learnwords/bloc/measure_bloc/bloc.dart';
 import 'package:learnwords/bloc/measure_bloc/measure_event.dart';
 import 'package:learnwords/fake/fake_data_fabric.dart';
+import 'package:learnwords/generated/l10n.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
 import 'package:learnwords/util/time_displayer.dart';
 
@@ -101,7 +102,7 @@ class StopwatchBody extends StatelessWidget {
                         child: Padding(
                           padding: EdgeInsets.all(16),
                           child: Text(
-                            state is MeasureStartedState ? "Пауза" : "Старт",
+                            state is MeasureStartedState ? S.of(context).pause : S.of(context).start,
                             style: TextStyle(fontSize: 28, color: Colors.white),
                           ),
                         ),
