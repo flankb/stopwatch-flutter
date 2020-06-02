@@ -14,10 +14,15 @@ import 'measure_state.dart';
 
 
 class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
-  final Ticker _ticker;
+  final Ticker3 _ticker;
   final BaseStopwatchRepository _stopwatchRepository;
 
   StreamSubscription<int> _tickerSubscription;
+  //Stream<int> _tickStream;
+  Stream<int> get tickStream => controller.stream;
+
+  var controller = new StreamController<int>();
+
 
   MeasureBloc(this._ticker, this._stopwatchRepository);
 
@@ -172,9 +177,10 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       }
 
       _tickerSubscription?.cancel();
-      _tickerSubscription = _ticker
-          .tick(ticks: state.measure.elapsed)
-          .listen((duration) => add(TickEvent(duration)));
+      _tickerSubscription = _ticker.tick().listen((event) { controller.add(event);} );
+
+      //.tick(ticks: state.measure.elapsed)
+      //.listen((duration) => add(TickEvent(duration)));
 
       yield MeasureStartedState(targetMeasure);
     }
@@ -185,7 +191,9 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
   Stream<MeasureState> _fixStopwatch(StopwatchStatus status) async* {
     yield MeasureUpdatingState(state.measure);
-    _tickerSubscription?.cancel();
+    await _tickerSubscription?.cancel();
+    await controller.close();
+
     state.measure.status = status;
     final dateNow = DateTime.now();
 
@@ -201,6 +209,9 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     // Вычислить сумму всех законченных отрезочков
     state.measure.elapsed = state.measure.getSumOfElapsed();
 
+    _tickerSubscription?.cancel();
+    controller.add(5000); // Как-бы фиксируем
+
     await _stopwatchRepository.updateMeasureAsync(state.measure.toEntity());
     await _stopwatchRepository.updateMeasureSession(lastSession.toEntity());
 
@@ -209,6 +220,8 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
   @override
   Future<void> close() {
+
+
     _tickerSubscription?.cancel();
     return super.close();
   }

@@ -208,12 +208,10 @@ class _MyTabPageState extends State<MyTabPageStateful>
       captionModel = CaptionModel();
     }
 
-    if (measureBloc == null) {
-      measureBloc = MeasureBloc(Ticker(), StopwatchRepository());
+    if (measureBloc == null || true) {
+      measureBloc = MeasureBloc(Ticker3(), StopwatchRepository());
       measureBloc.add(MeasureOpenedEvent());
     }
-
-
   }
 
   @override

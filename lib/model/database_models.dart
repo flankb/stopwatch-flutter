@@ -55,8 +55,25 @@ LazyDatabase _openConnection() {
 
 @UseMoor(tables: [Laps, Measures, MeasureSessions, Tags])
 class MyDatabase extends _$MyDatabase {
+  /*
+   SingletonOne._privateConstructor();
+
+  static final SingletonOne _instance = SingletonOne._privateConstructor();
+
+  factory SingletonOne(){
+    return _instance;
+  }
+
+   */
+
+  factory MyDatabase() {
+    return _instance;
+  }
+
+  static final MyDatabase _instance = MyDatabase._privateConstructor();
+
   // we tell the database where to store the data with this constructor
-  MyDatabase() : super(_openConnection());
+  MyDatabase._privateConstructor() : super(_openConnection());
 
   // you should bump this number whenever you change or add a table definition. Migrations
   // are covered later in this readme.

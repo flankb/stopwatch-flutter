@@ -26,38 +26,46 @@ class StopwatchBody extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 32, 0, 0),
             child: Align(
               alignment: Alignment.centerLeft,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.ideographic,
+              child: StreamBuilder<int>(
+                initialData: 0,
+                stream: measureBloc.tickStream,
+                builder: (context, snapshot) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        measureBloc.state.measure.elapsedTime()[0],
-                        style: TextStyle(fontSize: 30),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.ideographic,
+                        children: <Widget>[
+                          Text(
+                            snapshot.data.toString(),
+                            /*measureBloc.state.measure.elapsedTime()[0],*/
+                            style: TextStyle(fontSize: 30),
+                          ),
+                          Text(
+                            snapshot.data.toString(),
+                            /*measureBloc.state.measure.elapsedTime()[1],*/
+                            style: TextStyle(fontSize: 16),
+                          )
+                        ],
                       ),
-                      Text(
-                        measureBloc.state.measure.elapsedTime()[1],
-                        style: TextStyle(fontSize: 16),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.ideographic,
+                        children: <Widget>[
+                          Text(
+                            "00:00,",
+                            style: TextStyle(fontSize: 44),
+                          ),
+                          Text(
+                            "00",
+                            style: TextStyle(fontSize: 26),
+                          )
+                        ],
                       )
                     ],
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.ideographic,
-                    children: <Widget>[
-                      Text(
-                        "00:00,",
-                        style: TextStyle(fontSize: 44),
-                      ),
-                      Text(
-                        "00",
-                        style: TextStyle(fontSize: 26),
-                      )
-                    ],
-                  )
-                ],
+                  );
+                }
               ),
             ),
           ),
@@ -93,7 +101,7 @@ class StopwatchBody extends StatelessWidget {
                         child: Padding(
                           padding: EdgeInsets.all(16),
                           child: Text(
-                            "Старт",
+                            state is MeasureStartedState ? "Пауза" : "Старт",
                             style: TextStyle(fontSize: 28, color: Colors.white),
                           ),
                         ),
