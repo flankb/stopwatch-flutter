@@ -129,7 +129,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
   Stream<MeasureState> _mapPausedToState(MeasureEvent event) async* {
     if (state is MeasureStartedState) {
-      _fixStopwatch(StopwatchStatus.Paused);
+      yield* _fixStopwatch(StopwatchStatus.Paused);
       yield MeasurePausedState(state.measure);
     }
     else {
@@ -190,9 +190,14 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
   }
 
   Stream<MeasureState> _fixStopwatch(StopwatchStatus status) async* {
+    debugPrint("_fixStopwatch before");
     yield MeasureUpdatingState(state.measure);
+    debugPrint("_fixStopwatch after");
+
     await _tickerSubscription?.cancel();
-    await controller.close();
+
+    //await controller.sink.close();
+    //await controller.close();
 
     state.measure.status = status;
     final dateNow = DateTime.now();
@@ -200,16 +205,20 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     // Завершить последний отрезок
     final lastSession = state.measure.getLastUnfinishedSession();
 
+    debugPrint("LastUnfinishedSession: " + lastSession.toString());
+
     if (lastSession == null) {
       throw Exception("Не обнаружена последняя открытая сессия!");
     }
 
     lastSession.finished = dateNow;
 
+    debugPrint("LastUnfinishedSession: " + lastSession.toString());
+
     // Вычислить сумму всех законченных отрезочков
     state.measure.elapsed = state.measure.getSumOfElapsed();
 
-    _tickerSubscription?.cancel();
+    //_tickerSubscription?.cancel();
     controller.add(5000); // Как-бы фиксируем
 
     await _stopwatchRepository.updateMeasureAsync(state.measure.toEntity());

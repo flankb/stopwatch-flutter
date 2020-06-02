@@ -118,6 +118,10 @@ class MeasureViewModel extends BaseStopwatchEntity {
 
   int getSumOfElapsed() {
     var elapsed = 0;
+
+    debugPrint("All Sessions: ");
+    sessions.forEach((element) { debugPrint(element.toString()); });
+
     sessions.forEach((s) => elapsed += s.finished.difference(s.started).inMilliseconds);
     return elapsed;
   }
