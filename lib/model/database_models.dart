@@ -41,7 +41,6 @@ class Tags extends Table {
   TextColumn get name => text().customConstraint('UNIQUE')();
 }
 
-
 LazyDatabase _openConnection() {
   // the LazyDatabase util lets us find the right location for the file async.
   return LazyDatabase(() async {
@@ -52,6 +51,8 @@ LazyDatabase _openConnection() {
     return VmDatabase(file);
   });
 }
+
+
 
 @UseMoor(tables: [Laps, Measures, MeasureSessions, Tags])
 class MyDatabase extends _$MyDatabase {
@@ -79,6 +80,11 @@ class MyDatabase extends _$MyDatabase {
   // are covered later in this readme.
   @override
   int get schemaVersion => 1;
+
+
+  Future deleteEntities(){
+    //delete(table)
+  }
 
   Future<List<Measure>> getMeasuresByStatusAsync(String status) {
     return (select(measures)..where((m) => m.status.equals(status))).get();
@@ -126,6 +132,12 @@ class MyDatabase extends _$MyDatabase {
     return update(measures).replace(measure); //TODO Возможно заменить на insert.replace!
   }
 
+  Future updateMeasureSessionAsync(MeasureSession measureSession) {
+    debugPrint("updateMeasureSessionAsync measureSession ${measureSession.toString()}");
+
+    return update(measureSessions).replace(measureSession);
+  }
+
   Future updateLapAsync(Lap lap) {
     // using replace will update all fields from the entry that are not marked as a primary key.
     // it will also make sure that only the entry with the same primary key will be updated.
@@ -139,3 +151,4 @@ class MyDatabase extends _$MyDatabase {
     return (select(laps)..where((l) => l.measureId.equals(measureId))).get();
   }
 }
+

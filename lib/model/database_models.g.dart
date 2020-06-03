@@ -39,6 +39,50 @@ class Lap extends DataClass implements Insertable<Lap> {
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}comment']),
     );
   }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || measureId != null) {
+      map['measure_id'] = Variable<int>(measureId);
+    }
+    if (!nullToAbsent || difference != null) {
+      map['difference'] = Variable<int>(difference);
+    }
+    if (!nullToAbsent || order != null) {
+      map['order'] = Variable<int>(order);
+    }
+    if (!nullToAbsent || overall != null) {
+      map['overall'] = Variable<int>(overall);
+    }
+    if (!nullToAbsent || comment != null) {
+      map['comment'] = Variable<String>(comment);
+    }
+    return map;
+  }
+
+  LapsCompanion toCompanion(bool nullToAbsent) {
+    return LapsCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      measureId: measureId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(measureId),
+      difference: difference == null && nullToAbsent
+          ? const Value.absent()
+          : Value(difference),
+      order:
+          order == null && nullToAbsent ? const Value.absent() : Value(order),
+      overall: overall == null && nullToAbsent
+          ? const Value.absent()
+          : Value(overall),
+      comment: comment == null && nullToAbsent
+          ? const Value.absent()
+          : Value(comment),
+    );
+  }
+
   factory Lap.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
@@ -62,27 +106,6 @@ class Lap extends DataClass implements Insertable<Lap> {
       'overall': serializer.toJson<int>(overall),
       'comment': serializer.toJson<String>(comment),
     };
-  }
-
-  @override
-  LapsCompanion createCompanion(bool nullToAbsent) {
-    return LapsCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      measureId: measureId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(measureId),
-      difference: difference == null && nullToAbsent
-          ? const Value.absent()
-          : Value(difference),
-      order:
-          order == null && nullToAbsent ? const Value.absent() : Value(order),
-      overall: overall == null && nullToAbsent
-          ? const Value.absent()
-          : Value(overall),
-      comment: comment == null && nullToAbsent
-          ? const Value.absent()
-          : Value(comment),
-    );
   }
 
   Lap copyWith(
@@ -161,6 +184,24 @@ class LapsCompanion extends UpdateCompanion<Lap> {
         order = Value(order),
         overall = Value(overall),
         comment = Value(comment);
+  static Insertable<Lap> custom({
+    Expression<int> id,
+    Expression<int> measureId,
+    Expression<int> difference,
+    Expression<int> order,
+    Expression<int> overall,
+    Expression<String> comment,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (measureId != null) 'measure_id': measureId,
+      if (difference != null) 'difference': difference,
+      if (order != null) 'order': order,
+      if (overall != null) 'overall': overall,
+      if (comment != null) 'comment': comment,
+    });
+  }
+
   LapsCompanion copyWith(
       {Value<int> id,
       Value<int> measureId,
@@ -176,6 +217,30 @@ class LapsCompanion extends UpdateCompanion<Lap> {
       overall: overall ?? this.overall,
       comment: comment ?? this.comment,
     );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (measureId.present) {
+      map['measure_id'] = Variable<int>(measureId.value);
+    }
+    if (difference.present) {
+      map['difference'] = Variable<int>(difference.value);
+    }
+    if (order.present) {
+      map['order'] = Variable<int>(order.value);
+    }
+    if (overall.present) {
+      map['overall'] = Variable<int>(overall.value);
+    }
+    if (comment.present) {
+      map['comment'] = Variable<String>(comment.value);
+    }
+    return map;
   }
 }
 
@@ -259,39 +324,42 @@ class $LapsTable extends Laps with TableInfo<$LapsTable, Lap> {
   @override
   final String actualTableName = 'laps';
   @override
-  VerificationContext validateIntegrity(LapsCompanion d,
+  VerificationContext validateIntegrity(Insertable<Lap> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
-    if (d.id.present) {
-      context.handle(_idMeta, id.isAcceptableValue(d.id.value, _idMeta));
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
     }
-    if (d.measureId.present) {
+    if (data.containsKey('measure_id')) {
       context.handle(_measureIdMeta,
-          measureId.isAcceptableValue(d.measureId.value, _measureIdMeta));
+          measureId.isAcceptableOrUnknown(data['measure_id'], _measureIdMeta));
     } else if (isInserting) {
       context.missing(_measureIdMeta);
     }
-    if (d.difference.present) {
-      context.handle(_differenceMeta,
-          difference.isAcceptableValue(d.difference.value, _differenceMeta));
+    if (data.containsKey('difference')) {
+      context.handle(
+          _differenceMeta,
+          difference.isAcceptableOrUnknown(
+              data['difference'], _differenceMeta));
     } else if (isInserting) {
       context.missing(_differenceMeta);
     }
-    if (d.order.present) {
+    if (data.containsKey('order')) {
       context.handle(
-          _orderMeta, order.isAcceptableValue(d.order.value, _orderMeta));
+          _orderMeta, order.isAcceptableOrUnknown(data['order'], _orderMeta));
     } else if (isInserting) {
       context.missing(_orderMeta);
     }
-    if (d.overall.present) {
+    if (data.containsKey('overall')) {
       context.handle(_overallMeta,
-          overall.isAcceptableValue(d.overall.value, _overallMeta));
+          overall.isAcceptableOrUnknown(data['overall'], _overallMeta));
     } else if (isInserting) {
       context.missing(_overallMeta);
     }
-    if (d.comment.present) {
+    if (data.containsKey('comment')) {
       context.handle(_commentMeta,
-          comment.isAcceptableValue(d.comment.value, _commentMeta));
+          comment.isAcceptableOrUnknown(data['comment'], _commentMeta));
     } else if (isInserting) {
       context.missing(_commentMeta);
     }
@@ -304,30 +372,6 @@ class $LapsTable extends Laps with TableInfo<$LapsTable, Lap> {
   Lap map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return Lap.fromData(data, _db, prefix: effectivePrefix);
-  }
-
-  @override
-  Map<String, Variable> entityToSql(LapsCompanion d) {
-    final map = <String, Variable>{};
-    if (d.id.present) {
-      map['id'] = Variable<int, IntType>(d.id.value);
-    }
-    if (d.measureId.present) {
-      map['measure_id'] = Variable<int, IntType>(d.measureId.value);
-    }
-    if (d.difference.present) {
-      map['difference'] = Variable<int, IntType>(d.difference.value);
-    }
-    if (d.order.present) {
-      map['order'] = Variable<int, IntType>(d.order.value);
-    }
-    if (d.overall.present) {
-      map['overall'] = Variable<int, IntType>(d.overall.value);
-    }
-    if (d.comment.present) {
-      map['comment'] = Variable<String, StringType>(d.comment.value);
-    }
-    return map;
   }
 
   @override
@@ -366,6 +410,44 @@ class Measure extends DataClass implements Insertable<Measure> {
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}comment']),
     );
   }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || elapsed != null) {
+      map['elapsed'] = Variable<int>(elapsed);
+    }
+    if (!nullToAbsent || dateCreated != null) {
+      map['date_created'] = Variable<DateTime>(dateCreated);
+    }
+    if (!nullToAbsent || status != null) {
+      map['status'] = Variable<String>(status);
+    }
+    if (!nullToAbsent || comment != null) {
+      map['comment'] = Variable<String>(comment);
+    }
+    return map;
+  }
+
+  MeasuresCompanion toCompanion(bool nullToAbsent) {
+    return MeasuresCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      elapsed: elapsed == null && nullToAbsent
+          ? const Value.absent()
+          : Value(elapsed),
+      dateCreated: dateCreated == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dateCreated),
+      status:
+          status == null && nullToAbsent ? const Value.absent() : Value(status),
+      comment: comment == null && nullToAbsent
+          ? const Value.absent()
+          : Value(comment),
+    );
+  }
+
   factory Measure.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
@@ -387,24 +469,6 @@ class Measure extends DataClass implements Insertable<Measure> {
       'status': serializer.toJson<String>(status),
       'comment': serializer.toJson<String>(comment),
     };
-  }
-
-  @override
-  MeasuresCompanion createCompanion(bool nullToAbsent) {
-    return MeasuresCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      elapsed: elapsed == null && nullToAbsent
-          ? const Value.absent()
-          : Value(elapsed),
-      dateCreated: dateCreated == null && nullToAbsent
-          ? const Value.absent()
-          : Value(dateCreated),
-      status:
-          status == null && nullToAbsent ? const Value.absent() : Value(status),
-      comment: comment == null && nullToAbsent
-          ? const Value.absent()
-          : Value(comment),
-    );
   }
 
   Measure copyWith(
@@ -471,6 +535,22 @@ class MeasuresCompanion extends UpdateCompanion<Measure> {
     this.comment = const Value.absent(),
   })  : dateCreated = Value(dateCreated),
         status = Value(status);
+  static Insertable<Measure> custom({
+    Expression<int> id,
+    Expression<int> elapsed,
+    Expression<DateTime> dateCreated,
+    Expression<String> status,
+    Expression<String> comment,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (elapsed != null) 'elapsed': elapsed,
+      if (dateCreated != null) 'date_created': dateCreated,
+      if (status != null) 'status': status,
+      if (comment != null) 'comment': comment,
+    });
+  }
+
   MeasuresCompanion copyWith(
       {Value<int> id,
       Value<int> elapsed,
@@ -484,6 +564,27 @@ class MeasuresCompanion extends UpdateCompanion<Measure> {
       status: status ?? this.status,
       comment: comment ?? this.comment,
     );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (elapsed.present) {
+      map['elapsed'] = Variable<int>(elapsed.value);
+    }
+    if (dateCreated.present) {
+      map['date_created'] = Variable<DateTime>(dateCreated.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (comment.present) {
+      map['comment'] = Variable<String>(comment.value);
+    }
+    return map;
   }
 }
 
@@ -553,31 +654,34 @@ class $MeasuresTable extends Measures with TableInfo<$MeasuresTable, Measure> {
   @override
   final String actualTableName = 'measures';
   @override
-  VerificationContext validateIntegrity(MeasuresCompanion d,
+  VerificationContext validateIntegrity(Insertable<Measure> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
-    if (d.id.present) {
-      context.handle(_idMeta, id.isAcceptableValue(d.id.value, _idMeta));
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
     }
-    if (d.elapsed.present) {
+    if (data.containsKey('elapsed')) {
       context.handle(_elapsedMeta,
-          elapsed.isAcceptableValue(d.elapsed.value, _elapsedMeta));
+          elapsed.isAcceptableOrUnknown(data['elapsed'], _elapsedMeta));
     }
-    if (d.dateCreated.present) {
-      context.handle(_dateCreatedMeta,
-          dateCreated.isAcceptableValue(d.dateCreated.value, _dateCreatedMeta));
+    if (data.containsKey('date_created')) {
+      context.handle(
+          _dateCreatedMeta,
+          dateCreated.isAcceptableOrUnknown(
+              data['date_created'], _dateCreatedMeta));
     } else if (isInserting) {
       context.missing(_dateCreatedMeta);
     }
-    if (d.status.present) {
-      context.handle(
-          _statusMeta, status.isAcceptableValue(d.status.value, _statusMeta));
+    if (data.containsKey('status')) {
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status'], _statusMeta));
     } else if (isInserting) {
       context.missing(_statusMeta);
     }
-    if (d.comment.present) {
+    if (data.containsKey('comment')) {
       context.handle(_commentMeta,
-          comment.isAcceptableValue(d.comment.value, _commentMeta));
+          comment.isAcceptableOrUnknown(data['comment'], _commentMeta));
     }
     return context;
   }
@@ -588,28 +692,6 @@ class $MeasuresTable extends Measures with TableInfo<$MeasuresTable, Measure> {
   Measure map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return Measure.fromData(data, _db, prefix: effectivePrefix);
-  }
-
-  @override
-  Map<String, Variable> entityToSql(MeasuresCompanion d) {
-    final map = <String, Variable>{};
-    if (d.id.present) {
-      map['id'] = Variable<int, IntType>(d.id.value);
-    }
-    if (d.elapsed.present) {
-      map['elapsed'] = Variable<int, IntType>(d.elapsed.value);
-    }
-    if (d.dateCreated.present) {
-      map['date_created'] =
-          Variable<DateTime, DateTimeType>(d.dateCreated.value);
-    }
-    if (d.status.present) {
-      map['status'] = Variable<String, StringType>(d.status.value);
-    }
-    if (d.comment.present) {
-      map['comment'] = Variable<String, StringType>(d.comment.value);
-    }
-    return map;
   }
 
   @override
@@ -644,6 +726,39 @@ class MeasureSession extends DataClass implements Insertable<MeasureSession> {
           .mapFromDatabaseResponse(data['${effectivePrefix}finished']),
     );
   }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || measureId != null) {
+      map['measure_id'] = Variable<int>(measureId);
+    }
+    if (!nullToAbsent || started != null) {
+      map['started'] = Variable<DateTime>(started);
+    }
+    if (!nullToAbsent || finished != null) {
+      map['finished'] = Variable<DateTime>(finished);
+    }
+    return map;
+  }
+
+  MeasureSessionsCompanion toCompanion(bool nullToAbsent) {
+    return MeasureSessionsCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      measureId: measureId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(measureId),
+      started: started == null && nullToAbsent
+          ? const Value.absent()
+          : Value(started),
+      finished: finished == null && nullToAbsent
+          ? const Value.absent()
+          : Value(finished),
+    );
+  }
+
   factory MeasureSession.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
@@ -663,22 +778,6 @@ class MeasureSession extends DataClass implements Insertable<MeasureSession> {
       'started': serializer.toJson<DateTime>(started),
       'finished': serializer.toJson<DateTime>(finished),
     };
-  }
-
-  @override
-  MeasureSessionsCompanion createCompanion(bool nullToAbsent) {
-    return MeasureSessionsCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      measureId: measureId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(measureId),
-      started: started == null && nullToAbsent
-          ? const Value.absent()
-          : Value(started),
-      finished: finished == null && nullToAbsent
-          ? const Value.absent()
-          : Value(finished),
-    );
   }
 
   MeasureSession copyWith(
@@ -731,6 +830,20 @@ class MeasureSessionsCompanion extends UpdateCompanion<MeasureSession> {
     this.finished = const Value.absent(),
   })  : measureId = Value(measureId),
         started = Value(started);
+  static Insertable<MeasureSession> custom({
+    Expression<int> id,
+    Expression<int> measureId,
+    Expression<DateTime> started,
+    Expression<DateTime> finished,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (measureId != null) 'measure_id': measureId,
+      if (started != null) 'started': started,
+      if (finished != null) 'finished': finished,
+    });
+  }
+
   MeasureSessionsCompanion copyWith(
       {Value<int> id,
       Value<int> measureId,
@@ -742,6 +855,24 @@ class MeasureSessionsCompanion extends UpdateCompanion<MeasureSession> {
       started: started ?? this.started,
       finished: finished ?? this.finished,
     );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (measureId.present) {
+      map['measure_id'] = Variable<int>(measureId.value);
+    }
+    if (started.present) {
+      map['started'] = Variable<DateTime>(started.value);
+    }
+    if (finished.present) {
+      map['finished'] = Variable<DateTime>(finished.value);
+    }
+    return map;
   }
 }
 
@@ -801,27 +932,28 @@ class $MeasureSessionsTable extends MeasureSessions
   @override
   final String actualTableName = 'measure_sessions';
   @override
-  VerificationContext validateIntegrity(MeasureSessionsCompanion d,
+  VerificationContext validateIntegrity(Insertable<MeasureSession> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
-    if (d.id.present) {
-      context.handle(_idMeta, id.isAcceptableValue(d.id.value, _idMeta));
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
     }
-    if (d.measureId.present) {
+    if (data.containsKey('measure_id')) {
       context.handle(_measureIdMeta,
-          measureId.isAcceptableValue(d.measureId.value, _measureIdMeta));
+          measureId.isAcceptableOrUnknown(data['measure_id'], _measureIdMeta));
     } else if (isInserting) {
       context.missing(_measureIdMeta);
     }
-    if (d.started.present) {
+    if (data.containsKey('started')) {
       context.handle(_startedMeta,
-          started.isAcceptableValue(d.started.value, _startedMeta));
+          started.isAcceptableOrUnknown(data['started'], _startedMeta));
     } else if (isInserting) {
       context.missing(_startedMeta);
     }
-    if (d.finished.present) {
+    if (data.containsKey('finished')) {
       context.handle(_finishedMeta,
-          finished.isAcceptableValue(d.finished.value, _finishedMeta));
+          finished.isAcceptableOrUnknown(data['finished'], _finishedMeta));
     }
     return context;
   }
@@ -832,24 +964,6 @@ class $MeasureSessionsTable extends MeasureSessions
   MeasureSession map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return MeasureSession.fromData(data, _db, prefix: effectivePrefix);
-  }
-
-  @override
-  Map<String, Variable> entityToSql(MeasureSessionsCompanion d) {
-    final map = <String, Variable>{};
-    if (d.id.present) {
-      map['id'] = Variable<int, IntType>(d.id.value);
-    }
-    if (d.measureId.present) {
-      map['measure_id'] = Variable<int, IntType>(d.measureId.value);
-    }
-    if (d.started.present) {
-      map['started'] = Variable<DateTime, DateTimeType>(d.started.value);
-    }
-    if (d.finished.present) {
-      map['finished'] = Variable<DateTime, DateTimeType>(d.finished.value);
-    }
-    return map;
   }
 
   @override
@@ -883,6 +997,37 @@ class Tag extends DataClass implements Insertable<Tag> {
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
     );
   }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || dateCreated != null) {
+      map['date_created'] = Variable<DateTime>(dateCreated);
+    }
+    if (!nullToAbsent || frequency != null) {
+      map['frequency'] = Variable<int>(frequency);
+    }
+    if (!nullToAbsent || name != null) {
+      map['name'] = Variable<String>(name);
+    }
+    return map;
+  }
+
+  TagsCompanion toCompanion(bool nullToAbsent) {
+    return TagsCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      dateCreated: dateCreated == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dateCreated),
+      frequency: frequency == null && nullToAbsent
+          ? const Value.absent()
+          : Value(frequency),
+      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+    );
+  }
+
   factory Tag.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
@@ -902,20 +1047,6 @@ class Tag extends DataClass implements Insertable<Tag> {
       'frequency': serializer.toJson<int>(frequency),
       'name': serializer.toJson<String>(name),
     };
-  }
-
-  @override
-  TagsCompanion createCompanion(bool nullToAbsent) {
-    return TagsCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      dateCreated: dateCreated == null && nullToAbsent
-          ? const Value.absent()
-          : Value(dateCreated),
-      frequency: frequency == null && nullToAbsent
-          ? const Value.absent()
-          : Value(frequency),
-      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
-    );
   }
 
   Tag copyWith({int id, DateTime dateCreated, int frequency, String name}) =>
@@ -968,6 +1099,20 @@ class TagsCompanion extends UpdateCompanion<Tag> {
   })  : dateCreated = Value(dateCreated),
         frequency = Value(frequency),
         name = Value(name);
+  static Insertable<Tag> custom({
+    Expression<int> id,
+    Expression<DateTime> dateCreated,
+    Expression<int> frequency,
+    Expression<String> name,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (dateCreated != null) 'date_created': dateCreated,
+      if (frequency != null) 'frequency': frequency,
+      if (name != null) 'name': name,
+    });
+  }
+
   TagsCompanion copyWith(
       {Value<int> id,
       Value<DateTime> dateCreated,
@@ -979,6 +1124,24 @@ class TagsCompanion extends UpdateCompanion<Tag> {
       frequency: frequency ?? this.frequency,
       name: name ?? this.name,
     );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (dateCreated.present) {
+      map['date_created'] = Variable<DateTime>(dateCreated.value);
+    }
+    if (frequency.present) {
+      map['frequency'] = Variable<int>(frequency.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    return map;
   }
 }
 
@@ -1039,27 +1202,30 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
   @override
   final String actualTableName = 'tags';
   @override
-  VerificationContext validateIntegrity(TagsCompanion d,
+  VerificationContext validateIntegrity(Insertable<Tag> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
-    if (d.id.present) {
-      context.handle(_idMeta, id.isAcceptableValue(d.id.value, _idMeta));
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
     }
-    if (d.dateCreated.present) {
-      context.handle(_dateCreatedMeta,
-          dateCreated.isAcceptableValue(d.dateCreated.value, _dateCreatedMeta));
+    if (data.containsKey('date_created')) {
+      context.handle(
+          _dateCreatedMeta,
+          dateCreated.isAcceptableOrUnknown(
+              data['date_created'], _dateCreatedMeta));
     } else if (isInserting) {
       context.missing(_dateCreatedMeta);
     }
-    if (d.frequency.present) {
+    if (data.containsKey('frequency')) {
       context.handle(_frequencyMeta,
-          frequency.isAcceptableValue(d.frequency.value, _frequencyMeta));
+          frequency.isAcceptableOrUnknown(data['frequency'], _frequencyMeta));
     } else if (isInserting) {
       context.missing(_frequencyMeta);
     }
-    if (d.name.present) {
+    if (data.containsKey('name')) {
       context.handle(
-          _nameMeta, name.isAcceptableValue(d.name.value, _nameMeta));
+          _nameMeta, name.isAcceptableOrUnknown(data['name'], _nameMeta));
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
@@ -1072,25 +1238,6 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
   Tag map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return Tag.fromData(data, _db, prefix: effectivePrefix);
-  }
-
-  @override
-  Map<String, Variable> entityToSql(TagsCompanion d) {
-    final map = <String, Variable>{};
-    if (d.id.present) {
-      map['id'] = Variable<int, IntType>(d.id.value);
-    }
-    if (d.dateCreated.present) {
-      map['date_created'] =
-          Variable<DateTime, DateTimeType>(d.dateCreated.value);
-    }
-    if (d.frequency.present) {
-      map['frequency'] = Variable<int, IntType>(d.frequency.value);
-    }
-    if (d.name.present) {
-      map['name'] = Variable<String, StringType>(d.name.value);
-    }
-    return map;
   }
 
   @override
