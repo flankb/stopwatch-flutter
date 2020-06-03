@@ -82,11 +82,19 @@ class MyDatabase extends _$MyDatabase {
   int get schemaVersion => 1;
 
 
-  Future deleteEntities(){
+  /*Future deleteEntities<T extends TableInfo>(){
     //delete(table)
-  }
 
-  Future<List<Measure>> getMeasuresByStatusAsync(String status) {
+    //  // delete the oldest nine tasks
+    //  return (delete(todos)..where((t) => t.id.isSmallerThanValue(10))).go();
+
+    T table;
+    Expression<bool> Function(T tbl) filter;
+
+    return (delete(table)..where(filter)).go();
+  }*/
+
+  /*Future<List<Measure>> getMeasuresByStatusAsync(String status) {
     return (select(measures)..where((m) => m.status.equals(status))).get();
   }
 
@@ -149,6 +157,6 @@ class MyDatabase extends _$MyDatabase {
 
   Future<List<Lap>> getLapsByMeasureAsync(int measureId) {
     return (select(laps)..where((l) => l.measureId.equals(measureId))).get();
-  }
+  }*/
 }
 

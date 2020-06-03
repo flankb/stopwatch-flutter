@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:learnwords/bloc/measure_bloc/bloc.dart';
+import 'package:learnwords/model/database_models.dart';
 import 'package:learnwords/resources/stopwatch_db_repository.dart';
 import 'package:learnwords/util/ticker.dart';
 import 'package:learnwords/view/pages/about_page.dart';
@@ -219,7 +220,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
     }
 
     if (measureBloc == null /*|| true*/) {
-      measureBloc = MeasureBloc(Ticker3(), StopwatchRepository());
+      measureBloc = MeasureBloc(Ticker3(), StopwatchRepository(MyDatabase())); // TODO Плохо здесь иметь ссылку на базу данных!!!
       measureBloc.add(MeasureOpenedEvent());
     }
   }
