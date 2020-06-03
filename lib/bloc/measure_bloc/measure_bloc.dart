@@ -7,6 +7,7 @@ import 'package:learnwords/model/database_models.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
 import 'package:learnwords/models/stopwatch_status.dart';
 import 'package:learnwords/resources/base/base_stopwatch_db_repository.dart';
+import 'package:learnwords/resources/stopwatch_db_repository.dart';
 import 'package:learnwords/util/ticker.dart';
 
 import 'measure_event.dart';
@@ -15,7 +16,7 @@ import 'measure_state.dart';
 
 class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
   final Ticker3 _ticker;
-  final BaseStopwatchRepository _stopwatchRepository;
+  final StopwatchRepository _stopwatchRepository; // TODO Заменить на интерфейс репозитория (либо на DI)
 
   StreamSubscription<int> _tickerSubscription;
   //Stream<int> _tickStream;
@@ -33,7 +34,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
   Stream<MeasureState> mapEventToState(
     MeasureEvent event,
   ) async* {
-    debugPrint("Current state " + state.toString() + "Bloc event: "+ event.toString());
+    debugPrint("Current state ${state.toString()} Bloc event: ${event.toString()}");
 
     // Для каждого события что-то делаем и возвращаем состояние
     if (event is TickEvent) {
@@ -53,19 +54,27 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
   Stream<MeasureState> _mapOpenedToState(MeasureOpenedEvent event) async* {
     // Прочитать измерение с БД со всеми кругами и сессиями
-    final measuresStarted = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Started.toString()));
-    final measuredPaused = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Started));
+    final measuresStarted = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Started));
+    final measuredPaused = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Paused));
+    final measuredReady = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Ready));
 
     List<Measure> combine = List<Measure>();
 
     combine.addAll(measuresStarted);
     combine.addAll(measuredPaused);
+    combine.addAll(measuredReady);
 
     if (combine.length == 0) {
       yield MeasureReadyState(MeasureViewModel()); // Если в БД ниче нет, то ReadyState
     }
     else {
       if (combine.length > 1) {
+        //-------------
+        // Грохнуть лишнее
+        //
+        await _stopwatchRepository.deleteAllMeasuresDebug();
+        //-------------
+
         throw Exception("Не может быть больше одного актуального измерения");
       }
 
@@ -150,10 +159,10 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
       var targetMeasure = state.measure;
 
-      debugPrint(targetMeasure.toString());
+      debugPrint("targetMeasure ${targetMeasure.toString()}");
 
       // Если сущности не было, то необходимо создать и получить идентификатор
-      if (state.measure.id == null) {
+      if (targetMeasure.id == null) {
         final id = await _stopwatchRepository.createNewMeasureAsync();
         final measure = (await _stopwatchRepository.getMeasuresByIdAsync(id)).single;
 

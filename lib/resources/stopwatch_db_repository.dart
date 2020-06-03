@@ -129,6 +129,10 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
     return (select(laps)..where((l) => l.measureId.equals(measureId))).get();
   }
 
+  Future deleteAllMeasuresDebug() {
+    return delete(measures).go();
+  }
+
   /*@override
   Future<List<Measure>> getMeasuresByIdAsync(int id) {
     // TODO: implement getMeasuresByIdAsync

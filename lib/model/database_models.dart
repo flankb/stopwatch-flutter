@@ -21,7 +21,7 @@ class Laps extends Table {
 
 class MeasureSessions extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get measureId => integer().named('measure_id').customConstraint('REFERENCES measures(id) ON DELETE CASCADE')();
+  IntColumn get measureId => integer().named('measure_id').customConstraint('REFERENCES measures(id) ON DELETE CASCADE')(); // TODO ON DELETE CASCADE Не работает!!!
   DateTimeColumn get started => dateTime()();
   DateTimeColumn get finished => dateTime().nullable()();
 }
