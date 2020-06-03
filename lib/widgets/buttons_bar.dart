@@ -6,10 +6,12 @@ import 'package:launch_review/launch_review.dart';
 import 'package:learnwords/bloc/measure_bloc/measure_bloc.dart';
 import 'package:learnwords/bloc/measure_bloc/measure_event.dart';
 import 'package:learnwords/bloc/measure_bloc/measure_state.dart';
+import 'package:learnwords/model/database_models.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
 import 'package:learnwords/view/pages/about_page.dart';
 import 'package:learnwords/view/pages/history_page.dart';
 import 'package:learnwords/view/pages/settings_page.dart';
+import 'package:moor_db_viewer/moor_db_viewer.dart';
 
 // This is the type used by the popup menu below.
 enum WhyFarther { review, about }
@@ -48,6 +50,16 @@ class ButtonsBar extends StatelessWidget {
               // Кнопка с подсказкой внизу:
               // https://api.flutter.dev/flutter/material/IconButton-class.html
               // Так же можно обернуть в InkWell
+
+              IconButton(
+                icon: Icon(Icons.ac_unit),
+                color: Colors.red,
+                tooltip: 'View database',
+                onPressed: () {
+                  final db = MyDatabase(); //This should be a singleton
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => MoorDbViewer(db)));
+                },
+              ),
 
               IconButton(
                 icon: Icon(Icons.ac_unit),
