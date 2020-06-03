@@ -154,22 +154,26 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
       // Если сущности не было, то необходимо создать и получить идентификатор
       if (state.measure.id == null) {
-
-
         final id = await _stopwatchRepository.createNewMeasureAsync();
         final measure = (await _stopwatchRepository.getMeasuresByIdAsync(id)).single;
 
-        debugPrint("id " + id.toString());
-        debugPrint("id15 " + measure.id.toString());
+        debugPrint("id ${id.toString()} measureId ${measure.id.toString()}");
 
         targetMeasure = MeasureViewModel.fromEntity(measure);
       }
 
       if (!resume) {
+
+        // TODO Здесь не должно быть открытых измерительных сессий!!!
+        // Удалим здесь все незавершённые сессии!
+        //debugPrint()
+        final unfinishedSessions = targetMeasure.sessions.where((element) => element.finished == null);
+        //await _stopwatchRepository.
+
         final session = MeasureSessionViewModel(id: null, measureId: targetMeasure.id, started: nowDate); // TODO id здесь пустой
         targetMeasure.sessions.add(session);
 
-        debugPrint("id2 " + session.measureId.toString());
+        debugPrint("measureId (not resume) ${session.measureId.toString()}");
 
         // Если в БД есть такая запись - то обновить, иначе создать новую
         //state.measure.id = await _stopwatchRepository.updateMeasureAsync(state.measure.toEntity());
@@ -224,7 +228,9 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     await _stopwatchRepository.updateMeasureAsync(state.measure.toEntity());
     await _stopwatchRepository.updateMeasureSession(lastSession.toEntity());
 
-    await Future.delayed(Duration(seconds: 2));
+    //await Future.delayed(Duration(seconds: 2));
+
+    debugPrint("fixStopwatch finished");
   }
 
   @override

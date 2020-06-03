@@ -4,6 +4,8 @@ import 'package:learnwords/resources/base/base_stopwatch_db_repository.dart';
 class StopwatchRepository implements BaseStopwatchRepository {
   MyDatabase _database;
 
+  // TODO В идеале в этом классе предоставить базовые CRUD-операции и возможность писать SQL-код
+
   StopwatchRepository() {
     _database = MyDatabase();
   }
@@ -46,9 +48,8 @@ class StopwatchRepository implements BaseStopwatchRepository {
   }
 
   @override
-  Future<int> updateMeasureSession(MeasureSession measureSession) {
-    // TODO: implement updateMeasureSession
-    return null;
+  Future<bool> updateMeasureSession(MeasureSession measureSession) {
+    return _database.updateMeasureSessionAsync(measureSession);
   }
 
   @override

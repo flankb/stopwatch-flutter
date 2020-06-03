@@ -148,7 +148,7 @@ class MeasureViewModel extends BaseStopwatchEntity {
   }
 
   Measure toEntity() {
-    return Measure(id: id, status: status.toString(), dateCreated: dateCreated, elapsed: elapsed);
+    return Measure(id: id, status: describeEnum(status), dateCreated: dateCreated, elapsed: elapsed);
   }
 
   static MeasureViewModel fromEntity(Measure entity) {

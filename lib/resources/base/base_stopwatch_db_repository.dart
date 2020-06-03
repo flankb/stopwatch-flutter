@@ -18,7 +18,7 @@ abstract class BaseStopwatchRepository {
 
   Future<int> addNewMeasureSession(MeasureSession measureSession);
 
-  Future<int> updateMeasureSession(MeasureSession measureSession);
+  Future<bool> updateMeasureSession(MeasureSession measureSession);
 
   Future<List<MeasureSession>> getMeasureSessions(int measureId);
 }
