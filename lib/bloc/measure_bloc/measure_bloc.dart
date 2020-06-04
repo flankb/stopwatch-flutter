@@ -108,7 +108,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       // Сбросить счётчик времени круга
       state.measure.elapsedLap = 0;
 
-      final lapProps = state.measure.getNewLapDiffAndOverall(DateTime.now());
+      final lapProps = state.measure.getCurrentLapDiffAndOverall(DateTime.now());
 
       LapViewModel newLap = LapViewModel();
       newLap.measureId = state.measure.id;
@@ -161,7 +161,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       }
 
       state.measure.lastRestartedOverall = nowDate;
-      state.measure.lastRestartedLap = nowDate;
+      //state.measure.lastRestartedLap = nowDate;
 
       var targetMeasure = state.measure;
 
@@ -182,7 +182,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
         // TODO Здесь не должно быть открытых измерительных сессий!!!
         // Удалим здесь все незавершённые сессии!
         //debugPrint()
-        final unfinishedSessions = targetMeasure.sessions.where((element) => element.finished == null);
+        //final unfinishedSessions = targetMeasure.sessions.where((element) => element.finished == null);
         //await _stopwatchRepository.
 
         final session = MeasureSessionViewModel(id: null, measureId: targetMeasure.id, started: nowDate); // TODO id здесь пустой
@@ -238,7 +238,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
     // Вычислить сумму всех законченных отрезочков
     state.measure.elapsed = state.measure.getSumOfElapsed();
-    //state.measure.elapsedLap = state.measure.getNewLapDiffAndOverall(dateNow)[1]; // TODO Ошибка при Finished
+    state.measure.elapsedLap = state.measure.getCurrentLapDiffAndOverall(dateNow)[0]; // TODO Ошибка при Finished
 
     //_tickerSubscription?.cancel();
     controller.add(5000); // Как-бы фиксируем
@@ -257,8 +257,6 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
   @override
   Future<void> close() {
-
-
     _tickerSubscription?.cancel();
     return super.close();
   }

@@ -104,7 +104,7 @@ class MeasureViewModel extends BaseStopwatchEntity {
   DateTime lastRestartedOverall;
 
   /// Вспомогательное свойство для динамического расчета истекшего времени круга
-  DateTime lastRestartedLap;
+  //DateTime lastRestartedLap;
 
   MeasureViewModel({int id,
     String comment,
@@ -135,20 +135,46 @@ class MeasureViewModel extends BaseStopwatchEntity {
     return elapsed;
   }
 
-  List<int> getNewLapDiffAndOverall(DateTime dateNow) {
+  List<int> getCurrentLapDiffAndOverall(DateTime dateNow) {
+    // Метод должен работать как при завершенной, так и незавершенной сессии
+
     final base = getSumOfElapsed();
-    final lastSession = getLastUnfinishedSession();
 
-    if (lastSession == null) {
-      throw Exception("Last session must not be a null!");
-    }
+    final lastUnfinishedSession = getLastUnfinishedSession();
+    /*if (lastUnfinishedSession == null) {
+      throw Exception("Не обнаружена открытая сессия!");
+    }*/
 
-    final newOverall = base + dateNow.difference(lastSession.started).inMilliseconds;
+    final newOverall = lastUnfinishedSession != null
+        ? base + dateNow.difference(lastUnfinishedSession.started).inMilliseconds
+        : base;
+
     // Здесь же можно найти разницу с предыдущим кругом
     final prevLapOverall = laps.any((_) => true) ? laps.last.overall : 0;
     final difference = newOverall - prevLapOverall;
 
     return [difference, newOverall];
+    /*
+    if (lastUnfinishedSession != null) {
+      final newOverall = lastUnfinishedSession != null
+          ? base + dateNow.difference(lastUnfinishedSession.started).inMilliseconds
+          : base;
+
+      // Здесь же можно найти разницу с предыдущим кругом
+      final prevLapOverall = laps.any((_) => true) ? laps.last.overall : 0;
+      final difference = newOverall - prevLapOverall;
+
+      return [difference, newOverall];
+    }
+    else {
+      final newOverall = base;
+
+      final prevLapOverall = laps.any((_) => true) ? laps.last.overall : 0;
+      final difference = newOverall - prevLapOverall;
+
+      return [difference, newOverall];
+    }
+   */
   }
 
   MeasureSessionViewModel getLastUnfinishedSession() {
