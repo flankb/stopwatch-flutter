@@ -20,7 +20,10 @@ class StopwatchBody extends StatelessWidget {
     List<LapViewModel> items = FakeDataFabric.mainPageLaps();
     //var measureBloc = BlocProvider.of<MeasureBloc>(context);
 
+
     return BlocBuilder<MeasureBloc, MeasureState>(builder: (BuildContext context, MeasureState state) {
+      //state.measure.lastRestartedOverall = DateTime.now();
+
       return Column(
         children: <Widget>[
           Padding(
@@ -30,7 +33,18 @@ class StopwatchBody extends StatelessWidget {
               child: StreamBuilder<int>(
                 initialData: 0,
                 stream: measureBloc.tickStream,
+
+                //date2.difference(birthday).inDays;
+
+
                 builder: (context, snapshot) {
+                  final delta = DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds;
+                  final overallDifference = state.measure.elapsed + delta;
+                  final lapDifference = state.measure.elapsedLap + delta;
+
+                  final d1 = Duration(milliseconds: overallDifference);
+                  final d2 = Duration(milliseconds: lapDifference);
+
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -39,12 +53,15 @@ class StopwatchBody extends StatelessWidget {
                         textBaseline: TextBaseline.ideographic,
                         children: <Widget>[
                           Text(
-                            snapshot.data.toString(),
+                            TimeDisplayer.format(d2),
+                            //snapshot.data.toString(),
+                            //overallDifference.toString(),
                             /*measureBloc.state.measure.elapsedTime()[0],*/
                             style: TextStyle(fontSize: 30),
                           ),
                           Text(
-                            snapshot.data.toString(),
+                            TimeDisplayer.formatMills(d2),
+                            //snapshot.data.toString(),
                             /*measureBloc.state.measure.elapsedTime()[1],*/
                             style: TextStyle(fontSize: 16),
                           )
@@ -55,11 +72,12 @@ class StopwatchBody extends StatelessWidget {
                         textBaseline: TextBaseline.ideographic,
                         children: <Widget>[
                           Text(
-                            "00:00,",
+                            //snapshot.data.toString(),
+                            TimeDisplayer.format(d1),
                             style: TextStyle(fontSize: 44),
                           ),
                           Text(
-                            "00",
+                            TimeDisplayer.formatMills(d1),
                             style: TextStyle(fontSize: 26),
                           )
                         ],
