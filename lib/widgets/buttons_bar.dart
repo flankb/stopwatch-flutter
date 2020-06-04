@@ -8,10 +8,12 @@ import 'package:learnwords/bloc/measure_bloc/measure_event.dart';
 import 'package:learnwords/bloc/measure_bloc/measure_state.dart';
 import 'package:learnwords/model/database_models.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
+import 'package:learnwords/resources/stopwatch_db_repository.dart';
 import 'package:learnwords/view/pages/about_page.dart';
 import 'package:learnwords/view/pages/history_page.dart';
 import 'package:learnwords/view/pages/settings_page.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';
+import 'package:toast/toast.dart';
 
 // This is the type used by the popup menu below.
 enum WhyFarther { review, about }
@@ -65,7 +67,40 @@ class ButtonsBar extends StatelessWidget {
                 icon: Icon(Icons.ac_unit),
                 color: Colors.blue,
                 tooltip: 'Ready state',
-                onPressed: () {
+                onPressed: () async {
+                  final res = await showDialog(context: context, child: new Dialog(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text("Вайпнуть БД?"),
+                        Row(
+                          children: <Widget>[
+                            RawMaterialButton(
+                              child : Text("ДА"),
+                              onPressed: () {
+                                Navigator.pop(context, true);
+                            },),
+                            RawMaterialButton(
+                              child : Text("Нет"),
+                              onPressed: () {
+                                Navigator.pop(context, false);
+                            },)
+                          ],
+                        )
+                      ],
+                    ),
+                  ));
+
+                  if (res == true){
+                    final rep = StopwatchRepository(MyDatabase());
+                    await rep.wipeDatabaseDebug();
+
+                    // Вайп
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text("БД удалена!"),
+                    ));
+                  }
+
                   BlocProvider.of<MeasureBloc>(context).add(MeasureOpenedEvent());
                 },
               ),

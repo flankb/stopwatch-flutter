@@ -110,7 +110,7 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
     return update(measures).replace(measure); //TODO Возможно заменить на insert.replace!
   }
 
-  Future<bool> updateMeasureSession(MeasureSession measureSession) {
+  Future<bool> updateMeasureSession(MeasureSession measureSession) async {
     debugPrint("updateMeasureSessionAsync measureSession ${measureSession.toString()}");
 
     return update(measureSessions).replace(measureSession);
@@ -131,6 +131,13 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
 
   Future deleteAllMeasuresDebug() {
     return delete(measures).go();
+  }
+
+  Future wipeDatabaseDebug() async {
+    await delete(measureSessions).go();
+    await delete(laps).go();
+    await delete(tags).go();
+    await delete(measures).go();
   }
 
   /*@override

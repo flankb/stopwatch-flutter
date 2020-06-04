@@ -20,7 +20,7 @@ class Lap extends DataClass implements Insertable<Lap> {
       @required this.difference,
       @required this.order,
       @required this.overall,
-      @required this.comment});
+      this.comment});
   factory Lap.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -178,12 +178,11 @@ class LapsCompanion extends UpdateCompanion<Lap> {
     @required int difference,
     @required int order,
     @required int overall,
-    @required String comment,
+    this.comment = const Value.absent(),
   })  : measureId = Value(measureId),
         difference = Value(difference),
         order = Value(order),
-        overall = Value(overall),
-        comment = Value(comment);
+        overall = Value(overall);
   static Insertable<Lap> custom({
     Expression<int> id,
     Expression<int> measureId,
@@ -310,7 +309,7 @@ class $LapsTable extends Laps with TableInfo<$LapsTable, Lap> {
     return GeneratedTextColumn(
       'comment',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -360,8 +359,6 @@ class $LapsTable extends Laps with TableInfo<$LapsTable, Lap> {
     if (data.containsKey('comment')) {
       context.handle(_commentMeta,
           comment.isAcceptableOrUnknown(data['comment'], _commentMeta));
-    } else if (isInserting) {
-      context.missing(_commentMeta);
     }
     return context;
   }

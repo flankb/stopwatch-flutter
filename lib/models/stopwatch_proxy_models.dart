@@ -97,8 +97,14 @@ class MeasureViewModel extends BaseStopwatchEntity {
   int elapsedLap;
   DateTime dateCreated;
   StopwatchStatus status;
-  List<LapViewModel> laps = List();
-  List<MeasureSessionViewModel> sessions = List();
+  List<LapViewModel> laps;
+  List<MeasureSessionViewModel> sessions;
+
+  /// Вспомогательное свойство для динамического расчета истекшего времени
+  DateTime lastRestartedOverall;
+
+  /// Вспомогательное свойство для динамического расчета истекшего времени круга
+  DateTime lastRestartedLap;
 
   MeasureViewModel({int id,
     String comment,
@@ -106,7 +112,10 @@ class MeasureViewModel extends BaseStopwatchEntity {
     this.elapsedLap = 0,
     this.laps,
     this.status = StopwatchStatus.Ready,
-    this.dateCreated}) : super(id: id, comment : comment);
+    this.dateCreated}) : super(id: id, comment : comment){
+    laps = List<LapViewModel>();
+    sessions = List<MeasureSessionViewModel>();
+  }
 
   List<String> elapsedTime() {
     return [TimeDisplayer.format(Duration(milliseconds: elapsed)), TimeDisplayer.formatMills(Duration(milliseconds: elapsed))];
@@ -121,8 +130,8 @@ class MeasureViewModel extends BaseStopwatchEntity {
 
     debugPrint("All Sessions: ");
     sessions.forEach((element) { debugPrint(element.toString()); });
+    sessions.where((element) => element.finished != null).forEach((s) => elapsed += s.finished.difference(s.started).inMilliseconds); // TODO При добавлении круга здесь ошибка!
 
-    sessions.forEach((s) => elapsed += s.finished.difference(s.started).inMilliseconds);
     return elapsed;
   }
 

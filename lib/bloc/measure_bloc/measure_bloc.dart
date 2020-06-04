@@ -115,11 +115,14 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       newLap.order = state.measure.laps.length + 1;
       newLap.difference = lapProps[0];
       newLap.overall = lapProps[1];
+      newLap.comment = "Temp";
 
       state.measure.laps.add(newLap);
       newLap.id = await _stopwatchRepository.addNewLapAsync(newLap.toEntity());
 
+      debugPrint("Before yield MeasureStartedState(state.measure);");
       yield MeasureStartedState(state.measure);
+      debugPrint("After yield MeasureStartedState(state.measure);");
     }
     else {
       throw Exception("Wrong state!");
@@ -128,7 +131,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
   Stream<MeasureState> _mapFinishedToState(MeasureEvent event) async* {
     if (state is MeasureStartedState || state is MeasurePausedState) {
-      yield* _fixStopwatch(StopwatchStatus.Finished);
+      yield* _fixStopwatch(StopwatchStatus.Finished, finish : event is MeasureFinishedEvent);
       yield MeasureReadyState(MeasureViewModel());
     }
     else {
@@ -156,6 +159,9 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       if (state.measure.dateCreated == null) {
         state.measure.dateCreated = nowDate;
       }
+
+      state.measure.lastRestartedOverall = nowDate;
+      state.measure.lastRestartedLap = nowDate;
 
       var targetMeasure = state.measure;
 
@@ -202,7 +208,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     }
   }
 
-  Stream<MeasureState> _fixStopwatch(StopwatchStatus status) async* {
+  Stream<MeasureState> _fixStopwatch(StopwatchStatus status, {bool finish = false}) async* {
     debugPrint("_fixStopwatch before");
     yield MeasureUpdatingState(state.measure);
     debugPrint("_fixStopwatch after");
@@ -220,22 +226,29 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
     debugPrint("LastUnfinishedSession: " + lastSession.toString());
 
-    if (lastSession == null) {
+    if (lastSession == null && !finish) {
       throw Exception("Не обнаружена последняя открытая сессия!");
     }
 
-    lastSession.finished = dateNow;
+    if (lastSession != null){
+      lastSession.finished = dateNow;
+    }
 
     debugPrint("LastUnfinishedSession: " + lastSession.toString());
 
     // Вычислить сумму всех законченных отрезочков
     state.measure.elapsed = state.measure.getSumOfElapsed();
+    //state.measure.elapsedLap = state.measure.getNewLapDiffAndOverall(dateNow)[1]; // TODO Ошибка при Finished
 
     //_tickerSubscription?.cancel();
     controller.add(5000); // Как-бы фиксируем
 
     await _stopwatchRepository.updateMeasureAsync(state.measure.toEntity());
-    await _stopwatchRepository.updateMeasureSession(lastSession.toEntity());
+
+    if (lastSession != null) {
+      await _stopwatchRepository.updateMeasureSession(lastSession.toEntity());
+    }
+
 
     //await Future.delayed(Duration(seconds: 2));
 

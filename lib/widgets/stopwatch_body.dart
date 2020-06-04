@@ -72,9 +72,9 @@ class StopwatchBody extends StatelessWidget {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: items.length,
+              itemCount: state.measure.laps.length,
               itemBuilder: (BuildContext context, int index) {
-                final lap = items[index];
+                final lap = state.measure.laps[index];
 
                 return ListTile(
                     leading: SizedBox(

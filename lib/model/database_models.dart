@@ -6,6 +6,8 @@ import 'package:moor/moor.dart';
 import 'package:moor_ffi/moor_ffi.dart';
 import 'package:path_provider/path_provider.dart';
 
+//flutter packages pub run build_runner build
+
 // assuming that your file is called filename.dart. This will give an error at first,
 // but it's needed for moor to know about the generated code
 part 'database_models.g.dart';
@@ -16,7 +18,7 @@ class Laps extends Table {
   IntColumn get difference => integer()();
   IntColumn get order => integer()();
   IntColumn get overall => integer()();
-  TextColumn get comment => text()();
+  TextColumn get comment => text().nullable()();
 }
 
 class MeasureSessions extends Table {
