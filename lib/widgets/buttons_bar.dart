@@ -53,8 +53,8 @@ class ButtonsBar extends StatelessWidget {
               // https://api.flutter.dev/flutter/material/IconButton-class.html
               // Так же можно обернуть в InkWell
 
-              IconButton(
-                icon: Icon(Icons.ac_unit),
+              MenuButton(
+                pic: Icons.ac_unit,
                 color: Colors.red,
                 tooltip: 'View database',
                 onPressed: () {
@@ -63,8 +63,8 @@ class ButtonsBar extends StatelessWidget {
                 },
               ),
 
-              IconButton(
-                icon: Icon(Icons.ac_unit),
+              MenuButton(
+                pic: Icons.ac_unit,
                 color: Colors.blue,
                 tooltip: 'Ready state',
                 onPressed: () async {
@@ -105,16 +105,16 @@ class ButtonsBar extends StatelessWidget {
                 },
               ),
 
-              IconButton(
-                icon: Icon(Icons.refresh),
+              MenuButton(
+                pic: Icons.refresh,
                 tooltip: 'Сброс',
                 onPressed: () {
                   BlocProvider.of<MeasureBloc>(context).add(MeasureFinishedEvent());
                 },
               ),
 
-              IconButton(
-                icon: Icon(Icons.list),
+              MenuButton(
+                pic: Icons.list,
                 tooltip: 'История',
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
@@ -123,8 +123,8 @@ class ButtonsBar extends StatelessWidget {
                 },
               ),
 
-              IconButton(
-                icon: Icon(Icons.settings),
+              MenuButton(
+                pic: Icons.settings,
                 tooltip: 'Settings',
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
@@ -171,3 +171,54 @@ class ButtonsBar extends StatelessWidget {
     );
   }
 }
+
+class MenuButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final IconData pic;
+  final Color color;
+  final String tooltip;
+
+  const MenuButton({
+    Key key, this.onPressed, this.pic, this.color, this.tooltip,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal : 6.0),
+      child: IconButton(
+        icon: Icon(pic),
+        color: color,
+        tooltip: tooltip,
+        onPressed: onPressed,
+      ),
+    );
+  }
+}
+
+/*
+class MenuButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final IconData pic;
+
+  const MenuButton({
+    Key key, this.onPressed, this.pic,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal : 8.0),
+      child: IconButton(
+        icon: Icon(Icons.ac_unit),
+        color: Colors.red,
+        tooltip: 'View database',
+        onPressed: () {
+          final db = MyDatabase(); //This should be a singleton
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => MoorDbViewer(db)));
+        },
+      ),
+    );
+  }
+}
+ */
