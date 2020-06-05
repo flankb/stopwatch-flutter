@@ -41,15 +41,13 @@ class _StopwatchItemState extends State<StopwatchItem> {
             }))
           }
       },
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-        child: Container(
-            color: isSelected ? Colors.deepOrange : Colors.transparent,
-            child: Text(
-              widget.entity.comment ?? "Нет комментария",
-              style: TextStyle(fontSize: 18),
-            )),
-      ),
+      child: Container(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+          color: isSelected ? Colors.deepOrange : Colors.transparent,
+          child: Text(
+            widget.entity.comment ?? "Нет комментария",
+            style: TextStyle(fontSize: 18),
+          )),
     );
   }
 }
