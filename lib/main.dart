@@ -312,8 +312,8 @@ class _MyTabPageState extends State<MyTabPageStateful>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     debugPrint("AppLifecycleState " + state.toString());
-    if (state == AppLifecycleState.inactive ) {
-
+    if (state == AppLifecycleState.inactive) {
+      // TODO Сохранить сущности в БД
     }
   }
 
