@@ -28,8 +28,7 @@ class _StopwatchItemState extends State<StopwatchItem> {
             widget.selectedEvent(isSelected);
         })
 
-        /*
-        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+        /* Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
           return EntityEditPage(entityType: widget.entity.runtimeType, entityId: widget.entity.id);
         }))*/
       },

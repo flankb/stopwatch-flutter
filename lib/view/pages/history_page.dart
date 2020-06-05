@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -18,6 +20,13 @@ class HistoryPage extends StatelessWidget {
   final int entityId;
   StorageBloc _storageBloc;
 
+  StreamController _selectedItemsStreamController;
+  StreamController _isSelectionConroller;
+
+  int _selectedItems = 0;
+
+  //Stream _electedItemsStream = Stream();
+
   // Передать сюда ValueKey
   HistoryPage({Key key, this.pageType, this.entityId}) : super(key: key);
 
@@ -25,6 +34,9 @@ class HistoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     List data = [];
     List<int> selectedIndexes;
+
+    _selectedItemsStreamController = StreamController<int>();
+    _isSelectionConroller = StreamController<bool>();
 
     _storageBloc = StorageBloc(StopwatchRepository(MyDatabase()));
     _storageBloc.add(OpenStorageEvent(pageType, measureId: entityId));
@@ -45,8 +57,31 @@ class HistoryPage extends StatelessWidget {
         return _storageBloc;
       },
       child: Scaffold(
+        // Вариант:
+        //https://stackoverflow.com/questions/53733548/dynamic-appbar-of-flutter
         appBar: AppBar(
-          title: Text("История измерений"),
+          title: StreamBuilder<int>(
+              stream: _selectedItemsStreamController.stream,
+              initialData: 0,
+              builder: (context, snapshot) {
+                return snapshot.data == 0 ? Text("История измерений") : Text(snapshot.data.toString());
+              }),
+          actions: <Widget>[],
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              // Если Выделенных элементов > 1, то снять выделение
+              if(_selectedItems > 1){
+                _isSelectionConroller.add(true);
+              }
+              else{
+                Navigator.pop(context);
+              }
+
+
+
+              },
+          ),
         ),
         body: BlocBuilder<StorageBloc, StorageState>(
           builder: (BuildContext context, state) {
@@ -58,20 +93,30 @@ class HistoryPage extends StatelessWidget {
               return Stack(children: [
                 Container(
                   // TODO Реализовать Multiselect
-                  child: ListView.builder(
-                    itemCount: availState.allEntities.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      BaseStopwatchEntity entity = availState.allEntities[index];
-                      final key = PageStorageKey<String>("entity_$index");
+                  child: StreamBuilder<bool>(
+                    stream: _isSelectionConroller.stream,
+                    initialData: false,
+                    builder: (context, snapshot) {
+                      debugPrint("StreamBuilder snapshot ${snapshot.toString()}");
 
-                      return StopwatchItem(
-                        key: key,
-                        entity: entity,
-                        selectedEvent: (b) => {
-                          // Обновить менюшку...
+                      return ListView.builder(
+                        itemCount: availState.allEntities.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          BaseStopwatchEntity entity = availState.allEntities[index];
+                          final key = PageStorageKey<String>("entity_$index");
+
+                          return StopwatchItem(
+                            key: key,
+                            entity: entity,
+                            selectedEvent: (b) {
+                              // Обновить менюшку...
+                              _selectedItems += b ? 1 : -1;
+                              _selectedItemsStreamController.add(_selectedItems);
+                            },
+                          );
                         },
                       );
-                    },
+                    }
                   ),
                 ),
                 Align(
