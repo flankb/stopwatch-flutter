@@ -108,6 +108,9 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       // Сбросить счётчик времени круга
       state.measure.elapsedLap = 0;
 
+      final dateNow = DateTime.now();
+      state.measure.lastRestartedLap = dateNow;
+
       final lapProps = state.measure.getCurrentLapDiffAndOverall(DateTime.now());
 
       LapViewModel newLap = LapViewModel();
@@ -135,7 +138,8 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       yield MeasureReadyState(MeasureViewModel());
     }
     else {
-      throw Exception("Wrong state!");
+      yield MeasureReadyState(MeasureViewModel());
+      //throw Exception("Wrong state!");
     }
   }
 
@@ -234,14 +238,18 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       lastSession.finished = dateNow;
     }
 
-    debugPrint("LastUnfinishedSession: " + lastSession.toString());
+    controller.add(-1); // Как-бы фиксируем //TODO Костыль
+
+    debugPrint("LastUnfinishedSession (updated): " + lastSession.toString());
 
     // Вычислить сумму всех законченных отрезочков
     state.measure.elapsed = state.measure.getSumOfElapsed();
     state.measure.elapsedLap = state.measure.getCurrentLapDiffAndOverall(dateNow)[0]; // TODO Ошибка при Finished
 
+    debugPrint("state.measure after finish: " + state.measure.toString());
+
     //_tickerSubscription?.cancel();
-    controller.add(5000); // Как-бы фиксируем
+
 
     await _stopwatchRepository.updateMeasureAsync(state.measure.toEntity());
 

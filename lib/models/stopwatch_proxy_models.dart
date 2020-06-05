@@ -104,7 +104,7 @@ class MeasureViewModel extends BaseStopwatchEntity {
   DateTime lastRestartedOverall;
 
   /// Вспомогательное свойство для динамического расчета истекшего времени круга
-  //DateTime lastRestartedLap;
+  DateTime lastRestartedLap;
 
   MeasureViewModel({int id,
     String comment,
@@ -114,6 +114,7 @@ class MeasureViewModel extends BaseStopwatchEntity {
     this.status = StopwatchStatus.Ready,
     this.dateCreated}) : super(id: id, comment : comment){
     lastRestartedOverall = DateTime.now();
+    lastRestartedLap = DateTime.now();
     laps = List<LapViewModel>();
     sessions = List<MeasureSessionViewModel>();
   }

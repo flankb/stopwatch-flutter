@@ -35,12 +35,17 @@ class StopwatchBody extends StatelessWidget {
                 stream: measureBloc.tickStream,
 
                 //date2.difference(birthday).inDays;
+               builder: (context, snapshot) {
+                  final delta1 = snapshot.data != -1
+                    ? DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds
+                    : 0; // TODO Костыль!!!!! Переделать на регулярное обновление значений elapsed!
 
+                  final delta2 = snapshot.data != -1
+                      ? DateTime.now().difference(state.measure.lastRestartedLap).inMilliseconds
+                      : 0; // TODO Костыль!!!!! Переделать на регулярное обновление значений elapsed!
 
-                builder: (context, snapshot) {
-                  final delta = DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds;
-                  final overallDifference = state.measure.elapsed + delta;
-                  final lapDifference = state.measure.elapsedLap + delta;
+                  final overallDifference = state.measure.elapsed + delta1;
+                  final lapDifference = state.measure.elapsedLap + delta2; // TODO Если elapsedLap и elapsed обновлены, здесь возникают неправильные значения
 
                   final d1 = Duration(milliseconds: overallDifference);
                   final d2 = Duration(milliseconds: lapDifference);
