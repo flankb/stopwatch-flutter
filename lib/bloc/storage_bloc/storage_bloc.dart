@@ -18,6 +18,7 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
   Stream<StorageState> mapEventToState(
     StorageEvent event,
   ) async* {
+    debugPrint("Current state ${state.toString()} Bloc event: ${event.toString()}");
     // Для каждого события что-то делаем и возвращаем состояние
     if (event is OpenStorageEvent) {
       //  Данное событие должно срабатывать только один раз при загрузке списка

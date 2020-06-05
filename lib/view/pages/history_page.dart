@@ -1,9 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:learnwords/bloc/storage_bloc/bloc.dart';
 import 'package:learnwords/fake/fake_data_fabric.dart';
+import 'package:learnwords/model/database_models.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
+import 'package:learnwords/resources/stopwatch_db_repository.dart';
 import 'package:learnwords/view/dialogs/filter_dialog.dart';
+import 'package:learnwords/widgets/circular.dart';
 import 'package:learnwords/widgets/stopwatch_item_widget.dart';
 
 import 'entity_edit_page.dart';
@@ -11,14 +16,18 @@ import 'entity_edit_page.dart';
 class HistoryPage extends StatelessWidget {
   final Type pageType;
   final int entityId;
+  StorageBloc _storageBloc;
 
   // Передать сюда ValueKey
-  const HistoryPage({Key key, this.pageType, this.entityId}) : super(key: key);
+  HistoryPage({Key key, this.pageType, this.entityId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     List data = [];
     List<int> selectedIndexes;
+
+    _storageBloc = StorageBloc(StopwatchRepository(MyDatabase()));
+    _storageBloc.add(OpenStorageEvent(pageType, measureId: entityId));
 
     if (pageType == MeasureViewModel) {
       data = FakeDataFabric.measuresHistory();
@@ -28,60 +37,82 @@ class HistoryPage extends StatelessWidget {
 
     // Множественное выделение:
     // https://medium.com/flutterdevs/selecting-multiple-item-in-list-in-flutter-811a3049c56f
-
     // В данной статье интересный подход, где каждый элемент является Stateful виджетом
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("История измерений"),
-      ),
-      body: Stack(children: [
-        Container(
-          // TODO Реализовать Multiselect
-          child: ListView.builder(
-            itemCount: data.length,
-            itemBuilder: (BuildContext context, int index) {
-              BaseStopwatchEntity entity = data[index];
-              final key = PageStorageKey<String>("entity_$index");
-
-              return StopwatchItem(key : key, entity: entity, selectedEvent: (b) => { },);
-            },
-          ),
+    // Статья про эффективное использование BLoC
+    // https://medium.com/flutterpub/effective-bloc-pattern-45c36d76d5fe
+    return BlocProvider(
+      create: (BuildContext context) {
+        return _storageBloc;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("История измерений"),
         ),
-        Align(
-            alignment: Alignment.bottomCenter,
+        body: BlocBuilder<StorageBloc, StorageState>(
+          builder: (BuildContext context, state) {
+            if (!(state is AvailableListState)) {
+              return CenterCircularWidget();
+            } else {
+              final availState = state as AvailableListState;
 
-            child: SizedBox(
-              width: 150,
-              child: RawMaterialButton(
-                onPressed: () async {
-                  final result = await showDialog(context: context, builder: (context) => FilterDialog());
-                  // Для получения результата: Navigator.pop(context, _controller.text);
-                },
-                child: Padding(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Icon(Icons.filter_list, color: Colors.white,),
-                      SizedBox(
-                        width: 12,
-                      ),
-                      Text(
-                        "Фильтр",
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ],
+              return Stack(children: [
+                Container(
+                  // TODO Реализовать Multiselect
+                  child: ListView.builder(
+                    itemCount: availState.allEntities.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      BaseStopwatchEntity entity = availState.allEntities[index];
+                      final key = PageStorageKey<String>("entity_$index");
+
+                      return StopwatchItem(
+                        key: key,
+                        entity: entity,
+                        selectedEvent: (b) => {
+                          // Обновить менюшку...
+                        },
+                      );
+                    },
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 4.0),
                 ),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-                elevation: 2.0,
-                fillColor: Theme.of(context).primaryColor,
-                padding: const EdgeInsets.all(5.0),
-              ),
-            )
-        )
-      ]),
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: SizedBox(
+                      width: 150,
+                      child: RawMaterialButton(
+                        onPressed: () async {
+                          final result = await showDialog(context: context, builder: (context) => FilterDialog());
+                          // Для получения результата: Navigator.pop(context, _controller.text);
+                        },
+                        child: Padding(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                Icons.filter_list,
+                                color: Colors.white,
+                              ),
+                              SizedBox(
+                                width: 12,
+                              ),
+                              Text(
+                                "Фильтр",
+                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 4.0),
+                        ),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                        elevation: 2.0,
+                        fillColor: Theme.of(context).primaryColor,
+                        padding: const EdgeInsets.all(5.0),
+                      ),
+                    ))
+              ]);
+            }
+          },
+        ),
+      ),
     );
   }
 }

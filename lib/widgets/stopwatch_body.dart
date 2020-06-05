@@ -36,7 +36,7 @@ class StopwatchBody extends StatelessWidget {
 
                 //date2.difference(birthday).inDays;
                builder: (context, snapshot) {
-                  final delta1 = snapshot.data != -1
+                  /*final delta1 = snapshot.data != -1
                     ? DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds
                     : 0; // TODO Костыль!!!!! Переделать на регулярное обновление значений elapsed!
 
@@ -46,9 +46,12 @@ class StopwatchBody extends StatelessWidget {
 
                   final overallDifference = state.measure.elapsed + delta1;
                   final lapDifference = state.measure.elapsedLap + delta2; // TODO Если elapsedLap и elapsed обновлены, здесь возникают неправильные значения
+                   */
 
-                  final d1 = Duration(milliseconds: overallDifference);
-                  final d2 = Duration(milliseconds: lapDifference);
+
+
+                  final d1 = Duration(milliseconds: state.measure.elapsed + 33 * snapshot.data);
+                  final d2 = Duration(milliseconds: state.measure.elapsedLap + 33 * snapshot.data); // С кругом не работает, потому что Ticker не сбрасывается
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,6 +68,7 @@ class StopwatchBody extends StatelessWidget {
                             style: TextStyle(fontSize: 30),
                           ),
                           Text(
+                            //"",
                             TimeDisplayer.formatMills(d2),
                             //snapshot.data.toString(),
                             /*measureBloc.state.measure.elapsedTime()[1],*/

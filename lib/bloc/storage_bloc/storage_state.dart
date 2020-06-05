@@ -12,7 +12,7 @@ class InitialStorageState extends StorageState {
 
 class LoadingStorageState extends InitialStorageState { }
 
-abstract class AvailableListState {
+abstract class AvailableListState extends StorageState {
    final List<BaseStopwatchEntity> allEntities;
 
   AvailableListState(this.allEntities);

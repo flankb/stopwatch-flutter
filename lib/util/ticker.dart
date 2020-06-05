@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 class Ticker {
   Stream<int> tick({int ticks}) {
     return Stream.periodic(Duration(milliseconds: 33), (x) => ticks + x).take(ticks); // TODO Разобраться как работает!!!
@@ -14,6 +16,13 @@ class Ticker2 {
 class Ticker3 {
   Stream<int> tick() {
     return Stream.periodic(Duration(milliseconds: 33), (x) => x);
+  }
+}
+
+class Ticker4 {
+  Timer tick() {
+    return Timer.periodic(Duration(milliseconds: 33), (timer) {  });
+    //return Timer.periodic(Duration(milliseconds: 33), (x) => x); //TODO можно Timer.periodic
   }
 }
 

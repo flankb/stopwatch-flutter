@@ -11,8 +11,6 @@ abstract class MeasureState extends Equatable {
   List<Object> get props => [measure];
 }
 
-
-
 class MeasureReadyState extends MeasureState {
   MeasureReadyState(MeasureViewModel measure) : super(measure);
 }

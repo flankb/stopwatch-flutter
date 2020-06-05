@@ -238,7 +238,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       lastSession.finished = dateNow;
     }
 
-    controller.add(-1); // Как-бы фиксируем //TODO Костыль
+    controller.add(0); // Как-бы фиксируем //TODO Костыль
 
     debugPrint("LastUnfinishedSession (updated): " + lastSession.toString());
 

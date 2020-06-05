@@ -46,7 +46,7 @@ class _StopwatchItemState extends State<StopwatchItem> {
         child: Container(
             color: isSelected ? Colors.deepOrange : Colors.transparent,
             child: Text(
-              widget.entity.comment,
+              widget.entity.comment ?? "Нет комментария",
               style: TextStyle(fontSize: 18),
             )),
       ),

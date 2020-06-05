@@ -6,7 +6,7 @@ class Application {
   static Application _instance;
 
   Application get current {
-    if(_instance == null){
+    if (_instance == null) {
       _instance = Application._privateCons();
     }
 

@@ -17,6 +17,8 @@ class MeasureStartedEvent extends MeasureBaseEvent {
   MeasureStartedEvent({this.resume = false});
 }
 
+class MeasureFixSnapshotEvent extends MeasureBaseEvent { }
+
 class MeasurePausedEvent extends MeasureBaseEvent { }
 
 class MeasureFinishedEvent extends MeasureBaseEvent { }

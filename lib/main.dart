@@ -226,8 +226,9 @@ class _MyTabPageState extends State<MyTabPageStateful>
   }
 
   @override
-  void dispose() {
+  void dispose() async {
     WidgetsBinding.instance.removeObserver(this);
+    await measureBloc.close();
     super.dispose();
   }
 
