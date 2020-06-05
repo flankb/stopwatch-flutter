@@ -47,7 +47,7 @@ class ButtonsBar extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               // Кнопка с подсказкой внизу:
               // https://api.flutter.dev/flutter/material/IconButton-class.html
