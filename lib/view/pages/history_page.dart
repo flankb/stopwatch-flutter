@@ -21,9 +21,10 @@ class HistoryPage extends StatelessWidget {
   StorageBloc _storageBloc;
 
   StreamController _selectedItemsStreamController;
-  StreamController _isSelectionConroller;
+  //StreamController _isSelectionConroller;
+  List<BaseStopwatchEntity> _selectedEntities = List<BaseStopwatchEntity>();
 
-  int _selectedItems = 0;
+  //int _selectedItems = 0;
 
   //Stream _electedItemsStream = Stream();
 
@@ -32,11 +33,13 @@ class HistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List data = [];
-    List<int> selectedIndexes;
+    debugPrint("buildState HistoryPage");
 
-    _selectedItemsStreamController = StreamController<int>();
-    _isSelectionConroller = StreamController<bool>();
+    List data = [];
+
+
+    _selectedItemsStreamController = StreamController<int>.broadcast(); // StreamController<bool>.broadcast();
+    //_isSelectionConroller = StreamController<bool>();
 
     _storageBloc = StorageBloc(StopwatchRepository(MyDatabase()));
     _storageBloc.add(OpenStorageEvent(pageType, measureId: entityId));
@@ -71,16 +74,15 @@ class HistoryPage extends StatelessWidget {
             icon: Icon(Icons.arrow_back),
             onPressed: () {
               // Если Выделенных элементов > 1, то снять выделение
-              if(_selectedItems > 1){
-                _isSelectionConroller.add(true);
+              if (_selectedEntities.length >= 1) {
+                //_isSelectionConroller.add(true);
+                _selectedItemsStreamController.add(0);
+                _selectedEntities.clear();
               }
-              else{
+              else {
                 Navigator.pop(context);
               }
-
-
-
-              },
+          },
           ),
         ),
         body: BlocBuilder<StorageBloc, StorageState>(
@@ -93,13 +95,7 @@ class HistoryPage extends StatelessWidget {
               return Stack(children: [
                 Container(
                   // TODO Реализовать Multiselect
-                  child: StreamBuilder<bool>(
-                    stream: _isSelectionConroller.stream,
-                    initialData: false,
-                    builder: (context, snapshot) {
-                      debugPrint("StreamBuilder snapshot ${snapshot.toString()}");
-
-                      return ListView.builder(
+                  child:  ListView.builder(
                         itemCount: availState.allEntities.length,
                         itemBuilder: (BuildContext context, int index) {
                           BaseStopwatchEntity entity = availState.allEntities[index];
@@ -108,16 +104,28 @@ class HistoryPage extends StatelessWidget {
                           return StopwatchItem(
                             key: key,
                             entity: entity,
+                            selectionListController: _selectedItemsStreamController,
                             selectedEvent: (b) {
                               // Обновить менюшку...
-                              _selectedItems += b ? 1 : -1;
-                              _selectedItemsStreamController.add(_selectedItems);
+
+
+                              if (b.item2) {
+                                debugPrint("_selectedEntities add");
+                                _selectedEntities.add(b.item1);
+                              }
+                              else {
+                                debugPrint("_selectedEntities remove");
+                                _selectedEntities.remove(b.item1);
+                              }
+
+                              _selectedItemsStreamController.add(_selectedEntities.length);
+                              debugPrint("_selectedEntities.length ${_selectedEntities.length}");
+
+                              // Добаввить или удалить из SelectedItems
                             },
                           );
                         },
-                      );
-                    }
-                  ),
+                      )
                 ),
                 Align(
                     alignment: Alignment.bottomCenter,
