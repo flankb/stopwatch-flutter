@@ -17,53 +17,6 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
     //_database = MyDatabase();
   }
 
-  /*dispose() {
-    _database.close();
-  }
-
-  Future<int> addNewMeasureSession(MeasureSession measureSession) {
-    return _database.addNewMeasureSession(measureSession);
-  }
-
-  Future<List<MeasureSession>> getMeasureSessions(int measureId) {
-    return _database.getMeasureSessions(measureId);
-  }
-
-  Future<List<Measure>> getMeasuresByStatusAsync(String status) {
-    return _database.getMeasuresByStatusAsync(status);
-  }
-
-  Future<int> createNewMeasureAsync() {
-    //final u =  _database.measures;
-    return _database.createNewMeasureAsync();
-  }
-
-  Future<int> addNewLapAsync(Lap lap) {
-    return _database.addNewLapAsync(lap);
-  }
-
-  Future updateMeasureAsync(Measure measure) {
-    return _database.updateMeasureAsync(measure);
-  }
-
-  Future updateLapAsync(Lap lap) {
-    return _database.updateLapAsync(lap);
-  }
-
-  Future<List<Lap>> getLapsByMeasureAsync(int measureId) {
-    return _database.getLapsByMeasureAsync(measureId);
-  }
-
-  @override
-  Future<bool> updateMeasureSession(MeasureSession measureSession) {
-    return _database.updateMeasureSessionAsync(measureSession);
-  }
-
-  @override
-  Future<List<Measure>> getMeasuresByIdAsync(int id) {
-    return _database.getMeasuresByIdsync(id);
-  }*/
-
   Future<List<Measure>> getMeasuresByStatusAsync(String status) {
     return (select(measures)..where((m) => m.status.equals(status))).get();
   }
@@ -93,11 +46,6 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
   Future<List<MeasureSession>> getMeasureSessions(int measureId) {
     return (select(measureSessions)..where((m) => m.id.equals(measureId))).get();
   }
-
-  /*
-  Future<int> addNewMeasureSession(Table table){ // TODO Что-то придумать, чтобы избежать дублирования методов в разных слоях
-    final t = select(table).get();
-  }*/
 
   Future updateMeasureAsync(Measure measure) {
     //into(measures).insert(measure).
@@ -139,17 +87,4 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
     await delete(tags).go();
     await delete(measures).go();
   }
-
-  /*@override
-  Future<List<Measure>> getMeasuresByIdAsync(int id) {
-    // TODO: implement getMeasuresByIdAsync
-    throw UnimplementedError();
-  }*/
-
-  /*@override
-  Future<bool> updateMeasureSession(MeasureSession measureSession) {
-    // TODO: implement updateMeasureSession
-    throw UnimplementedError();
-  }*/
-
 }
