@@ -19,8 +19,6 @@ class StopwatchBody extends StatelessWidget {
   Widget build(BuildContext context) {
     List<LapViewModel> items = FakeDataFabric.mainPageLaps();
     //var measureBloc = BlocProvider.of<MeasureBloc>(context);
-
-
     return BlocBuilder<MeasureBloc, MeasureState>(builder: (BuildContext context, MeasureState state) {
       //state.measure.lastRestartedOverall = DateTime.now();
 

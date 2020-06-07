@@ -20,7 +20,7 @@ class StopwatchItem extends StatefulWidget {
   }
 }
 
-class _StopwatchItemState extends State<StopwatchItem> {
+class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveClientMixin {
   bool isSelected = false;
 
   @override
@@ -29,6 +29,8 @@ class _StopwatchItemState extends State<StopwatchItem> {
     _init();
 
     debugPrint("initState ${widget.key}");
+    // TODO initState заново вызывается при прокрутке, нужно где-то хранить состояние выделенных элементов (Статический кэш)??
+    // TODO С wantKeepAlive = true кэш не нужен
   }
 
   @override
@@ -79,4 +81,8 @@ class _StopwatchItemState extends State<StopwatchItem> {
           )),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
