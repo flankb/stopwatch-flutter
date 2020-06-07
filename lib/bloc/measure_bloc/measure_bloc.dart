@@ -77,6 +77,9 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       }
 
       final measure = MeasureViewModel.fromEntity(combine.single);
+
+      debugPrint( "Restored sessions by Id ${measure.id}: ${(await _stopwatchRepository.getMeasureSessions(measure.id)).length}");
+
       final sessions = (await _stopwatchRepository.getMeasureSessions(measure.id))
                     .map((session) => MeasureSessionViewModel.fromEntity(session));
 
@@ -87,15 +90,23 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       measure.sessions.addAll(sessions);
 
       debugPrint("Laps added: ${measure.laps.length}");
+      measure.laps.forEach((element) {debugPrint(element.toString());});
       debugPrint("Sessions added: ${measure.sessions.length}");
-
+      measure.sessions.forEach((element) {debugPrint(element.toString());});
       debugPrint("Restored measure: ${measure.toString()}");
 
       if (measure.status == StopwatchStatus.Started) {  // Если есть в статусе Запущено, то ReadyState, а затем в add(startEvent)
         yield MeasureReadyState(measure);
         add(MeasureStartedEvent(resume : true));
       } else if (measure.status == StopwatchStatus.Paused) {
-        yield MeasurePausedState(measure);// Если есть в статусе Пауза, то PausedState
+
+        debugPrint("In Opened before paused: ${measure}");
+
+        _updateElapseds(measure, DateTime.now()); //Ticker здесь не инициализирован!!!!
+        debugPrint("Hash code 1: ${measure.hashCode}");
+        controller.add(-1);
+
+        yield MeasurePausedState(measure); // Если есть в статусе Пауза, то PausedState
       }
     }
   }
@@ -128,7 +139,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       state.measure.laps.add(newLap);
       newLap.id = await _stopwatchRepository.addNewLapAsync(newLap.toEntity());
 
-      _updateElapseds(dateNow);
+      _updateElapseds(state.measure, dateNow);
 
       debugPrint("Before yield MeasureStartedState(state.measure);");
       yield MeasureStartedState(state.measure);
@@ -171,7 +182,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
         state.measure.dateCreated = nowDate;
       }
 
-      _updateElapseds(nowDate);
+      _updateElapseds(state.measure, nowDate);
 
       var targetMeasure = state.measure;
 
@@ -197,10 +208,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
         session.id = await _stopwatchRepository.addNewMeasureSession(session.toEntity());
       }
 
-      _tickerSubscription?.cancel();
-      _tickerSubscription = _ticker.tick().listen((event) {
-        controller.add(event);
-      });
+      _startTicker();
 
       // Обновить статус измерения в БД, тогда не нужно будет делать событие снэпшота
       await _stopwatchRepository.updateMeasureAsync(targetMeasure.toEntity());
@@ -212,12 +220,21 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     }
   }
 
-  void _updateElapseds(DateTime nowDate) {
-    state.measure.lastRestartedOverall = nowDate;
+  void _startTicker() {
+    _tickerSubscription?.cancel();
+    _tickerSubscription = _ticker.tick().listen((event) {
+      controller.add(event);
+    });
+  }
+
+  void _updateElapseds(MeasureViewModel measure, DateTime nowDate) {
+    measure.lastRestartedOverall = nowDate;
     //state.measure.lastRestartedLap = nowDate;
 
-    state.measure.elapsed = state.measure.getSumOfElapsed(nowDate);
-    state.measure.elapsedLap = state.measure.getCurrentLapDiffAndOverall(nowDate)[0];
+    measure.elapsed = measure.getSumOfElapsed(nowDate);
+    measure.elapsedLap = measure.getCurrentLapDiffAndOverall(nowDate)[0];
+
+    debugPrint("After _updateElapseds ${measure.toString()}");
   }
 
   Stream<MeasureState> _fixStopwatch(StopwatchStatus status, {bool finish = false}) async* {
@@ -251,7 +268,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     state.measure.lastRestartedLap = dateNow;
     state.measure.lastRestartedOverall = dateNow;*/
 
-    _updateElapseds(dateNow);
+    _updateElapseds(state.measure, dateNow);
 
     debugPrint("state.measure after finish: " + state.measure.toString());
 

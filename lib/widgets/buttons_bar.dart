@@ -66,7 +66,7 @@ class ButtonsBar extends StatelessWidget {
               MenuButton(
                 pic: Icons.ac_unit,
                 color: Colors.blue,
-                tooltip: 'Ready state',
+                tooltip: 'Ready (Open) state',
                 onPressed: () async {
                   final res = await showDialog(context: context, child: new Dialog(
                     child: Column(
@@ -102,6 +102,7 @@ class ButtonsBar extends StatelessWidget {
                   }
 
                   BlocProvider.of<MeasureBloc>(context).add(MeasureOpenedEvent());
+                  //  BlocProvider.of<MeasureBloc>(context).add(MeasureOpenedEvent());
                 },
               ),
 

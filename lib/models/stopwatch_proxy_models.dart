@@ -25,6 +25,14 @@ class LapViewModel extends BaseStopwatchEntity {
     return TimeDisplayer.format2(Duration(milliseconds: overall));
   }
 
+  String differenceMills() {
+    return TimeDisplayer.formatMills(Duration(milliseconds: difference));
+  }
+
+  String overallMills() {
+    return TimeDisplayer.formatMills(Duration(milliseconds: overall));
+  }
+
   LapViewModel({int id, String comment, this.measureId, this.order, this.difference = 0, this.overall = 0}) : super(id: id, comment : comment);
 
   Lap toEntity() {
@@ -114,7 +122,7 @@ class MeasureViewModel extends BaseStopwatchEntity {
     this.elapsedLap = 0,
     this.laps,
     this.status = StopwatchStatus.Ready,
-    this.dateCreated}) : super(id: id, comment : comment){
+    this.dateCreated}) : super(id: id, comment : comment) {
     lastRestartedOverall = DateTime.now();
     //lastRestartedLap = DateTime.now();
     laps = List<LapViewModel>();
@@ -191,6 +199,11 @@ class MeasureViewModel extends BaseStopwatchEntity {
 
   MeasureSessionViewModel getLastUnfinishedSession() {
     sessions.sort((a,b) => a.started.compareTo(b.started));
+
+    if (sessions.where((element) => element.finished == null).length > 1) {
+      throw new Exception("Обнаружено более одной измерительной сессии с открытым окончанием!");
+    }
+
     return sessions.lastWhere((s) => s.finished == null, orElse: () => null);
   }
 

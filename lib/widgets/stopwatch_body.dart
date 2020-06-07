@@ -34,6 +34,11 @@ class StopwatchBody extends StatelessWidget {
 
                 //date2.difference(birthday).inDays;
                 builder: (context, snapshot) {
+                  if(snapshot.data == -1){
+                    debugPrint("Hash code 2: ${state.measure.hashCode}");
+                    debugPrint("StreamBuilder ok! Measure ${state.measure} LastRestarted ${state.measure.lastRestartedOverall}");
+                  }
+
                   final delta1 = DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds;
                   final delta2 =  DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds;
 
@@ -94,7 +99,11 @@ class StopwatchBody extends StatelessWidget {
                       alignment: Alignment.topLeft,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[Text("+${lap.differenceTime()}"), Text(lap.overallTime())],
+                        children: <Widget>
+                        [
+                          Text("+${lap.differenceTime()},${lap.differenceMills()}"),
+                          Text("${lap.overallTime()},${lap.overallMills()}")
+                        ],
                       ),
                     ));
               },

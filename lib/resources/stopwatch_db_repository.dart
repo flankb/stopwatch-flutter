@@ -44,7 +44,7 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
   }
 
   Future<List<MeasureSession>> getMeasureSessions(int measureId) {
-    return (select(measureSessions)..where((m) => m.id.equals(measureId))).get();
+    return (select(measureSessions)..where((m) => m.measureId.equals(measureId))).get();
   }
 
   Future updateMeasureAsync(Measure measure) {
