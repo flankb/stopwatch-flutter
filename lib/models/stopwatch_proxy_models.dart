@@ -104,7 +104,7 @@ class MeasureViewModel extends BaseStopwatchEntity {
   DateTime lastRestartedOverall;
 
   /// Вспомогательное свойство для динамического расчета истекшего времени круга
-  DateTime lastRestartedLap;
+  //DateTime lastRestartedLap;
 
   int checkPointLapTicks = 0;
 
@@ -116,7 +116,7 @@ class MeasureViewModel extends BaseStopwatchEntity {
     this.status = StopwatchStatus.Ready,
     this.dateCreated}) : super(id: id, comment : comment){
     lastRestartedOverall = DateTime.now();
-    lastRestartedLap = DateTime.now();
+    //lastRestartedLap = DateTime.now();
     laps = List<LapViewModel>();
     sessions = List<MeasureSessionViewModel>();
   }
@@ -129,29 +129,37 @@ class MeasureViewModel extends BaseStopwatchEntity {
     return [TimeDisplayer.format(Duration(milliseconds: elapsedLap)), TimeDisplayer.formatMills(Duration(milliseconds: elapsedLap))];
   }
 
-  int getSumOfElapsed() {
+  int getSumOfElapsed(DateTime dateNow) {
     var elapsed = 0;
 
     debugPrint("All Sessions: ");
     sessions.forEach((element) { debugPrint(element.toString()); });
     sessions.where((element) => element.finished != null).forEach((s) => elapsed += s.finished.difference(s.started).inMilliseconds); // TODO При добавлении круга здесь ошибка!
 
-    return elapsed;
+    final lastUnfinishedSession = getLastUnfinishedSession();
+
+    final elapsedAll = lastUnfinishedSession != null
+        ? elapsed + dateNow.difference(lastUnfinishedSession.started).inMilliseconds
+        : elapsed;
+
+    return elapsedAll;
   }
 
   List<int> getCurrentLapDiffAndOverall(DateTime dateNow) {
     // Метод должен работать как при завершенной, так и незавершенной сессии
 
-    final base = getSumOfElapsed();
+    //final base = getSumOfElapsed(dateNow);
 
-    final lastUnfinishedSession = getLastUnfinishedSession();
+    //final lastUnfinishedSession = getLastUnfinishedSession();
     /*if (lastUnfinishedSession == null) {
       throw Exception("Не обнаружена открытая сессия!");
     }*/
 
-    final newOverall = lastUnfinishedSession != null
+    /*final newOverall = lastUnfinishedSession != null
         ? base + dateNow.difference(lastUnfinishedSession.started).inMilliseconds
-        : base;
+        : base;*/
+
+    final newOverall = getSumOfElapsed(dateNow);
 
     // Здесь же можно найти разницу с предыдущим кругом
     final prevLapOverall = laps.any((_) => true) ? laps.last.overall : 0;

@@ -70,7 +70,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
         //-------------
         // Грохнуть лишнее
         //
-        await _stopwatchRepository.deleteAllMeasuresDebug();
+        //await _stopwatchRepository.deleteAllMeasuresDebug();
         //-------------
 
         throw Exception("Не может быть больше одного актуального измерения");
@@ -78,13 +78,18 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
       final measure = MeasureViewModel.fromEntity(combine.single);
       final sessions = (await _stopwatchRepository.getMeasureSessions(measure.id))
-                    .map((_) => MeasureSessionViewModel.fromEntity(_));
+                    .map((session) => MeasureSessionViewModel.fromEntity(session));
 
       final laps = (await _stopwatchRepository.getLapsByMeasureAsync(measure.id))
-                    .map((_) => LapViewModel.fromEntity(_));
+                    .map((lap) => LapViewModel.fromEntity(lap));
 
       measure.laps.addAll(laps);
       measure.sessions.addAll(sessions);
+
+      debugPrint("Laps added: ${measure.laps.length}");
+      debugPrint("Sessions added: ${measure.sessions.length}");
+
+      debugPrint("Restored measure: ${measure.toString()}");
 
       if (measure.status == StopwatchStatus.Started) {  // Если есть в статусе Запущено, то ReadyState, а затем в add(startEvent)
         yield MeasureReadyState(measure);
@@ -105,11 +110,11 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       yield MeasureUpdatingState(state.measure);
 
       // Сбросить счётчик времени круга
-      state.measure.elapsedLap = 0;
+      state.measure.elapsedLap = 0; // TODO Убрать???
       //state.measure.checkPointLapTicks = await controller.stream.last; //Количество тиков прошедших с начала стрима
 
       final dateNow = DateTime.now();
-      state.measure.lastRestartedLap = dateNow;
+      //state.measure.lastRestartedLap = dateNow;
 
       final lapProps = state.measure.getCurrentLapDiffAndOverall(DateTime.now());
 
@@ -122,6 +127,8 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
       state.measure.laps.add(newLap);
       newLap.id = await _stopwatchRepository.addNewLapAsync(newLap.toEntity());
+
+      _updateElapseds(dateNow);
 
       debugPrint("Before yield MeasureStartedState(state.measure);");
       yield MeasureStartedState(state.measure);
@@ -164,8 +171,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
         state.measure.dateCreated = nowDate;
       }
 
-      state.measure.lastRestartedOverall = nowDate;
-      state.measure.lastRestartedLap = nowDate;
+      _updateElapseds(nowDate);
 
       var targetMeasure = state.measure;
 
@@ -206,6 +212,14 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     }
   }
 
+  void _updateElapseds(DateTime nowDate) {
+    state.measure.lastRestartedOverall = nowDate;
+    //state.measure.lastRestartedLap = nowDate;
+
+    state.measure.elapsed = state.measure.getSumOfElapsed(nowDate);
+    state.measure.elapsedLap = state.measure.getCurrentLapDiffAndOverall(nowDate)[0];
+  }
+
   Stream<MeasureState> _fixStopwatch(StopwatchStatus status, {bool finish = false}) async* {
     debugPrint("_fixStopwatch before");
     yield MeasureUpdatingState(state.measure);
@@ -232,10 +246,12 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     debugPrint("LastUnfinishedSession (updated): " + lastSession.toString());
 
     // Вычислить сумму всех законченных отрезочков
-    state.measure.elapsed = state.measure.getSumOfElapsed();
+    /*state.measure.elapsed = state.measure.getSumOfElapsed(dateNow);
     state.measure.elapsedLap = state.measure.getCurrentLapDiffAndOverall(dateNow)[0]; // TODO Ошибка при Finished
     state.measure.lastRestartedLap = dateNow;
-    state.measure.lastRestartedOverall = dateNow;
+    state.measure.lastRestartedOverall = dateNow;*/
+
+    _updateElapseds(dateNow);
 
     debugPrint("state.measure after finish: " + state.measure.toString());
 

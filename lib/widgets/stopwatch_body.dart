@@ -35,7 +35,7 @@ class StopwatchBody extends StatelessWidget {
                 //date2.difference(birthday).inDays;
                 builder: (context, snapshot) {
                   final delta1 = DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds;
-                  final delta2 =  DateTime.now().difference(state.measure.lastRestartedLap).inMilliseconds;
+                  final delta2 =  DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds;
 
                   final overallDifference = state.measure.elapsed + delta1; // TODO elapsed не сбрасывается
                   final lapDifference = state.measure.elapsedLap + delta2;
