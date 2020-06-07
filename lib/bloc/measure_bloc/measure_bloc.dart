@@ -158,6 +158,9 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
   Stream<MeasureState> _mapStartedToState(MeasureEvent event, {bool resume = false}) async* {
     if (state is MeasureReadyState || state is MeasurePausedState) {
       yield MeasureUpdatingState(state.measure);
+
+      // TODO После рестарта здесь измерение с пустым идентификатором
+
       // Устанавливаем поля в модели, делаем запись в репозитории
       state.measure.status = StopwatchStatus.Started;
       final nowDate = DateTime.now();
@@ -176,8 +179,6 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
       var targetMeasure = state.measure;
 
-      debugPrint("targetMeasure ${targetMeasure.toString()}");
-
       // Если сущности не было, то необходимо создать и получить идентификатор
       if (targetMeasure.id == null) {
         final id = await _stopwatchRepository.createNewMeasureAsync();
@@ -185,8 +186,11 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
         debugPrint("id ${id.toString()} measureId ${measure.id.toString()}");
 
-        targetMeasure = MeasureViewModel.fromEntity(measure);
+        targetMeasure.id = id;
+        //targetMeasure = MeasureViewModel.fromEntity(measure); // TODO Здесь у сущности сброшены все поля, установленные выше!!
       }
+
+      debugPrint("targetMeasure ${targetMeasure.toString()}");
 
       if (!resume) {
 
@@ -212,6 +216,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       });
 
       // Обновить статус измерения в БД TODO тогда не нужно будет делать событие снэпшота
+      await _stopwatchRepository.updateMeasureAsync(targetMeasure.toEntity());
 
       //.tick(ticks: state.measure.elapsed)
       //.listen((duration) => add(TickEvent(duration)));
@@ -263,13 +268,11 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     controller.add(0); // Как-бы фиксируем //TODO Костыль
     //_tickerSubscription?.cancel();
 
-
     await _stopwatchRepository.updateMeasureAsync(state.measure.toEntity());
 
     if (lastSession != null) {
       await _stopwatchRepository.updateMeasureSession(lastSession.toEntity());
     }
-
 
     //await Future.delayed(Duration(seconds: 2));
 
