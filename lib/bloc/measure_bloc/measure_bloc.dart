@@ -105,8 +105,10 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
   Stream<MeasureState> _mapLapAddedToState(LapAddedEvent event) async* {
     if (state is MeasureStartedState) {
       yield MeasureUpdatingState(state.measure);
+
       // Сбросить счётчик времени круга
       state.measure.elapsedLap = 0;
+      //state.measure.checkPointLapTicks = await controller.stream.last; //Количество тиков прошедших с начала стрима
 
       final dateNow = DateTime.now();
       state.measure.lastRestartedLap = dateNow;
@@ -165,6 +167,11 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       }
 
       state.measure.lastRestartedOverall = nowDate;
+      state.measure.lastRestartedLap = nowDate;
+      /*if (state.measure.laps.length == 0) {
+        state.measure.lastRestartedLap = nowDate;
+      }*/
+
       //state.measure.lastRestartedLap = nowDate;
 
       var targetMeasure = state.measure;
@@ -200,7 +207,11 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       }
 
       _tickerSubscription?.cancel();
-      _tickerSubscription = _ticker.tick().listen((event) { controller.add(event);} );
+      _tickerSubscription = _ticker.tick().listen((event) {
+        controller.add(event);
+      });
+
+      // Обновить статус измерения в БД TODO тогда не нужно будет делать событие снэпшота
 
       //.tick(ticks: state.measure.elapsed)
       //.listen((duration) => add(TickEvent(duration)));
@@ -238,16 +249,18 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       lastSession.finished = dateNow;
     }
 
-    controller.add(0); // Как-бы фиксируем //TODO Костыль
+    //controller.add(0); // Как-бы фиксируем //TODO Костыль
 
     debugPrint("LastUnfinishedSession (updated): " + lastSession.toString());
 
     // Вычислить сумму всех законченных отрезочков
     state.measure.elapsed = state.measure.getSumOfElapsed();
     state.measure.elapsedLap = state.measure.getCurrentLapDiffAndOverall(dateNow)[0]; // TODO Ошибка при Finished
-
+    state.measure.lastRestartedLap = dateNow;
+    state.measure.lastRestartedOverall = dateNow;
     debugPrint("state.measure after finish: " + state.measure.toString());
 
+    controller.add(0); // Как-бы фиксируем //TODO Костыль
     //_tickerSubscription?.cancel();
 
 

@@ -35,7 +35,7 @@ class StopwatchBody extends StatelessWidget {
                 stream: measureBloc.tickStream,
 
                 //date2.difference(birthday).inDays;
-               builder: (context, snapshot) {
+                builder: (context, snapshot) {
                   /*final delta1 = snapshot.data != -1
                     ? DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds
                     : 0; // TODO Костыль!!!!! Переделать на регулярное обновление значений elapsed!
@@ -48,10 +48,17 @@ class StopwatchBody extends StatelessWidget {
                   final lapDifference = state.measure.elapsedLap + delta2; // TODO Если elapsedLap и elapsed обновлены, здесь возникают неправильные значения
                    */
 
+                  final delta1 = DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds;
+                  final delta2 =  DateTime.now().difference(state.measure.lastRestartedLap).inMilliseconds;
 
+                  final overallDifference = state.measure.elapsed + delta1; // TODO elapsed не сбрасывается
+                  final lapDifference = state.measure.elapsedLap + delta2;
 
-                  final d1 = Duration(milliseconds: state.measure.elapsed + 33 * snapshot.data);
-                  final d2 = Duration(milliseconds: state.measure.elapsedLap + 33 * snapshot.data); // С кругом не работает, потому что Ticker не сбрасывается
+                  //final d1 = Duration(milliseconds: state.measure.elapsed + 33 * snapshot.data);
+                  //final d2 = Duration(milliseconds: state.measure.elapsedLap + 33 * snapshot.data); // С кругом не работает, потому что Ticker не сбрасывается
+
+                  final d1 = Duration(milliseconds: overallDifference);
+                  final d2 = Duration(milliseconds: lapDifference);
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

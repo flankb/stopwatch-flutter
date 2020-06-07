@@ -106,6 +106,8 @@ class MeasureViewModel extends BaseStopwatchEntity {
   /// Вспомогательное свойство для динамического расчета истекшего времени круга
   DateTime lastRestartedLap;
 
+  int checkPointLapTicks = 0;
+
   MeasureViewModel({int id,
     String comment,
     this.elapsed = 0,
