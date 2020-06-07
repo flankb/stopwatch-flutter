@@ -5,7 +5,10 @@ class TimeDisplayer {
   static format(Duration d) => d.toString().split('.').first.padLeft(8, "0");
 
   // Сотые секунды
-  static formatMills(Duration d) => d.toString().split('.')[1];
+  static formatMills(Duration d) => d.toString().split('.')[1].substring(0,2);
+
+  // Сотые секунды
+  //static formatMills(Duration d) => ((d.inSeconds % 1000) / 1000).toStringAsFixed(2).substring(1,4); // final f = (d % 1000) / 1000;
 
   static formatAll(Duration d) => d.toString();
 
@@ -18,8 +21,6 @@ class TimeDisplayer {
     else {
 
     }*/
-
-
 
     // Duration to string:
     // 48:00:00.000000

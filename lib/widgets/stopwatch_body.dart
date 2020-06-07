@@ -53,12 +53,12 @@ class StopwatchBody extends StatelessWidget {
                         textBaseline: TextBaseline.ideographic,
                         children: <Widget>[
                           Text(
-                            TimeDisplayer.format(d2),
+                            "${TimeDisplayer.format(d2)},",
                             style: TextStyle(fontSize: 30),
                           ),
                           Text(
                             TimeDisplayer.formatMills(d2),
-                            style: TextStyle(fontSize: 16),
+                            style: TextStyle(fontSize: 20),
                           )
                         ],
                       ),
@@ -67,13 +67,12 @@ class StopwatchBody extends StatelessWidget {
                         textBaseline: TextBaseline.ideographic,
                         children: <Widget>[
                           Text(
-                            //snapshot.data.toString(),
-                            TimeDisplayer.format(d1),
+                            "${TimeDisplayer.format(d1)},",
                             style: TextStyle(fontSize: 44),
                           ),
                           Text(
                             TimeDisplayer.formatMills(d1),
-                            style: TextStyle(fontSize: 26),
+                            style: TextStyle(fontSize: 32),
                           )
                         ],
                       )
