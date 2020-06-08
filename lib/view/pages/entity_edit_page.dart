@@ -70,6 +70,8 @@ class EditFormState extends State<EditForm> {
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
+
+
     return Form(
       key: _formKey,
       child: BlocProvider(
@@ -83,6 +85,7 @@ class EditFormState extends State<EditForm> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 TextFormField(
+                  autofocus: true,
                   decoration: InputDecoration(
                       labelText: 'Введите комментарий',
                   ),
