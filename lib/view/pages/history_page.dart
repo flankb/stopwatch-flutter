@@ -69,7 +69,22 @@ class HistoryPage extends StatelessWidget {
               builder: (context, snapshot) {
                 return snapshot.data == 0 ? Text("История измерений") : Text(snapshot.data.toString());
               }),
-          actions: <Widget>[],
+          actions: <Widget>[
+            StreamBuilder<int>(
+              stream: _selectedItemsStreamController.stream,
+              initialData: 0,
+              builder: (context, snapshot) {
+                return Row(
+                  children: <Widget>[
+                    snapshot.data == 1 ? IconButton(icon: Icon(Icons.edit), onPressed: () {
+                    },) : SizedBox(),
+                    snapshot.data >= 1 ? IconButton(icon: Icon(Icons.delete), onPressed: () {
+                    },) : SizedBox()
+                  ],
+                );
+              }
+            )
+          ],
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
