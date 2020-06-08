@@ -84,6 +84,9 @@ class HistoryPage extends StatelessWidget {
                       _unselectItems();
                     },) : SizedBox(),
                     snapshot.data >= 1 ? IconButton(icon: Icon(Icons.delete), onPressed: () {
+                      _storageBloc.add(DeleteStorageEvent(_selectedEntities));
+
+                      //_unselectItems();
                     },) : SizedBox()
                   ],
                 );

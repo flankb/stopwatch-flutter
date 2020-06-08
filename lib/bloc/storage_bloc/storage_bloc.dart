@@ -67,7 +67,15 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
         throw Exception("Wrong state for filtering!");
       }
     } else if (event is DeleteStorageEvent) {
+        if (state is AvailableListState) {
+          var entities = (state as AvailableListState).allEntities;
+          entities = entities.toSet().difference(event.entitiesForDelete.toSet()).toList();
 
+          await stopwatchRepository.deleteMeasures(event.entitiesForDelete.map((e) => e.id).toList());
+          yield AvailableListState(entities, filtered: (state as AvailableListState).filtered);
+        } else {
+          throw Exception("Wrong state!");
+        }
     }
 
     /*

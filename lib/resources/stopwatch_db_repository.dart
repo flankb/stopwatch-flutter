@@ -77,6 +77,20 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
     return (select(laps)..where((l) => l.measureId.equals(measureId))).get();
   }
 
+  Future deleteMeasures(List<int> measureIds) async {
+    final lapsToDelete = (await (select(laps)..where((l) => l.measureId.isIn(measureIds))).get()).map((e) => e.id);
+    final sessionsToDelete = (await (select(measureSessions)..where((m) => m.measureId.isIn(measureIds))).get()).map((e) => e.id);
+
+    return transaction(() async {
+      // Удалить круги
+      await (delete(laps)..where((l) => l.id.isIn(lapsToDelete))).go();
+      // Удалить изм. сессии
+      await (delete(measureSessions)..where((m) => m.id.isIn(sessionsToDelete))).go();
+
+      await (delete(measures)..where((m) => m.id.isIn(measureIds))).go();
+    });
+  }
+
   Future deleteAllMeasuresDebug() {
     return delete(measures).go();
   }
