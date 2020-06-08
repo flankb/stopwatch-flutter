@@ -36,8 +36,6 @@ class HistoryPage extends StatelessWidget {
     debugPrint("buildState HistoryPage");
 
     List data = [];
-
-
     _selectedItemsStreamController = StreamController<int>.broadcast(); // StreamController<bool>.broadcast();
     //_isSelectionConroller = StreamController<bool>();
 

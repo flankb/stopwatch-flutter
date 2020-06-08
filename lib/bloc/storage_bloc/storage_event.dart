@@ -24,6 +24,12 @@ class RequestEditEvent extends StorageEvent {
   RequestEditEvent(this.entity);
 }
 
+class DeleteStorageEvent extends StorageEvent {
+  final List<BaseStopwatchEntity> entitiesForDelete;
+
+  DeleteStorageEvent(this.entitiesForDelete);
+}
+
 class FilterStorageEvent extends StorageEvent {
   final String query;
   final DateTime dateFrom;

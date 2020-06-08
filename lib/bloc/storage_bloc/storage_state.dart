@@ -3,22 +3,31 @@ import 'package:learnwords/models/stopwatch_proxy_models.dart';
 
 abstract class StorageState extends Equatable {
   const StorageState();
-}
 
-class InitialStorageState extends StorageState {
   @override
   List<Object> get props => [];
 }
 
-class LoadingStorageState extends InitialStorageState { }
+/*class InitialStorageState extends StorageState {
+  @override
+  List<Object> get props => [];
+}*/
 
-abstract class AvailableListState extends StorageState {
+class LoadingStorageState extends StorageState { }
+
+class AvailableListState extends StorageState {
    final List<BaseStopwatchEntity> allEntities;
+   final bool filtered;
 
-  AvailableListState(this.allEntities);
+   // Можно здесь же хранить фильтр
+
+   @override
+   List<Object> get props => [allEntities, filtered];
+
+   AvailableListState(this.allEntities, {this.filtered = false});
 }
 
-class ReadyStorageState extends InitialStorageState implements AvailableListState {
+/*class ReadyStorageState extends InitialStorageState implements AvailableListState {
   final List<BaseStopwatchEntity> allEntities;
 
   final BaseStopwatchEntity editableEntity;
@@ -27,9 +36,10 @@ class ReadyStorageState extends InitialStorageState implements AvailableListStat
   List<Object> get props => [allEntities, editableEntity];
 
   ReadyStorageState(this.allEntities, {this.editableEntity});
-}
+}*/
 
-class FilteringState extends InitialStorageState implements AvailableListState {
+/*
+class FilteredState extends InitialStorageState implements AvailableListState {
   final List<BaseStopwatchEntity> allEntities;
   final List<BaseStopwatchEntity> filteredEntities;
 
@@ -38,5 +48,5 @@ class FilteringState extends InitialStorageState implements AvailableListState {
   @override
   List<Object> get props => [allEntities, filteredEntities, editableEntity];
 
-  FilteringState(this.allEntities, this.filteredEntities, {this.editableEntity});
-}
+  FilteredState(this.allEntities, this.filteredEntities, {this.editableEntity});
+}*/

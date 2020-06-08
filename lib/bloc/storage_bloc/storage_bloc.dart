@@ -28,13 +28,15 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
         final measures = await stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished));
         final resultList = measures.map((m) => MeasureViewModel.fromEntity(m)).toList();
 
-        yield ReadyStorageState(resultList);
+        yield AvailableListState(resultList);
       } else if (openStorageEvent.entityType == LapViewModel) {
         final laps = (await stopwatchRepository.getLapsByMeasureAsync(openStorageEvent.measureId)).map((l) => LapViewModel.fromEntity(l)).toList();
 
-        yield ReadyStorageState(laps);
+        yield AvailableListState(laps);
       }
     }
+
+    /*
     if (event is RequestEditEvent) {
       if (state is AvailableListState) {
         final entity = event.entity;
@@ -45,6 +47,8 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
         throw Exception("Wrong state for edit!");
       }
     }
+    */
+
     if (event is FilterStorageEvent) {
       if (state is AvailableListState) {
         final filteredList = event.entityType == MeasureViewModel
@@ -58,16 +62,23 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
                 .toList()
             : (state as AvailableListState).allEntities.where((_) => _.comment.contains(event.query)).toList();
 
-        yield FilteringState((state as AvailableListState).allEntities, filteredList);
+        yield AvailableListState(filteredList, filtered: true);
       } else {
         throw Exception("Wrong state for filtering!");
       }
-    } else if (event is ApplyChangesEvent) {
+    } else if (event is DeleteStorageEvent) {
+
+    }
+
+    /*
+    else if (event is ApplyChangesEvent) {
       if (event.entity is LapViewModel) {
         await stopwatchRepository.updateLapAsync((event.entity as LapViewModel).toEntity());
       } else if (event.entity is MeasureViewModel) {
         await stopwatchRepository.updateMeasureAsync((event.entity as MeasureViewModel).toEntity());
       }
     }
+    */
+
   }
 }
