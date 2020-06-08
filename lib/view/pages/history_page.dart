@@ -74,7 +74,14 @@ class HistoryPage extends StatelessWidget {
               builder: (context, snapshot) {
                 return Row(
                   children: <Widget>[
-                    snapshot.data == 1 ? IconButton(icon: Icon(Icons.edit), onPressed: () {
+                    snapshot.data == 1 ? IconButton(icon: Icon(Icons.edit), onPressed: () async {
+                      final entityToEdit = _selectedEntities.single;
+
+                      await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                        return EntityEditPage(entityType: pageType, entityId: entityToEdit.id, entity: entityToEdit,);
+                      }));
+
+                      _unselectItems();
                     },) : SizedBox(),
                     snapshot.data >= 1 ? IconButton(icon: Icon(Icons.delete), onPressed: () {
                     },) : SizedBox()
@@ -89,8 +96,7 @@ class HistoryPage extends StatelessWidget {
               // Если Выделенных элементов > 1, то снять выделение
               if (_selectedEntities.length >= 1) {
                 //_isSelectionConroller.add(true);
-                _selectedItemsStreamController.add(0);
-                _selectedEntities.clear();
+                _unselectItems();
               }
               else {
                 Navigator.pop(context);
@@ -178,5 +184,10 @@ class HistoryPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _unselectItems() {
+    _selectedItemsStreamController.add(0);
+    _selectedEntities.clear();
   }
 }

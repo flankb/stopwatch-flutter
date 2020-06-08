@@ -19,12 +19,16 @@ class EntityEditPage extends StatelessWidget {
         appBar: AppBar(
           title: Text("Редактирование измерения"),
         ),
-        body: EditForm());
+        body: EditForm(entity: entity,));
   }
 }
 
 // Define a custom Form widget.
 class EditForm extends StatefulWidget {
+  final BaseStopwatchEntity entity;
+
+  const EditForm({Key key, this.entity}) : super(key: key);
+
   @override
   EditFormState createState() {
     return EditFormState();
@@ -42,6 +46,13 @@ class EditFormState extends State<EditForm> {
   final _formKey = GlobalKey<FormState>(); // TODO У формы обязательно должен быть ключ!!!
 
   EntityBloc entityBloc;
+  TextEditingController textController;
+
+  @override
+  void dispose() {
+    super.dispose();
+    entityBloc.dispose();
+  }
 
   @override
   void initState() {
@@ -51,6 +62,9 @@ class EditFormState extends State<EditForm> {
 
   _init() {
     entityBloc = EntityBloc(StopwatchRepository(MyDatabase()));
+    entityBloc.add(OpenEntityEvent(widget.entity));
+
+    textController = new TextEditingController(text: widget.entity.comment);
   }
 
   @override
@@ -69,10 +83,16 @@ class EditFormState extends State<EditForm> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 TextFormField(
+                  decoration: InputDecoration(
+                      labelText: 'Введите комментарий',
+                  ),
+                  //initialValue: snapshot is AvailableEntityState ? snapshot?.entity?.comment : "",
+                  controller: textController,
                   validator: (value) {
                     if (value.isEmpty) {
                       return 'Поле не может быть пустым!';
                     }
+
                     return null;
                   },
                 ),
@@ -85,6 +105,11 @@ class EditFormState extends State<EditForm> {
                       if (_formKey.currentState.validate()) {
                         // If the form is valid, display a Snackbar.
                         //Scaffold.of(context).showSnackBar(SnackBar(content: Text('Обработка данных..')));
+
+                        widget.entity.comment = textController.text;
+                        entityBloc.add(SaveEntityEvent(widget.entity));
+
+                        Navigator.pop(context);
                       }
                     },
                     child: Text('Сохранить'),

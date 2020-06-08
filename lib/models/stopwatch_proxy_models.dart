@@ -208,11 +208,12 @@ class MeasureViewModel extends BaseStopwatchEntity {
   }
 
   Measure toEntity() {
-    return Measure(id: id, status: describeEnum(status), dateCreated: dateCreated, elapsed: elapsed);
+    return Measure(id: id, comment: comment, status: describeEnum(status), dateCreated: dateCreated, elapsed: elapsed);
   }
 
   static MeasureViewModel fromEntity(Measure entity) {
     return MeasureViewModel(id: entity.id,
+        comment: entity.comment,
         status: StopwatchStatus.values.firstWhere((e) => describeEnum(e) == entity.status),
         dateCreated: entity.dateCreated,
         elapsed: entity.elapsed);
@@ -220,6 +221,6 @@ class MeasureViewModel extends BaseStopwatchEntity {
 
   @override
   String toString() {
-    return 'MeasureViewModel{id: $id, elapsed: $elapsed, elapsedLap: $elapsedLap, dateCreated: $dateCreated, status: $status}';
+    return 'MeasureViewModel{id: $id, comment: $comment,  elapsed: $elapsed, elapsedLap: $elapsedLap, dateCreated: $dateCreated, status: $status}';
   }
 }
