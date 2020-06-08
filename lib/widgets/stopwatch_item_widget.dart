@@ -60,13 +60,15 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
   Widget build(BuildContext context) {
     debugPrint("buildState ${widget.key}");
 
-    final elapsed =  (widget.entity is MeasureViewModel)
+    final entityIsMeasure = widget.entity is MeasureViewModel;
+
+    final elapsed =  entityIsMeasure
         ? (widget.entity as MeasureViewModel).elapsed
         : (widget.entity is LapViewModel) ? (widget.entity as LapViewModel).difference : 0;
 
     final elapsedString = TimeDisplayer.formatAllBeautiful(Duration(milliseconds : elapsed));
 
-    final date =  (widget.entity is MeasureViewModel)
+    final date = entityIsMeasure
         ?  (widget.entity as MeasureViewModel).dateCreated : null;
 
     final rand = r.nextInt(4);
@@ -97,11 +99,12 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SizedBox(
+              !entityIsMeasure ? SizedBox(
                 width: 32,
-                child: Text("${num.toString()}. ",
+                child: Text("${(widget.entity as LapViewModel).order.toString()}. ",
                 style: TextStyle(fontSize: 18),),
-              ),
+              )
+              : SizedBox(),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
