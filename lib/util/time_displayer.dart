@@ -12,6 +12,8 @@ class TimeDisplayer {
 
   static formatAll(Duration d) => d.toString();
 
+  static formatAllBeautiful(Duration d) => "${format(d)},${formatMills(d)}";
+
   static format2(Duration d) => d.toString().split('.').first.padLeft(8, "0");
 
   static String toHumanString(int milliseconds) {

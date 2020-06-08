@@ -99,14 +99,14 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
         yield MeasureReadyState(measure);
         add(MeasureStartedEvent(resume : true));
       } else if (measure.status == StopwatchStatus.Paused) {
+        // TODO Повнимательнее с паттерном BLoC, нужно очень четко следить за состоянием
 
-        debugPrint("In Opened before paused: ${measure}");
+        //debugPrint("In Opened before paused: $measure");
 
         _updateElapseds(measure, DateTime.now()); //Ticker здесь не инициализирован!!!!
-        debugPrint("Hash code 1: ${measure.hashCode}");
-        controller.add(-1);
-
+        //debugPrint("Hash code 1: ${measure.hashCode}");
         yield MeasurePausedState(measure); // Если есть в статусе Пауза, то PausedState
+        controller.add(-1);
       }
     }
   }
@@ -134,7 +134,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       newLap.order = state.measure.laps.length + 1;
       newLap.difference = lapProps[0];
       newLap.overall = lapProps[1];
-      newLap.comment = "Temp";
+      //newLap.comment = "Temp";
 
       state.measure.laps.add(newLap);
       newLap.id = await _stopwatchRepository.addNewLapAsync(newLap.toEntity());
@@ -262,14 +262,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
     debugPrint("LastUnfinishedSession (updated): " + lastSession.toString());
 
-    // Вычислить сумму всех законченных отрезочков
-    /*state.measure.elapsed = state.measure.getSumOfElapsed(dateNow);
-    state.measure.elapsedLap = state.measure.getCurrentLapDiffAndOverall(dateNow)[0]; // TODO Ошибка при Finished
-    state.measure.lastRestartedLap = dateNow;
-    state.measure.lastRestartedOverall = dateNow;*/
-
     _updateElapseds(state.measure, dateNow);
-
     debugPrint("state.measure after finish: " + state.measure.toString());
 
     controller.add(0); // Как-бы фиксируем //TODO Костыль

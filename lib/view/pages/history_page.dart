@@ -107,8 +107,6 @@ class HistoryPage extends StatelessWidget {
                             selectionListController: _selectedItemsStreamController,
                             selectedEvent: (b) {
                               // Обновить менюшку...
-
-
                               if (b.item2) {
                                 debugPrint("_selectedEntities add");
                                 _selectedEntities.add(b.item1);

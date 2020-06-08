@@ -1,16 +1,21 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
+import 'package:learnwords/util/time_displayer.dart';
 import 'package:learnwords/view/pages/entity_edit_page.dart';
 import 'package:learnwords/view/pages/history_page.dart';
 import 'package:tuple/tuple.dart';
+import 'package:intl/intl.dart';
 
 class StopwatchItem extends StatefulWidget {
   final BaseStopwatchEntity entity;
   final ValueChanged<Tuple2<BaseStopwatchEntity, bool>> selectedEvent;
   final StreamController<int> selectionListController;
+
+  // Сделать данный класс Generic ?
 
   const StopwatchItem({Key key, this.entity, this.selectedEvent, this.selectionListController}) : super(key: key);
 
@@ -49,9 +54,23 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
     });
   }
 
+  static Random r = Random(42);
+
   @override
   Widget build(BuildContext context) {
     debugPrint("buildState ${widget.key}");
+
+    final elapsed =  (widget.entity is MeasureViewModel)
+        ? (widget.entity as MeasureViewModel).elapsed
+        : (widget.entity is LapViewModel) ? (widget.entity as LapViewModel).difference : 0;
+
+    final elapsedString = TimeDisplayer.formatAllBeautiful(Duration(milliseconds : elapsed));
+
+    final date =  (widget.entity is MeasureViewModel)
+        ?  (widget.entity as MeasureViewModel).dateCreated : null;
+
+    final rand = r.nextInt(4);
+    final num = pow(3, rand);
 
     return InkWell(
       onLongPress: () => {
@@ -75,9 +94,32 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
       child: Container(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           color: isSelected ? Colors.deepOrange : Colors.transparent,
-          child: Text(
-            widget.entity.comment ?? "Нет комментария",
-            style: TextStyle(fontSize: 18),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(
+                width: 32,
+                child: Text("${num.toString()}. ",
+                style: TextStyle(fontSize: 18),),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    widget.entity.comment ?? "Нет комментария",
+                    style: TextStyle(fontSize: 18, color: widget.entity.comment == null ? Colors.black12 : Colors.black),
+                  ),
+                  SizedBox(height: 6),
+                  Text(
+                    elapsedString,
+                      style: TextStyle(fontSize: 18)
+                  ),
+                  SizedBox(height: 3),
+                  date != null ?
+                      Text(DateFormat("dd-MM-yyyy").format(date), style: TextStyle(color: Colors.black54),) : SizedBox()
+                ],
+              ),
+            ],
           )),
     );
   }
