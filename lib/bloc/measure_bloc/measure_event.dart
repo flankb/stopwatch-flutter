@@ -33,21 +33,3 @@ class TickEvent extends MeasureBaseEvent {
   @override
   List<Object> get props => [duration];
 }
-
-/*
-class TodoDeleted extends TodosEvent {
-  final Todo todo;
-
-  const TodoDeleted(this.todo);
-
-  @override
-  List<Object> get props => [todo];
-
-  @override
-  String toString() => 'TodoDeleted { todo: $todo }';
-}
-
-class ClearCompleted extends TodosEvent {}
-
-class ToggleAll extends TodosEvent {}
- */
