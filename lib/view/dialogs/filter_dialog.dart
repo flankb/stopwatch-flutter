@@ -3,6 +3,7 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:learnwords/models/filter.dart';
 
 class FilterDialog extends StatelessWidget {
   final Type entityType;
@@ -44,6 +45,17 @@ class FilterFormState extends State<FilterForm> {
   // Note: This is a `GlobalKey<FormState>`,
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
+  Filter _filter; // TODO Это поле можно передавать через конструктор и хранить его в BLoC'е
+
+  //TextEditingController
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Создать контроллеры
+    _filter = Filter("");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,9 +85,18 @@ class FilterFormState extends State<FilterForm> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text("Фильтр измерений"),
+                    Text("Фильтр измерений", style: TextStyle(
+                      fontSize: 18
+                    ),),
+                    SizedBox(height: 12,),
                     TextFormField(
-                      initialValue: "Измерение содержит...",
+                      decoration: InputDecoration(
+                        hintText: "Наименование содержит..."
+                      ),
+                      onSaved: (val) => setState(() {
+                        debugPrint(val);
+                        _filter.query = val;
+                      }),
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'Поле не может быть пустым!';
@@ -83,8 +104,13 @@ class FilterFormState extends State<FilterForm> {
                         return null;
                       },
                     ),
+                    SizedBox(height: 6,),
                     DateTimeField(
                       format: format,
+                      onSaved: (dt){
+                        _filter.dateFrom = dt;
+                      },
+                      decoration: InputDecoration(labelText: "С:", labelStyle: TextStyle(color: Theme.of(context).accentColor)),
                       initialValue: DateTime.now(),
                       onShowPicker: (context, currentValue) {
                         return showDatePicker(
@@ -94,8 +120,14 @@ class FilterFormState extends State<FilterForm> {
                             lastDate: DateTime(2100));
                       },
                     ),
+                    SizedBox(height: 6,),
                     DateTimeField(
                       format: format,
+                      onSaved: (dt){
+                        // TODO setState вроде не нужен
+                        _filter.dateTo = dt;
+                      },
+                      decoration: InputDecoration(labelText: "По:", labelStyle: TextStyle(color: Theme.of(context).accentColor)),
                       initialValue: DateTime.now(),
                       onShowPicker: (context, currentValue) {
                         return showDatePicker(
@@ -110,25 +142,33 @@ class FilterFormState extends State<FilterForm> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          RaisedButton(
+                          RawMaterialButton(
                             onPressed: () {
                               // Validate returns true if the form is valid, or false
                               // otherwise.
                               if (_formKey.currentState.validate()) {
+                                _formKey.currentState.save();
+                                Navigator.pop(context, _filter);
                                 // If the form is valid, display a Snackbar.
                                 //Scaffold.of(context).showSnackBar(SnackBar(content: Text('Обработка данных..')));
                               }
                             },
-                            child: Text('Сохранить'),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text('СОХРАНИТЬ'),
+                            ),
                           ),
                           SizedBox(
                             width: 16,
                           ),
-                          RaisedButton(
+                          RawMaterialButton(
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child: Text('Отмена'),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text('ОТМЕНА'),
+                            ),
                           )
                         ],
                       ),
