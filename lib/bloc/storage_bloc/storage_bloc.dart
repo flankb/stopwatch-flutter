@@ -55,10 +55,10 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
         final availState = state as AvailableListState;
         yield LoadingStorageState();
 
-        var result = List<BaseStopwatchEntity>();
+        var result =  availState.entities;
 
-        if (event.filter.query != null && event.filter.query.isEmpty) {
-          result = availState.entities.where((en) => en.comment.contains(event.filter.query));
+        if (event.filter.query != null && event.filter.query != "") {
+          result = result.where((en) => en.comment != null && en.comment.contains(event.filter.query)).toList();
         }
 
         if (event.entityType == MeasureViewModel) {
@@ -70,7 +70,7 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
               .toList();
         }
 
-        yield AvailableListState(result, availState.allEntities, filtered: true);
+        yield AvailableListState(result.map((e) => e).toList(), availState.allEntities, filtered: true);
       } else {
         throw Exception("Wrong state for filtering!");
       }
@@ -87,11 +87,13 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
     else if (event is DeleteStorageEvent) {
       if (state is AvailableListState) {
         final availState = state as AvailableListState;
-        var entities = (state as AvailableListState).entities;
+        var entities = availState.entities;
         entities = entities.toSet().difference(event.entitiesForDelete.toSet()).toList();
 
+        final all = availState.allEntities.toSet().difference(event.entitiesForDelete.toSet()).toList();
+
         await stopwatchRepository.deleteMeasures(event.entitiesForDelete.map((e) => e.id).toList());
-        yield AvailableListState(entities, availState.allEntities, filtered: (state as AvailableListState).filtered);
+        yield AvailableListState(entities, all, filtered: (state as AvailableListState).filtered);
       } else {
         throw Exception("Wrong state!");
       }
