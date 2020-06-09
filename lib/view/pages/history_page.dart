@@ -127,9 +127,9 @@ class HistoryPage extends StatelessWidget {
                 Container(
                   // TODO Реализовать Multiselect
                   child:  ListView.builder(
-                        itemCount: availState.allEntities.length,
+                        itemCount: availState.entities.length,
                         itemBuilder: (BuildContext context, int index) {
-                          BaseStopwatchEntity entity = availState.allEntities[index];
+                          BaseStopwatchEntity entity = availState.entities[index];
                           final key = PageStorageKey<String>("entity_$index");
 
                           return StopwatchItem(
@@ -158,37 +158,50 @@ class HistoryPage extends StatelessWidget {
                 ),
                 Align(
                     alignment: Alignment.bottomCenter,
-                    child: SizedBox(
-                      width: 150,
-                      child: RawMaterialButton(
-                        onPressed: () async {
-                          final result = await showDialog(context: context, builder: (context) => FilterDialog());
-                          // Для получения результата: Navigator.pop(context, _controller.text);
-                        },
-                        child: Padding(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                Icons.filter_list,
-                                color: Colors.white,
+                    child: Row(
+                      children: <Widget>[
+                        availState.filtered
+                            ? RawMaterialButton(
+                            child: Icon(Icons.clear),
+                            onPressed: () {
+                              _storageBloc.add(CancelFilterEvent(pageType));
+                        },)
+                            : SizedBox(),
+                        SizedBox(
+                          width: 150,
+                          child: RawMaterialButton(
+                            onPressed: () async {
+                              final result = await showDialog(context: context, builder: (context) => FilterDialog());
+
+                              _storageBloc.add(FilterStorageEvent(pageType, result));
+                              // Для получения результата: Navigator.pop(context, _controller.text);
+                            },
+                            child: Padding(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.filter_list,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(
+                                    width: 12,
+                                  ),
+                                  Text(
+                                    "Фильтр",
+                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                  ),
+                                ],
                               ),
-                              SizedBox(
-                                width: 12,
-                              ),
-                              Text(
-                                "Фильтр",
-                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                              ),
-                            ],
+                              padding: EdgeInsets.symmetric(horizontal: 4.0),
+                            ),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                            elevation: 2.0,
+                            fillColor: Theme.of(context).primaryColor,
+                            padding: const EdgeInsets.all(5.0),
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 4.0),
                         ),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-                        elevation: 2.0,
-                        fillColor: Theme.of(context).primaryColor,
-                        padding: const EdgeInsets.all(5.0),
-                      ),
+                      ],
                     ))
               ]);
             }
