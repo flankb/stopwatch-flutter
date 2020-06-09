@@ -47,9 +47,14 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
   _init(){
     widget.selectionListController.stream.asBroadcastStream().listen((event) {
       if (event == 0) {
-        this.setState(() {
-          isSelected = false;
-        });
+
+        if (this.mounted) {
+          this.setState(() {
+            isSelected = false;
+          });
+        }
+
+
       }
     });
   }
@@ -76,10 +81,12 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
 
     return InkWell(
       onLongPress: () => {
-        this.setState(() {
+        if (mounted) {
+          this.setState(() {
             isSelected = !isSelected;
             widget.selectedEvent(Tuple2(widget.entity, isSelected));
-        })
+          })
+        }
 
         /* Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
           return EntityEditPage(entityType: widget.entity.runtimeType, entityId: widget.entity.id);

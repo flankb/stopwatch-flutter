@@ -12,6 +12,7 @@ import 'package:learnwords/resources/stopwatch_db_repository.dart';
 import 'package:learnwords/view/dialogs/filter_dialog.dart';
 import 'package:learnwords/widgets/circular.dart';
 import 'package:learnwords/widgets/stopwatch_item_widget.dart';
+import 'package:toast/toast.dart';
 
 import 'entity_edit_page.dart';
 
@@ -84,7 +85,15 @@ class HistoryPage extends StatelessWidget {
                       _unselectItems();
                     },) : SizedBox(),
                     snapshot.data >= 1 ? IconButton(icon: Icon(Icons.delete), onPressed: () {
-                      _storageBloc.add(DeleteStorageEvent(_selectedEntities));
+                      if(pageType == LapViewModel){
+                        Toast.show("Круги нельзя удалять!", context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
+                        return;
+                      }
+
+                      final entitiesForDelete = List<BaseStopwatchEntity>();
+                      entitiesForDelete.addAll(_selectedEntities);
+                      _unselectItems();
+                      _storageBloc.add(DeleteStorageEvent(entitiesForDelete));
 
                       //_unselectItems();
                     },) : SizedBox()
