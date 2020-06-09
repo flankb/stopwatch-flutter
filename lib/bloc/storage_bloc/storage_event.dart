@@ -39,6 +39,12 @@ class FilterStorageEvent extends StorageEvent {
   FilterStorageEvent(this.entityType, this.filter);
 }
 
+class CancelFilterEvent extends StorageEvent {
+  final Type entityType;
+
+  CancelFilterEvent(this.entityType);
+}
+
 /*
 class ApplyChangesEvent extends StorageEvent {
   final BaseStopwatchEntity entity;
