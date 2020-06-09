@@ -52,9 +52,9 @@ class FilterFormState extends State<FilterForm> {
   @override
   void initState() {
     super.initState();
-
+    debugPrint("init FormState");
     // Создать контроллеры
-    _filter = Filter("");
+    _filter = Filter.defaultFilter();
   }
 
   @override
@@ -97,12 +97,12 @@ class FilterFormState extends State<FilterForm> {
                         debugPrint(val);
                         _filter.query = val;
                       }),
-                      validator: (value) {
+                      /*validator: (value) {
                         if (value.isEmpty) {
                           return 'Поле не может быть пустым!';
                         }
                         return null;
-                      },
+                      },*/
                     ),
                     SizedBox(height: 6,),
                     DateTimeField(
@@ -111,7 +111,7 @@ class FilterFormState extends State<FilterForm> {
                         _filter.dateFrom = dt;
                       },
                       decoration: InputDecoration(labelText: "С:", labelStyle: TextStyle(color: Theme.of(context).accentColor)),
-                      initialValue: DateTime.now(),
+                      initialValue: _filter.dateFrom,
                       onShowPicker: (context, currentValue) {
                         return showDatePicker(
                             context: context,
@@ -128,7 +128,7 @@ class FilterFormState extends State<FilterForm> {
                         _filter.dateTo = dt;
                       },
                       decoration: InputDecoration(labelText: "По:", labelStyle: TextStyle(color: Theme.of(context).accentColor)),
-                      initialValue: DateTime.now(),
+                      initialValue: _filter.dateTo,
                       onShowPicker: (context, currentValue) {
                         return showDatePicker(
                             context: context,
