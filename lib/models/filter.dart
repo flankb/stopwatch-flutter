@@ -1,9 +1,9 @@
 
 /// Фильтр
 class Filter {
-  final DateTime dateFrom;
-  final DateTime dateTo;
-  final String query;
+  DateTime dateFrom;
+  DateTime dateTo;
+  String query;
 
   Filter(this.query, {this.dateFrom, this.dateTo}) : assert (query != null)
   {}
