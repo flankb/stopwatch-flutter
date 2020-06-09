@@ -172,6 +172,7 @@ class HistoryPage extends StatelessWidget {
                 Align(
                     alignment: Alignment.bottomCenter,
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         availState.filtered
                             ? RawMaterialButton(
@@ -179,15 +180,23 @@ class HistoryPage extends StatelessWidget {
                                 onPressed: () {
                                   _storageBloc.add(CancelFilterEvent(pageType));
                                 },
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                                elevation: 2.0,
+                                fillColor: Colors.white,
+                                padding: const EdgeInsets.all(5.0),
                               )
                             : SizedBox(),
+                        availState.filtered ? SizedBox(width: 12,) : SizedBox(),
                         SizedBox(
                           width: 150,
                           child: RawMaterialButton(
                             onPressed: () async {
                               final result = await showDialog(context: context, builder: (context) => FilterDialog());
 
-                              _storageBloc.add(FilterStorageEvent(pageType, result));
+                              if (result != null) {
+                                _storageBloc.add(FilterStorageEvent(pageType, result));
+                              }
+
                               // Для получения результата: Navigator.pop(context, _controller.text);
                             },
                             child: Padding(
