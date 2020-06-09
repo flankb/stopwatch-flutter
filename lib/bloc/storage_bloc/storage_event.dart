@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:learnwords/models/filter.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
 
 abstract class StorageEvent extends Equatable {
@@ -19,10 +20,11 @@ class OpenStorageEvent extends StorageEvent {
   List<Object> get props => [entityType, measureId];
 }
 
+/*
 class RequestEditEvent extends StorageEvent {
   final BaseStopwatchEntity entity;
   RequestEditEvent(this.entity);
-}
+}*/
 
 class DeleteStorageEvent extends StorageEvent {
   final List<BaseStopwatchEntity> entitiesForDelete;
@@ -31,15 +33,14 @@ class DeleteStorageEvent extends StorageEvent {
 }
 
 class FilterStorageEvent extends StorageEvent {
-  final String query;
-  final DateTime dateFrom;
-  final DateTime dateTo;
+  final Filter filter;
   final Type entityType;
 
-  FilterStorageEvent(this.query, this.dateFrom, this.dateTo, this.entityType);
+  FilterStorageEvent(this.entityType, this.filter);
 }
 
+/*
 class ApplyChangesEvent extends StorageEvent {
   final BaseStopwatchEntity entity;
   ApplyChangesEvent(this.entity);
-}
+}*/

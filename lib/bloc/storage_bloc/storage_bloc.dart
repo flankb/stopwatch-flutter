@@ -56,11 +56,11 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
                 .allEntities
                 .map((e) => e as MeasureViewModel)
                 .where((_) =>
-                    _.comment.contains(event.query) &&
-                    _.dateCreated.millisecondsSinceEpoch > event.dateFrom.millisecondsSinceEpoch &&
-                    _.dateCreated.millisecondsSinceEpoch < event.dateTo.millisecondsSinceEpoch)
+                    _.comment.contains(event.filter.query) &&
+                    _.dateCreated.millisecondsSinceEpoch > event.filter.dateFrom.millisecondsSinceEpoch &&
+                    _.dateCreated.millisecondsSinceEpoch < event.filter.dateTo.millisecondsSinceEpoch)
                 .toList()
-            : (state as AvailableListState).allEntities.where((_) => _.comment.contains(event.query)).toList();
+            : (state as AvailableListState).allEntities.where((_) => _.comment.contains(event.filter.query)).toList();
 
         yield AvailableListState(filteredList, filtered: true);
       } else {
