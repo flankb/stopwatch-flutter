@@ -51,31 +51,48 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
 
     if (event is FilterStorageEvent) {
       if (state is AvailableListState) {
-        final filteredList = event.entityType == MeasureViewModel
-            ? (state as AvailableListState)
-                .allEntities
-                .map((e) => e as MeasureViewModel)
-                .where((_) =>
-                    _.comment.contains(event.filter.query) &&
-                    _.dateCreated.millisecondsSinceEpoch > event.filter.dateFrom.millisecondsSinceEpoch &&
-                    _.dateCreated.millisecondsSinceEpoch < event.filter.dateTo.millisecondsSinceEpoch)
-                .toList()
-            : (state as AvailableListState).allEntities.where((_) => _.comment.contains(event.filter.query)).toList();
 
-        yield AvailableListState(filteredList, filtered: true);
+        final availState = state as AvailableListState;
+        yield LoadingStorageState();
+
+        var result = List<BaseStopwatchEntity>();
+
+        if (event.filter.query != null && event.filter.query.isEmpty) {
+          result = availState.entities.where((en) => en.comment.contains(event.filter.query));
+        }
+
+        if (event.entityType == MeasureViewModel) {
+          result = result
+              .map((e) => e as MeasureViewModel)
+              .where((measure) =>
+                  measure.dateCreated.millisecondsSinceEpoch > event.filter.dateFrom.millisecondsSinceEpoch &&
+                  measure.dateCreated.millisecondsSinceEpoch < event.filter.dateTo.millisecondsSinceEpoch)
+              .toList();
+        }
+
+        yield AvailableListState(result, filtered: true);
       } else {
         throw Exception("Wrong state for filtering!");
       }
-    } else if (event is DeleteStorageEvent) {
-        if (state is AvailableListState) {
-          var entities = (state as AvailableListState).allEntities;
-          entities = entities.toSet().difference(event.entitiesForDelete.toSet()).toList();
+    } else if (event is CancelFilterEvent) {
+      // Получить текущее состояние (а именно списки и тип сущности) (должно быть только Available)
+      if (state is AvailableListState) {
 
-          await stopwatchRepository.deleteMeasures(event.entitiesForDelete.map((e) => e.id).toList());
-          yield AvailableListState(entities, filtered: (state as AvailableListState).filtered);
-        } else {
-          throw Exception("Wrong state!");
-        }
+      }
+      else {
+        throw new Exception("Неверное состояние!");
+      }
+    }
+    else if (event is DeleteStorageEvent) {
+      if (state is AvailableListState) {
+        var entities = (state as AvailableListState).entities;
+        entities = entities.toSet().difference(event.entitiesForDelete.toSet()).toList();
+
+        await stopwatchRepository.deleteMeasures(event.entitiesForDelete.map((e) => e.id).toList());
+        yield AvailableListState(entities, filtered: (state as AvailableListState).filtered);
+      } else {
+        throw Exception("Wrong state!");
+      }
     }
 
     /*
@@ -87,6 +104,5 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
       }
     }
     */
-
   }
 }
