@@ -28,11 +28,11 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
         final measures = await stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished));
         final resultList = measures.map((m) => MeasureViewModel.fromEntity(m)).toList();
 
-        yield AvailableListState(resultList);
+        yield AvailableListState(resultList, resultList);
       } else if (openStorageEvent.entityType == LapViewModel) {
         final laps = (await stopwatchRepository.getLapsByMeasureAsync(openStorageEvent.measureId)).map((l) => LapViewModel.fromEntity(l)).toList();
 
-        yield AvailableListState(laps);
+        yield AvailableListState(laps, laps);
       }
     }
 
@@ -70,26 +70,28 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
               .toList();
         }
 
-        yield AvailableListState(result, filtered: true);
+        yield AvailableListState(result, availState.allEntities, filtered: true);
       } else {
         throw Exception("Wrong state for filtering!");
       }
     } else if (event is CancelFilterEvent) {
       // Получить текущее состояние (а именно списки и тип сущности) (должно быть только Available)
       if (state is AvailableListState) {
-
+        final availState = state as AvailableListState;
+        yield AvailableListState(availState.allEntities, availState.allEntities, filtered: false);
       }
       else {
-        throw new Exception("Неверное состояние!");
+        throw Exception("Wrong state!");
       }
     }
     else if (event is DeleteStorageEvent) {
       if (state is AvailableListState) {
+        final availState = state as AvailableListState;
         var entities = (state as AvailableListState).entities;
         entities = entities.toSet().difference(event.entitiesForDelete.toSet()).toList();
 
         await stopwatchRepository.deleteMeasures(event.entitiesForDelete.map((e) => e.id).toList());
-        yield AvailableListState(entities, filtered: (state as AvailableListState).filtered);
+        yield AvailableListState(entities, availState.allEntities, filtered: (state as AvailableListState).filtered);
       } else {
         throw Exception("Wrong state!");
       }

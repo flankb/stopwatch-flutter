@@ -17,11 +17,14 @@ import 'package:toast/toast.dart';
 import 'entity_edit_page.dart';
 
 class HistoryPage extends StatelessWidget {
+  // TODO Сконверитровать в StatefulWidget ?
+
   final Type pageType;
   final int entityId;
   StorageBloc _storageBloc;
 
   StreamController _selectedItemsStreamController;
+
   //StreamController _isSelectionConroller;
   List<BaseStopwatchEntity> _selectedEntities = List<BaseStopwatchEntity>();
 
@@ -36,18 +39,19 @@ class HistoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint("buildState HistoryPage");
 
-    List data = [];
     _selectedItemsStreamController = StreamController<int>.broadcast(); // StreamController<bool>.broadcast();
     //_isSelectionConroller = StreamController<bool>();
 
     _storageBloc = StorageBloc(StopwatchRepository(MyDatabase()));
     _storageBloc.add(OpenStorageEvent(pageType, measureId: entityId));
 
+    /*
+    List data = [];
     if (pageType == MeasureViewModel) {
       data = FakeDataFabric.measuresHistory();
     } else {
       data = FakeDataFabric.lapsHistory();
-    }
+    }*/
 
     // Множественное выделение:
     // https://medium.com/flutterdevs/selecting-multiple-item-in-list-in-flutter-811a3049c56f
@@ -70,37 +74,50 @@ class HistoryPage extends StatelessWidget {
               }),
           actions: <Widget>[
             StreamBuilder<int>(
-              stream: _selectedItemsStreamController.stream,
-              initialData: 0,
-              builder: (context, snapshot) {
-                return Row(
-                  children: <Widget>[
-                    snapshot.data == 1 ? IconButton(icon: Icon(Icons.edit), onPressed: () async {
-                      final entityToEdit = _selectedEntities.single;
+                stream: _selectedItemsStreamController.stream,
+                initialData: 0,
+                builder: (context, snapshot) {
+                  return Row(
+                    children: <Widget>[
+                      snapshot.data == 1
+                          ? IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () async {
+                                final entityToEdit = _selectedEntities.single;
 
-                      await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-                        return EntityEditPage(entityType: pageType, entityId: entityToEdit.id, entity: entityToEdit,);
-                      }));
+                                await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                                  return EntityEditPage(
+                                    entityType: pageType,
+                                    entityId: entityToEdit.id,
+                                    entity: entityToEdit,
+                                  );
+                                }));
 
-                      _unselectItems();
-                    },) : SizedBox(),
-                    snapshot.data >= 1 ? IconButton(icon: Icon(Icons.delete), onPressed: () {
-                      if(pageType == LapViewModel){
-                        Toast.show("Круги нельзя удалять!", context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
-                        return;
-                      }
+                                _unselectItems();
+                              },
+                            )
+                          : SizedBox(),
+                      snapshot.data >= 1
+                          ? IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                if (pageType == LapViewModel) {
+                                  Toast.show("Круги нельзя удалять!", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                                  return;
+                                }
 
-                      final entitiesForDelete = List<BaseStopwatchEntity>();
-                      entitiesForDelete.addAll(_selectedEntities);
-                      _unselectItems();
-                      _storageBloc.add(DeleteStorageEvent(entitiesForDelete));
+                                final entitiesForDelete = List<BaseStopwatchEntity>();
+                                entitiesForDelete.addAll(_selectedEntities);
+                                _unselectItems();
+                                _storageBloc.add(DeleteStorageEvent(entitiesForDelete));
 
-                      //_unselectItems();
-                    },) : SizedBox()
-                  ],
-                );
-              }
-            )
+                                //_unselectItems();
+                              },
+                            )
+                          : SizedBox()
+                    ],
+                  );
+                })
           ],
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -109,11 +126,10 @@ class HistoryPage extends StatelessWidget {
               if (_selectedEntities.length >= 1) {
                 //_isSelectionConroller.add(true);
                 _unselectItems();
-              }
-              else {
+              } else {
                 Navigator.pop(context);
               }
-          },
+            },
           ),
         ),
         body: BlocBuilder<StorageBloc, StorageState>(
@@ -125,47 +141,45 @@ class HistoryPage extends StatelessWidget {
 
               return Stack(children: [
                 Container(
-                  // TODO Реализовать Multiselect
-                  child:  ListView.builder(
-                        itemCount: availState.entities.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          BaseStopwatchEntity entity = availState.entities[index];
-                          final key = PageStorageKey<String>("entity_$index");
+                    child: ListView.builder(
+                  itemCount: availState.entities.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    BaseStopwatchEntity entity = availState.entities[index];
+                    final key = PageStorageKey<String>("entity_$index");
 
-                          return StopwatchItem(
-                            key: key,
-                            entity: entity,
-                            selectionListController: _selectedItemsStreamController,
-                            selectedEvent: (b) {
-                              // Обновить менюшку...
-                              if (b.item2) {
-                                debugPrint("_selectedEntities add");
-                                _selectedEntities.add(b.item1);
-                              }
-                              else {
-                                debugPrint("_selectedEntities remove");
-                                _selectedEntities.remove(b.item1);
-                              }
+                    return StopwatchItem(
+                      key: key,
+                      entity: entity,
+                      selectionListController: _selectedItemsStreamController,
+                      selectedEvent: (b) {
+                        // Обновить менюшку...
+                        if (b.item2) {
+                          debugPrint("_selectedEntities add");
+                          _selectedEntities.add(b.item1);
+                        } else {
+                          debugPrint("_selectedEntities remove");
+                          _selectedEntities.remove(b.item1);
+                        }
 
-                              _selectedItemsStreamController.add(_selectedEntities.length);
-                              debugPrint("_selectedEntities.length ${_selectedEntities.length}");
+                        _selectedItemsStreamController.add(_selectedEntities.length);
+                        debugPrint("_selectedEntities.length ${_selectedEntities.length}");
 
-                              // Добаввить или удалить из SelectedItems
-                            },
-                          );
-                        },
-                      )
-                ),
+                        // Добаввить или удалить из SelectedItems
+                      },
+                    );
+                  },
+                )),
                 Align(
                     alignment: Alignment.bottomCenter,
                     child: Row(
                       children: <Widget>[
                         availState.filtered
                             ? RawMaterialButton(
-                            child: Icon(Icons.clear),
-                            onPressed: () {
-                              _storageBloc.add(CancelFilterEvent(pageType));
-                        },)
+                                child: Icon(Icons.clear),
+                                onPressed: () {
+                                  _storageBloc.add(CancelFilterEvent(pageType));
+                                },
+                              )
                             : SizedBox(),
                         SizedBox(
                           width: 150,

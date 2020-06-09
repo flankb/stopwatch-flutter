@@ -16,6 +16,7 @@ abstract class StorageState extends Equatable {
 class LoadingStorageState extends StorageState { }
 
 class AvailableListState extends StorageState {
+   final List<BaseStopwatchEntity> allEntities;
    final List<BaseStopwatchEntity> entities;
    final bool filtered;
 
@@ -24,7 +25,7 @@ class AvailableListState extends StorageState {
    @override
    List<Object> get props => [entities, filtered];
 
-   AvailableListState(this.entities, {this.filtered = false});
+   AvailableListState(this.entities, this.allEntities, {this.filtered = false});
 }
 
 /*class ReadyStorageState extends InitialStorageState implements AvailableListState {
