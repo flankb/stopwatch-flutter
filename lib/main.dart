@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
+import 'package:get_it/get_it.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:learnwords/bloc/measure_bloc/bloc.dart';
 import 'package:learnwords/model/database_models.dart';
@@ -202,8 +203,6 @@ class _MyTabPageState extends State<MyTabPageStateful>
     _categoryScrollController = ItemScrollController();
 
     _init();
-
-    _onCreateAsync();
     debugPrint('initState();');
   }
 
@@ -221,7 +220,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
     }
 
     if (measureBloc == null /*|| true*/) {
-      measureBloc = MeasureBloc(Ticker3(), StopwatchRepository()); // TODO Плохо здесь иметь ссылку на базу данных!!!
+      measureBloc = GetIt.I.get<MeasureBloc>();
       measureBloc.add(MeasureOpenedEvent());
     }
   }
@@ -231,9 +230,6 @@ class _MyTabPageState extends State<MyTabPageStateful>
     WidgetsBinding.instance.removeObserver(this);
     await measureBloc.close();
     super.dispose();
-  }
-
-  Future _onCreateAsync() async {
   }
 
   _showRateDialog(BuildContext context) {

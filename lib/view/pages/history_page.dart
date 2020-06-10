@@ -18,7 +18,6 @@ import 'package:toast/toast.dart';
 
 import 'entity_edit_page.dart';
 
-
 class HistoryPage extends StatefulWidget {
   final Type pageType;
   final int entityId;
@@ -54,7 +53,6 @@ class _HistoryPageState extends State<HistoryPage> {
     _storageBloc.add(LoadStorageEvent(widget.pageType, measureId: widget.entityId));
 
     // Сразу же отфильтруем в случае необходимости
-
   }
 
   @override

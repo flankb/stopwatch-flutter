@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:learnwords/bloc/entity_bloc/bloc.dart';
 import 'package:learnwords/model/database_models.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
@@ -61,7 +62,7 @@ class EditFormState extends State<EditForm> {
   }
 
   _init() {
-    entityBloc = EntityBloc(StopwatchRepository());
+    entityBloc = GetIt.I.get<EntityBloc>();
     entityBloc.add(OpenEntityEvent(widget.entity));
 
     textController = new TextEditingController(text: widget.entity.comment);
@@ -70,8 +71,6 @@ class EditFormState extends State<EditForm> {
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-
-
     return Form(
       key: _formKey,
       child: BlocProvider(
