@@ -1,6 +1,7 @@
 
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
@@ -22,6 +23,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:soundpool/soundpool.dart';
 //import 'package:scrollable_positioned_list/scrollable_positioned_list.dart' as scrollList;
 
 import 'models/stopwatch_status.dart';
@@ -212,6 +214,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
     debugPrint('reassemble' + " " + describeEnum(StopwatchStatus.Ready));
 
     _init();
+
   }
 
   _init() {
@@ -223,6 +226,22 @@ class _MyTabPageState extends State<MyTabPageStateful>
       measureBloc = GetIt.I.get<MeasureBloc>();
       measureBloc.add(MeasureOpenedEvent());
     }
+
+    _loadSounds();
+  }
+
+  Soundpool _pool;
+  int _soundId;
+
+  _loadSounds() async {
+    _pool = Soundpool(streamType: StreamType.notification);
+
+    _soundId = await rootBundle.load("assets/sounds/sound1.wav").then((ByteData soundData) {
+      return _pool.load(soundData);
+    });
+
+    // TODO Сделать InheritedWidget для проигрывания звуков
+    //int streamId = await pool.play(soundId);
   }
 
   @override
