@@ -8,6 +8,7 @@ import 'package:get_it/get_it.dart';
 import 'package:learnwords/bloc/storage_bloc/bloc.dart';
 import 'package:learnwords/fake/fake_data_fabric.dart';
 import 'package:learnwords/model/database_models.dart';
+import 'package:learnwords/models/filter.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
 import 'package:learnwords/resources/stopwatch_db_repository.dart';
 import 'package:learnwords/service_locator.dart';
@@ -38,21 +39,38 @@ class _HistoryPageState extends State<HistoryPage> {
     super.initState();
 
     _selectedItemsStreamController = StreamController<int>.broadcast();
+    //https://github.com/felangel/bloc/issues/74
+
+    // TODO https://github.com/felangel/bloc/blob/master/packages/flutter_bloc/README.md
+
     _storageBloc = GetIt.I.get<StorageBloc>(instanceName: widget.pageType == MeasureViewModel ? MeasuresBloc : LapsBloc);
 
-    // TODO Инициализировать фильтр
-    var lastFilter = (_storageBloc.state as AvailableListState)?.lastFilter;
-    if (lastFilter != null) {
-      final wasFiltered = (_storageBloc.state as AvailableListState).filtered;
+    debugPrint("History page: Init state");
 
-      /*if (wasFiltered) {
-        lastFilter =
-      }*/
+    // Инициализировать фильтр
+    var wasFiltered = false;
+    Filter previousFilter;
+
+    debugPrint("${_storageBloc.state}");
+
+    if (_storageBloc.state is AvailableListState) {
+      final availState = _storageBloc.state as AvailableListState;
+      wasFiltered = availState.filtered;
+      previousFilter = availState.lastFilter;
+
+      debugPrint("Last filter: $previousFilter");
     }
 
-    _storageBloc.add(LoadStorageEvent(widget.pageType, measureId: widget.entityId));
+    _storageBloc.add(LoadStorageEvent(widget.pageType, measureId: widget.entityId)); // TODO Более явно перезагружать состояние?
+
+    //TODO проблема в том, что два раза срабатывает LoadStorageEvent и прогресс-бар даже не появляется!
+    //  Current state AvailableListState Bloc event: LoadStorageEvent
+    //  Current state AvailableListState Bloc event: LoadStorageEvent
 
     // Сразу же отфильтруем в случае необходимости
+    if (wasFiltered) {
+      _storageBloc.add(FilterStorageEvent(widget.pageType, previousFilter));
+    }
   }
 
   @override
@@ -64,10 +82,11 @@ class _HistoryPageState extends State<HistoryPage> {
     // В данной статье интересный подход, где каждый элемент является Stateful виджетом
     // Статья про эффективное использование BLoC
     // https://medium.com/flutterpub/effective-bloc-pattern-45c36d76d5fe
-    return BlocProvider(
-      create: (BuildContext context) {
+    return BlocProvider.value(
+      /*create: (BuildContext context) {
         return _storageBloc;
-      },
+      },*/
+      value: _storageBloc,
       child: Scaffold(
         // Вариант:
         //https://stackoverflow.com/questions/53733548/dynamic-appbar-of-flutter
@@ -197,13 +216,12 @@ class _HistoryPageState extends State<HistoryPage> {
                           width: 150,
                           child: RawMaterialButton(
                             onPressed: () async {
-                              final result = await showDialog(context: context, builder: (context) => FilterDialog());
+                              debugPrint("Last filter in history page ${availState.lastFilter}");
+                              final result = await showDialog(context: context, builder: (context) => FilterDialog(filter: availState.lastFilter,));
 
                               if (result != null) {
                                 _storageBloc.add(FilterStorageEvent(widget.pageType, result));
                               }
-
-                              // Для получения результата: Navigator.pop(context, _controller.text);
                             },
                             child: Padding(
                               child: Row(

@@ -7,8 +7,9 @@ import 'package:learnwords/models/filter.dart';
 
 class FilterDialog extends StatelessWidget {
   final Type entityType;
+  final Filter filter;
 
-  const FilterDialog({Key key, this.entityType}) : super(key: key);
+  const FilterDialog({Key key, this.entityType, this.filter}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,13 +24,17 @@ class FilterDialog extends StatelessWidget {
       ),
       elevation: 0.0,
       backgroundColor: Colors.transparent,
-      child: FilterForm(),
+      child: FilterForm(filter: filter,),
     );
   }
 }
 
 // Define a custom Form widget.
 class FilterForm extends StatefulWidget {
+  Filter filter;
+
+  FilterForm({Key key, this.filter}) : super(key: key);
+
   @override
   FilterFormState createState() {
     return FilterFormState();
@@ -45,7 +50,7 @@ class FilterFormState extends State<FilterForm> {
   // Note: This is a `GlobalKey<FormState>`,
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
-  Filter _filter; // TODO Это поле можно передавать через конструктор и хранить его в BLoC'е
+  //Filter _filter; // TODO Это поле можно передавать через конструктор и хранить его в BLoC'е
 
   //TextEditingController
 
@@ -54,7 +59,7 @@ class FilterFormState extends State<FilterForm> {
     super.initState();
     debugPrint("init FormState");
     // Создать контроллеры
-    _filter = Filter.defaultFilter();
+    widget.filter ??= Filter.defaultFilter();
   }
 
   @override
@@ -90,12 +95,13 @@ class FilterFormState extends State<FilterForm> {
                     ),),
                     SizedBox(height: 12,),
                     TextFormField(
+                      initialValue: widget.filter.query,
                       decoration: InputDecoration(
                         hintText: "Наименование содержит..."
                       ),
                       onSaved: (val) => setState(() {
                         debugPrint(val);
-                        _filter.query = val;
+                        widget.filter.query = val;
                       }),
                       /*validator: (value) {
                         if (value.isEmpty) {
@@ -108,10 +114,10 @@ class FilterFormState extends State<FilterForm> {
                     DateTimeField(
                       format: format,
                       onSaved: (dt){
-                        _filter.dateFrom = dt;
+                        widget.filter.dateFrom = dt;
                       },
                       decoration: InputDecoration(labelText: "С:", labelStyle: TextStyle(color: Theme.of(context).accentColor)),
-                      initialValue: _filter.dateFrom,
+                      initialValue: widget.filter.dateFrom,
                       onShowPicker: (context, currentValue) {
                         return showDatePicker(
                             context: context,
@@ -125,10 +131,10 @@ class FilterFormState extends State<FilterForm> {
                       format: format,
                       onSaved: (dt){
                         // TODO setState вроде не нужен
-                        _filter.dateTo = dt;
+                        widget.filter.dateTo = dt;
                       },
                       decoration: InputDecoration(labelText: "По:", labelStyle: TextStyle(color: Theme.of(context).accentColor)),
-                      initialValue: _filter.dateTo,
+                      initialValue: widget.filter.dateTo,
                       onShowPicker: (context, currentValue) {
                         return showDatePicker(
                             context: context,
@@ -148,7 +154,7 @@ class FilterFormState extends State<FilterForm> {
                               // otherwise.
                               if (_formKey.currentState.validate()) {
                                 _formKey.currentState.save();
-                                Navigator.pop(context, _filter);
+                                Navigator.pop(context, widget.filter);
                                 // If the form is valid, display a Snackbar.
                                 //Scaffold.of(context).showSnackBar(SnackBar(content: Text('Обработка данных..')));
                               }

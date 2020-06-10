@@ -32,6 +32,8 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
       } else if (openStorageEvent.entityType == LapViewModel) {
         final laps = (await stopwatchRepository.getLapsByMeasureAsync(openStorageEvent.measureId)).map((l) => LapViewModel.fromEntity(l)).toList();
 
+        await Future.delayed(Duration(milliseconds: 1000));
+
         yield AvailableListState(laps, laps, null);
       }
     }
