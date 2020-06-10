@@ -8,6 +8,7 @@ import 'package:launch_review/launch_review.dart';
 import 'package:learnwords/bloc/measure_bloc/bloc.dart';
 import 'package:learnwords/model/database_models.dart';
 import 'package:learnwords/resources/stopwatch_db_repository.dart';
+import 'package:learnwords/service_locator.dart';
 import 'package:learnwords/util/ticker.dart';
 import 'package:learnwords/view/pages/about_page.dart';
 import 'package:learnwords/view/pages/settings_page.dart';
@@ -48,8 +49,8 @@ void main() async {
   // https://github.com/Skyost/rate_my_app/blob/master/example/lib/main.dart
   await rateMyApp.init();
   await PrefService.init(prefix: 'pref_'); // Настройки
+  setupLocators();
   runApp(MyApp());
-
 }
 
 class MyApp extends StatelessWidget {
