@@ -9,12 +9,12 @@ abstract class StorageEvent extends Equatable {
   List<Object> get props => null;
 }
 
-class OpenStorageEvent extends StorageEvent {
+class LoadStorageEvent extends StorageEvent {
   // Определение типа: https://stackoverflow.com/questions/55835258/get-the-name-of-a-dart-class-as-a-type-or-string
   final Type entityType;
   final int measureId;
 
-  OpenStorageEvent(this.entityType, {this.measureId});
+  LoadStorageEvent(this.entityType, {this.measureId});
 
   @override
   List<Object> get props => [entityType, measureId];

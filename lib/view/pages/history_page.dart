@@ -4,11 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:learnwords/bloc/storage_bloc/bloc.dart';
 import 'package:learnwords/fake/fake_data_fabric.dart';
 import 'package:learnwords/model/database_models.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
 import 'package:learnwords/resources/stopwatch_db_repository.dart';
+import 'package:learnwords/service_locator.dart';
 import 'package:learnwords/view/dialogs/filter_dialog.dart';
 import 'package:learnwords/widgets/circular.dart';
 import 'package:learnwords/widgets/stopwatch_item_widget.dart';
@@ -16,42 +18,48 @@ import 'package:toast/toast.dart';
 
 import 'entity_edit_page.dart';
 
-class HistoryPage extends StatelessWidget {
-  // TODO Сконверитровать в StatefulWidget ?
 
+class HistoryPage extends StatefulWidget {
   final Type pageType;
   final int entityId;
+
+  HistoryPage({Key key, this.pageType, this.entityId}) : super(key: key);
+
+  @override
+  _HistoryPageState createState() => _HistoryPageState();
+}
+
+class _HistoryPageState extends State<HistoryPage> {
   StorageBloc _storageBloc;
-
   StreamController _selectedItemsStreamController;
-
-  //StreamController _isSelectionConroller;
   List<BaseStopwatchEntity> _selectedEntities = List<BaseStopwatchEntity>();
 
-  //int _selectedItems = 0;
+  @override
+  void initState() {
+    super.initState();
 
-  //Stream _electedItemsStream = Stream();
+    _selectedItemsStreamController = StreamController<int>.broadcast();
+    _storageBloc = GetIt.I.get<StorageBloc>(instanceName: widget.pageType == MeasureViewModel ? MeasuresBloc : LapsBloc);
 
-  // Передать сюда ValueKey
-  HistoryPage({Key key, this.pageType, this.entityId}) : super(key: key);
+    // TODO Инициализировать фильтр
+    var lastFilter = (_storageBloc.state as AvailableListState)?.lastFilter;
+    if (lastFilter != null) {
+      final wasFiltered = (_storageBloc.state as AvailableListState).filtered;
+
+      /*if (wasFiltered) {
+        lastFilter =
+      }*/
+    }
+
+    _storageBloc.add(LoadStorageEvent(widget.pageType, measureId: widget.entityId));
+
+    // Сразу же отфильтруем в случае необходимости
+
+  }
 
   @override
   Widget build(BuildContext context) {
     debugPrint("buildState HistoryPage");
-
-    _selectedItemsStreamController = StreamController<int>.broadcast(); // StreamController<bool>.broadcast();
-    //_isSelectionConroller = StreamController<bool>();
-
-    _storageBloc = StorageBloc(StopwatchRepository());
-    _storageBloc.add(OpenStorageEvent(pageType, measureId: entityId));
-
-    /*
-    List data = [];
-    if (pageType == MeasureViewModel) {
-      data = FakeDataFabric.measuresHistory();
-    } else {
-      data = FakeDataFabric.lapsHistory();
-    }*/
 
     // Множественное выделение:
     // https://medium.com/flutterdevs/selecting-multiple-item-in-list-in-flutter-811a3049c56f
@@ -87,7 +95,7 @@ class HistoryPage extends StatelessWidget {
 
                                 await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
                                   return EntityEditPage(
-                                    entityType: pageType,
+                                    entityType: widget.pageType,
                                     entityId: entityToEdit.id,
                                     entity: entityToEdit,
                                   );
@@ -101,7 +109,7 @@ class HistoryPage extends StatelessWidget {
                           ? IconButton(
                               icon: Icon(Icons.delete),
                               onPressed: () {
-                                if (pageType == LapViewModel) {
+                                if (widget.pageType == LapViewModel) {
                                   Toast.show("Круги нельзя удалять!", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
                                   return;
                                 }
@@ -178,7 +186,7 @@ class HistoryPage extends StatelessWidget {
                             ? RawMaterialButton(
                                 child: Icon(Icons.clear),
                                 onPressed: () {
-                                  _storageBloc.add(CancelFilterEvent(pageType));
+                                  _storageBloc.add(CancelFilterEvent(widget.pageType));
                                 },
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
                                 elevation: 2.0,
@@ -194,7 +202,7 @@ class HistoryPage extends StatelessWidget {
                               final result = await showDialog(context: context, builder: (context) => FilterDialog());
 
                               if (result != null) {
-                                _storageBloc.add(FilterStorageEvent(pageType, result));
+                                _storageBloc.add(FilterStorageEvent(widget.pageType, result));
                               }
 
                               // Для получения результата: Navigator.pop(context, _controller.text);
