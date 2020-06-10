@@ -92,7 +92,7 @@ class ButtonsBar extends StatelessWidget {
                   ));
 
                   if (res == true){
-                    final rep = StopwatchRepository(MyDatabase());
+                    final rep = StopwatchRepository();
                     await rep.wipeDatabaseDebug();
 
                     // Вайп

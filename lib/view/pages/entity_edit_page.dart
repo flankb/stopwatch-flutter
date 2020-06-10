@@ -61,7 +61,7 @@ class EditFormState extends State<EditForm> {
   }
 
   _init() {
-    entityBloc = EntityBloc(StopwatchRepository(MyDatabase()));
+    entityBloc = EntityBloc(StopwatchRepository());
     entityBloc.add(OpenEntityEvent(widget.entity));
 
     textController = new TextEditingController(text: widget.entity.comment);

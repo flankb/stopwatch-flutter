@@ -42,7 +42,7 @@ class HistoryPage extends StatelessWidget {
     _selectedItemsStreamController = StreamController<int>.broadcast(); // StreamController<bool>.broadcast();
     //_isSelectionConroller = StreamController<bool>();
 
-    _storageBloc = StorageBloc(StopwatchRepository(MyDatabase()));
+    _storageBloc = StorageBloc(StopwatchRepository());
     _storageBloc.add(OpenStorageEvent(pageType, measureId: entityId));
 
     /*

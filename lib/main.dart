@@ -220,7 +220,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
     }
 
     if (measureBloc == null /*|| true*/) {
-      measureBloc = MeasureBloc(Ticker3(), StopwatchRepository(MyDatabase())); // TODO Плохо здесь иметь ссылку на базу данных!!!
+      measureBloc = MeasureBloc(Ticker3(), StopwatchRepository()); // TODO Плохо здесь иметь ссылку на базу данных!!!
       measureBloc.add(MeasureOpenedEvent());
     }
   }
