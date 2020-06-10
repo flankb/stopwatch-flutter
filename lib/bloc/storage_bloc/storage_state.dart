@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:learnwords/models/filter.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
 
 abstract class StorageState extends Equatable {
@@ -18,6 +19,7 @@ class LoadingStorageState extends StorageState { }
 class AvailableListState extends StorageState {
    final List<BaseStopwatchEntity> allEntities;
    final List<BaseStopwatchEntity> entities;
+   final Filter lastFilter;
    final bool filtered;
 
    // Можно здесь же хранить фильтр
@@ -25,7 +27,7 @@ class AvailableListState extends StorageState {
    @override
    List<Object> get props => [entities, filtered];
 
-   AvailableListState(this.entities, this.allEntities, {this.filtered = false});
+   AvailableListState(this.entities, this.allEntities, this.lastFilter, {this.filtered = false});
 }
 
 /*class ReadyStorageState extends InitialStorageState implements AvailableListState {

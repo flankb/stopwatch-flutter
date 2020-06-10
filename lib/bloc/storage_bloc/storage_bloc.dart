@@ -28,27 +28,13 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
         final measures = await stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished));
         final resultList = measures.map((m) => MeasureViewModel.fromEntity(m)).toList();
 
-        yield AvailableListState(resultList, resultList);
+        yield AvailableListState(resultList, resultList, null);
       } else if (openStorageEvent.entityType == LapViewModel) {
         final laps = (await stopwatchRepository.getLapsByMeasureAsync(openStorageEvent.measureId)).map((l) => LapViewModel.fromEntity(l)).toList();
 
-        yield AvailableListState(laps, laps);
+        yield AvailableListState(laps, laps, null);
       }
     }
-
-    /*
-    if (event is RequestEditEvent) {
-      if (state is AvailableListState) {
-        final entity = event.entity;
-        final list1 = (state as AvailableListState).allEntities;
-
-        yield ReadyStorageState(list1, editableEntity: entity); //TODO Что если был Filtering ???
-      } else {
-        throw Exception("Wrong state for edit!");
-      }
-    }
-    */
-
     if (event is FilterStorageEvent) {
       if (state is AvailableListState) {
 
@@ -70,7 +56,7 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
               .toList();
         }
 
-        yield AvailableListState(result.map((e) => e).toList(), availState.allEntities, filtered: true);
+        yield AvailableListState(result.map((e) => e).toList(), availState.allEntities, event.filter, filtered: true);
       } else {
         throw Exception("Wrong state for filtering!");
       }
@@ -78,7 +64,7 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
       // Получить текущее состояние (а именно списки и тип сущности) (должно быть только Available)
       if (state is AvailableListState) {
         final availState = state as AvailableListState;
-        yield AvailableListState(availState.allEntities, availState.allEntities, filtered: false);
+        yield AvailableListState(availState.allEntities, availState.allEntities, availState.lastFilter, filtered: false);
       }
       else {
         throw Exception("Wrong state!");
@@ -93,20 +79,10 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
         final all = availState.allEntities.toSet().difference(event.entitiesForDelete.toSet()).toList();
 
         await stopwatchRepository.deleteMeasures(event.entitiesForDelete.map((e) => e.id).toList());
-        yield AvailableListState(entities, all, filtered: (state as AvailableListState).filtered);
+        yield AvailableListState(entities, all, availState.lastFilter, filtered: availState.filtered);
       } else {
         throw Exception("Wrong state!");
       }
     }
-
-    /*
-    else if (event is ApplyChangesEvent) {
-      if (event.entity is LapViewModel) {
-        await stopwatchRepository.updateLapAsync((event.entity as LapViewModel).toEntity());
-      } else if (event.entity is MeasureViewModel) {
-        await stopwatchRepository.updateMeasureAsync((event.entity as MeasureViewModel).toEntity());
-      }
-    }
-    */
   }
 }
