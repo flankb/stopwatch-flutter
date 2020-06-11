@@ -167,12 +167,12 @@ class _HistoryPageState extends State<HistoryPage> {
               return CenterCircularWidget();
             } else {
               final availState = state as AvailableListState;
-              final pageIsMeasure = widget.pageType == MeasureViewModel;
+              final pageIsLap = widget.pageType == LapViewModel;
 
               return Stack(children: [
                 Column(
                   children: <Widget>[
-                    pageIsMeasure
+                    pageIsLap
                         ? Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Card(
