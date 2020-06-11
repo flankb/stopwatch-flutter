@@ -1,4 +1,3 @@
-
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +14,7 @@ import 'package:learnwords/util/ticker.dart';
 import 'package:learnwords/view/pages/about_page.dart';
 import 'package:learnwords/view/pages/settings_page.dart';
 import 'package:learnwords/widgets/circular.dart';
+import 'package:learnwords/widgets/sound_widget.dart';
 import 'package:learnwords/widgets/stopwatch_body.dart';
 import 'package:preferences/preferences.dart';
 import 'package:rate_my_app/rate_my_app.dart';
@@ -24,6 +24,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:soundpool/soundpool.dart';
+import 'package:tuple/tuple.dart';
 //import 'package:scrollable_positioned_list/scrollable_positioned_list.dart' as scrollList;
 
 import 'models/stopwatch_status.dart';
@@ -73,7 +74,6 @@ class MyApp extends StatelessWidget {
             // Notice that the counter didn't reset back to zero; the application
             // is not restarted.
             primarySwatch: Colors.deepOrange),
-
         localizationsDelegates: [
           S.delegate,
           GlobalMaterialLocalizations.delegate,
@@ -92,13 +92,11 @@ class CaptionModel extends Model {
   String get caption => _captionValue;
 
   void updateCaption(String caption) {
-    _captionValue =
-        caption == '' ? 'ВЕСЬ СЛОВАРЬ' : "#${caption.toUpperCase()}";
+    _captionValue = caption == '' ? 'ВЕСЬ СЛОВАРЬ' : "#${caption.toUpperCase()}";
     notifyListeners();
   }
 
-  static CaptionModel of(BuildContext context) =>
-      ScopedModel.of<CaptionModel>(context);
+  static CaptionModel of(BuildContext context) => ScopedModel.of<CaptionModel>(context);
 }
 
 class Choice {
@@ -122,8 +120,7 @@ const List<Choice> choices = const <Choice>[
       title: 'Настройки',
       //icon: Icons.settings,
       settingsType: SettingsType.Settings),
-  const Choice(
-      title: 'О программе', icon: Icons.info, settingsType: SettingsType.About),
+  const Choice(title: 'О программе', icon: Icons.info, settingsType: SettingsType.About),
   //const Choice(title: 'Walk', icon: Icons.directions_walk),
 ];
 
@@ -138,7 +135,6 @@ class _MyTabPageState extends State<MyTabPageStateful>
         //AutomaticKeepAliveClientMixin,
         WidgetsBindingObserver,
         AfterLayoutMixin<MyTabPageStateful> {
-
   void _showDialog(BuildContext context, String message) {
     //await Future.delayed(Duration(seconds: 2));
     // flutter defined function
@@ -174,13 +170,11 @@ class _MyTabPageState extends State<MyTabPageStateful>
         break;
 
       case SettingsType.Settings:
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SettingsPage()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
         break;
 
       case SettingsType.About:
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => AboutPage()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => AboutPage()));
         break;
 
       default:
@@ -193,7 +187,10 @@ class _MyTabPageState extends State<MyTabPageStateful>
 
   ItemScrollController _categoryScrollController;
   bool categoryInited = false;
-  int _selectedIndex = 0;
+
+  //int _selectedIndex = 0;
+
+  Future _soundsLoader;
 
   MeasureBloc measureBloc;
 
@@ -209,12 +206,11 @@ class _MyTabPageState extends State<MyTabPageStateful>
   }
 
   @override
-  void reassemble(){
+  void reassemble() {
     super.reassemble();
     debugPrint('reassemble' + " " + describeEnum(StopwatchStatus.Ready));
 
     _init();
-
   }
 
   _init() {
@@ -227,23 +223,25 @@ class _MyTabPageState extends State<MyTabPageStateful>
       measureBloc.add(MeasureOpenedEvent());
     }
 
-    _loadSounds();
+    _soundsLoader = _loadSounds();
   }
 
-  Soundpool _pool;
-  int _soundId;
+  /*Soundpool _pool;
+  int _soundId1;
+  int _soundId2;*/
 
-  _loadSounds() async {
-    _pool = Soundpool(streamType: StreamType.notification);
+  Future<Tuple2<Soundpool, List<int>>> _loadSounds() async {
+    final pool = Soundpool(streamType: StreamType.notification);
 
-    _soundId = await rootBundle.load("assets/sounds/sound1.wav").then((ByteData soundData) {
-      return _pool.load(soundData);
+    final soundId1 = await rootBundle.load("assets/sounds/sound1.wav").then((ByteData soundData) {
+      return pool.load(soundData);
     });
 
+    final soundId2 = await rootBundle.load("assets/sounds/sound2.wav").then((ByteData soundData) {
+      return pool.load(soundData);
+    });
 
-
-    // TODO Сделать InheritedWidget для проигрывания звуков
-    //int streamId = await pool.play(soundId);
+    return Tuple2(pool, [soundId1, soundId2]);
   }
 
   @override
@@ -267,8 +265,8 @@ class _MyTabPageState extends State<MyTabPageStateful>
         // The dialog "no" button text.
         laterButton: 'ПОЗЖЕ',
         // The dialog "later" button text.
-        listener: (
-            button) { // The button click listener (useful if you want to cancel the click event).
+        listener: (button) {
+          // The button click listener (useful if you want to cancel the click event).
           switch (button) {
             case RateMyAppDialogButton.rate:
               print('Clicked on "Rate".');
@@ -287,19 +285,19 @@ class _MyTabPageState extends State<MyTabPageStateful>
         // Set to false if you want to show the native Apple app rating dialog on iOS.
         dialogStyle: DialogStyle(),
         // Custom dialog styles.
-        onDismissed: () =>
-            rateMyApp.callEvent(RateMyAppEventType
-                .laterButtonPressed), // Called when the user dismissed the dialog (either by taping outside or by pressing the "back" button).
+        onDismissed: () => rateMyApp.callEvent(
+            RateMyAppEventType.laterButtonPressed), // Called when the user dismissed the dialog (either by taping outside or by pressing the "back" button).
         // actionsBuilder: (_) => [], // This one allows you to use your own buttons.
       );
     }
   }
 
+  /*
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -322,10 +320,21 @@ class _MyTabPageState extends State<MyTabPageStateful>
     debugPrint("measureBloc == null " + (measureBloc == null).toString());
 
     return Scaffold(
-      body: BlocProvider(create:
-          (BuildContext context) => measureBloc,
-          child : StopwatchBody(measureBloc: measureBloc,))
-    );
+        body: BlocProvider(
+            create: (BuildContext context) => measureBloc,
+            child: FutureBuilder(
+                future: _soundsLoader,
+                builder: (context, snapshot) {
+                  return snapshot.hasData
+                      ? SoundWidget(
+                          soundPool: snapshot.data.item1,
+                          sounds: snapshot.data.item2,
+                          child: StopwatchBody(
+                            measureBloc: measureBloc,
+                          ),
+                        )
+                      : CenterCircularWidget();
+                })));
   }
 
   @override

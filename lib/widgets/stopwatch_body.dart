@@ -7,6 +7,7 @@ import 'package:learnwords/fake/fake_data_fabric.dart';
 import 'package:learnwords/generated/l10n.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
 import 'package:learnwords/util/time_displayer.dart';
+import 'package:learnwords/widgets/sound_widget.dart';
 
 import 'buttons_bar.dart';
 
@@ -126,6 +127,9 @@ class StopwatchBody extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
+                          final s = SoundWidget.of(context);
+                          s.soundPool.play(s.sounds[0]);
+
                           if (state is MeasureReadyState || state is MeasurePausedState){
                             measureBloc.add(MeasureStartedEvent());
                           } else if (state is MeasureStartedState) {
@@ -151,6 +155,8 @@ class StopwatchBody extends StatelessWidget {
                           child: Text("Круг", style: TextStyle(fontSize: 28, color: Colors.black)),
                         ),
                         onPressed: state is MeasureStartedState ? () {
+                          final s = SoundWidget.of(context);
+                          s.soundPool.play(s.sounds[1]);
                           measureBloc.add(LapAddedEvent());
                         } : null,
                         fillColor: Colors.white30,
