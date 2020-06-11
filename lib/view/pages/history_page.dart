@@ -14,6 +14,7 @@ import 'package:learnwords/resources/stopwatch_db_repository.dart';
 import 'package:learnwords/service_locator.dart';
 import 'package:learnwords/view/dialogs/filter_dialog.dart';
 import 'package:learnwords/widgets/circular.dart';
+import 'package:learnwords/widgets/pair_label_view.dart';
 import 'package:learnwords/widgets/stopwatch_item_widget.dart';
 import 'package:toast/toast.dart';
 
@@ -166,37 +167,70 @@ class _HistoryPageState extends State<HistoryPage> {
               return CenterCircularWidget();
             } else {
               final availState = state as AvailableListState;
+              final pageIsMeasure = widget.pageType == MeasureViewModel;
 
               return Stack(children: [
-                Container(
-                    child: ListView.builder(
-                  itemCount: availState.entities.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    BaseStopwatchEntity entity = availState.entities[index];
-                    final key = PageStorageKey<String>("entity_$index");
+                Column(
+                  children: <Widget>[
+                    pageIsMeasure
+                        ? Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Card(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  children: <Widget>[
+                                    PairLabelView(
+                                      caption: "Общее время",
+                                      value: "02:04:01,12",
+                                    ),
+                                    PairLabelView(
+                                      caption: "Комментарий",
+                                      value: "Стометровка",
+                                    ),
+                                    PairLabelView(
+                                      caption: "Дата",
+                                      value: "06-12-2018",
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                        )
+                        : SizedBox(),
+                    Expanded(
+                      child: Container(
+                          child: ListView.builder(
+                        itemCount: availState.entities.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          BaseStopwatchEntity entity = availState.entities[index];
+                          final key = PageStorageKey<String>("entity_$index");
 
-                    return StopwatchItem(
-                      key: key,
-                      entity: entity,
-                      selectionListController: _selectedItemsStreamController,
-                      selectedEvent: (b) {
-                        // Обновить менюшку...
-                        if (b.item2) {
-                          debugPrint("_selectedEntities add");
-                          _selectedEntities.add(b.item1);
-                        } else {
-                          debugPrint("_selectedEntities remove");
-                          _selectedEntities.remove(b.item1);
-                        }
+                          return StopwatchItem(
+                            key: key,
+                            entity: entity,
+                            selectionListController: _selectedItemsStreamController,
+                            selectedEvent: (b) {
+                              // Обновить менюшку...
+                              if (b.item2) {
+                                debugPrint("_selectedEntities add");
+                                _selectedEntities.add(b.item1);
+                              } else {
+                                debugPrint("_selectedEntities remove");
+                                _selectedEntities.remove(b.item1);
+                              }
 
-                        _selectedItemsStreamController.add(_selectedEntities.length);
-                        debugPrint("_selectedEntities.length ${_selectedEntities.length}");
+                              _selectedItemsStreamController.add(_selectedEntities.length);
+                              debugPrint("_selectedEntities.length ${_selectedEntities.length}");
 
-                        // Добаввить или удалить из SelectedItems
-                      },
-                    );
-                  },
-                )),
+                              // Добаввить или удалить из SelectedItems
+                            },
+                          );
+                        },
+                      )),
+                    ),
+                  ],
+                ),
                 Align(
                     alignment: Alignment.bottomCenter,
                     child: Row(
@@ -214,13 +248,21 @@ class _HistoryPageState extends State<HistoryPage> {
                                 padding: const EdgeInsets.all(5.0),
                               )
                             : SizedBox(),
-                        availState.filtered ? SizedBox(width: 12,) : SizedBox(),
+                        availState.filtered
+                            ? SizedBox(
+                                width: 12,
+                              )
+                            : SizedBox(),
                         SizedBox(
                           width: 150,
                           child: RawMaterialButton(
                             onPressed: () async {
                               debugPrint("Last filter in history page ${availState.lastFilter}");
-                              final result = await showDialog(context: context, builder: (context) => FilterDialog(filter: availState.lastFilter,));
+                              final result = await showDialog(
+                                  context: context,
+                                  builder: (context) => FilterDialog(
+                                        filter: availState.lastFilter,
+                                      ));
 
                               if (result != null) {
                                 _storageBloc.add(FilterStorageEvent(widget.pageType, result));

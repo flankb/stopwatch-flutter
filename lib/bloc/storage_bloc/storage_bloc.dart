@@ -38,6 +38,7 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
       }
     }
     else if (event is ClearStorageEvent){
+      // Здесь при необходимости можно удалять элементы из списка
       yield LoadingStorageState();
     }
     else if (event is FilterStorageEvent) {
