@@ -8,6 +8,7 @@ import 'package:learnwords/generated/l10n.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
 import 'package:learnwords/util/time_displayer.dart';
 import 'package:learnwords/widgets/sound_widget.dart';
+import 'package:vibration/vibration.dart';
 
 import 'buttons_bar.dart';
 
@@ -154,9 +155,14 @@ class StopwatchBody extends StatelessWidget {
                           padding: EdgeInsets.all(16),
                           child: Text("Круг", style: TextStyle(fontSize: 28, color: Colors.black)),
                         ),
-                        onPressed: state is MeasureStartedState ? () {
+                        onPressed: state is MeasureStartedState ? () async {
                           final s = SoundWidget.of(context);
                           s.soundPool.play(s.sounds[1]);
+
+                          if (await Vibration.hasVibrator()) {
+                            Vibration.vibrate(duration: 50);
+                          }
+
                           measureBloc.add(LapAddedEvent());
                         } : null,
                         fillColor: Colors.white30,
