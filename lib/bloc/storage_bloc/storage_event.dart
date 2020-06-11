@@ -20,6 +20,10 @@ class LoadStorageEvent extends StorageEvent {
   List<Object> get props => [entityType, measureId];
 }
 
+class ClearStorageEvent extends StorageEvent {
+
+}
+
 /*
 class RequestEditEvent extends StorageEvent {
   final BaseStopwatchEntity entity;

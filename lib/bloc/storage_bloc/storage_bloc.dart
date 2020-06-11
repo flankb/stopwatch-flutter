@@ -37,7 +37,10 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
         yield AvailableListState(laps, laps, null);
       }
     }
-    if (event is FilterStorageEvent) {
+    else if (event is ClearStorageEvent){
+      yield LoadingStorageState();
+    }
+    else if (event is FilterStorageEvent) {
       if (state is AvailableListState) {
 
         final availState = state as AvailableListState;

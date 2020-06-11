@@ -39,9 +39,8 @@ class _HistoryPageState extends State<HistoryPage> {
     super.initState();
 
     _selectedItemsStreamController = StreamController<int>.broadcast();
-    //https://github.com/felangel/bloc/issues/74
-
-    // TODO https://github.com/felangel/bloc/blob/master/packages/flutter_bloc/README.md
+    // https://github.com/felangel/bloc/issues/74
+    // https://github.com/felangel/bloc/blob/master/packages/flutter_bloc/README.md
 
     _storageBloc = GetIt.I.get<StorageBloc>(instanceName: widget.pageType == MeasureViewModel ? MeasuresBloc : LapsBloc);
 
@@ -59,8 +58,12 @@ class _HistoryPageState extends State<HistoryPage> {
       previousFilter = availState.lastFilter;
 
       debugPrint("Last filter: $previousFilter");
+
+      // Здесь сбрасываем состояние
+      _storageBloc.add(ClearStorageEvent());
     }
 
+    // TODO Перед Loaded показывается старое состояние, а вместо него требуется сбросить состояние, чтобы показывался прогресс-бар
     _storageBloc.add(LoadStorageEvent(widget.pageType, measureId: widget.entityId)); // TODO Более явно перезагружать состояние?
 
     //TODO проблема в том, что два раза срабатывает LoadStorageEvent и прогресс-бар даже не появляется!
