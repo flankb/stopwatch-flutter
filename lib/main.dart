@@ -202,7 +202,9 @@ class _MyTabPageState extends State<MyTabPageStateful>
     _categoryScrollController = ItemScrollController();
 
     _init();
-    debugPrint('initState();');
+    debugPrint('Main initState');
+
+
   }
 
   @override

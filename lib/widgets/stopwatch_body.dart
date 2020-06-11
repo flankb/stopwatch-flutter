@@ -8,6 +8,7 @@ import 'package:learnwords/generated/l10n.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
 import 'package:learnwords/util/time_displayer.dart';
 import 'package:learnwords/widgets/sound_widget.dart';
+import 'package:preferences/preference_service.dart';
 import 'package:vibration/vibration.dart';
 
 import 'buttons_bar.dart';
@@ -19,7 +20,10 @@ class StopwatchBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("StopwatchBody build");
+
     List<LapViewModel> items = FakeDataFabric.mainPageLaps();
+
     //var measureBloc = BlocProvider.of<MeasureBloc>(context);
     return BlocBuilder<MeasureBloc, MeasureState>(builder: (BuildContext context, MeasureState state) {
       //state.measure.lastRestartedOverall = DateTime.now();
@@ -31,60 +35,59 @@ class StopwatchBody extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerLeft,
               child: StreamBuilder<int>(
-                initialData: 0,
-                stream: measureBloc.tickStream,
+                  initialData: 0,
+                  stream: measureBloc.tickStream,
 
-                //date2.difference(birthday).inDays;
-                builder: (context, snapshot) {
-                  if(snapshot.data == -1){
-                    debugPrint("Hash code 2: ${state.measure.hashCode}");
-                    debugPrint("StreamBuilder ok! Measure ${state.measure} LastRestarted ${state.measure.lastRestartedOverall}");
-                  }
+                  //date2.difference(birthday).inDays;
+                  builder: (context, snapshot) {
+                    if (snapshot.data == -1) {
+                      debugPrint("Hash code 2: ${state.measure.hashCode}");
+                      debugPrint("StreamBuilder ok! Measure ${state.measure} LastRestarted ${state.measure.lastRestartedOverall}");
+                    }
 
-                  final delta1 = DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds;
-                  final delta2 =  DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds;
+                    final delta1 = DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds;
+                    final delta2 = DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds;
 
-                  final overallDifference = state.measure.elapsed + delta1; // TODO elapsed не сбрасывается
-                  final lapDifference = state.measure.elapsedLap + delta2;
+                    final overallDifference = state.measure.elapsed + delta1; // TODO elapsed не сбрасывается
+                    final lapDifference = state.measure.elapsedLap + delta2;
 
-                  final d1 = Duration(milliseconds: overallDifference);
-                  final d2 = Duration(milliseconds: lapDifference);
+                    final d1 = Duration(milliseconds: overallDifference);
+                    final d2 = Duration(milliseconds: lapDifference);
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.ideographic,
-                        children: <Widget>[
-                          Text(
-                            "${TimeDisplayer.format(d2)},",
-                            style: TextStyle(fontSize: 30),
-                          ),
-                          Text(
-                            TimeDisplayer.formatMills(d2),
-                            style: TextStyle(fontSize: 20),
-                          )
-                        ],
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.ideographic,
-                        children: <Widget>[
-                          Text(
-                            "${TimeDisplayer.format(d1)},",
-                            style: TextStyle(fontSize: 44),
-                          ),
-                          Text(
-                            TimeDisplayer.formatMills(d1),
-                            style: TextStyle(fontSize: 32),
-                          )
-                        ],
-                      )
-                    ],
-                  );
-                }
-              ),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.ideographic,
+                          children: <Widget>[
+                            Text(
+                              "${TimeDisplayer.format(d2)},",
+                              style: TextStyle(fontSize: 30),
+                            ),
+                            Text(
+                              TimeDisplayer.formatMills(d2),
+                              style: TextStyle(fontSize: 20),
+                            )
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.ideographic,
+                          children: <Widget>[
+                            Text(
+                              "${TimeDisplayer.format(d1)},",
+                              style: TextStyle(fontSize: 44),
+                            ),
+                            Text(
+                              TimeDisplayer.formatMills(d1),
+                              style: TextStyle(fontSize: 32),
+                            )
+                          ],
+                        )
+                      ],
+                    );
+                  }),
             ),
           ),
           Expanded(
@@ -94,18 +97,12 @@ class StopwatchBody extends StatelessWidget {
                 final lap = state.measure.laps[index];
 
                 return ListTile(
-                    leading: SizedBox(
-                        width: 20,
-                        child: Text(lap.order.toString())),
+                    leading: SizedBox(width: 20, child: Text(lap.order.toString())),
                     title: Align(
                       alignment: Alignment.topLeft,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>
-                        [
-                          Text("+${lap.differenceTime()},${lap.differenceMills()}"),
-                          Text("${lap.overallTime()},${lap.overallMills()}")
-                        ],
+                        children: <Widget>[Text("+${lap.differenceTime()},${lap.differenceMills()}"), Text("${lap.overallTime()},${lap.overallMills()}")],
                       ),
                     ));
               },
@@ -128,14 +125,14 @@ class StopwatchBody extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          final s = SoundWidget.of(context);
-                          s.soundPool.play(s.sounds[0]);
-
-                          if (state is MeasureReadyState || state is MeasurePausedState){
+                          if (state is MeasureReadyState || state is MeasurePausedState) {
                             measureBloc.add(MeasureStartedEvent());
                           } else if (state is MeasureStartedState) {
                             measureBloc.add(MeasurePausedEvent());
                           }
+
+                          _playSound(context, 0);
+                          _vibrate();
                         },
                         fillColor: Colors.red,
                         shape: RoundedRectangleBorder(
@@ -155,16 +152,13 @@ class StopwatchBody extends StatelessWidget {
                           padding: EdgeInsets.all(16),
                           child: Text("Круг", style: TextStyle(fontSize: 28, color: Colors.black)),
                         ),
-                        onPressed: state is MeasureStartedState ? () async {
-                          final s = SoundWidget.of(context);
-                          s.soundPool.play(s.sounds[1]);
-
-                          if (await Vibration.hasVibrator()) {
-                            Vibration.vibrate(duration: 50);
-                          }
-
-                          measureBloc.add(LapAddedEvent());
-                        } : null,
+                        onPressed: state is MeasureStartedState
+                            ? () async {
+                                measureBloc.add(LapAddedEvent());
+                                _playSound(context, 1);
+                                _vibrate();
+                              }
+                            : null,
                         fillColor: Colors.white30,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(0)),
@@ -178,5 +172,23 @@ class StopwatchBody extends StatelessWidget {
         ],
       );
     });
+  }
+
+  _vibrate() async {
+    final vibration = PrefService.getBool('vibration');
+    if (vibration) {
+      //if (await Vibration.hasVibrator()) { // TODO Куда-то впилить проверку (в InheritedWidget?)
+        Vibration.vibrate(duration: 50);
+      //}
+    }
+  }
+
+  _playSound(BuildContext context, int soundId) {
+    final sound = PrefService.getBool('sound');
+
+    if (sound) {
+      final s = SoundWidget.of(context);
+      s.soundPool.play(s.sounds[soundId]);
+    }
   }
 }
