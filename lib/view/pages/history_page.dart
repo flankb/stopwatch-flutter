@@ -12,6 +12,7 @@ import 'package:learnwords/models/filter.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
 import 'package:learnwords/resources/stopwatch_db_repository.dart';
 import 'package:learnwords/service_locator.dart';
+import 'package:learnwords/util/csv_exporter.dart';
 import 'package:learnwords/view/dialogs/filter_dialog.dart';
 import 'package:learnwords/widgets/circular.dart';
 import 'package:learnwords/widgets/pair_label_view.dart';
@@ -108,6 +109,8 @@ class _HistoryPageState extends State<HistoryPage> {
                 builder: (context, snapshot) {
                   return Row(
                     children: <Widget>[
+                      widget.pageType == MeasureViewModel ? _exportToCsvButton(context) : SizedBox(),
+                      SizedBox(width: 6,),
                       snapshot.data == 1
                           ? IconButton(
                               icon: Icon(Icons.edit),
@@ -126,7 +129,8 @@ class _HistoryPageState extends State<HistoryPage> {
                               },
                             )
                           : SizedBox(),
-                      snapshot.data >= 1
+                      SizedBox(width: 6,),
+                      snapshot.data >= 1 && widget.pageType == MeasureViewModel
                           ? IconButton(
                               icon: Icon(Icons.delete),
                               onPressed: () {
@@ -303,8 +307,39 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
+
+
+
+  Widget _exportToCsvButton(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.exit_to_app),
+      onPressed: () async {
+        var entitiesToExport = _selectedEntities;
+
+        if (!entitiesToExport.any((element) => true)) {
+          entitiesToExport = (BlocProvider.of<StorageBloc>(context).state as AvailableListState).entities;
+        }
+
+        final csv = await GetIt.I.get<CsvExporter>().convertToCsv(entitiesToExport.map((e) => e as MeasureViewModel).toList());
+
+        debugPrint("Generated csv:");
+        debugPrint(csv);
+
+        _unselectItems();
+      },
+    );
+  }
+
   void _unselectItems() {
     _selectedItemsStreamController.add(0);
     _selectedEntities.clear();
   }
 }
+
+class ExportToCsvButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+

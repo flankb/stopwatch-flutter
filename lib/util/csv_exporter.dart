@@ -1,23 +1,41 @@
 
 import 'package:csv/csv.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
+import 'package:learnwords/resources/stopwatch_db_repository.dart';
 
-class CsvExporter{
-  static String convertToCsv(List<MeasureViewModel> measures) {
+class CsvExporter {
+  final StopwatchRepository stopwatchRepository;
+
+  CsvExporter(this.stopwatchRepository);
+
+  Future<String> convertToCsv(List<MeasureViewModel> measures) async {
     StringBuffer csvBody = StringBuffer();
     csvBody.writeln("Дата измерения\tОбщее время\tКомментарий\tНомер круга\tВремя круга\tРазница с пред. кругом\tКомментарий круга\t");
 
-    measures.forEach((element) {
+    await Future.forEach(measures, ((element) async {
+      debugPrint("Exported to csv $element");
+
       final elapsedTime = element.elapsedTime();
 
       String row = "${element.dateCreated}\t${elapsedTime[0]},${elapsedTime[1]}\t${element.comment}\t\t\t\t";
       csvBody.writeln(row);
 
-      element.laps.forEach((lap) {
-        String lapRow = "\t\t\t${lap.order}\t${lap.overallTime()}\t${lap.differenceTime()}\t${lap.comment}";
+      // Загрузить круги для текущего измерения
+      final laps = (await stopwatchRepository.getLapsByMeasureAsync(element.id)).map((l) => LapViewModel.fromEntity(l));
+
+      //debugPrint("lap len: ${laps.length}");
+
+      laps.forEach((lap) {
+        String lapRow = "\t\t\t${lap.order}\t${lap.overallTime()}\t${lap.differenceTime()}\t${lap.comment ?? ""}";
+
+        //debugPrint("lap: ${lapRow}");
+
         csvBody.writeln(lapRow);
       });
-    });
+    }));
+
+    //debugPrint(csvBody.toString());
 
     //String csv = const ListToCsvConverter().convert([]);
     final csv = csvBody.toString();
