@@ -10,6 +10,10 @@ class CsvExporter {
   CsvExporter(this.stopwatchRepository);
 
   Future<String> convertToCsv(List<MeasureViewModel> measures) async {
+    // TODO Для экспорта файла плагины:
+    // https://pub.dev/packages/esys_flutter_share
+    // https://pub.dev/packages/share#-example-tab-
+
     StringBuffer csvBody = StringBuffer();
     csvBody.writeln("Дата измерения\tОбщее время\tКомментарий\tНомер круга\tВремя круга\tРазница с пред. кругом\tКомментарий круга\t");
 

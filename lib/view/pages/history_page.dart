@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:get_it/get_it.dart';
 import 'package:learnwords/bloc/storage_bloc/bloc.dart';
 import 'package:learnwords/fake/fake_data_fabric.dart';
@@ -17,6 +18,7 @@ import 'package:learnwords/view/dialogs/filter_dialog.dart';
 import 'package:learnwords/widgets/circular.dart';
 import 'package:learnwords/widgets/pair_label_view.dart';
 import 'package:learnwords/widgets/stopwatch_item_widget.dart';
+import 'package:preferences/preferences.dart';
 import 'package:toast/toast.dart';
 
 import 'entity_edit_page.dart';
@@ -326,8 +328,27 @@ class _HistoryPageState extends State<HistoryPage> {
         debugPrint(csv);
 
         _unselectItems();
+
+        _sendEmail(csv);
       },
     );
+  }
+
+  _sendEmail(String body) async {
+    // Вычислим адрес из настроек
+    final emailAddress = PrefService.getString('email');
+
+    final Email email = Email(
+      body: body,
+      subject: 'Измерения от ${DateTime.now()}',
+      recipients: [emailAddress],
+      //cc: ['cc@example.com'],
+      //bcc: ['bcc@example.com'],
+      //attachmentPaths: ['/path/to/attachment.zip'],
+      isHTML: false,
+    );
+
+    await FlutterEmailSender.send(email);
   }
 
   void _unselectItems() {
