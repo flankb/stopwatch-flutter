@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:csv/csv.dart';
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
 import 'package:learnwords/resources/stopwatch_db_repository.dart';
 
@@ -45,6 +49,12 @@ class CsvExporter {
     final csv = csvBody.toString();
 
     return csv;
+  }
+
+  Future shareFile(String csv) async {
+    //final ByteData bytes = await rootBundle.load('assets/image1.png');
+    List<int> bytes2 = utf8.encode(csv);
+    await Share.file('Измерения', 'Measures_${DateTime.now()}.csv', bytes2, 'text/csv' /*, text: 'My optional text.'*/);
   }
 }
 

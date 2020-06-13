@@ -112,7 +112,13 @@ class _HistoryPageState extends State<HistoryPage> {
                   return Row(
                     children: <Widget>[
                       widget.pageType == MeasureViewModel ? _exportToCsvButton(context) : SizedBox(),
-                      SizedBox(width: 6,),
+                      SizedBox(
+                        width: 6,
+                      ),
+                      widget.pageType == MeasureViewModel ? _exportToCsvButton(context, shareMode: ShareMode.File) : SizedBox(),
+                      SizedBox(
+                        width: 6,
+                      ),
                       snapshot.data == 1
                           ? IconButton(
                               icon: Icon(Icons.edit),
@@ -131,7 +137,9 @@ class _HistoryPageState extends State<HistoryPage> {
                               },
                             )
                           : SizedBox(),
-                      SizedBox(width: 6,),
+                      SizedBox(
+                        width: 6,
+                      ),
                       snapshot.data >= 1 && widget.pageType == MeasureViewModel
                           ? IconButton(
                               icon: Icon(Icons.delete),
@@ -180,8 +188,8 @@ class _HistoryPageState extends State<HistoryPage> {
                   children: <Widget>[
                     pageIsLap
                         ? Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Card(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Card(
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
@@ -202,7 +210,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                 ),
                               ),
                             ),
-                        )
+                          )
                         : SizedBox(),
                     Expanded(
                       child: Container(
@@ -309,12 +317,9 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-
-
-
-  Widget _exportToCsvButton(BuildContext context) {
+  Widget _exportToCsvButton(BuildContext context, {ShareMode shareMode = ShareMode.Email}) {
     return IconButton(
-      icon: const Icon(Icons.exit_to_app),
+      icon: shareMode == ShareMode.Email ? const Icon(Icons.exit_to_app) : const Icon(Icons.insert_drive_file),
       onPressed: () async {
         var entitiesToExport = _selectedEntities;
 
@@ -324,12 +329,19 @@ class _HistoryPageState extends State<HistoryPage> {
 
         final csv = await GetIt.I.get<CsvExporter>().convertToCsv(entitiesToExport.map((e) => e as MeasureViewModel).toList());
 
-        debugPrint("Generated csv:");
-        debugPrint(csv);
+        //debugPrint("Generated csv:");
+        //debugPrint(csv);
 
         _unselectItems();
 
-        _sendEmail(csv);
+        switch(shareMode){
+          case ShareMode.Email:
+            await _sendEmail(csv);
+            break;
+          case ShareMode.File:
+            await GetIt.I.get<CsvExporter>().shareFile(csv);
+            break;
+        }
       },
     );
   }
@@ -357,10 +369,11 @@ class _HistoryPageState extends State<HistoryPage> {
   }
 }
 
+enum ShareMode { Email, File }
+
 class ExportToCsvButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container();
   }
 }
-
