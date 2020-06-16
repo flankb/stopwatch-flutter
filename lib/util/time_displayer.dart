@@ -2,7 +2,7 @@ class TimeDisplayer {
   static int dayMills = 24 * 3600 * 1000;
 
   // Часы
-  static format(Duration d) => d.toString().split('.').first.padLeft(8, "0");
+  //static format(Duration d) => d.toString().split('.').first.padLeft(8, "0");
 
   // Сотые секунды
   static formatMills(Duration d) => d.toString().split('.')[1].substring(0,2);
@@ -10,11 +10,34 @@ class TimeDisplayer {
   // Сотые секунды
   //static formatMills(Duration d) => ((d.inSeconds % 1000) / 1000).toStringAsFixed(2).substring(1,4); // final f = (d % 1000) / 1000;
 
-  static formatAll(Duration d) => d.toString();
+  //static formatAll(Duration d) => d.toString();
 
-  static formatAllBeautiful(Duration d) => "${format(d)},${formatMills(d)}";
+  static formatAllBeautiful(Duration d) => "${format2(d)},${formatMills(d)}";
 
-  static format2(Duration d) => d.toString().split('.').first.padLeft(8, "0");
+  //static format2(Duration d) => d.toString().split('.').first.padLeft(8, "0");
+
+
+  static String format2(Duration d){
+    if (d.inMinutes < 60) {
+      final base = d.toString().split('.').first.padLeft(8, "0");
+      return base.substring(3,8);
+    } else if (d.inHours < 24) {
+      final base = d.toString().split('.').first.padLeft(8, "0");
+      return base;
+    } else {
+      var base = d.toString().split('.').first;
+      final end  = base.substring(base.length - 5, base.length);
+
+      final days = d.inHours ~/ 24;
+      final hours = d.inHours - days * 24;
+
+      // final minutes = d.inMinutes - hours * 60; // TODO По-хорошему переделать на такой вариант
+      // final seconds = d.inSeconds - minutes * 60;
+
+      return "$days.${hours.toString().padLeft(2,'0')}:$end";
+    }
+  }
+
 
   static String toHumanString(int milliseconds) {
     /*if (milliseconds < dayMills) {

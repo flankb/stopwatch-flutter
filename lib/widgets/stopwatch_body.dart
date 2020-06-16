@@ -62,7 +62,7 @@ class StopwatchBody extends StatelessWidget {
                           textBaseline: TextBaseline.ideographic,
                           children: <Widget>[
                             Text(
-                              "${TimeDisplayer.format(d2)},",
+                              "${TimeDisplayer.format2(d2)},",
                               style: TextStyle(fontSize: 30),
                             ),
                             Text(
@@ -76,7 +76,7 @@ class StopwatchBody extends StatelessWidget {
                           textBaseline: TextBaseline.ideographic,
                           children: <Widget>[
                             Text(
-                              "${TimeDisplayer.format(d1)},",
+                              "${TimeDisplayer.format2(d1)},",
                               style: TextStyle(fontSize: 44),
                             ),
                             Text(

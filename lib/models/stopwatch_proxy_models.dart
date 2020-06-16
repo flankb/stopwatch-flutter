@@ -130,11 +130,11 @@ class MeasureViewModel extends BaseStopwatchEntity {
   }
 
   List<String> elapsedTime() {
-    return [TimeDisplayer.format(Duration(milliseconds: elapsed)), TimeDisplayer.formatMills(Duration(milliseconds: elapsed))];
+    return [TimeDisplayer.format2(Duration(milliseconds: elapsed)), TimeDisplayer.formatMills(Duration(milliseconds: elapsed))];
   }
 
   List<String> elapsedTimeLap() {
-    return [TimeDisplayer.format(Duration(milliseconds: elapsedLap)), TimeDisplayer.formatMills(Duration(milliseconds: elapsedLap))];
+    return [TimeDisplayer.format2(Duration(milliseconds: elapsedLap)), TimeDisplayer.formatMills(Duration(milliseconds: elapsedLap))];
   }
 
   int getSumOfElapsed(DateTime dateNow) {
