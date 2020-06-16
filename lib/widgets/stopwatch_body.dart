@@ -91,6 +91,7 @@ class StopwatchBody extends StatelessWidget {
             ),
           ),
           Expanded(
+            flex: 3,
             child: ListView.builder(
               itemCount: state.measure.laps.length,
               itemBuilder: (BuildContext context, int index) {
@@ -108,14 +109,15 @@ class StopwatchBody extends StatelessWidget {
               },
             ),
           ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
-                    child: SizedBox(
-                      height: 150,
+          Expanded(
+            flex: 1,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
                       child: RawMaterialButton(
                         child: Padding(
                           padding: EdgeInsets.all(16),
@@ -139,14 +141,11 @@ class StopwatchBody extends StatelessWidget {
                           borderRadius: BorderRadius.all(Radius.circular(0)),
                         ),
                       ),
-                    ),
-                  )),
-              Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(4, 8, 8, 8),
-                    child: SizedBox(
-                      height: 150,
+                    )),
+                Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(4, 8, 8, 8),
                       child: RawMaterialButton(
                         child: Padding(
                           padding: EdgeInsets.all(16),
@@ -164,11 +163,14 @@ class StopwatchBody extends StatelessWidget {
                           borderRadius: BorderRadius.all(Radius.circular(0)),
                         ),
                       ),
-                    ),
-                  ))
-            ],
+                    ))
+              ],
+            ),
           ),
-          ButtonsBar()
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: ButtonsBar(),
+          )
         ],
       );
     });
