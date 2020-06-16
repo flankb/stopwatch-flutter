@@ -197,14 +197,17 @@ class _MyTabPageState extends State<MyTabPageStateful>
   @override
   void initState() {
     super.initState();
+
+    /*SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp
+    ]);*/
+
     WidgetsBinding.instance.addObserver(this);
 
     _categoryScrollController = ItemScrollController();
 
     _init();
     debugPrint('Main initState');
-
-
   }
 
   @override
@@ -248,6 +251,13 @@ class _MyTabPageState extends State<MyTabPageStateful>
 
   @override
   void dispose() async {
+    /*SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);*/
+
     WidgetsBinding.instance.removeObserver(this);
     await measureBloc.close();
     super.dispose();
