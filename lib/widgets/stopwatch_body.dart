@@ -7,16 +7,24 @@ import 'package:learnwords/fake/fake_data_fabric.dart';
 import 'package:learnwords/generated/l10n.dart';
 import 'package:learnwords/models/stopwatch_proxy_models.dart';
 import 'package:learnwords/util/time_displayer.dart';
+import 'package:learnwords/widgets/measure_lap_item.dart';
 import 'package:learnwords/widgets/sound_widget.dart';
 import 'package:preferences/preference_service.dart';
 import 'package:vibration/vibration.dart';
 
 import 'buttons_bar.dart';
 
-class StopwatchBody extends StatelessWidget {
+class StopwatchBody extends StatefulWidget {
   final MeasureBloc measureBloc;
 
   const StopwatchBody({Key key, this.measureBloc}) : super(key: key);
+
+  @override
+  _StopwatchBodyState createState() => _StopwatchBodyState();
+}
+
+class _StopwatchBodyState extends State<StopwatchBody> {
+  ScrollController _scrollController = new ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +44,7 @@ class StopwatchBody extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: StreamBuilder<int>(
                   initialData: 0,
-                  stream: measureBloc.tickStream,
+                  stream: widget.measureBloc.tickStream,
 
                   //date2.difference(birthday).inDays;
                   builder: (context, snapshot) {
@@ -94,10 +102,18 @@ class StopwatchBody extends StatelessWidget {
             flex: 3,
             child: ListView.builder(
               itemCount: state.measure.laps.length,
+              controller: _scrollController,
               itemBuilder: (BuildContext context, int index) {
                 final lap = state.measure.laps[index];
 
-                return ListTile(
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+                  child: MeasureLapItem(difference: "+${lap.differenceTime()},${lap.differenceMills()}", order: lap.order, overall: "${lap.overallTime()},${lap.overallMills()}" ,),
+                );
+
+
+
+                 /* return ListTile(
                     leading: SizedBox(width: 20, child: Text(lap.order.toString())),
                     title: Align(
                       alignment: Alignment.topLeft,
@@ -105,7 +121,7 @@ class StopwatchBody extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[Text("+${lap.differenceTime()},${lap.differenceMills()}"), Text("${lap.overallTime()},${lap.overallMills()}")],
                       ),
-                    ));
+                    ));*/
               },
             ),
           ),
@@ -128,9 +144,9 @@ class StopwatchBody extends StatelessWidget {
                         ),
                         onPressed: () {
                           if (state is MeasureReadyState || state is MeasurePausedState) {
-                            measureBloc.add(MeasureStartedEvent());
+                            widget.measureBloc.add(MeasureStartedEvent());
                           } else if (state is MeasureStartedState) {
-                            measureBloc.add(MeasurePausedEvent());
+                            widget.measureBloc.add(MeasurePausedEvent());
                           }
 
                           _playSound(context, 0);
@@ -153,9 +169,18 @@ class StopwatchBody extends StatelessWidget {
                         ),
                         onPressed: state is MeasureStartedState
                             ? () async {
-                                measureBloc.add(LapAddedEvent());
+                                widget.measureBloc.add(LapAddedEvent());
                                 _playSound(context, 1);
                                 _vibrate();
+
+                                WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                                  _scrollController.animateTo(
+                                    _scrollController.position.maxScrollExtent,
+                                    duration: const Duration(milliseconds: 50),
+                                    curve: Curves.easeOut,);
+                                });
+
+
                               }
                             : null,
                         fillColor: Colors.yellowAccent,
