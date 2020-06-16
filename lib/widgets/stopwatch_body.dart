@@ -138,7 +138,7 @@ class StopwatchBody extends StatelessWidget {
                         },
                         fillColor: Colors.red,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(0)),
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
                         ),
                       ),
                     )),
@@ -158,9 +158,9 @@ class StopwatchBody extends StatelessWidget {
                                 _vibrate();
                               }
                             : null,
-                        fillColor: Colors.white30,
+                        fillColor: Colors.yellowAccent,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(0)),
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
                         ),
                       ),
                     ))
@@ -168,7 +168,7 @@ class StopwatchBody extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
+            padding: const EdgeInsets.fromLTRB(6, 0, 6, 6),
             child: ButtonsBar(),
           )
         ],

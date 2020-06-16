@@ -24,158 +24,151 @@ class ButtonsBar extends StatelessWidget {
     //var measureBloc = BlocProvider.of<MeasureBloc>(context);
 
     return BlocBuilder<MeasureBloc, MeasureState>(builder: (BuildContext context, MeasureState state) {
-      return Card(
-        elevation: 2.0,
-        // this field changes the shadow of the card 1.0 is default
-        shape: RoundedRectangleBorder(
-          //side: BorderSide(width: 0.01),
-            borderRadius: BorderRadius.circular(12)),
-        child: Container(
-          //color: Colors.redAccent,
-          height: 56,
-          /*width: MediaQuery
-              .of(context)
-              .size
-              .width,*/
-          decoration: BoxDecoration(
-            //borderRadius: BorderRadius.circular(8.0),
-            color: Colors.white,
-            /*boxShadow: [
-              BoxShadow(
-                color: Colors.black,
-                blurRadius: 1.0,
-                spreadRadius: 0.0,
-                offset: Offset(0.5, 0.5), // shadow direction: bottom right
-              )
-            ],*/
-              /*borderRadius: new BorderRadius.horizontal(
-                left: new Radius.circular(10.0),
-                right: new Radius.circular(10.0),
-              )*/
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                // Кнопка с подсказкой внизу:
-                // https://api.flutter.dev/flutter/material/IconButton-class.html
-                // Так же можно обернуть в InkWell
+      return Container(
+        //color: Colors.redAccent,
+        height: 56,
+        /*width: MediaQuery
+            .of(context)
+            .size
+            .width,*/
+        decoration: BoxDecoration(
+          //borderRadius: BorderRadius.circular(8.0),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey,
+              blurRadius: 1.0,
+              spreadRadius: 0.0,
+              offset: Offset(0.5, 0.5), // shadow direction: bottom right
+            )
+          ],
+            borderRadius: new BorderRadius.horizontal(
+              left: new Radius.circular(10.0),
+              right: new Radius.circular(10.0),
+            )
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              // Кнопка с подсказкой внизу:
+              // https://api.flutter.dev/flutter/material/IconButton-class.html
+              // Так же можно обернуть в InkWell
 
-                MenuButton(
-                  pic: Icons.ac_unit,
-                  color: Colors.red,
-                  tooltip: 'View database',
-                  onPressed: () {
-                    final db = MyDatabase(); //This should be a singleton
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => MoorDbViewer(db)));
-                  },
-                ),
+              MenuButton(
+                pic: Icons.ac_unit,
+                color: Colors.red,
+                tooltip: 'View database',
+                onPressed: () {
+                  final db = MyDatabase(); //This should be a singleton
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => MoorDbViewer(db)));
+                },
+              ),
 
-                MenuButton(
-                  pic: Icons.ac_unit,
-                  color: Colors.blue,
-                  tooltip: 'Ready (Open) state',
-                  onPressed: () async {
-                    final res = await showDialog(context: context, child: new Dialog(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text("Вайпнуть БД?"),
-                          Row(
-                            children: <Widget>[
-                              RawMaterialButton(
-                                child : Text("ДА"),
-                                onPressed: () {
-                                  Navigator.pop(context, true);
-                              },),
-                              RawMaterialButton(
-                                child : Text("Нет"),
-                                onPressed: () {
-                                  Navigator.pop(context, false);
-                              },)
-                            ],
-                          )
-                        ],
-                      ),
+              MenuButton(
+                pic: Icons.ac_unit,
+                color: Colors.blue,
+                tooltip: 'Ready (Open) state',
+                onPressed: () async {
+                  final res = await showDialog(context: context, child: new Dialog(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text("Вайпнуть БД?"),
+                        Row(
+                          children: <Widget>[
+                            RawMaterialButton(
+                              child : Text("ДА"),
+                              onPressed: () {
+                                Navigator.pop(context, true);
+                            },),
+                            RawMaterialButton(
+                              child : Text("Нет"),
+                              onPressed: () {
+                                Navigator.pop(context, false);
+                            },)
+                          ],
+                        )
+                      ],
+                    ),
+                  ));
+
+                  if (res == true){
+                    final rep = StopwatchRepository();
+                    await rep.wipeDatabaseDebug();
+
+                    // Вайп
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text("БД удалена!"),
                     ));
+                  }
 
-                    if (res == true){
-                      final rep = StopwatchRepository();
-                      await rep.wipeDatabaseDebug();
+                  BlocProvider.of<MeasureBloc>(context).add(MeasureOpenedEvent());
+                  //  BlocProvider.of<MeasureBloc>(context).add(MeasureOpenedEvent());
+                },
+              ),
 
-                      // Вайп
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text("БД удалена!"),
-                      ));
-                    }
+              MenuButton(
+                pic: Icons.refresh,
+                tooltip: 'Сброс',
+                onPressed: () {
+                  BlocProvider.of<MeasureBloc>(context).add(MeasureFinishedEvent());
+                },
+              ),
 
-                    BlocProvider.of<MeasureBloc>(context).add(MeasureOpenedEvent());
-                    //  BlocProvider.of<MeasureBloc>(context).add(MeasureOpenedEvent());
-                  },
-                ),
+              MenuButton(
+                pic: Icons.list,
+                tooltip: 'История',
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                    return HistoryPage(pageType: MeasureViewModel, entityId: -1,);
+                  }));
+                },
+              ),
 
-                MenuButton(
-                  pic: Icons.refresh,
-                  tooltip: 'Сброс',
-                  onPressed: () {
-                    BlocProvider.of<MeasureBloc>(context).add(MeasureFinishedEvent());
-                  },
-                ),
+              MenuButton(
+                pic: Icons.settings,
+                tooltip: 'Settings',
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                    return SettingsPage();
+                  }));
+                },
+              ),
 
-                MenuButton(
-                  pic: Icons.list,
-                  tooltip: 'История',
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-                      return HistoryPage(pageType: MeasureViewModel, entityId: -1,);
-                    }));
-                  },
-                ),
-
-                MenuButton(
-                  pic: Icons.settings,
-                  tooltip: 'Settings',
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-                      return SettingsPage();
-                    }));
-                  },
-                ),
-
-                // This menu button widget updates a _selection field (of type WhyFarther,
-                // not shown here).
-                PopupMenuButton<WhyFarther>(
-                  onSelected: (WhyFarther result) {
-                    switch (result) {
-                      case WhyFarther.review:
-                        LaunchReview.launch(
-                          androidAppId: "com.garnetjuice.stopwatch",
-                          iOSAppId: "585027354",
-                        );
-                        break;
-                      case WhyFarther.about:
-                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-                          return AboutPage();
-                        }));
-                        break;
-                    }
-                  },
-                  itemBuilder: (BuildContext context) =>
-                  <PopupMenuEntry<WhyFarther>>[
-                    const PopupMenuItem<WhyFarther>(
-                      value: WhyFarther.review,
-                      child: Text('Оценить приложение'),
-                    ),
-                    const PopupMenuItem<WhyFarther>(
-                      value: WhyFarther.about,
-                      child: Text('О программе'),
-                    ),
-                  ],
-                )
-              ],
-            ),
+              // This menu button widget updates a _selection field (of type WhyFarther,
+              // not shown here).
+              PopupMenuButton<WhyFarther>(
+                onSelected: (WhyFarther result) {
+                  switch (result) {
+                    case WhyFarther.review:
+                      LaunchReview.launch(
+                        androidAppId: "com.garnetjuice.stopwatch",
+                        iOSAppId: "585027354",
+                      );
+                      break;
+                    case WhyFarther.about:
+                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                        return AboutPage();
+                      }));
+                      break;
+                  }
+                },
+                itemBuilder: (BuildContext context) =>
+                <PopupMenuEntry<WhyFarther>>[
+                  const PopupMenuItem<WhyFarther>(
+                    value: WhyFarther.review,
+                    child: Text('Оценить приложение'),
+                  ),
+                  const PopupMenuItem<WhyFarther>(
+                    value: WhyFarther.about,
+                    child: Text('О программе'),
+                  ),
+                ],
+              )
+            ],
           ),
         ),
       );
