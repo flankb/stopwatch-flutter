@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:learnwords/models/stopwatch_status.dart';
+import 'package:stopwatch/models/stopwatch_status.dart';
 import 'package:path/path.dart' as p;
 import 'package:moor/moor.dart';
 import 'package:moor_ffi/moor_ffi.dart';

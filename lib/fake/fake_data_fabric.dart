@@ -1,5 +1,5 @@
-import 'package:learnwords/models/stopwatch_proxy_models.dart';
-import 'package:learnwords/models/stopwatch_status.dart';
+import 'package:stopwatch/models/stopwatch_proxy_models.dart';
+import 'package:stopwatch/models/stopwatch_status.dart';
 
 class FakeDataFabric {
   static List<LapViewModel> mainPageLaps() {

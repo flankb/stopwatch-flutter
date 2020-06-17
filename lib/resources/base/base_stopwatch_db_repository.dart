@@ -1,5 +1,5 @@
 
-import 'package:learnwords/model/database_models.dart';
+import 'package:stopwatch/model/database_models.dart';
 
 abstract class BaseStopwatchRepository {
   Future<Measure> getMeasuresByIdAsync(int id);

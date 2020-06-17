@@ -3,7 +3,7 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:learnwords/models/filter.dart';
+import 'package:stopwatch/models/filter.dart';
 
 class FilterDialog extends StatelessWidget {
   final Type entityType;

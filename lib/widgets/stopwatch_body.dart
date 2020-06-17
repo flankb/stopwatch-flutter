@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:learnwords/bloc/measure_bloc/bloc.dart';
-import 'package:learnwords/bloc/measure_bloc/measure_event.dart';
-import 'package:learnwords/fake/fake_data_fabric.dart';
-import 'package:learnwords/generated/l10n.dart';
-import 'package:learnwords/models/stopwatch_proxy_models.dart';
-import 'package:learnwords/util/time_displayer.dart';
-import 'package:learnwords/widgets/measure_lap_item.dart';
-import 'package:learnwords/widgets/sound_widget.dart';
+import 'package:stopwatch/bloc/measure_bloc/bloc.dart';
+import 'package:stopwatch/bloc/measure_bloc/measure_event.dart';
+import 'package:stopwatch/fake/fake_data_fabric.dart';
+import 'package:stopwatch/generated/l10n.dart';
+import 'package:stopwatch/models/stopwatch_proxy_models.dart';
+import 'package:stopwatch/util/time_displayer.dart';
+import 'package:stopwatch/widgets/measure_lap_item.dart';
+import 'package:stopwatch/widgets/sound_widget.dart';
 import 'package:preferences/preference_service.dart';
 import 'package:vibration/vibration.dart';
 

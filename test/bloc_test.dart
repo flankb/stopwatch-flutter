@@ -1,7 +1,7 @@
 
-import 'package:learnwords/bloc/measure_bloc/measure_bloc.dart';
-import 'package:learnwords/resources/stopwatch_db_repository.dart';
-import 'package:learnwords/util/ticker.dart';
+import 'package:stopwatch/bloc/measure_bloc/measure_bloc.dart';
+import 'package:stopwatch/resources/stopwatch_db_repository.dart';
+import 'package:stopwatch/util/ticker.dart';
 import 'package:test/test.dart';
 import 'package:bloc_test/bloc_test.dart';
 

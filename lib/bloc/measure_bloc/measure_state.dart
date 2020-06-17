@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:learnwords/models/stopwatch_proxy_models.dart';
+import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 
 abstract class MeasureState extends Equatable {
   //const MeasureState();

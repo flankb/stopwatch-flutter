@@ -5,8 +5,8 @@ import 'package:csv/csv.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:learnwords/models/stopwatch_proxy_models.dart';
-import 'package:learnwords/resources/stopwatch_db_repository.dart';
+import 'package:stopwatch/models/stopwatch_proxy_models.dart';
+import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 
 class CsvExporter {
   final StopwatchRepository stopwatchRepository;

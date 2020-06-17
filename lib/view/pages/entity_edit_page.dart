@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:learnwords/bloc/entity_bloc/bloc.dart';
-import 'package:learnwords/model/database_models.dart';
-import 'package:learnwords/models/stopwatch_proxy_models.dart';
-import 'package:learnwords/resources/stopwatch_db_repository.dart';
+import 'package:stopwatch/bloc/entity_bloc/bloc.dart';
+import 'package:stopwatch/model/database_models.dart';
+import 'package:stopwatch/models/stopwatch_proxy_models.dart';
+import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 
 class EntityEditPage extends StatelessWidget {
   final Type entityType;

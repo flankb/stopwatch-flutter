@@ -11,10 +11,10 @@ import 'fake_repos.dart';
 
 void main() {
   group("Main scope model tests", () {
-    LearnWordsModel _testModel;
+    stopwatchModel _testModel;
 
     setUp(() async {
-      _testModel = LearnWordsModel(categoryRepository: FakeCategoriesRepository(),
+      _testModel = stopwatchModel(categoryRepository: FakeCategoriesRepository(),
           dictRepository: FakeWordRepository());
 
       await _testModel.loadAllModelAsync();
