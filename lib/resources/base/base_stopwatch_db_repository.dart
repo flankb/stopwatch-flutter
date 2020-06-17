@@ -2,7 +2,7 @@
 import 'package:learnwords/model/database_models.dart';
 
 abstract class BaseStopwatchRepository {
-  Future<List<Measure>> getMeasuresByIdAsync(int id);
+  Future<Measure> getMeasuresByIdAsync(int id);
 
   Future<List<Measure>> getMeasuresByStatusAsync(String status);
 

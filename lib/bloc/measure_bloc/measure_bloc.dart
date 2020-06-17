@@ -189,7 +189,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       // Если сущности не было, то необходимо создать и получить идентификатор
       if (targetMeasure.id == null) {
         final id = await _stopwatchRepository.createNewMeasureAsync();
-        final measure = (await _stopwatchRepository.getMeasuresByIdAsync(id)).single;
+        final measure = (await _stopwatchRepository.getMeasuresByIdAsync(id));
 
         debugPrint("id ${id.toString()} measureId ${measure.id.toString()}");
 

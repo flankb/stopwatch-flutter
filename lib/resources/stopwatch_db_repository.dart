@@ -21,8 +21,8 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
     return (select(measures)..where((m) => m.status.equals(status))..orderBy([(t) => OrderingTerm(expression: t.dateCreated, mode: OrderingMode.desc)])).get();
   }
 
-  Future<List<Measure>> getMeasuresByIdAsync(int id) {
-    return (select(measures)..where((m) => m.id.equals(id))).get();
+  Future<Measure> getMeasuresByIdAsync(int id) {
+    return (select(measures)..where((m) => m.id.equals(id))).getSingle();
   }
 
   // returns the generated id
