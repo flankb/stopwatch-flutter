@@ -19,6 +19,10 @@ import 'package:toast/toast.dart';
 enum WhyFarther { review, about }
 
 class ButtonsBar extends StatelessWidget {
+  final AnimationController parentAnimationController;
+
+  const ButtonsBar({Key key, @required this.parentAnimationController}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     //var measureBloc = BlocProvider.of<MeasureBloc>(context);
@@ -115,6 +119,12 @@ class ButtonsBar extends StatelessWidget {
                 tooltip: 'Сброс',
                 onPressed: () {
                   BlocProvider.of<MeasureBloc>(context).add(MeasureFinishedEvent());
+
+                  if (parentAnimationController.isCompleted) {
+                    parentAnimationController.reverse();
+                  } else {
+                    parentAnimationController.forward();
+                  }
                 },
               ),
 

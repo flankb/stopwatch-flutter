@@ -23,8 +23,45 @@ class StopwatchBody extends StatefulWidget {
   _StopwatchBodyState createState() => _StopwatchBodyState();
 }
 
-class _StopwatchBodyState extends State<StopwatchBody> {
+class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateMixin {
   ScrollController _scrollController = new ScrollController();
+  AnimationController _controller;
+  Animation<double> animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+      upperBound: 150,
+      lowerBound: 0
+    );
+
+    //animation = Tween(begin: 0.0, end: 300.0).animate(_controller);
+
+    /*final Animation<double> animation2 = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.ease,
+    );*/
+
+    _controller.addStatusListener((status) {
+      if(status == AnimationStatus.completed){
+        _controller.reverse();
+      }
+    });
+
+    /*
+    ..addListener(() {
+    +         setState(() {
+    +           // The state that has changed here is the animation object’s value.
+    +         });
+    +       });
+    */
+
+    // TODO М.б. использовать AnimatedWidget ??
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,38 +99,46 @@ class _StopwatchBodyState extends State<StopwatchBody> {
                     final d1 = Duration(milliseconds: overallDifference);
                     final d2 = Duration(milliseconds: lapDifference);
 
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
-                          textBaseline: TextBaseline.ideographic,
-                          children: <Widget>[
-                            Text(
-                              "${TimeDisplayer.format2(d2)},",
-                              style: TextStyle(fontSize: 30),
-                            ),
-                            Text(
-                              TimeDisplayer.formatMills(d2),
-                              style: TextStyle(fontSize: 20),
-                            )
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
-                          textBaseline: TextBaseline.ideographic,
-                          children: <Widget>[
-                            Text(
-                              "${TimeDisplayer.format2(d1)},",
-                              style: TextStyle(fontSize: 44),
-                            ),
-                            Text(
-                              TimeDisplayer.formatMills(d1),
-                              style: TextStyle(fontSize: 32),
-                            )
-                          ],
-                        )
-                      ],
+                    return AnimatedBuilder(
+                      animation: _controller,
+                      builder: (context, widget) {
+                        return Transform.translate(
+                          offset: Offset(0 + _controller.value, 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.ideographic,
+                                children: <Widget>[
+                                  Text(
+                                    "${TimeDisplayer.format2(d2)},",
+                                    style: TextStyle(fontSize: 30),
+                                  ),
+                                  Text(
+                                    TimeDisplayer.formatMills(d2),
+                                    style: TextStyle(fontSize: 20),
+                                  )
+                                ],
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.ideographic,
+                                children: <Widget>[
+                                  Text(
+                                    "${TimeDisplayer.format2(d1)},",
+                                    style: TextStyle(fontSize: 44),
+                                  ),
+                                  Text(
+                                    TimeDisplayer.formatMills(d1),
+                                    style: TextStyle(fontSize: 32),
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
+                        );
+                      }
                     );
                   }),
             ),
@@ -111,9 +156,7 @@ class _StopwatchBodyState extends State<StopwatchBody> {
                   child: MeasureLapItem(difference: "+${lap.differenceTime()},${lap.differenceMills()}", order: lap.order, overall: "${lap.overallTime()},${lap.overallMills()}" ,),
                 );
 
-
-
-                 /* return ListTile(
+                /*return ListTile(
                     leading: SizedBox(width: 20, child: Text(lap.order.toString())),
                     title: Align(
                       alignment: Alignment.topLeft,
@@ -135,6 +178,7 @@ class _StopwatchBodyState extends State<StopwatchBody> {
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
                       child: RawMaterialButton(
+                        //enableFeedback: false
                         child: Padding(
                           padding: EdgeInsets.all(16),
                           child: Text(
@@ -180,9 +224,15 @@ class _StopwatchBodyState extends State<StopwatchBody> {
                                     curve: Curves.easeOut,);
                                 });
 
-
+                                /*
+                                  if (_controller.isCompleted) {
+                                    _controller.reverse();
+                                  } else {
+                                    _controller.forward();
+                                  }
+                                 */
                               }
-                            : null,
+                            :   null,
                         fillColor: Colors.yellowAccent,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -194,7 +244,7 @@ class _StopwatchBodyState extends State<StopwatchBody> {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(6, 0, 6, 6),
-            child: ButtonsBar(),
+            child: ButtonsBar(parentAnimationController: _controller,),
           )
         ],
       );
