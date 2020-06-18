@@ -216,7 +216,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       yield MeasureStartedState(targetMeasure);
     }
     else {
-      throw Exception("Wrong state!");
+      throw Exception("Wrong state! $state");
     }
   }
 

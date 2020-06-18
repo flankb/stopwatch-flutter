@@ -12,17 +12,17 @@ import 'package:mockito/mockito.dart';
 class StopwatchFakeRepository extends Fake implements StopwatchRepository {
   List<MeasureViewModel> _measures;
   List<LapViewModel> _laps;
-  List<MeasureSessionViewModel> _sessions;
+  List<MeasureSessionViewModel> sessions;
   
   StopwatchFakeRepository({bool preBuild =false}) {
     if (preBuild) {
       _measures = FakeDataFabric.measuresHistory();
       _laps = FakeDataFabric.lapsHistory();
-      _sessions = FakeDataFabric.sessionsHistory();
+      sessions = FakeDataFabric.sessionsHistory();
     } else {
       _measures = List<MeasureViewModel>();
       _laps = List<LapViewModel>();
-      _sessions = List<MeasureSessionViewModel>();
+      sessions = List<MeasureSessionViewModel>();
     }
   }
   
@@ -62,13 +62,13 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
     MeasureSessionViewModel session = MeasureSessionViewModel.fromEntity(measureSession);
     session.id = Random(55).nextInt(2000) + 100;
 
-    _sessions.add(session);
+    sessions.add(session);
     return session.id;
   }
 
   @override
   Future<List<MeasureSession>> getMeasureSessions(int measureId) async {
-    return _sessions.where((element) => element.measureId == measureId).map((e) => e.toEntity());
+    return sessions.where((element) => element.measureId == measureId).map((e) => e.toEntity());
   }
 
   @override
@@ -81,10 +81,10 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
 
   @override
   Future<bool> updateMeasureSession(MeasureSession measureSession) async {
-    final sessionForUpdate = _sessions.firstWhere((element) => element.id == measureSession.id);
-    _sessions.remove(sessionForUpdate);
+    final sessionForUpdate = sessions.firstWhere((element) => element.id == measureSession.id);
+    sessions.remove(sessionForUpdate);
 
-    _sessions.add(MeasureSessionViewModel.fromEntity(measureSession));
+    sessions.add(MeasureSessionViewModel.fromEntity(measureSession));
     return true;
   }
 
@@ -105,7 +105,7 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
   Future deleteMeasures(List<int> measureIds) async {
     measureIds.forEach((element) {
       _measures.removeWhere((m) => m.id == element);
-      _sessions.removeWhere((s) => s.measureId == element);
+      sessions.removeWhere((s) => s.measureId == element);
       _laps.removeWhere((l) => l.measureId == element);
     });
   }
