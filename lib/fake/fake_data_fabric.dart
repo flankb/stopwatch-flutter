@@ -21,6 +21,15 @@ class FakeDataFabric {
     return list;
   }
 
+  static List<MeasureSessionViewModel> sessionsHistory() {
+    final list = [
+      MeasureSessionViewModel(id: 1, measureId: 2, started: DateTime.now().add(Duration(minutes: -10)), finished: DateTime.now()),
+      MeasureSessionViewModel(id: 2, measureId: 3, started: DateTime.now().add(Duration(minutes: -10)), finished: DateTime.now())
+    ];
+
+    return list;
+  }
+
   static List<LapViewModel> lapsHistory() {
     final list = [
       LapViewModel(id: 0, comment: "Иванов А. И.", measureId: 1, order: 1, difference: 5000, overall: 5000),
