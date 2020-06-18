@@ -56,10 +56,21 @@ void main() {
     blocTest(
       'open',
       build: () async => measureBloc,
-      wait: Duration(seconds: 2),
-      act: (bloc) async => bloc..add(MeasureOpenedEvent())
-        ..add(MeasureStartedEvent()),
-      verify: (bloc) async {
+      wait: Duration(seconds: 0),
+      act: (bloc) async {
+        bloc.add(MeasureOpenedEvent());
+        await Future.delayed(Duration(seconds: 2));
+
+        bloc.add(MeasureStartedEvent());
+
+        await Future.delayed(Duration(seconds: 1));
+        bloc.add(MeasurePausedEvent());
+        /*bloc.add(MeasureOpenedEvent());
+        bloc.add(MeasureStartedEvent());
+        bloc.add(MeasurePausedEvent());*/
+      },
+
+     verify: (bloc) async {
         //debugPrint("Test state ${(bloc as MeasureBloc).state}"); // Последне состояние
         //expect((bloc as MeasureBloc).state is MeasureReadyState , equals(true));
       },
@@ -76,16 +87,26 @@ void main() {
           return true;
         }),*/
 
-        predicate<MeasureState>((state){
+        predicate<MeasureState>((state) {
+          debugPrint("Test state ${state.toString()}");
+
+          //debugPrint("Test state ${state.measure}");
+          //expect(state.measure.status == StopwatchStatus.Started, equals(true), reason: "Status wrong!");
+          expect(repository.sessions.length > 0, equals(true), reason: "Sessions empty!");
+          //bool result  = true;
+          return true;
+        }),
+
+        isA<MeasureUpdatingState>(),
+        isA<MeasurePausedState>()
+
+        /*predicate<MeasureState>((state){
           bool result  = true;
 
-          result = result && state.measure.status == StopwatchStatus.Started;
+          debugPrint("Matcher pause measure: ${state.measure}");
 
-          result &= repository.sessions.length > 0;
-
-          //debugPrint("Test state $state");
-          return true;
-        })
+          return result;
+        })*/
       ],
     );
 
