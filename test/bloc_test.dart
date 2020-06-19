@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stopwatch/bloc/measure_bloc/measure_bloc.dart';
@@ -13,6 +12,11 @@ import 'package:stopwatch/util/ticker.dart';
 import 'package:bloc_test/bloc_test.dart';
 
 import 'fake_repos.dart';
+
+Future<bool> existsMeasure(StopwatchFakeRepository repository, StopwatchStatus status) async {
+  final measures = await repository.getMeasuresByStatusAsync(describeEnum(status));
+  return measures.length > 0;
+}
 
 void main() {
   group('MeasureBloc', () {
@@ -48,20 +52,31 @@ void main() {
 
       measureBloc.listen((state) async {
         debugPrint("Listened: " + state.toString());
+        final measure = state.measure;
 
         switch(counterStates){
           case 3:
             // В базе есть измерение со статусом Started
+            final startedExists = await existsMeasure(repository, StopwatchStatus.Started);
 
             // В базе появилась измерительная сессия
+            final existsSessions = (await repository.getMeasureSessions(measure.id)).length > 0;
+            break;
           case 5:
             // Есть круг
+            final existsLaps = (await repository.getLapsByMeasureAsync(measure.id)).any((element) => true);
+            break;
           case 7:
             // В базе есть измерение в статусе Paused
+            final pausedExists = existsMeasure(repository, StopwatchStatus.Paused);
 
             // elapsed > 2 секунд
+            final measureElapsed = measure.elapsed >= 2000 && measure.elapsedLap >= 2000;
+            break;
           case 8:
             // В базе есть финишированное измерение
+            final finishExists = existsMeasure(repository, StopwatchStatus.Finished);
+            break;
         }
 
         /*
@@ -86,8 +101,8 @@ void main() {
          */
 
         // Проверим, что есть измерение со статусом Finished
-        final finished = await repository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished));
-        if (finished.length > 0 && !_testController.isClosed) {
+        final finished = await existsMeasure(repository, StopwatchStatus.Finished);
+        if (finished && !_testController.isClosed) {
           _testController.add(true);
           _testController.close();
         }

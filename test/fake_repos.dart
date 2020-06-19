@@ -68,7 +68,7 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
 
   @override
   Future<List<MeasureSession>> getMeasureSessions(int measureId) async {
-    return sessions.where((element) => element.measureId == measureId).map((e) => e.toEntity());
+    return sessions.where((element) => element.measureId == measureId).map((e) => e.toEntity()).toList();
   }
 
   @override
