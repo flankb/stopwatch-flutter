@@ -33,14 +33,34 @@ class HistoryPage extends StatefulWidget {
   _HistoryPageState createState() => _HistoryPageState();
 }
 
-class _HistoryPageState extends State<HistoryPage> {
+class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStateMixin {
   StorageBloc _storageBloc;
   StreamController _selectedItemsStreamController;
   List<BaseStopwatchEntity> _selectedEntities = List<BaseStopwatchEntity>();
 
+  Duration duration = Duration(milliseconds: 1800);
+  AnimationController animationController;
+  Animation<double> animation;
+
+
+
+
   @override
   void initState() {
     super.initState();
+
+    animationController = AnimationController(vsync: this, duration: duration);
+    animation = Tween<double>(begin : 1.0, end: 2.0).animate(animationController);  //ColorTween(begin: beginColor, end: endColor).animate(controller);
+
+
+    animationController.addStatusListener((status) {
+      if(status == AnimationStatus.completed){
+        //animationController.reverse();
+      }
+    });
+
+    //animationController.forward();
+    animationController.forward();
 
     _selectedItemsStreamController = StreamController<int>.broadcast();
     // https://github.com/felangel/bloc/issues/74
@@ -78,6 +98,12 @@ class _HistoryPageState extends State<HistoryPage> {
     if (wasFiltered) {
       _storageBloc.add(FilterStorageEvent(widget.pageType, previousFilter));
     }
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -183,34 +209,45 @@ class _HistoryPageState extends State<HistoryPage> {
               final availState = state as AvailableListState;
               final pageIsLap = widget.pageType == LapViewModel;
 
+
+              // TODO Анимашка
+              // https://github.com/flutter/samples/blob/master/animations/lib/src/basics/05_animated_builder.dart
               return Stack(children: [
                 Column(
                   children: <Widget>[
                     pageIsLap
-                        ? Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Card(
+                        ? AnimatedBuilder(
+                          animation: animation,
+                          builder: (context, snapshot) {
+                            return Transform.scale(
+                              scale: animationController.value,
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  children: <Widget>[
-                                    PairLabelView(
-                                      caption: "Общее время",
-                                      value: "02:04:01,12",
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Card(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        children: <Widget>[
+                                          PairLabelView(
+                                            caption: "Общее время",
+                                            value: "02:04:01,12",
+                                          ),
+                                          PairLabelView(
+                                            caption: "Комментарий",
+                                            value: "Стометровка",
+                                          ),
+                                          PairLabelView(
+                                            caption: "Дата",
+                                            value: "06-12-2018",
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                    PairLabelView(
-                                      caption: "Комментарий",
-                                      value: "Стометровка",
-                                    ),
-                                    PairLabelView(
-                                      caption: "Дата",
-                                      value: "06-12-2018",
-                                    )
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            ),
-                          )
+                            );
+                          }
+                        )
                         : SizedBox(),
                     Expanded(
                       child: Container(
