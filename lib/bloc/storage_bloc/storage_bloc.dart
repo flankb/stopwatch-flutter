@@ -79,6 +79,7 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
     else if (event is DeleteStorageEvent) {
       if (state is AvailableListState) {
         final availState = state as AvailableListState;
+        yield LoadingStorageState();
         var entities = availState.entities;
         entities = entities.toSet().difference(event.entitiesForDelete.toSet()).toList();
 

@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stopwatch/bloc/measure_bloc/measure_event.dart';
 import 'package:stopwatch/bloc/storage_bloc/bloc.dart';
+import 'package:stopwatch/models/filter.dart';
+import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 import 'package:stopwatch/models/stopwatch_status.dart';
 import 'package:bloc_test/bloc_test.dart';
 
@@ -20,7 +22,7 @@ void main() {
     StorageBloc storageBloc;
 
     setUp(() {
-      repository = StopwatchFakeRepository();
+      repository = StopwatchFakeRepository(preBuild: true);
       storageBloc = StorageBloc(repository);
     });
 
@@ -52,23 +54,20 @@ void main() {
       build: () async => storageBloc,
       wait: Duration(seconds: 0),
       act: (bloc) async {
-        bloc.add(MeasureOpenedEvent());
-        bloc.add(MeasureStartedEvent());
-        bloc.add(MeasurePausedEvent());
-        /*bloc.add(MeasureOpenedEvent());
-        bloc.add(MeasureStartedEvent());
-        bloc.add(MeasurePausedEvent());*/
+        bloc.add(LoadStorageEvent(MeasureViewModel));
+        bloc.add(FilterStorageEvent(MeasureViewModel, Filter.defaultFilter()));
+        bloc.add(CancelFilterEvent(MeasureViewModel));
+        bloc.add(DeleteStorageEvent(List<BaseStopwatchEntity>()));
       },
       verify: (bloc) async {
-        //debugPrint("Test state ${(bloc as MeasureBloc).state}"); // Последне состояние
-        //expect((bloc as MeasureBloc).state is MeasureReadyState , equals(true));
       },
       expect: [
-        /*isA<MeasureReadyState>(),
-        isA<MeasureUpdatingState>(),
-        isA<MeasureStartedState>(),
-        isA<MeasureUpdatingState>(),
-        isA<MeasurePausedState>(),*/
+        isA<AvailableListState>(),
+        isA<LoadingStorageState>(),
+        isA<AvailableListState>(),
+        isA<AvailableListState>(),
+        isA<LoadingStorageState>(),
+        isA<AvailableListState>(),
       ],
     );
   });
