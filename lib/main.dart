@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:get_it/get_it.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:stopwatch/bloc/measure_bloc/bloc.dart';
 import 'package:stopwatch/model/database_models.dart';
@@ -73,7 +74,11 @@ class MyApp extends StatelessWidget {
             // or simply save your changes to "hot reload" in a Flutter IDE).
             // Notice that the counter didn't reset back to zero; the application
             // is not restarted.
-            primarySwatch: Colors.deepOrange),
+            primarySwatch: Colors.deepOrange,
+            textTheme: GoogleFonts.latoTextTheme(
+                  Theme.of(context).textTheme,
+             ),
+        ),
         localizationsDelegates: [
           S.delegate,
           GlobalMaterialLocalizations.delegate,
