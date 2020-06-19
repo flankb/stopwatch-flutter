@@ -51,6 +51,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
   }
 
   Stream<MeasureState> _mapOpenedToState(MeasureOpenedEvent event) async* {
+    yield MeasureUpdatingState(state.measure);
     // Прочитать измерение с БД со всеми кругами и сессиями
     final measuresStarted = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Started));
     final measuredPaused = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Paused));
@@ -159,6 +160,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       yield MeasureReadyState(MeasureViewModel());
       //throw Exception("Wrong state!");
     }
+
   }
 
   Stream<MeasureState> _mapPausedToState(MeasureEvent event) async* {

@@ -1,7 +1,7 @@
-
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stopwatch/bloc/measure_bloc/measure_bloc.dart';
 import 'package:stopwatch/bloc/measure_bloc/measure_event.dart';
@@ -28,123 +28,91 @@ void main() {
       measureBloc?.close();
     });
 
-    test('initial state test', () {
+    test('Initial state test', () {
       final initialState = MeasureUpdatingState(MeasureViewModel());
       expect(measureBloc.initialState.props[0].toString(), initialState.props[0].toString());
     });
 
     //expectLater(actual, matcher) // TODO Асинхронный expect
 
-    test("description", () async {
+    test("Full measure bloc test", () async {
       // https://stackoverflow.com/questions/42611880/difference-between-await-for-and-listen-in-dart/42613676
       // https://pub.dev/packages/fake_async
       // https://stackoverflow.com/questions/56621534/how-to-unit-test-stream-listen-in-dart
 
       // flutter test wait for stream
+      // https://stackoverflow.com/questions/55830800/placing-two-yields-next-to-each-other-in-dart-flutter-only-the-second-get-e
+
+      final _testController = StreamController<bool>();
+
+      measureBloc.listen((state) async {
+        debugPrint("Listened: " + state.toString());
+
+        /*
+        Listened: MeasureUpdatingState
+        Listened: MeasureReadyState
+
+        //MeasureStartedEvent
+        Listened: MeasureUpdatingState
+        Listened: MeasureStartedState
+
+        //Lap Added
+        Listened: MeasureUpdatingState
+        Listened: MeasureStartedState
+
+        //MeasurePausedEvent
+        Listened: MeasureUpdatingState
+        Listened: MeasurePausedState
+
+        //MeasureFinishedEvent
+        Listened: MeasureUpdatingState
+        Listened: MeasureReadyState
+         */
+
+        // Проверим, что есть измерение со статусом Finished
+        final finished = await repository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished));
+        if (finished.length > 0 && !_testController.isClosed) {
+          _testController.add(true);
+          _testController.close();
+        }
+      });
 
       measureBloc.add(MeasureOpenedEvent());
       measureBloc.add(MeasureStartedEvent());
 
-      final _testController = StreamController<bool>();
+      await Future.delayed(Duration(seconds: 1));
+      measureBloc.add(LapAddedEvent());
 
-
-      measureBloc.listen((state) async {
-        debugPrint("Listened " + state.toString());
-
-        await Future.delayed(Duration(seconds: 2));
-
-        //debugPrint("stateasfasfas");
-        _testController.add(true);
-      });
+      await Future.delayed(Duration(seconds: 1));
+      measureBloc.add(MeasurePausedEvent());
+      measureBloc.add(MeasureFinishedEvent());
 
       expectLater(_testController.stream, emits(true));
-      //_testController.close();
-
-      //await Future.delayed(Duration(seconds: 2));
-
-      //await Future.
-
-      //expect()
-
-      //expect(measureBloc.state, 1);
-
-      //await emitsExactly(measureBloc, [1], skip: 2);
     });
 
     blocTest(
-      'open',
+      'States flow',
       build: () async => measureBloc,
       wait: Duration(seconds: 0),
       act: (bloc) async {
         bloc.add(MeasureOpenedEvent());
-        await Future.delayed(Duration(seconds: 2));
-
         bloc.add(MeasureStartedEvent());
-
-        await Future.delayed(Duration(seconds: 1));
         bloc.add(MeasurePausedEvent());
         /*bloc.add(MeasureOpenedEvent());
         bloc.add(MeasureStartedEvent());
         bloc.add(MeasurePausedEvent());*/
       },
-
-     verify: (bloc) async {
+      verify: (bloc) async {
         //debugPrint("Test state ${(bloc as MeasureBloc).state}"); // Последне состояние
         //expect((bloc as MeasureBloc).state is MeasureReadyState , equals(true));
       },
       expect: [
         isA<MeasureReadyState>(),
-        /*predicate<MeasureState>((state){
-          debugPrint("Test state $state");
-          return true;
-        }),*/
-
         isA<MeasureUpdatingState>(),
-        /*predicate<MeasureState>((state){
-          debugPrint("Test state $state");
-          return true;
-        }),*/
-
         isA<MeasureStartedState>(),
-        /*predicate<MeasureState>((state) {
-          debugPrint("Matcher started measure: ${state.measure.toString()}");
-
-          //debugPrint("Test state ${state.measure}");
-          //expect(state.measure.status == StopwatchStatus.Started, equals(true), reason: "Status wrong!");
-          expect(repository.sessions.length > 0, equals(true), reason: "Sessions empty!");
-          //bool result  = true;
-          return true;
-        }),*/
-
         isA<MeasureUpdatingState>(),
         isA<MeasurePausedState>(),
-
-        /*predicate<MeasureState>((state){
-          bool result  = true;
-
-          debugPrint("Matcher pause measure: ${state.measure.toString()}");
-
-          return result;
-        })*/
       ],
     );
-
-    /*blocTest(
-        'start',
-        build: () async => measureBloc,
-        wait: Duration(seconds: 2),
-        skip: 1,
-        act: (bloc) async => bloc.add(MeasureStartedEvent()),
-        verify: (bloc) async {
-          expect((bloc as MeasureBloc).state is MeasureStartedState , equals(true));
-        }
-    );*/
-
-    /*test('StopwatchFakeRepository test', () async {
-      final fakeRep = StopwatchFakeRepository();
-
-      expect((await fakeRep.getMeasuresByStatusAsync("")), equals(null));
-    });*/
-
   });
 }
