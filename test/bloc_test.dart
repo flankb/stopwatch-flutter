@@ -44,9 +44,25 @@ void main() {
       // https://stackoverflow.com/questions/55830800/placing-two-yields-next-to-each-other-in-dart-flutter-only-the-second-get-e
 
       final _testController = StreamController<bool>();
+      int counterStates = 0;
 
       measureBloc.listen((state) async {
         debugPrint("Listened: " + state.toString());
+
+        switch(counterStates){
+          case 3:
+            // В базе есть измерение со статусом Started
+
+            // В базе появилась измерительная сессия
+          case 5:
+            // Есть круг
+          case 7:
+            // В базе есть измерение в статусе Paused
+
+            // elapsed > 2 секунд
+          case 8:
+            // В базе есть финишированное измерение
+        }
 
         /*
         Listened: MeasureUpdatingState
@@ -75,6 +91,8 @@ void main() {
           _testController.add(true);
           _testController.close();
         }
+
+        counterStates++;
       });
 
       measureBloc.add(MeasureOpenedEvent());
