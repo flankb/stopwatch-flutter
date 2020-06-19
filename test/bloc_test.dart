@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stopwatch/bloc/measure_bloc/measure_bloc.dart';
@@ -35,16 +37,32 @@ void main() {
 
     test("description", () async {
       // https://stackoverflow.com/questions/42611880/difference-between-await-for-and-listen-in-dart/42613676
+      // https://pub.dev/packages/fake_async
+      // https://stackoverflow.com/questions/56621534/how-to-unit-test-stream-listen-in-dart
 
+      // flutter test wait for stream
 
       measureBloc.add(MeasureOpenedEvent());
       measureBloc.add(MeasureStartedEvent());
 
-      measureBloc.listen((state) {
-        debugPrint(state.toString());
+      final _testController = StreamController<bool>();
+
+
+      measureBloc.listen((state) async {
+        debugPrint("Listened " + state.toString());
+
+        await Future.delayed(Duration(seconds: 2));
+
+        //debugPrint("stateasfasfas");
+        _testController.add(true);
       });
 
-      //Future.wa
+      expectLater(_testController.stream, emits(true));
+      //_testController.close();
+
+      //await Future.delayed(Duration(seconds: 2));
+
+      //await Future.
 
       //expect()
 
@@ -87,23 +105,24 @@ void main() {
           return true;
         }),*/
 
-        predicate<MeasureState>((state) {
-          debugPrint("Test state ${state.toString()}");
+        isA<MeasureStartedState>(),
+        /*predicate<MeasureState>((state) {
+          debugPrint("Matcher started measure: ${state.measure.toString()}");
 
           //debugPrint("Test state ${state.measure}");
           //expect(state.measure.status == StopwatchStatus.Started, equals(true), reason: "Status wrong!");
           expect(repository.sessions.length > 0, equals(true), reason: "Sessions empty!");
           //bool result  = true;
           return true;
-        }),
+        }),*/
 
         isA<MeasureUpdatingState>(),
-        isA<MeasurePausedState>()
+        isA<MeasurePausedState>(),
 
         /*predicate<MeasureState>((state){
           bool result  = true;
 
-          debugPrint("Matcher pause measure: ${state.measure}");
+          debugPrint("Matcher pause measure: ${state.measure.toString()}");
 
           return result;
         })*/
