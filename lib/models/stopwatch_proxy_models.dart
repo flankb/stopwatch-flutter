@@ -123,8 +123,7 @@ class MeasureViewModel extends BaseStopwatchEntity {
     this.laps,
     this.status = StopwatchStatus.Ready,
     this.dateCreated}) : super(id: id, comment : comment) {
-    //lastRestartedOverall = DateTime.now();
-    //lastRestartedLap = DateTime.now();
+    lastRestartedOverall = DateTime.now();
     laps = List<LapViewModel>();
     sessions = List<MeasureSessionViewModel>();
   }

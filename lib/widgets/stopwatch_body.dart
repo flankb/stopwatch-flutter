@@ -252,7 +252,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
   }
 
   _vibrate() async {
-    final vibration = PrefService.getBool('vibration');
+    final vibration = PrefService.getBool('vibration') ?? true;
     if (vibration) {
       //if (await Vibration.hasVibrator()) { // TODO Куда-то впилить проверку (в InheritedWidget?)
         Vibration.vibrate(duration: 50);
@@ -261,7 +261,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
   }
 
   _playSound(BuildContext context, int soundId) {
-    final sound = PrefService.getBool('sound');
+    final sound = PrefService.getBool('sound') ?? true;
 
     if (sound) {
       final s = SoundWidget.of(context);
