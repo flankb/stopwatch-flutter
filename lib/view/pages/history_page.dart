@@ -38,20 +38,18 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
   StreamController _selectedItemsStreamController;
   List<BaseStopwatchEntity> _selectedEntities = List<BaseStopwatchEntity>();
 
-  Duration duration = Duration(milliseconds: 1800);
+  Duration duration = Duration(milliseconds: 800);
   AnimationController animationController;
   Animation<double> animation;
-
-
-
 
   @override
   void initState() {
     super.initState();
 
     animationController = AnimationController(vsync: this, duration: duration);
-    animation = Tween<double>(begin : 1.0, end: 2.0).animate(animationController);  //ColorTween(begin: beginColor, end: endColor).animate(controller);
+    animation = Tween<double>(begin : 0.5, end: 1.0).animate(animationController);  //ColorTween(begin: beginColor, end: endColor).animate(controller);
 
+    _storageBloc = GetIt.I.get<StorageBloc>(instanceName: widget.pageType == MeasureViewModel ? MeasuresBloc : LapsBloc);
 
     animationController.addStatusListener((status) {
       if(status == AnimationStatus.completed){
@@ -59,14 +57,24 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
       }
     });
 
-    //animationController.forward();
+    /*_storageBloc.listen((state) {
+      if(state is AvailableListState){
+
+        debugPrint("dddddd " + state.toString());
+
+        if(mounted)
+          animationController.forward();
+      }
+    });*/
+
     animationController.forward();
+    //animationController.forward();
 
     _selectedItemsStreamController = StreamController<int>.broadcast();
     // https://github.com/felangel/bloc/issues/74
     // https://github.com/felangel/bloc/blob/master/packages/flutter_bloc/README.md
 
-    _storageBloc = GetIt.I.get<StorageBloc>(instanceName: widget.pageType == MeasureViewModel ? MeasuresBloc : LapsBloc);
+
 
     debugPrint("History page: Init state");
 
@@ -102,7 +110,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
 
   @override
   void dispose() {
-    animationController.dispose();
+    //animationController.dispose();
     super.dispose();
   }
 
@@ -209,7 +217,6 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
               final availState = state as AvailableListState;
               final pageIsLap = widget.pageType == LapViewModel;
 
-
               // TODO Анимашка
               // https://github.com/flutter/samples/blob/master/animations/lib/src/basics/05_animated_builder.dart
               return Stack(children: [
@@ -220,7 +227,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                           animation: animation,
                           builder: (context, snapshot) {
                             return Transform.scale(
-                              scale: animationController.value,
+                              scale: animation.value,
                               child: Padding(
                                   padding: const EdgeInsets.all(16.0),
                                   child: Card(
