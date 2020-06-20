@@ -63,19 +63,22 @@ void main() {
           case 1:
             // Проверить, что в сотоянии есть загруженные элементы
             final existsElements = availableState.entities.any((element) => true);
+            expect(existsElements, true, reason: "В сотоянии нет загруженных элементов");
             break;
           case 3:
             // Проверить, что отфильтровано (перед этим задать фильтр)
             final filteredEntities = availableState.entities.where((element) => element.comment.contains("сто"));
             final onlyFilteredExists = filteredEntities.length == availableState.entities.length;
+            expect(onlyFilteredExists, true, reason: "Неверное количество отфильтрованных элементов");
 
             final stateIsFiltered = availableState.filtered;
+            expect(stateIsFiltered, true, reason : 'Флаг не выставился!');
 
             break;
-
           case 5:
             // Проверить, что есть загруженные элементы
             final existsElements = availableState.entities.any((element) => true);
+            expect(existsElements, true, reason : "После удаления нет загруженных элементов!");
         }
 
         if (counterStates == 6) {
