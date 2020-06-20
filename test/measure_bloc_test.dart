@@ -71,8 +71,8 @@ void main() {
             break;
           case 7:
             // В базе есть измерение в статусе Paused
-            final pausedExists = existsMeasure(repository, StopwatchStatus.Paused);
-            //expect(pausedExists, true, reason : "В базе нет измерение в статусе Paused"); //TODO !!!!
+            final pausedExists = await existsMeasure(repository, StopwatchStatus.Paused);
+            expect(pausedExists, true, reason : "В базе нет измерение в статусе Paused"); //TODO !!!!
 
             // elapsed > 2 секунд
             final measureElapsed = measure.elapsed >= 1990 && measure.elapsedLap >= 1000;
@@ -80,8 +80,8 @@ void main() {
             break;
           case 8:
             // В базе есть финишированное измерение
-            final finishExists = existsMeasure(repository, StopwatchStatus.Finished);
-           // expect(finishExists, true, reason: "В базе нет финишированных измерений"); //TODO !!!!!
+            final finishExists = await existsMeasure(repository, StopwatchStatus.Finished);
+            expect(finishExists, true, reason: "В базе нет финишированных измерений"); //TODO !!!!!
             break;
         }
 
