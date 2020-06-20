@@ -43,8 +43,57 @@ void main() {
 
       storageBloc.listen((state) async {
         debugPrint("Listened: " + state.toString());
+        final availableState = state as AvailableListState;
 
+        /**
+         * Listened: LoadingStorageState
+            Current state LoadingStorageState Bloc event: LoadStorageEvent
+            Listened: AvailableListState
+            Current state AvailableListState Bloc event: FilterStorageEvent
+            Listened: LoadingStorageState
+            Listened: AvailableListState
+            Current state AvailableListState Bloc event: CancelFilterEvent
+            Listened: AvailableListState
+            Current state AvailableListState Bloc event: DeleteStorageEvent
+            Listened: LoadingStorageState
+            Listened: AvailableListState
+         */
+
+        switch(counterStates) {
+          case 1:
+            // Проверить, что в сотоянии есть загруженные элементы
+            final existsElements = availableState.entities.any((element) => true);
+            break;
+          case 3:
+            // Проверить, что отфильтровано (перед этим задать фильтр)
+            final filteredEntities = availableState.entities.where((element) => element.comment.contains("сто"));
+            final onlyFilteredExists = filteredEntities.length == availableState.entities.length;
+
+            final stateIsFiltered = availableState.filtered;
+
+            break;
+
+          case 5:
+            // Проверить, что есть загруженные элементы
+            final existsElements = availableState.entities.any((element) => true);
+        }
+
+        if (counterStates == 6) {
+          _testController.add(true);
+          _testController.close();
+        }
+
+        counterStates++;
       });
+
+      storageBloc.add(LoadStorageEvent(MeasureViewModel));
+
+      Filter filter = Filter.defaultFilter();
+      filter.query = "сто";
+      storageBloc.add(FilterStorageEvent(MeasureViewModel, filter));
+
+      storageBloc.add(CancelFilterEvent(MeasureViewModel));
+      storageBloc.add(DeleteStorageEvent(List<BaseStopwatchEntity>()));
 
       expectLater(_testController.stream, emits(true));
     });
