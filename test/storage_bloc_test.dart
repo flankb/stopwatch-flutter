@@ -43,7 +43,7 @@ void main() {
 
       storageBloc.listen((state) async {
         debugPrint("Listened: " + state.toString());
-        final availableState = state as AvailableListState;
+        final availableState = (state is AvailableListState) ? state : null;
 
         /**
          * Listened: LoadingStorageState
@@ -75,7 +75,7 @@ void main() {
             expect(stateIsFiltered, true, reason : 'Флаг не выставился!');
 
             break;
-          case 5:
+          case 6:
             // Проверить, что есть загруженные элементы
             final existsElements = availableState.entities.any((element) => true);
             expect(existsElements, true, reason : "После удаления нет загруженных элементов!");
