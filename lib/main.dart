@@ -65,6 +65,8 @@ void main() async {
 // https://proandroiddev.com/how-to-dynamically-change-the-theme-in-flutter-698bd022d0f0
 // https://resocoder.com/2019/08/09/switch-themes-with-flutter-bloc-dynamic-theming-tutorial-dark-light-theme/
 // https://pub.dev/packages/theme_provider
+// https://pub.dev/packages/dynamic_theme
+// https://api.flutter.dev/flutter/widgets/InheritedModel-class.html
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
