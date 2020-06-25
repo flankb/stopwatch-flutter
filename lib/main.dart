@@ -15,7 +15,6 @@ import 'package:stopwatch/util/ticker.dart';
 import 'package:stopwatch/view/pages/about_page.dart';
 import 'package:stopwatch/view/pages/settings_page.dart';
 import 'package:stopwatch/widgets/circular.dart';
-import 'package:stopwatch/widgets/sound_widget.dart';
 import 'package:stopwatch/widgets/stopwatch_body.dart';
 import 'package:preferences/preferences.dart';
 import 'package:rate_my_app/rate_my_app.dart';
@@ -31,6 +30,7 @@ import 'package:tuple/tuple.dart';
 import 'models/stopwatch_status.dart';
 import 'generated/l10n.dart';
 import 'util_mixins/rate_app_mixin.dart';
+import 'widgets/inherited/sound_widget.dart';
 
 // Рефакторинг
 // https://iirokrankka.com/2018/12/11/splitting-widgets-to-methods-performance-antipattern/
@@ -54,16 +54,24 @@ void main() async {
   // https://github.com/Skyost/rate_my_app/blob/master/example/lib/main.dart
   await rateMyApp.init();
   await PrefService.init(prefix: 'pref_'); // Настройки
+
+  // TODO Здесь прочитать какая тема (перед инициализацией приложения)
+
   setupLocators();
   runApp(MyApp());
 }
+
+// Добавление темной темы во Flutter:
+// https://proandroiddev.com/how-to-dynamically-change-the-theme-in-flutter-698bd022d0f0
+// https://resocoder.com/2019/08/09/switch-themes-with-flutter-bloc-dynamic-theming-tutorial-dark-light-theme/
+// https://pub.dev/packages/theme_provider
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Шаблон',
+        title: 'Секундомер',
         theme: ThemeData(
             // This is the theme of your application.
             //
@@ -74,7 +82,10 @@ class MyApp extends StatelessWidget {
             // or simply save your changes to "hot reload" in a Flutter IDE).
             // Notice that the counter didn't reset back to zero; the application
             // is not restarted.
-            primarySwatch: Colors.deepOrange,
+            //brightness: Brightness.dark, // Тёмная тема
+            //primarySwatch: Colors.deepOrange,
+            primaryColor: Colors.blue,
+
             textTheme: GoogleFonts.latoTextTheme(
                   Theme.of(context).textTheme,
              ),
@@ -343,7 +354,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
                 future: _soundsLoader,
                 builder: (context, snapshot) {
                   return snapshot.hasData
-                      ? SoundWidget(
+                    ? SoundWidget(
                           soundPool: snapshot.data.item1,
                           sounds: snapshot.data.item2,
                           child: StopwatchBody(

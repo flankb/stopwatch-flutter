@@ -3,6 +3,8 @@ import 'package:flutter/widgets.dart';
 import 'package:preferences/preferences.dart';
 import 'package:validators/validators.dart';
 
+import '../../theme_data.dart';
+
 class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,13 @@ class SettingsPage extends StatelessWidget {
             'screen_block',
             defaultVal: true,
             desc: "Вкл",
+          ),
+          DropdownPreference<String>( //
+            'Тема приложения',
+            'theme',
+            defaultVal: AppTheme.BlueLight.toString(),
+            displayValues: ['Blue Light', 'Blue Dark', 'Green Light', 'Green Dark'],
+            values: [AppTheme.BlueLight.toString(), AppTheme.BlueDark.toString(), AppTheme.GreenLight.toString(), AppTheme.GreenDark.toString()],
           ),
           TextFieldPreference(
             'E-mail',
