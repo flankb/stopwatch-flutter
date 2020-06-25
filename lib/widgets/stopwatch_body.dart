@@ -8,11 +8,11 @@ import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 import 'package:stopwatch/util/time_displayer.dart';
 import 'package:stopwatch/widgets/measure_lap_item.dart';
-import 'package:stopwatch/widgets/sound_widget.dart';
 import 'package:preferences/preference_service.dart';
 import 'package:vibration/vibration.dart';
 
 import 'buttons_bar.dart';
+import 'inherited/sound_widget.dart';
 
 class StopwatchBody extends StatefulWidget {
   final MeasureBloc measureBloc;

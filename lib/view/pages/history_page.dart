@@ -74,8 +74,6 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
     // https://github.com/felangel/bloc/issues/74
     // https://github.com/felangel/bloc/blob/master/packages/flutter_bloc/README.md
 
-
-
     debugPrint("History page: Init state");
 
     // Инициализировать фильтр

@@ -61,6 +61,10 @@ class ButtonsBar extends StatelessWidget {
               // https://api.flutter.dev/flutter/material/IconButton-class.html
               // Так же можно обернуть в InkWell
 
+              // Пример AppBar'a:
+              // https://flutter.dev/docs/catalog/samples/basic-app-bar
+              // PopupMenu сделано также как у меня
+
               MenuButton(
                 pic: Icons.ac_unit,
                 color: Colors.red,

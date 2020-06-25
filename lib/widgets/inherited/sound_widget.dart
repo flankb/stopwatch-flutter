@@ -11,7 +11,7 @@ class SoundWidget extends InheritedWidget {
     @required Widget child, Key key}) : super(child: child, key: key);
 
   @override
-  bool updateShouldNotify(InheritedWidget oldWidget) {
+  bool updateShouldNotify(SoundWidget oldWidget) {
     return true;
   }
 
