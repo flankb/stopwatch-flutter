@@ -37,13 +37,13 @@ class ButtonsBar extends StatelessWidget {
             .width,*/
         decoration: BoxDecoration(
           //borderRadius: BorderRadius.circular(8.0),
-          color: Colors.white,
+          color: Theme.of(context).bottomAppBarColor,
           boxShadow: [
             BoxShadow(
               color: Colors.grey,
               blurRadius: 1.0,
               spreadRadius: 0.0,
-              offset: Offset(0.5, 0.5), // shadow direction: bottom right
+              offset: Offset(0.3, 0.3), // shadow direction: bottom right
             )
           ],
             borderRadius: new BorderRadius.horizontal(

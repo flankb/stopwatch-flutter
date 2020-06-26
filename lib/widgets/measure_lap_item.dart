@@ -23,7 +23,7 @@ class MeasureLapItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text("$difference", style: TextStyle(fontSize: 18)),
-            Text("$overall", style: TextStyle(fontSize: 16, color: Colors.black38))
+            Text("$overall", style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.subtitle2.color))
           ],
         )
       ],

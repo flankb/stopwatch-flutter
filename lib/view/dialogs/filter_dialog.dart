@@ -72,7 +72,7 @@ class FilterFormState extends State<FilterForm> {
       children: <Widget>[
         Container(
             decoration: new BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).backgroundColor,
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(8),
               boxShadow: [

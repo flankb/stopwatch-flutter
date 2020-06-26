@@ -5,6 +5,7 @@ enum AppTheme {
   GreenDark,
   BlueLight,
   BlueDark,
+  //PinkLight
 }
 
 final appThemeData = { //TODO создавать этот словарь в контексте??
@@ -20,10 +21,11 @@ final appThemeData = { //TODO создавать этот словарь в ко
     brightness: Brightness.light,
     primaryColor: Colors.blue,
   ),
-  AppTheme.BlueDark: ThemeData(
+  /*AppTheme.BlueDark: ThemeData(
     brightness: Brightness.dark,
     primaryColor: Colors.blue[700],
-  ),
+  ),*/
+  AppTheme.BlueDark : ThemeData.dark().copyWith(primaryColor: Colors.blue[700])
 };
 
 /*

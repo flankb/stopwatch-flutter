@@ -101,6 +101,7 @@ class EditFormState extends State<EditForm> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: RaisedButton(
+                    color: Theme.of(context).primaryColor,
                     onPressed: () {
                       // Validate returns true if the form is valid, or false
                       // otherwise.

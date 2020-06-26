@@ -102,7 +102,7 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
       },
       child: Container(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-          color: isSelected ? Colors.deepOrange : Colors.transparent,
+          color: isSelected ? Theme.of(context).primaryColor : Colors.transparent,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -117,7 +117,7 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
                 children: <Widget>[
                   Text(
                     widget.entity.comment ?? "Нет комментария",
-                    style: TextStyle(fontSize: 18, color: widget.entity.comment == null ? Colors.black12 : Colors.black),
+                    style: TextStyle(fontSize: 18, color: widget.entity.comment == null ? Theme.of(context).textTheme.subtitle2.color : Theme.of(context).textTheme.subtitle2.color),
                   ),
                   SizedBox(height: 6),
                   Text(
@@ -126,7 +126,7 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
                   ),
                   SizedBox(height: 3),
                   date != null ?
-                      Text(DateFormat("dd-MM-yyyy").format(date), style: TextStyle(color: Colors.black54),) : SizedBox()
+                      Text(DateFormat("dd-MM-yyyy").format(date), style: TextStyle(color: Theme.of(context).textTheme.subtitle2.color),) : SizedBox()
                 ],
               ),
             ],
