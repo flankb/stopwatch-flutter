@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stopwatch/theme_data.dart';
 
+// TODO Скопировать данный код в базу знаний
+// TODO Вместе со статьёй https://ericwindmill.com/articles/inherited_widget/
 class AppThemeProvider extends InheritedWidget {
   final AppTheme appTheme;
   final AppThemeContainerState data;
@@ -19,6 +21,8 @@ class AppThemeProvider extends InheritedWidget {
   }
 
   static AppThemeProvider of(BuildContext context){
+    //context.findAncestorWidgetOfExactType()
+
     return context.dependOnInheritedWidgetOfExactType<AppThemeProvider>();
   }
 }
