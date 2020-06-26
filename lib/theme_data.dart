@@ -12,20 +12,27 @@ final appThemeData = { //TODO создавать этот словарь в ко
   AppTheme.GreenLight: ThemeData(
     brightness: Brightness.light,
     primaryColor: Colors.green,
+      toggleableActiveColor : Colors.green
   ),
   AppTheme.GreenDark: ThemeData(
     brightness: Brightness.dark,
     primaryColor: Colors.green[700],
+      toggleableActiveColor : Colors.green[700],
+    focusColor: Colors.green[700]
   ),
   AppTheme.BlueLight: ThemeData(
     brightness: Brightness.light,
     primaryColor: Colors.blue,
+      toggleableActiveColor : Colors.blue
   ),
   /*AppTheme.BlueDark: ThemeData(
     brightness: Brightness.dark,
     primaryColor: Colors.blue[700],
   ),*/
-  AppTheme.BlueDark : ThemeData.dark().copyWith(primaryColor: Colors.blue[700])
+  AppTheme.BlueDark : ThemeData.dark().copyWith(
+      primaryColor: Colors.blue[700],
+      toggleableActiveColor : Colors.blue[700]
+  )
 };
 
 /*

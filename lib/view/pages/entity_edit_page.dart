@@ -85,8 +85,22 @@ class EditFormState extends State<EditForm> {
               children: <Widget>[
                 TextFormField(
                   autofocus: true,
+
+
+
                   decoration: InputDecoration(
                       labelText: 'Введите комментарий',
+                      /*labelStyle: TextStyle(
+                          color:  Colors.blue,
+
+                      ),
+
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Colors.blue
+                        )
+                    ),*/
+
                   ),
                   //initialValue: snapshot is AvailableEntityState ? snapshot?.entity?.comment : "",
                   controller: textController,
