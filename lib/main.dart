@@ -93,18 +93,22 @@ class MyApp extends StatelessWidget {
 
     return InheritedThemeNotifier(
       controller: themeController,
-      child: MaterialApp(
-          title: 'Секундомер',
-          theme: InheritedThemeNotifier.of(context) == null ? themeController.themeData : InheritedThemeNotifier.of(context).themeData,
-          localizationsDelegates: [
-            S.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: S.delegate.supportedLocales,
-          home: MyTabPageStateful() //MyHomePage(title: 'Flutter Demo Home Page'),
-          ),
+      child: Builder(
+        builder: (BuildContext context) {
+          return MaterialApp(
+              title: 'Секундомер',
+              theme:  InheritedThemeNotifier.of(context).themeData,
+              localizationsDelegates: [
+                S.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: S.delegate.supportedLocales,
+              home: MyTabPageStateful() //MyHomePage(title: 'Flutter Demo Home Page'),
+              );
+        }
+      ),
     );
   }
 }
