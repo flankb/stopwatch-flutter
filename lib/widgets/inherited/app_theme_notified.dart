@@ -8,6 +8,7 @@ class ThemeController extends ChangeNotifier {
   Map<AppTheme, ThemeData> _availableThemes;
 
   ThemeController(AppTheme initialTheme, Map<AppTheme, ThemeData> availableThemes) {
+    _appTheme = initialTheme;
     _availableThemes = availableThemes;
   }
 
@@ -17,6 +18,9 @@ class ThemeController extends ChangeNotifier {
   updateTheme(AppTheme newTheme) {
     if (_appTheme != newTheme) {
       _appTheme = newTheme;
+
+      debugPrint("Updated theme: " + newTheme.toString());
+
       notifyListeners();
     }
   }
@@ -25,10 +29,13 @@ class ThemeController extends ChangeNotifier {
 class InheritedThemeNotifier extends InheritedNotifier<ThemeController>{
   final ThemeController controller;
 
-  const InheritedThemeNotifier({Key key, @required Widget child, this.controller})
+  const InheritedThemeNotifier({Key key, @required Widget child, @required this.controller})
       : super(key: key, child: child, notifier: controller);
 
-  static ThemeController of(BuildContext context){
-    return context.dependOnInheritedWidgetOfExactType<InheritedThemeNotifier>().controller;
+  static ThemeController of(BuildContext context) {
+    final p = context.dependOnInheritedWidgetOfExactType<InheritedThemeNotifier>();
+    debugPrint("ThemeController of: " + p.toString());
+
+    return p == null ? null : context.dependOnInheritedWidgetOfExactType<InheritedThemeNotifier>().controller;
   }
 }

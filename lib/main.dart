@@ -15,6 +15,7 @@ import 'package:stopwatch/util/ticker.dart';
 import 'package:stopwatch/view/pages/about_page.dart';
 import 'package:stopwatch/view/pages/settings_page.dart';
 import 'package:stopwatch/widgets/circular.dart';
+import 'package:stopwatch/widgets/inherited/app_theme_notified.dart';
 import 'package:stopwatch/widgets/stopwatch_body.dart';
 import 'package:preferences/preferences.dart';
 import 'package:rate_my_app/rate_my_app.dart';
@@ -29,6 +30,7 @@ import 'package:tuple/tuple.dart';
 
 import 'models/stopwatch_status.dart';
 import 'generated/l10n.dart';
+import 'theme_data.dart';
 import 'util_mixins/rate_app_mixin.dart';
 import 'widgets/inherited/sound_widget.dart';
 
@@ -48,6 +50,12 @@ RateMyApp rateMyApp = RateMyApp(
   appStoreIdentifier: '585027354',
 );
 
+AppTheme readLastTheme(){
+  final themeStr = PrefService.getString('theme') ?? AppTheme.GreenDark.toString();
+  AppTheme theme = AppTheme.values.firstWhere((e) => e.toString() == themeStr);
+  return theme;
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // This allows to use async methods in the main method without any problem.
 
@@ -55,10 +63,12 @@ void main() async {
   await rateMyApp.init();
   await PrefService.init(prefix: 'pref_'); // Настройки
 
-  // TODO Здесь прочитать какая тема (перед инициализацией приложения)
+  // Здесь прочитать какая тема (перед инициализацией приложения)
+  final initialTheme = readLastTheme();
+  final controller  = ThemeController(initialTheme, appThemeData);
 
   setupLocators();
-  runApp(MyApp());
+  runApp(MyApp(initialTheme: initialTheme, themeController: controller,));
 }
 
 // Добавление темной темы во Flutter:
@@ -69,38 +79,33 @@ void main() async {
 // https://api.flutter.dev/flutter/widgets/InheritedModel-class.html
 
 class MyApp extends StatelessWidget {
+  final AppTheme initialTheme;
+  final ThemeController themeController;
+
+  const MyApp({Key key, this.initialTheme, this.themeController}) : super(key: key);
+
+
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Секундомер',
-        theme: ThemeData(
-            // This is the theme of your application.
-            //
-            // Try running your application with "flutter run". You'll see the
-            // application has a blue toolbar. Then, without quitting the app, try
-            // changing the primarySwatch below to Colors.green and then invoke
-            // "hot reload" (press "r" in the console where you ran "flutter run",
-            // or simply save your changes to "hot reload" in a Flutter IDE).
-            // Notice that the counter didn't reset back to zero; the application
-            // is not restarted.
-            //brightness: Brightness.dark, // Тёмная тема
-            //primarySwatch: Colors.deepOrange,
-            primaryColor: Colors.blue,
+    debugPrint("themeController.themeData " + themeController.theme.toString());
 
-            textTheme: GoogleFonts.latoTextTheme(
-                  Theme.of(context).textTheme,
-             ),
-        ),
-        localizationsDelegates: [
-          S.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: S.delegate.supportedLocales,
-        home: MyTabPageStateful() //MyHomePage(title: 'Flutter Demo Home Page'),
-        );
+    return InheritedThemeNotifier(
+      controller: themeController,
+      child: MaterialApp(
+          title: 'Секундомер',
+          theme: InheritedThemeNotifier.of(context) == null ? themeController.themeData : InheritedThemeNotifier.of(context).themeData,
+          localizationsDelegates: [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          home: MyTabPageStateful() //MyHomePage(title: 'Flutter Demo Home Page'),
+          ),
+    );
   }
 }
 

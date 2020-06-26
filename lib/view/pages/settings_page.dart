@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:preferences/preferences.dart';
+import 'package:stopwatch/widgets/inherited/app_theme_notified.dart';
 import 'package:validators/validators.dart';
 
 import '../../theme_data.dart';
@@ -33,6 +34,14 @@ class SettingsPage extends StatelessWidget {
             'Тема приложения',
             'theme',
             defaultVal: AppTheme.BlueLight.toString(),
+            onChange: (v) {
+
+
+              AppTheme theme = AppTheme.values.firstWhere((e) => e.toString() == v.toString());
+              debugPrint("Selected theme: " + theme.toString());
+
+              InheritedThemeNotifier.of(context).updateTheme(theme);
+            },
             displayValues: ['Blue Light', 'Blue Dark', 'Green Light', 'Green Dark'],
             values: [AppTheme.BlueLight.toString(), AppTheme.BlueDark.toString(), AppTheme.GreenLight.toString(), AppTheme.GreenDark.toString()],
           ),
