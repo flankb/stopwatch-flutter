@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 enum AppTheme {
   GreenLight,
@@ -8,31 +9,62 @@ enum AppTheme {
   //PinkLight
 }
 
+class ExtendedTheme {
+  final ThemeData materialTheme;
+  final Color shadowColor;
+  final buttonPauseColor;
+  final subtitleColor;
+
+
+  ExtendedTheme(this.materialTheme, { this.shadowColor = const Color(0xff3F3C3C), this.buttonPauseColor = Colors.black, this.subtitleColor = const Color(0xffE6E6E6) });
+}
+
+ThemeData baseTheme = ThemeData(
+    brightness: Brightness.light,
+    textTheme: GoogleFonts.latoTextTheme()
+);
+
+
+
 final appThemeData = { //TODO создавать этот словарь в контексте??
-  AppTheme.GreenLight: ThemeData(
+
+  AppTheme.GreenLight : ExtendedTheme(baseTheme.copyWith(
+    primaryColor: Colors.green,
+    toggleableActiveColor : Colors.green,
+    focusColor: Colors.green
+  ),
+      subtitleColor : const Color(0xff4A4747)
+  ),
+
+  /*AppTheme.GreenLight: ThemeData(
     brightness: Brightness.light,
     primaryColor: Colors.green,
-      toggleableActiveColor : Colors.green
-  ),
-  AppTheme.GreenDark: ThemeData(
+    toggleableActiveColor : Colors.green,
+
+
+  ),*/
+  AppTheme.GreenDark: ExtendedTheme(ThemeData(
     brightness: Brightness.dark,
     primaryColor: Colors.green[700],
-      toggleableActiveColor : Colors.green[700],
-    focusColor: Colors.green[700]
+    toggleableActiveColor : Colors.green[700],
+    focusColor: Colors.green[700],
   ),
-  AppTheme.BlueLight: ThemeData(
+      subtitleColor : const Color(0xffA5A5A5)
+  ),
+
+  AppTheme.BlueLight: ExtendedTheme(ThemeData(
     brightness: Brightness.light,
     primaryColor: Colors.blue,
-      toggleableActiveColor : Colors.blue
+    toggleableActiveColor : Colors.blue
   ),
-  /*AppTheme.BlueDark: ThemeData(
-    brightness: Brightness.dark,
+      subtitleColor : const Color(0xff4A4747)
+  ),
+
+  AppTheme.BlueDark : ExtendedTheme(ThemeData.dark().copyWith(
     primaryColor: Colors.blue[700],
-  ),*/
-  AppTheme.BlueDark : ThemeData.dark().copyWith(
-      primaryColor: Colors.blue[700],
-      toggleableActiveColor : Colors.blue[700]
-  )
+    toggleableActiveColor : Colors.blue[700]
+  ),
+      subtitleColor : const Color(0xffA5A5A5)) //
 };
 
 /*

@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import 'inherited/app_theme_notified.dart';
+
 class MeasureLapItem extends StatelessWidget {
   final int order;
   final String difference;
@@ -23,7 +25,7 @@ class MeasureLapItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text("$difference", style: TextStyle(fontSize: 18)),
-            Text("$overall", style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.subtitle2.color))
+            Text("$overall", style: TextStyle(fontSize: 16, color: InheritedThemeNotifier.of(context).themeData.subtitleColor))
           ],
         )
       ],

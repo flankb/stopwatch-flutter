@@ -40,7 +40,7 @@ class ButtonsBar extends StatelessWidget {
           color: Theme.of(context).bottomAppBarColor,
           boxShadow: [
             BoxShadow(
-              color: Colors.grey,
+              color: const Color(0xff3F3C3C),
               blurRadius: 1.0,
               spreadRadius: 0.0,
               offset: Offset(0.3, 0.3), // shadow direction: bottom right
@@ -65,7 +65,7 @@ class ButtonsBar extends StatelessWidget {
               // https://flutter.dev/docs/catalog/samples/basic-app-bar
               // PopupMenu сделано также как у меня
 
-              MenuButton(
+              /*MenuButton(
                 pic: Icons.ac_unit,
                 color: Colors.red,
                 tooltip: 'View database',
@@ -116,7 +116,7 @@ class ButtonsBar extends StatelessWidget {
                   BlocProvider.of<MeasureBloc>(context).add(MeasureOpenedEvent());
                   //  BlocProvider.of<MeasureBloc>(context).add(MeasureOpenedEvent());
                 },
-              ),
+              ),*/
 
               MenuButton(
                 pic: Icons.refresh,
@@ -203,14 +203,11 @@ class MenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal : 3.0),
-      child: IconButton(
-        icon: Icon(pic),
-        color: color,
-        tooltip: tooltip,
-        onPressed: onPressed,
-      ),
+    return IconButton(
+      icon: Icon(pic),
+      color: color,
+      tooltip: tooltip,
+      onPressed: onPressed,
     );
   }
 }

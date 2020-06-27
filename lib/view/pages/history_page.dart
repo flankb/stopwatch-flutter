@@ -256,7 +256,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                         : SizedBox(),
                     Expanded(
                       child: Container(
-                          child: ListView.builder(
+                          child: ListView.separated(
                         itemCount: availState.entities.length,
                         itemBuilder: (BuildContext context, int index) {
                           BaseStopwatchEntity entity = availState.entities[index];
@@ -282,7 +282,9 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                               // Добаввить или удалить из SelectedItems
                             },
                           );
-                        },
+                        }, separatorBuilder: (BuildContext context, int index) {
+                          return Divider();
+                          },
                       )),
                     ),
                   ],

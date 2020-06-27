@@ -196,7 +196,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                           _playSound(context, 0);
                           _vibrate();
                         },
-                        fillColor: Colors.red,
+                        fillColor: state is MeasureStartedState ? Colors.red : Theme.of(context).primaryColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(12)),
                         ),

@@ -10,6 +10,8 @@ import 'package:stopwatch/view/pages/history_page.dart';
 import 'package:tuple/tuple.dart';
 import 'package:intl/intl.dart';
 
+import 'inherited/app_theme_notified.dart';
+
 class StopwatchItem extends StatefulWidget {
   final BaseStopwatchEntity entity;
   final ValueChanged<Tuple2<BaseStopwatchEntity, bool>> selectedEvent;
@@ -117,7 +119,7 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
                 children: <Widget>[
                   Text(
                     widget.entity.comment ?? "Нет комментария",
-                    style: TextStyle(fontSize: 18, color: widget.entity.comment == null ? Theme.of(context).textTheme.subtitle2.color : Theme.of(context).textTheme.subtitle2.color),
+                    style: TextStyle(fontSize: 18, color: widget.entity.comment == null ? InheritedThemeNotifier.of(context).themeData.subtitleColor : Theme.of(context).textTheme.subtitle2.color),
                   ),
                   SizedBox(height: 6),
                   Text(
@@ -126,7 +128,7 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
                   ),
                   SizedBox(height: 3),
                   date != null ?
-                      Text(DateFormat("dd-MM-yyyy").format(date), style: TextStyle(color: Theme.of(context).textTheme.subtitle2.color),) : SizedBox()
+                      Text(DateFormat("dd-MM-yyyy").format(date), style: TextStyle(color: InheritedThemeNotifier.of(context).themeData.subtitleColor),) : SizedBox()
                 ],
               ),
             ],

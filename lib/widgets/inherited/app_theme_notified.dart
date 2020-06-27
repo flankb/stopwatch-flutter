@@ -5,15 +5,15 @@ import 'package:stopwatch/theme_data.dart';
 
 class ThemeController extends ChangeNotifier {
   AppTheme _appTheme;
-  Map<AppTheme, ThemeData> _availableThemes;
+  Map<AppTheme, ExtendedTheme> _availableThemes;
 
-  ThemeController(AppTheme initialTheme, Map<AppTheme, ThemeData> availableThemes) {
+  ThemeController(AppTheme initialTheme, Map<AppTheme, ExtendedTheme> availableThemes) {
     _appTheme = initialTheme;
     _availableThemes = availableThemes;
   }
 
   AppTheme get theme => _appTheme;
-  ThemeData get themeData => _availableThemes[_appTheme];
+  ExtendedTheme get themeData => _availableThemes[_appTheme];
 
   updateTheme(AppTheme newTheme) {
     if (_appTheme != newTheme) {
@@ -33,9 +33,10 @@ class InheritedThemeNotifier extends InheritedNotifier<ThemeController>{
       : super(key: key, child: child, notifier: controller);
 
   static ThemeController of(BuildContext context) {
-    final p = context.dependOnInheritedWidgetOfExactType<InheritedThemeNotifier>();
-    debugPrint("ThemeController of: " + p.toString());
+    //final p = context.dependOnInheritedWidgetOfExactType<InheritedThemeNotifier>();
+    //debugPrint("ThemeController of: " + p.toString());
 
-    return p == null ? null : context.dependOnInheritedWidgetOfExactType<InheritedThemeNotifier>().controller;
+    return /*p == null ? null :*/ context.dependOnInheritedWidgetOfExactType<InheritedThemeNotifier>().controller;
   }
+
 }
