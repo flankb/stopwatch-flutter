@@ -35,14 +35,14 @@ class _MetroAppBarState extends State<MetroAppBar> {
             )
           ],
           borderRadius: new BorderRadius.horizontal(
-            left: new Radius.circular(10.0),
-            right: new Radius.circular(10.0),
+            left: new Radius.circular(0.0),
+            right: new Radius.circular(0.0),
           )),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             for (var pc in widget.primaryCommands) pc,
             PopupMenuButton<String>(

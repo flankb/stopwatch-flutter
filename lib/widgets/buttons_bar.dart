@@ -15,6 +15,7 @@ import 'package:stopwatch/view/pages/settings_page.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';
 import 'package:toast/toast.dart';
 
+/*
 // This is the type used by the popup menu below.
 enum WhyFarther { review, about }
 
@@ -65,59 +66,6 @@ class ButtonsBar extends StatelessWidget {
               // Пример AppBar'a:
               // https://flutter.dev/docs/catalog/samples/basic-app-bar
               // PopupMenu сделано также как у меня
-
-              /*MenuButton(
-                pic: Icons.ac_unit,
-                color: Colors.red,
-                tooltip: 'View database',
-                onPressed: () {
-                  final db = MyDatabase(); //This should be a singleton
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => MoorDbViewer(db)));
-                },
-              ),
-
-              MenuButton(
-                pic: Icons.ac_unit,
-                color: Colors.blue,
-                tooltip: 'Ready (Open) state',
-                onPressed: () async {
-                  final res = await showDialog(context: context, child: new Dialog(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text("Вайпнуть БД?"),
-                        Row(
-                          children: <Widget>[
-                            RawMaterialButton(
-                              child : Text("ДА"),
-                              onPressed: () {
-                                Navigator.pop(context, true);
-                            },),
-                            RawMaterialButton(
-                              child : Text("Нет"),
-                              onPressed: () {
-                                Navigator.pop(context, false);
-                            },)
-                          ],
-                        )
-                      ],
-                    ),
-                  ));
-
-                  if (res == true){
-                    final rep = StopwatchRepository();
-                    await rep.wipeDatabaseDebug();
-
-                    // Вайп
-                    Scaffold.of(context).showSnackBar(SnackBar(
-                      content: Text("БД удалена!"),
-                    ));
-                  }
-
-                  BlocProvider.of<MeasureBloc>(context).add(MeasureOpenedEvent());
-                  //  BlocProvider.of<MeasureBloc>(context).add(MeasureOpenedEvent());
-                },
-              ),*/
 
               PrimaryCommand(
                 pic: Icons.refresh,
@@ -190,14 +138,14 @@ class ButtonsBar extends StatelessWidget {
     },
     );
   }
-}
+}*/
 
 class SecondaryCommand { // TODO Переделать в Widget???
   final String commandName;
   final VoidCallback onPressed;
   final Widget child;
 
-  SecondaryCommand(this.commandName, this.onPressed, this.child);
+  SecondaryCommand({@required this.commandName, @required this.onPressed, @required this.child});
 }
 
 class PrimaryCommand extends StatelessWidget {

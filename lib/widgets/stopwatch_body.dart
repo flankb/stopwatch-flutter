@@ -1,14 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:launch_review/launch_review.dart';
 import 'package:stopwatch/bloc/measure_bloc/bloc.dart';
 import 'package:stopwatch/bloc/measure_bloc/measure_event.dart';
 import 'package:stopwatch/fake/fake_data_fabric.dart';
 import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 import 'package:stopwatch/util/time_displayer.dart';
+import 'package:stopwatch/view/pages/about_page.dart';
+import 'package:stopwatch/view/pages/history_page.dart';
+import 'package:stopwatch/view/pages/settings_page.dart';
 import 'package:stopwatch/widgets/measure_lap_item.dart';
 import 'package:preferences/preference_service.dart';
+import 'package:stopwatch/widgets/metro_app_bar.dart';
 import 'package:vibration/vibration.dart';
 
 import 'buttons_bar.dart';
@@ -243,8 +248,152 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(6, 0, 6, 6),
-            child: ButtonsBar(parentAnimationController: _controller,),
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+            child: MetroAppBar(
+              primaryCommands: <PrimaryCommand>[
+
+                /*PrimaryCommand(
+                pic: Icons.ac_unit,
+                color: Colors.red,
+                tooltip: 'View database',
+                onPressed: () {
+                  final db = MyDatabase(); //This should be a singleton
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => MoorDbViewer(db)));
+                },
+              ),
+
+              PrimaryCommand(
+                pic: Icons.ac_unit,
+                color: Colors.blue,
+                tooltip: 'Ready (Open) state',
+                onPressed: () async {
+                  final res = await showDialog(context: context, child: new Dialog(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text("Вайпнуть БД?"),
+                        Row(
+                          children: <Widget>[
+                            RawMaterialButton(
+                              child : Text("ДА"),
+                              onPressed: () {
+                                Navigator.pop(context, true);
+                            },),
+                            RawMaterialButton(
+                              child : Text("Нет"),
+                              onPressed: () {
+                                Navigator.pop(context, false);
+                            },)
+                          ],
+                        )
+                      ],
+                    ),
+                  ));
+
+                  if (res == true){
+                    final rep = StopwatchRepository();
+                    await rep.wipeDatabaseDebug();
+
+                    // Вайп
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text("БД удалена!"),
+                    ));
+                  }
+
+                  BlocProvider.of<MeasureBloc>(context).add(MeasureOpenedEvent());
+                  //  BlocProvider.of<MeasureBloc>(context).add(MeasureOpenedEvent());
+                },
+              ),*/
+
+                PrimaryCommand(
+                  pic: Icons.refresh,
+                  tooltip: 'Сброс',
+                  onPressed: () {
+                    BlocProvider.of<MeasureBloc>(context).add(MeasureFinishedEvent());
+
+                    if (_controller.isCompleted) {
+                      _controller.reverse();
+                    } else {
+                      _controller.forward();
+                    }
+                  },
+                ),
+
+                PrimaryCommand(
+                  pic: Icons.list,
+                  tooltip: 'История',
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                      return HistoryPage(pageType: MeasureViewModel, entityId: -1,);
+                    }));
+                  },
+                ),
+
+                PrimaryCommand(
+                  pic: Icons.settings,
+                  tooltip: 'Settings',
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                      return SettingsPage();
+                    }));
+                  },
+                ),
+              ],
+              secondaryCommands: <SecondaryCommand>[
+                SecondaryCommand(
+                    commandName: "review",
+                    onPressed: () {
+                      LaunchReview.launch(
+                        androidAppId: "com.garnetjuice.stopwatch",
+                        iOSAppId: "585027354",
+                      );
+                    },
+                    child: Text('Оценить приложение')
+                ),
+                SecondaryCommand(
+                    commandName: "about", onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                        return AboutPage();
+                      }));
+                    },
+                    child: Text('О программе')
+                )
+
+                /*
+                * PopupMenuButton<WhyFarther>(
+                onSelected: (WhyFarther result) {
+                  switch (result) {
+                    case WhyFarther.review:
+                      LaunchReview.launch(
+                        androidAppId: "com.garnetjuice.stopwatch",
+                        iOSAppId: "585027354",
+                      );
+                      break;
+                    case WhyFarther.about:
+                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                        return AboutPage();
+                      }));
+                      break;
+                  }
+                },
+                itemBuilder: (BuildContext context) =>
+                <PopupMenuEntry<WhyFarther>>[
+                  const PopupMenuItem<WhyFarther>(
+                    value: WhyFarther.review,
+                    child: Text('Оценить приложение'),
+                  ),
+                  const PopupMenuItem<WhyFarther>(
+                    value: WhyFarther.about,
+                    child: Text('О программе'),
+                  ),
+                ],
+              )
+                *
+                * */
+
+
+              ],
+             )
           )
         ],
       );
