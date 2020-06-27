@@ -160,12 +160,26 @@ class PrimaryCommand extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(pic),
+
+
+    return SizedBox(
+      height: 56,
+      child: FlatButton(
+        onPressed: () {
+         onPressed();
+        },
+        child: Icon(pic, color: color),
+      ),
+    );
+
+
+
+     /* IconButton(
+      icon: Icon(pic, color: color),
       color: color,
       tooltip: tooltip,
-      onPressed: onPressed,
-    );
+      //onPressed: onPressed,
+    );*/
   }
 }
 
