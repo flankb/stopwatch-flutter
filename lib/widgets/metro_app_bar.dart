@@ -56,25 +56,19 @@ class _MetroAppBarState extends State<MetroAppBar> with SingleTickerProviderStat
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 for (var pc in widget.primaryCommands) pc,
-                InkWell(
-                  onTap: (){
-                    debugPrint("PopupMenuButton click");
-                    _animationController.reverse();
+                PopupMenuButton<String>(
+                  onSelected: (command) {
+                    // Определить нужную команду
+                    final cmd = widget.secondaryCommands.singleWhere((element) => element.commandName == command);
+                    cmd.onPressed();
                   },
-                  child: PopupMenuButton<String>(
-                    onSelected: (command) {
-                      // Определить нужную команду
-                      final cmd = widget.secondaryCommands.singleWhere((element) => element.commandName == command);
-                      cmd.onPressed();
-                    },
-                    itemBuilder: (BuildContext context) {
-                      return widget.secondaryCommands.map((e) {
-                        return PopupMenuItem<String>(
-                          value: e.commandName,
-                          child: e.child,);
-                      }).toList();
-                    },
-                  ),
+                  itemBuilder: (BuildContext context) {
+                    return widget.secondaryCommands.map((e) {
+                      return PopupMenuItem<String>(
+                        value: e.commandName,
+                        child: e.child,);
+                    }).toList();
+                  },
                 )
               ],
             ),

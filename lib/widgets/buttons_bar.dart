@@ -168,7 +168,16 @@ class PrimaryCommand extends StatelessWidget {
         onPressed: () {
          onPressed();
         },
-        child: Icon(pic, color: color),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(
+              height: 28,
+                child: Icon(pic, color: color)
+            ),
+            Text(tooltip, style: TextStyle(fontSize: 10),)
+          ],
+        ),
       ),
     );
 
