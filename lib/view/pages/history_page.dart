@@ -15,7 +15,9 @@ import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 import 'package:stopwatch/service_locator.dart';
 import 'package:stopwatch/util/csv_exporter.dart';
 import 'package:stopwatch/view/dialogs/filter_dialog.dart';
+import 'package:stopwatch/widgets/buttons_bar.dart';
 import 'package:stopwatch/widgets/circular.dart';
+import 'package:stopwatch/widgets/metro_app_bar.dart';
 import 'package:stopwatch/widgets/pair_label_view.dart';
 import 'package:stopwatch/widgets/stopwatch_item_widget.dart';
 import 'package:preferences/preferences.dart';
@@ -353,7 +355,17 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                               ),
                             ),
                           ],
-                        ))
+                        )),
+
+
+                    MetroAppBar(primaryCommands: <PrimaryCommand>[
+                      PrimaryCommand(tooltip: "To *.csv", pic: Icons.filter_list, onPressed: () {
+
+                      },),
+                      PrimaryCommand(tooltip: "To email", pic : Icons.mail, onPressed: (){ },)
+                    ], secondaryCommands: <SecondaryCommand>[
+
+                    ],)
 
 
 

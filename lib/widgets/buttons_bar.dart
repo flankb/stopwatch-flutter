@@ -155,7 +155,7 @@ class PrimaryCommand extends StatelessWidget {
   final String tooltip;
 
   const PrimaryCommand({
-    Key key, this.onPressed, this.pic, this.color, this.tooltip,
+    Key key, @required this.onPressed, @required this.pic, this.color, @required this.tooltip,
   }) : super(key: key);
 
   @override
