@@ -256,7 +256,9 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                         : SizedBox(),
                     Expanded(
                       child: Container(
+                        padding: const EdgeInsets.only(top: 6),
                           child: ListView.separated(
+                            physics: ClampingScrollPhysics(),
                         itemCount: availState.entities.length,
                         itemBuilder: (BuildContext context, int index) {
                           BaseStopwatchEntity entity = availState.entities[index];
@@ -287,72 +289,77 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                           },
                       )),
                     ),
-                  ],
-                ),
-                Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        availState.filtered
-                            ? RawMaterialButton(
-                                child: Icon(Icons.clear),
-                                onPressed: () {
-                                  _storageBloc.add(CancelFilterEvent(widget.pageType));
-                                },
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-                                elevation: 2.0,
-                                fillColor: Colors.white,
-                                padding: const EdgeInsets.all(5.0),
-                              )
-                            : SizedBox(),
-                        availState.filtered
-                            ? SizedBox(
-                                width: 12,
-                              )
-                            : SizedBox(),
-                        SizedBox(
-                          width: 150,
-                          child: RawMaterialButton(
-                            onPressed: () async {
-                              debugPrint("Last filter in history page ${availState.lastFilter}");
-                              final result = await showDialog(
-                                  context: context,
-                                  builder: (context) => FilterDialog(
+
+                    Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            availState.filtered
+                                ? RawMaterialButton(
+                              child: Icon(Icons.clear),
+                              onPressed: () {
+                                _storageBloc.add(CancelFilterEvent(widget.pageType));
+                              },
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                              elevation: 2.0,
+                              fillColor: Colors.white,
+                              padding: const EdgeInsets.all(5.0),
+                            )
+                                : SizedBox(),
+                            availState.filtered
+                                ? SizedBox(
+                              width: 12,
+                            )
+                                : SizedBox(),
+                            SizedBox(
+                              width: 150,
+                              child: RawMaterialButton(
+                                onPressed: () async {
+                                  debugPrint("Last filter in history page ${availState.lastFilter}");
+                                  final result = await showDialog(
+                                      context: context,
+                                      builder: (context) => FilterDialog(
                                         filter: availState.lastFilter,
                                       ));
 
-                              if (result != null) {
-                                _storageBloc.add(FilterStorageEvent(widget.pageType, result));
-                              }
-                            },
-                            child: Padding(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.filter_list,
-                                    color: Colors.white,
+                                  if (result != null) {
+                                    _storageBloc.add(FilterStorageEvent(widget.pageType, result));
+                                  }
+                                },
+                                child: Padding(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.filter_list,
+                                        color: Colors.white,
+                                      ),
+                                      SizedBox(
+                                        width: 12,
+                                      ),
+                                      Text(
+                                        "Фильтр",
+                                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(
-                                    width: 12,
-                                  ),
-                                  Text(
-                                    "Фильтр",
-                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                  ),
-                                ],
+                                  padding: EdgeInsets.symmetric(horizontal: 4.0),
+                                ),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                                elevation: 2.0,
+                                fillColor: Theme.of(context).primaryColor,
+                                padding: const EdgeInsets.all(5.0),
                               ),
-                              padding: EdgeInsets.symmetric(horizontal: 4.0),
                             ),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-                            elevation: 2.0,
-                            fillColor: Theme.of(context).primaryColor,
-                            padding: const EdgeInsets.all(5.0),
-                          ),
-                        ),
-                      ],
-                    ))
+                          ],
+                        ))
+
+
+
+                  ],
+                ),
+
               ]);
             }
           },
