@@ -103,7 +103,7 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
           }
       },
       child: Container(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
           color: isSelected ? Theme.of(context).primaryColor : Colors.transparent,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,

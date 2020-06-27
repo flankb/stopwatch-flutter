@@ -18,6 +18,7 @@ import 'package:toast/toast.dart';
 // This is the type used by the popup menu below.
 enum WhyFarther { review, about }
 
+@Deprecated("Will change")
 class ButtonsBar extends StatelessWidget {
   final AnimationController parentAnimationController;
 
@@ -118,7 +119,7 @@ class ButtonsBar extends StatelessWidget {
                 },
               ),*/
 
-              MenuButton(
+              PrimaryCommand(
                 pic: Icons.refresh,
                 tooltip: 'Сброс',
                 onPressed: () {
@@ -132,7 +133,7 @@ class ButtonsBar extends StatelessWidget {
                 },
               ),
 
-              MenuButton(
+              PrimaryCommand(
                 pic: Icons.list,
                 tooltip: 'История',
                 onPressed: () {
@@ -142,7 +143,7 @@ class ButtonsBar extends StatelessWidget {
                 },
               ),
 
-              MenuButton(
+              PrimaryCommand(
                 pic: Icons.settings,
                 tooltip: 'Settings',
                 onPressed: () {
@@ -191,13 +192,21 @@ class ButtonsBar extends StatelessWidget {
   }
 }
 
-class MenuButton extends StatelessWidget {
+class SecondaryCommand { // TODO Переделать в Widget???
+  final String commandName;
+  final VoidCallback onPressed;
+  final Widget child;
+
+  SecondaryCommand(this.commandName, this.onPressed, this.child);
+}
+
+class PrimaryCommand extends StatelessWidget {
   final VoidCallback onPressed;
   final IconData pic;
   final Color color;
   final String tooltip;
 
-  const MenuButton({
+  const PrimaryCommand({
     Key key, this.onPressed, this.pic, this.color, this.tooltip,
   }) : super(key: key);
 
