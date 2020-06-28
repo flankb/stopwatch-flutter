@@ -21,7 +21,11 @@ class ExtendedTheme {
 
 ThemeData baseTheme = ThemeData(
     brightness: Brightness.light,
-    textTheme: GoogleFonts.latoTextTheme()
+    textTheme: GoogleFonts.latoTextTheme(),
+
+    // https://stackoverflow.com/questions/50020523/how-to-disable-default-widget-splash-effect-in-flutter
+    //splashColor: Colors.transparent, // TODO Убираются Material-эффекты
+    //highlightColor: Colors.transparent,
 );
 
 
@@ -43,7 +47,7 @@ final appThemeData = { //TODO создавать этот словарь в ко
 
 
   ),*/
-  AppTheme.GreenDark: ExtendedTheme(ThemeData(
+  AppTheme.GreenDark: ExtendedTheme(baseTheme.copyWith(
     brightness: Brightness.dark,
     primaryColor: Colors.green[700],
     toggleableActiveColor : Colors.green[700],
@@ -52,7 +56,7 @@ final appThemeData = { //TODO создавать этот словарь в ко
       subtitleColor : const Color(0xffA5A5A5)
   ),
 
-  AppTheme.BlueLight: ExtendedTheme(ThemeData(
+  AppTheme.BlueLight: ExtendedTheme(baseTheme.copyWith(
     brightness: Brightness.light,
     primaryColor: Colors.blue,
     toggleableActiveColor : Colors.blue
@@ -60,7 +64,7 @@ final appThemeData = { //TODO создавать этот словарь в ко
       subtitleColor : const Color(0xff4A4747)
   ),
 
-  AppTheme.BlueDark : ExtendedTheme(ThemeData.dark().copyWith(
+  AppTheme.BlueDark : ExtendedTheme(baseTheme.copyWith(
     primaryColor: Colors.blue[700],
     toggleableActiveColor : Colors.blue[700]
   ),

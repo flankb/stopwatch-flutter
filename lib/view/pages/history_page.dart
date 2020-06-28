@@ -131,169 +131,162 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
       child: Scaffold(
         // Вариант:
         //https://stackoverflow.com/questions/53733548/dynamic-appbar-of-flutter
-        appBar: AppBar(
-          title: StreamBuilder<int>(
-              stream: _selectedItemsStreamController.stream,
-              initialData: 0,
-              builder: (context, snapshot) {
-                return snapshot.data == 0 ? Text("История измерений") : Text(snapshot.data.toString());
-              }),
-          actions: <Widget>[
-            StreamBuilder<int>(
-                stream: _selectedItemsStreamController.stream,
-                initialData: 0,
-                builder: (context, snapshot) {
-                  return Row(
-                    children: <Widget>[
-                      widget.pageType == MeasureViewModel ? _exportToCsvButton(context) : SizedBox(),
-                      SizedBox(
-                        width: 6,
-                      ),
-                      widget.pageType == MeasureViewModel ? _exportToCsvButton(context, shareMode: ShareMode.File) : SizedBox(),
-                      SizedBox(
-                        width: 6,
-                      ),
-                      snapshot.data == 1
-                          ? IconButton(
-                              icon: Icon(Icons.edit),
-                              onPressed: () async {
-                                final entityToEdit = _selectedEntities.single;
-
-                                await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-                                  return EntityEditPage(
-                                    entityType: widget.pageType,
-                                    entityId: entityToEdit.id,
-                                    entity: entityToEdit,
-                                  );
-                                }));
-
-                                _unselectItems();
-                              },
-                            )
-                          : SizedBox(),
-                      SizedBox(
-                        width: 6,
-                      ),
-                      snapshot.data >= 1 && widget.pageType == MeasureViewModel
-                          ? IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () {
-                                if (widget.pageType == LapViewModel) {
-                                  Toast.show("Круги нельзя удалять!", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-                                  return;
-                                }
-
-                                final entitiesForDelete = List<BaseStopwatchEntity>();
-                                entitiesForDelete.addAll(_selectedEntities);
-                                _unselectItems();
-                                _storageBloc.add(DeleteStorageEvent(entitiesForDelete));
-
-                                //_unselectItems();
-                              },
-                            )
-                          : SizedBox()
-                    ],
-                  );
-                })
-          ],
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              // Если Выделенных элементов > 1, то снять выделение
-              if (_selectedEntities.length >= 1) {
-                //_isSelectionConroller.add(true);
-                _unselectItems();
+        body: SafeArea(
+          child: BlocBuilder<StorageBloc, StorageState>(
+            builder: (BuildContext context, state) {
+              if (!(state is AvailableListState)) {
+                return CenterCircularWidget();
               } else {
-                Navigator.pop(context);
-              }
-            },
-          ),
-        ),
-        body: BlocBuilder<StorageBloc, StorageState>(
-          builder: (BuildContext context, state) {
-            if (!(state is AvailableListState)) {
-              return CenterCircularWidget();
-            } else {
-              final availState = state as AvailableListState;
-              final pageIsLap = widget.pageType == LapViewModel;
+                final availState = state as AvailableListState;
+                final pageIsLap = widget.pageType == LapViewModel;
 
-              // TODO Анимашка
-              // https://github.com/flutter/samples/blob/master/animations/lib/src/basics/05_animated_builder.dart
-              return Stack(children: [
-                Column(
-                  children: <Widget>[
-                    pageIsLap
-                        ? AnimatedBuilder(
-                          animation: animation,
-                          builder: (context, snapshot) {
-                            return Transform.scale(
-                              scale: animation.value,
-                              child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Card(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        children: <Widget>[
-                                          PairLabelView(
-                                            caption: "Общее время",
-                                            value: "02:04:01,12",
-                                          ),
-                                          PairLabelView(
-                                            caption: "Комментарий",
-                                            value: "Стометровка",
-                                          ),
-                                          PairLabelView(
-                                            caption: "Дата",
-                                            value: "06-12-2018",
-                                          )
-                                        ],
+                // TODO Анимашка
+                // https://github.com/flutter/samples/blob/master/animations/lib/src/basics/05_animated_builder.dart
+                return Stack(children: [
+                  Column(
+                    children: <Widget>[
+                      // Заголовок
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          BackButton(),
+                          Text("измерения", style: TextStyle(fontSize: 36),)
+                        ],
+                      ),
+
+                      pageIsLap
+                          ? AnimatedBuilder(
+                            animation: animation,
+                            builder: (context, snapshot) {
+                              return Transform.scale(
+                                scale: animation.value,
+                                child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Card(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          children: <Widget>[
+                                            PairLabelView(
+                                              caption: "Общее время",
+                                              value: "02:04:01,12",
+                                            ),
+                                            PairLabelView(
+                                              caption: "Комментарий",
+                                              value: "Стометровка",
+                                            ),
+                                            PairLabelView(
+                                              caption: "Дата",
+                                              value: "06-12-2018",
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                            );
-                          }
-                        )
-                        : SizedBox(),
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.only(top: 6),
-                          child: ListView.separated(
-                            physics: ClampingScrollPhysics(),
-                        itemCount: availState.entities.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          BaseStopwatchEntity entity = availState.entities[index];
-                          final key = PageStorageKey<String>("entity_$index");
+                              );
+                            }
+                          )
+                          : SizedBox(),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.only(top: 6),
+                            child: ListView.separated(
+                              physics: ClampingScrollPhysics(),
+                          itemCount: availState.entities.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            BaseStopwatchEntity entity = availState.entities[index];
+                            final key = PageStorageKey<String>("entity_$index");
 
-                          return StopwatchItem(
-                            key: key,
-                            entity: entity,
-                            selectionListController: _selectedItemsStreamController,
-                            selectedEvent: (b) {
-                              // Обновить менюшку...
-                              if (b.item2) {
-                                debugPrint("_selectedEntities add");
-                                _selectedEntities.add(b.item1);
-                              } else {
-                                debugPrint("_selectedEntities remove");
-                                _selectedEntities.remove(b.item1);
+                            return StopwatchItem(
+                              key: key,
+                              entity: entity,
+                              selectionListController: _selectedItemsStreamController,
+                              selectedEvent: (b) {
+                                // Обновить менюшку...
+                                if (b.item2) {
+                                  debugPrint("_selectedEntities add");
+                                  _selectedEntities.add(b.item1);
+                                } else {
+                                  debugPrint("_selectedEntities remove");
+                                  _selectedEntities.remove(b.item1);
+                                }
+
+                                _selectedItemsStreamController.add(_selectedEntities.length);
+                                debugPrint("_selectedEntities.length ${_selectedEntities.length}");
+
+                                // Добаввить или удалить из SelectedItems
+                              },
+                            );
+                          }, separatorBuilder: (BuildContext context, int index) {
+                            return Divider(
+                              height: 0,
+                            );
+                            },
+                        )),
+                      ),
+
+
+
+                      StreamBuilder<int>(
+                        stream:  _selectedItemsStreamController.stream,
+                        initialData: 0,
+                        builder: (context, snapshot) {
+                          return MetroAppBar(primaryCommands: <Widget>[
+                            widget.pageType == MeasureViewModel ? _exportToCsvButtonPrimary(context) : SizedBox(),
+                            widget.pageType == MeasureViewModel ? _exportToCsvButtonPrimary(context, shareMode: ShareMode.File) : SizedBox(),
+
+                            snapshot.data == 1
+                                ? PrimaryCommand(onPressed: () async {
+                              final entityToEdit = _selectedEntities.single;
+
+                              await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                                return EntityEditPage(
+                                  entityType: widget.pageType,
+                                  entityId: entityToEdit.id,
+                                  entity: entityToEdit,
+                                );
+                              }));
+
+                              _unselectItems();
+                            }, pic: Icons.edit, tooltip: "Ред.",)
+                            : SizedBox(),
+
+                            snapshot.data >= 1 && widget.pageType == MeasureViewModel ?
+                            PrimaryCommand(tooltip: "Удалить", pic: Icons.delete, onPressed: () {
+                              if (widget.pageType == LapViewModel) {
+                                Toast.show("Круги нельзя удалять!", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                                return;
                               }
 
-                              _selectedItemsStreamController.add(_selectedEntities.length);
-                              debugPrint("_selectedEntities.length ${_selectedEntities.length}");
+                              final entitiesForDelete = List<BaseStopwatchEntity>();
+                              entitiesForDelete.addAll(_selectedEntities);
+                              _unselectItems();
+                              _storageBloc.add(DeleteStorageEvent(entitiesForDelete));
+                            },) : SizedBox(),
+                          ],
 
-                              // Добаввить или удалить из SelectedItems
-                            },
-                          );
-                        }, separatorBuilder: (BuildContext context, int index) {
-                          return Divider();
-                          },
-                      )),
-                    ),
+                          secondaryCommands: <SecondaryCommand>[
 
-                    Align(
-                        alignment: Alignment.bottomCenter,
+                          ],);
+
+
+                                
+
+                        }
+                      )
+
+
+
+
+                    ],
+                  ),
+
+
+                  Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 56),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
@@ -305,7 +298,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                               },
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
                               elevation: 2.0,
-                              fillColor: Colors.white,
+                              fillColor: Theme.of(context).bottomAppBarColor,
                               padding: const EdgeInsets.all(5.0),
                             )
                                 : SizedBox(),
@@ -355,31 +348,19 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                               ),
                             ),
                           ],
-                        )),
+                        ),
+                      )),
 
-
-                    MetroAppBar(primaryCommands: <PrimaryCommand>[
-                      PrimaryCommand(tooltip: "To *.csv", pic: Icons.filter_list, onPressed: () {
-
-                      },),
-                      PrimaryCommand(tooltip: "To email", pic : Icons.mail, onPressed: (){ },)
-                    ], secondaryCommands: <SecondaryCommand>[
-
-                    ],)
-
-
-
-                  ],
-                ),
-
-              ]);
-            }
-          },
+                ]);
+              }
+            },
+          ),
         ),
       ),
     );
   }
 
+  /*
   Widget _exportToCsvButton(BuildContext context, {ShareMode shareMode = ShareMode.Email}) {
     return IconButton(
       icon: shareMode == ShareMode.Email ? const Icon(Icons.exit_to_app) : const Icon(Icons.insert_drive_file),
@@ -408,6 +389,35 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
       },
     );
   }
+  */
+
+
+  PrimaryCommand _exportToCsvButtonPrimary(BuildContext context, {ShareMode shareMode = ShareMode.Email}) {
+    final icon = shareMode == ShareMode.Email ? Icons.email : Icons.insert_drive_file;
+    final tooltip = shareMode == ShareMode.Email ? "To email" : "To *.csv";
+    final command = () async {
+      var entitiesToExport = _selectedEntities;
+
+      if (!entitiesToExport.any((element) => true)) {
+        entitiesToExport = (BlocProvider.of<StorageBloc>(context).state as AvailableListState).entities;
+      }
+
+      final csv = await GetIt.I.get<CsvExporter>().convertToCsv(entitiesToExport.map((e) => e as MeasureViewModel).toList());
+       _unselectItems();
+
+      switch(shareMode){
+        case ShareMode.Email:
+          await _sendEmail(csv);
+          break;
+        case ShareMode.File:
+          await GetIt.I.get<CsvExporter>().shareFile(csv);
+          break;
+      }
+    };
+
+    return PrimaryCommand(tooltip: tooltip, pic: icon, onPressed: command,);
+  }
+
 
   _sendEmail(String body) async {
     // Вычислим адрес из настроек

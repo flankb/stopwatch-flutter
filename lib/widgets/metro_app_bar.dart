@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'buttons_bar.dart';
 
 class MetroAppBar extends StatefulWidget {
-  final List<PrimaryCommand> primaryCommands;
+  final List<Widget> primaryCommands;
   final List<SecondaryCommand> secondaryCommands;
 
   const MetroAppBar({Key key, @required this.primaryCommands, @required this.secondaryCommands}) : super(key: key);
@@ -56,6 +56,8 @@ class _MetroAppBarState extends State<MetroAppBar> with SingleTickerProviderStat
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 for (var pc in widget.primaryCommands) pc,
+
+                widget.secondaryCommands.any((element) => true) ?
                 PopupMenuButton<String>(
                   onSelected: (command) {
                     // Определить нужную команду
@@ -69,7 +71,7 @@ class _MetroAppBarState extends State<MetroAppBar> with SingleTickerProviderStat
                         child: e.child,);
                     }).toList();
                   },
-                )
+                ) : SizedBox()
               ],
             ),
           ),

@@ -10,56 +10,69 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Настройки"),
-        ),
-        body: PreferencePage([
-          SwitchPreference(
-            'Звук',
-            'sound',
-            defaultVal: true,
-          ),
-          SwitchPreference(
-            'Вибрация',
-            'vibration',
-            defaultVal: true,
-          ),
-          SwitchPreference(
-            'Блокировка экрана',
-            'screen_block',
-            defaultVal: true,
-            desc: "Вкл",
-          ),
-          DropdownPreference<String>( //
-            'Тема приложения',
-            'theme',
-            defaultVal: AppTheme.BlueLight.toString(),
-            onChange: (v) {
+      body: SafeArea(
+          child: Column(
+            children: <Widget>[
+              // Заголовок
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  BackButton(),
+                  Text("Настройки", style: TextStyle(fontSize: 36),)
+                ],
+              ),
+              Expanded(
+                child: PreferencePage([
+                  SwitchPreference(
+                    'Звук',
+                    'sound',
+                    defaultVal: true,
+                  ),
+                  SwitchPreference(
+                    'Вибрация',
+                    'vibration',
+                    defaultVal: true,
+                  ),
+                  SwitchPreference(
+                    'Блокировка экрана',
+                    'screen_block',
+                    defaultVal: true,
+                    desc: "Вкл",
+                  ),
+                  DropdownPreference<String>( //
+                    'Тема приложения',
+                    'theme',
+                    defaultVal: AppTheme.BlueLight.toString(),
+                    onChange: (v) {
 
 
-              AppTheme theme = AppTheme.values.firstWhere((e) => e.toString() == v.toString());
-              debugPrint("Selected theme: " + theme.toString());
+                      AppTheme theme = AppTheme.values.firstWhere((e) => e.toString() == v.toString());
+                      debugPrint("Selected theme: " + theme.toString());
 
-              InheritedThemeNotifier.of(context).updateTheme(theme);
-            },
-            displayValues: ['Blue Light', 'Blue Dark', 'Green Light', 'Green Dark'],
-            values: [AppTheme.BlueLight.toString(), AppTheme.BlueDark.toString(), AppTheme.GreenLight.toString(), AppTheme.GreenDark.toString()],
+                      InheritedThemeNotifier.of(context).updateTheme(theme);
+                    },
+                    displayValues: ['Blue Light', 'Blue Dark', 'Green Light', 'Green Dark'],
+                    values: [AppTheme.BlueLight.toString(), AppTheme.BlueDark.toString(), AppTheme.GreenLight.toString(), AppTheme.GreenDark.toString()],
+                  ),
+                  TextFieldPreference(
+                    'E-mail',
+                    'email',
+                    defaultVal: 'email@example.com',
+                    validator: (str) {
+                      if (!isEmail(str)) {
+                        return "Invalid email";
+                      }
+
+                      return null;
+                    },
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    autofocus: false,
+                    maxLines: 1,
+                  )
+                ]),
+              ),
+            ],
           ),
-          TextFieldPreference(
-            'E-mail',
-            'email',
-            defaultVal: 'email@example.com',
-            validator: (str) {
-              if (!isEmail(str)) {
-                return "Invalid email";
-              }
-
-              return null;
-            },
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            autofocus: false,
-            maxLines: 1,
-          )
-        ]));
+        ));
   }
 }
