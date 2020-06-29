@@ -15,10 +15,8 @@ class EntityEditPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Редактирование измерения"),
-        ),
-        body: EditForm(entity: entity,));
+        body: SafeArea(
+            child: EditForm(entity: entity,)));
   }
 }
 
@@ -69,72 +67,87 @@ class EditFormState extends State<EditForm> {
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    return Form(
-      key: _formKey,
-      child: BlocProvider(
-        create: (BuildContext context) {
-          return entityBloc;
-        },
-        child: BlocBuilder<EntityBloc, EntityState>(builder: (context, snapshot) {
-          return Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                TextFormField(
-                  autofocus: true,
+    return Column(
+      children: <Widget>[
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            BackButton(),
+            Flexible(child: Text("Редактирование", maxLines: 1, style: TextStyle(fontSize: 36),))
+          ],
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: BlocProvider(
+                create: (BuildContext context) {
+                  return entityBloc;
+                },
+                child: BlocBuilder<EntityBloc, EntityState>(builder: (context, snapshot) {
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        TextFormField(
+                          autofocus: true,
 
 
 
-                  decoration: InputDecoration(
-                      labelText: 'Введите комментарий',
-                      /*labelStyle: TextStyle(
-                          color:  Colors.blue,
+                          decoration: InputDecoration(
+                              labelText: 'Введите комментарий',
+                              /*labelStyle: TextStyle(
+                                  color:  Colors.blue,
 
-                      ),
+                              ),
 
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.blue
-                        )
-                    ),*/
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Colors.blue
+                                )
+                            ),*/
 
-                  ),
-                  //initialValue: snapshot is AvailableEntityState ? snapshot?.entity?.comment : "",
-                  controller: textController,
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'Поле не может быть пустым!';
-                    }
+                          ),
+                          //initialValue: snapshot is AvailableEntityState ? snapshot?.entity?.comment : "",
+                          controller: textController,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Поле не может быть пустым!';
+                            }
 
-                    return null;
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: RaisedButton(
-                    color: Theme.of(context).primaryColor,
-                    onPressed: () {
-                      // Validate returns true if the form is valid, or false
-                      // otherwise.
-                      if (_formKey.currentState.validate()) {
-                        // If the form is valid, display a Snackbar.
-                        //Scaffold.of(context).showSnackBar(SnackBar(content: Text('Обработка данных..')));
+                            return null;
+                          },
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16.0),
+                          child: RaisedButton(
+                            color: Theme.of(context).primaryColor,
+                            onPressed: () {
+                              // Validate returns true if the form is valid, or false
+                              // otherwise.
+                              if (_formKey.currentState.validate()) {
+                                // If the form is valid, display a Snackbar.
+                                //Scaffold.of(context).showSnackBar(SnackBar(content: Text('Обработка данных..')));
 
-                        widget.entity.comment = textController.text;
-                        entityBloc.add(SaveEntityEvent(widget.entity));
+                                widget.entity.comment = textController.text;
+                                entityBloc.add(SaveEntityEvent(widget.entity));
 
-                        Navigator.pop(context);
-                      }
-                    },
-                    child: Text('Сохранить'),
-                  ),
-                ),
-              ],
+                                Navigator.pop(context);
+                              }
+                            },
+                            child: Text('Сохранить'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ),
             ),
-          );
-        }),
-      ),
+          ),
+        ),
+      ],
     );
   }
 }
