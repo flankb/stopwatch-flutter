@@ -150,7 +150,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           BackButton(),
-                          Text("измерения", style: TextStyle(fontSize: 36),)
+                          Text("Измерения", style: TextStyle(fontSize: 36),)
                         ],
                       ),
 

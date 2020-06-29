@@ -15,79 +15,65 @@ class ExtendedTheme {
   final buttonPauseColor;
   final subtitleColor;
 
-
-  ExtendedTheme(this.materialTheme, { this.shadowColor = const Color(0xff3F3C3C), this.buttonPauseColor = Colors.black, this.subtitleColor = const Color(0xffE6E6E6) });
+  ExtendedTheme(this.materialTheme,
+      {this.shadowColor = const Color(0xff3F3C3C), this.buttonPauseColor = Colors.black, this.subtitleColor = const Color(0xffE6E6E6)});
 }
 
 ThemeData baseTheme = ThemeData(
-    brightness: Brightness.light,
-    textTheme: GoogleFonts.latoTextTheme(),
+  //brightness: Brightness.light,
+  textTheme: GoogleFonts.latoTextTheme(),
 
-    // https://stackoverflow.com/questions/50020523/how-to-disable-default-widget-splash-effect-in-flutter
-    //splashColor: Colors.transparent, // TODO Убираются Material-эффекты
-    //highlightColor: Colors.transparent,
+  // https://stackoverflow.com/questions/50020523/how-to-disable-default-widget-splash-effect-in-flutter
+  //splashColor: Colors.transparent, // TODO Убираются Material-эффекты
+  //highlightColor: Colors.transparent,
 );
 
+final appThemeData = {
+  //TODO создавать этот словарь в контексте??
+  AppTheme.GreenLight: ExtendedTheme(
+      ThemeData(brightness: Brightness.light,
+          primaryColor: Colors.green,
+          toggleableActiveColor: Colors.green,
+          focusColor: Colors.green,
+          accentColor: Colors.green,
 
 
-final appThemeData = { //TODO создавать этот словарь в контексте??
+          textTheme: GoogleFonts.latoTextTheme(
+          )
 
-  AppTheme.GreenLight : ExtendedTheme(baseTheme.copyWith(
-    primaryColor: Colors.green,
-    toggleableActiveColor : Colors.green,
-    focusColor: Colors.green
-  ),
-      subtitleColor : const Color(0xff4A4747)
-  ),
+        ),
+      subtitleColor: const Color(0xff4A4747)),
+  AppTheme.GreenDark: ExtendedTheme(
+      ThemeData(
+        brightness: Brightness.dark,
+        primaryColor: Colors.green[700],
+        accentColor: Colors.green[700],
+        toggleableActiveColor: Colors.green[700],
+        focusColor: Colors.green[700],
+        textTheme: GoogleFonts.latoTextTheme(),
+      ),
+      subtitleColor: const Color(0xffA5A5A5)),
 
-  /*AppTheme.GreenLight: ThemeData(
-    brightness: Brightness.light,
-    primaryColor: Colors.green,
-    toggleableActiveColor : Colors.green,
+  AppTheme.BlueLight: ExtendedTheme(ThemeData(
+      brightness: Brightness.light,
+      primaryColor: Colors.blue,
+      toggleableActiveColor: Colors.blue,
+      accentColor: Colors.blue,
+      textTheme: GoogleFonts.latoTextTheme(),),
+      subtitleColor: const Color(0xff4A4747),
+      ),
 
-
-  ),*/
-  AppTheme.GreenDark: ExtendedTheme(baseTheme.copyWith(
-    brightness: Brightness.dark,
-    primaryColor: Colors.green[700],
-    toggleableActiveColor : Colors.green[700],
-    focusColor: Colors.green[700],
-  ),
-      subtitleColor : const Color(0xffA5A5A5)
-  ),
-
-  AppTheme.BlueLight: ExtendedTheme(baseTheme.copyWith(
-    brightness: Brightness.light,
-    primaryColor: Colors.blue,
-    toggleableActiveColor : Colors.blue
-  ),
-      subtitleColor : const Color(0xff4A4747)
-  ),
-
-  AppTheme.BlueDark : ExtendedTheme(baseTheme.copyWith(
-    primaryColor: Colors.blue[700],
-    toggleableActiveColor : Colors.blue[700]
-  ),
-      subtitleColor : const Color(0xffA5A5A5)) //
+  AppTheme.BlueDark: ExtendedTheme(ThemeData(
+      brightness: Brightness.dark,
+      primaryColor: Colors.blue[700],
+      toggleableActiveColor: Colors.blue[700],
+      accentColor: Colors.blue[700],
+      textTheme: GoogleFonts.latoTextTheme(),),
+      subtitleColor: const Color(0xffA5A5A5)) //
 };
 
 /*
-ThemeData(
-            // This is the theme of your application.
-            //
-            // Try running your application with "flutter run". You'll see the
-            // application has a blue toolbar. Then, without quitting the app, try
-            // changing the primarySwatch below to Colors.green and then invoke
-            // "hot reload" (press "r" in the console where you ran "flutter run",
-            // or simply save your changes to "hot reload" in a Flutter IDE).
-            // Notice that the counter didn't reset back to zero; the application
-            // is not restarted.
-            //brightness: Brightness.dark, // Тёмная тема
-            //primarySwatch: Colors.deepOrange,
-            primaryColor: Colors.blue,
-
-            textTheme: GoogleFonts.latoTextTheme(
+ textTheme: GoogleFonts.latoTextTheme(
                   Theme.of(context).textTheme,
             ),
-        )
  */

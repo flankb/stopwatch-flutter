@@ -91,6 +91,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint("themeController.themeData " + themeController.theme.toString());
 
+    //final textTheme = Theme.of(context).textTheme;
+
     return InheritedThemeNotifier(
       controller: themeController,
       child: Builder(

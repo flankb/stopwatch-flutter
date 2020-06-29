@@ -67,124 +67,126 @@ class FilterFormState extends State<FilterForm> {
     final format = DateFormat("yyyy-MM-dd");
 
     // Build a Form widget using the _formKey created above.
-    return  Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Container(
-            decoration: new BoxDecoration(
-              color: Theme.of(context).backgroundColor,
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 10.0,
-                  offset: const Offset(0.0, 10.0),
-                ),
-              ],
-            ),
-            child: Form(
-              key: _formKey,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text("Фильтр измерений", style: TextStyle(
-                      fontSize: 18
-                    ),),
-                    SizedBox(height: 12,),
-                    TextFormField(
-                      initialValue: widget.filter.query,
-                      decoration: InputDecoration(
-                        hintText: "Наименование содержит..."
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(
+              decoration: new BoxDecoration(
+                color: Theme.of(context).bottomAppBarColor,
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10.0,
+                    offset: const Offset(0.0, 10.0),
+                  ),
+                ],
+              ),
+              child: Form(
+                key: _formKey,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text("Фильтр измерений", style: TextStyle(
+                        fontSize: 18
+                      ),),
+                      SizedBox(height: 12,),
+                      TextFormField(
+                        initialValue: widget.filter.query,
+                        decoration: InputDecoration(
+                          hintText: "Наименование содержит..."
+                        ),
+                        onSaved: (val) => setState(() {
+                          debugPrint(val);
+                          widget.filter.query = val;
+                        }),
+                        /*validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Поле не может быть пустым!';
+                          }
+                          return null;
+                        },*/
                       ),
-                      onSaved: (val) => setState(() {
-                        debugPrint(val);
-                        widget.filter.query = val;
-                      }),
-                      /*validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Поле не может быть пустым!';
-                        }
-                        return null;
-                      },*/
-                    ),
-                    SizedBox(height: 6,),
-                    DateTimeField(
-                      format: format,
-                      onSaved: (dt){
-                        widget.filter.dateFrom = dt;
-                      },
-                      decoration: InputDecoration(labelText: "С:", labelStyle: TextStyle(color: Theme.of(context).accentColor)),
-                      initialValue: widget.filter.dateFrom,
-                      onShowPicker: (context, currentValue) {
-                        return showDatePicker(
-                            context: context,
-                            firstDate: DateTime(1900),
-                            initialDate: currentValue ?? DateTime.now(),
-                            lastDate: DateTime(2100));
-                      },
-                    ),
-                    SizedBox(height: 6,),
-                    DateTimeField(
-                      format: format,
-                      onSaved: (dt){
-                        // TODO setState вроде не нужен
-                        widget.filter.dateTo = dt;
-                      },
-                      decoration: InputDecoration(labelText: "По:", labelStyle: TextStyle(color: Theme.of(context).accentColor)),
-                      initialValue: widget.filter.dateTo,
-                      onShowPicker: (context, currentValue) {
-                        return showDatePicker(
-                            context: context,
-                            firstDate: DateTime(1900),
-                            initialDate: currentValue ?? DateTime.now(),
-                            lastDate: DateTime(2100));
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          RawMaterialButton(
-                            onPressed: () {
-                              // Validate returns true if the form is valid, or false
-                              // otherwise.
-                              if (_formKey.currentState.validate()) {
-                                _formKey.currentState.save();
-                                Navigator.pop(context, widget.filter);
-                                // If the form is valid, display a Snackbar.
-                                //Scaffold.of(context).showSnackBar(SnackBar(content: Text('Обработка данных..')));
-                              }
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text('СОХРАНИТЬ'),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 16,
-                          ),
-                          RawMaterialButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text('ОТМЕНА'),
-                            ),
-                          )
-                        ],
+                      SizedBox(height: 6,),
+                      DateTimeField(
+                        format: format,
+                        onSaved: (dt){
+                          widget.filter.dateFrom = dt;
+                        },
+                        decoration: InputDecoration(labelText: "С:", labelStyle: TextStyle(color: Theme.of(context).accentColor)),
+                        initialValue: widget.filter.dateFrom,
+                        onShowPicker: (context, currentValue) {
+                          return showDatePicker(
+                              context: context,
+                              firstDate: DateTime(1900),
+                              initialDate: currentValue ?? DateTime.now(),
+                              lastDate: DateTime(2100));
+                        },
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 6,),
+                      DateTimeField(
+                        format: format,
+                        onSaved: (dt){
+                          // TODO setState вроде не нужен
+                          widget.filter.dateTo = dt;
+                        },
+                        decoration: InputDecoration(labelText: "По:", labelStyle: TextStyle(color: Theme.of(context).accentColor)),
+                        initialValue: widget.filter.dateTo,
+                        onShowPicker: (context, currentValue) {
+                          return showDatePicker(
+                              context: context,
+                              firstDate: DateTime(1900),
+                              initialDate: currentValue ?? DateTime.now(),
+                              lastDate: DateTime(2100));
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            RawMaterialButton(
+                              onPressed: () {
+                                // Validate returns true if the form is valid, or false
+                                // otherwise.
+                                if (_formKey.currentState.validate()) {
+                                  _formKey.currentState.save();
+                                  Navigator.pop(context, widget.filter);
+                                  // If the form is valid, display a Snackbar.
+                                  //Scaffold.of(context).showSnackBar(SnackBar(content: Text('Обработка данных..')));
+                                }
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('СОХРАНИТЬ'),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 16,
+                            ),
+                            RawMaterialButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('ОТМЕНА'),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
 
   }

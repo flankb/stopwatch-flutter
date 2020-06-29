@@ -33,10 +33,8 @@ class InheritedThemeNotifier extends InheritedNotifier<ThemeController>{
       : super(key: key, child: child, notifier: controller);
 
   static ThemeController of(BuildContext context) {
-    //final p = context.dependOnInheritedWidgetOfExactType<InheritedThemeNotifier>();
-    //debugPrint("ThemeController of: " + p.toString());
+    // Здесь каким-то образом подменить текстовую тему? (Известен контекст)
 
-    return /*p == null ? null :*/ context.dependOnInheritedWidgetOfExactType<InheritedThemeNotifier>().controller;
+    return context.dependOnInheritedWidgetOfExactType<InheritedThemeNotifier>().controller;
   }
-
 }
