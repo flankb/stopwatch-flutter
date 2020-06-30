@@ -18,11 +18,11 @@ class LapViewModel extends BaseStopwatchEntity {
   int overall;
 
   String differenceTime() {
-    return TimeDisplayer.format2(Duration(milliseconds: difference));
+    return TimeDisplayer.formatBase(Duration(milliseconds: difference));
   }
 
   String overallTime() {
-    return TimeDisplayer.format2(Duration(milliseconds: overall));
+    return TimeDisplayer.formatBase(Duration(milliseconds: overall));
   }
 
   String differenceMills() {
@@ -129,11 +129,11 @@ class MeasureViewModel extends BaseStopwatchEntity {
   }
 
   List<String> elapsedTime() {
-    return [TimeDisplayer.format2(Duration(milliseconds: elapsed)), TimeDisplayer.formatMills(Duration(milliseconds: elapsed))];
+    return [TimeDisplayer.formatBase(Duration(milliseconds: elapsed)), TimeDisplayer.formatMills(Duration(milliseconds: elapsed))];
   }
 
   List<String> elapsedTimeLap() {
-    return [TimeDisplayer.format2(Duration(milliseconds: elapsedLap)), TimeDisplayer.formatMills(Duration(milliseconds: elapsedLap))];
+    return [TimeDisplayer.formatBase(Duration(milliseconds: elapsedLap)), TimeDisplayer.formatMills(Duration(milliseconds: elapsedLap))];
   }
 
   int getSumOfElapsed(DateTime dateNow) {

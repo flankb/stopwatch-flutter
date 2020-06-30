@@ -117,7 +117,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                                 textBaseline: TextBaseline.ideographic,
                                 children: <Widget>[
                                   Text(
-                                    "${TimeDisplayer.format2(d2)},",
+                                    "${TimeDisplayer.formatBase(d2)},",
                                     style: TextStyle(fontSize: 30),
                                   ),
                                   Text(
@@ -131,7 +131,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                                 textBaseline: TextBaseline.ideographic,
                                 children: <Widget>[
                                   Text(
-                                    "${TimeDisplayer.format2(d1)},",
+                                    "${TimeDisplayer.formatBase(d1)},",
                                     style: TextStyle(fontSize: 44),
                                   ),
                                   Text(
@@ -324,7 +324,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                   tooltip: 'История',
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-                      return HistoryPage(pageType: MeasureViewModel, entityId: -1,);
+                      return HistoryPage(pageType: MeasureViewModel, entityId: null,);
                     }));
                   },
                 ),

@@ -14,6 +14,7 @@ import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 import 'package:stopwatch/service_locator.dart';
 import 'package:stopwatch/util/csv_exporter.dart';
+import 'package:stopwatch/util/time_displayer.dart';
 import 'package:stopwatch/view/dialogs/filter_dialog.dart';
 import 'package:stopwatch/widgets/buttons_bar.dart';
 import 'package:stopwatch/widgets/circular.dart';
@@ -27,7 +28,7 @@ import 'entity_edit_page.dart';
 
 class HistoryPage extends StatefulWidget {
   final Type pageType;
-  final int entityId;
+  final BaseStopwatchEntity entityId;
 
   HistoryPage({Key key, this.pageType, this.entityId}) : super(key: key);
 
@@ -49,12 +50,12 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
     super.initState();
 
     animationController = AnimationController(vsync: this, duration: duration);
-    animation = Tween<double>(begin : 0.5, end: 1.0).animate(animationController);  //ColorTween(begin: beginColor, end: endColor).animate(controller);
+    animation = Tween<double>(begin: 0.5, end: 1.0).animate(animationController); //ColorTween(begin: beginColor, end: endColor).animate(controller);
 
     _storageBloc = GetIt.I.get<StorageBloc>(instanceName: widget.pageType == MeasureViewModel ? MeasuresBloc : LapsBloc);
 
     animationController.addStatusListener((status) {
-      if(status == AnimationStatus.completed){
+      if (status == AnimationStatus.completed) {
         //animationController.reverse();
       }
     });
@@ -96,7 +97,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
     }
 
     // TODO Перед Loaded показывается старое состояние, а вместо него требуется сбросить состояние, чтобы показывался прогресс-бар
-    _storageBloc.add(LoadStorageEvent(widget.pageType, measureId: widget.entityId)); // TODO Более явно перезагружать состояние?
+    _storageBloc.add(LoadStorageEvent(widget.pageType, measureId: widget.entityId?.id)); // TODO Более явно перезагружать состояние?
 
     //TODO проблема в том, что два раза срабатывает LoadStorageEvent и прогресс-бар даже не появляется!
     //  Current state AvailableListState Bloc event: LoadStorageEvent
@@ -140,6 +141,10 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                 final availState = state as AvailableListState;
                 final pageIsLap = widget.pageType == LapViewModel;
 
+                final overallElapsed = pageIsLap ? TimeDisplayer.formatAllBeautifulFromMills((widget.entityId as MeasureViewModel).elapsed) : "";
+                final comment = pageIsLap ? (widget.entityId as MeasureViewModel).comment : "";
+                final createDate = pageIsLap ? TimeDisplayer.formatDate((widget.entityId as MeasureViewModel).dateCreated) : "";
+
                 // TODO Анимашка
                 // https://github.com/flutter/samples/blob/master/animations/lib/src/basics/05_animated_builder.dart
                 return Stack(children: [
@@ -150,17 +155,20 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           BackButton(),
-                          Text("Измерения", style: TextStyle(fontSize: 36),)
+                          Text(
+                            pageIsLap ? "Измерение" : "Измерения",
+                            style: TextStyle(fontSize: 36),
+                          )
                         ],
                       ),
 
                       pageIsLap
                           ? AnimatedBuilder(
-                            animation: animation,
-                            builder: (context, snapshot) {
-                              return Transform.scale(
-                                scale: animation.value,
-                                child: Padding(
+                              animation: animation,
+                              builder: (context, snapshot) {
+                                return Transform.scale(
+                                  scale: animation.value,
+                                  child: Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: Card(
                                       child: Padding(
@@ -169,188 +177,202 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                           children: <Widget>[
                                             PairLabelView(
                                               caption: "Общее время",
-                                              value: "02:04:01,12",
+                                              value: overallElapsed,
                                             ),
                                             PairLabelView(
                                               caption: "Комментарий",
-                                              value: "Стометровка",
+                                              value: comment ?? "",
                                             ),
                                             PairLabelView(
-                                              caption: "Дата",
-                                              value: "06-12-2018",
+                                              caption: "Дата создания",
+                                              value: createDate,
                                             )
                                           ],
                                         ),
                                       ),
                                     ),
                                   ),
-                              );
-                            }
-                          )
+                                );
+                              })
                           : SizedBox(),
+
+                      if (pageIsLap && availState.entities.any((element) => true))
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Круги: ",
+                                style: TextStyle(fontSize: 22),
+                              )),
+                        ),
+
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.only(top: 6),
+                            padding: const EdgeInsets.only(top: 6),
                             child: ListView.separated(
                               physics: ClampingScrollPhysics(),
-                          itemCount: availState.entities.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            BaseStopwatchEntity entity = availState.entities[index];
-                            final key = PageStorageKey<String>("entity_$index");
+                              itemCount: availState.entities.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                BaseStopwatchEntity entity = availState.entities[index];
+                                final key = PageStorageKey<String>("entity_$index");
 
-                            return StopwatchItem(
-                              key: key,
-                              entity: entity,
-                              selectionListController: _selectedItemsStreamController,
-                              selectedEvent: (b) {
-                                // Обновить менюшку...
-                                if (b.item2) {
-                                  debugPrint("_selectedEntities add");
-                                  _selectedEntities.add(b.item1);
-                                } else {
-                                  debugPrint("_selectedEntities remove");
-                                  _selectedEntities.remove(b.item1);
-                                }
+                                return StopwatchItem(
+                                  key: key,
+                                  entity: entity,
+                                  selectionListController: _selectedItemsStreamController,
+                                  selectedEvent: (b) {
+                                    // Обновить менюшку...
+                                    if (b.item2) {
+                                      debugPrint("_selectedEntities add");
+                                      _selectedEntities.add(b.item1);
+                                    } else {
+                                      debugPrint("_selectedEntities remove");
+                                      _selectedEntities.remove(b.item1);
+                                    }
 
-                                _selectedItemsStreamController.add(_selectedEntities.length);
-                                debugPrint("_selectedEntities.length ${_selectedEntities.length}");
+                                    _selectedItemsStreamController.add(_selectedEntities.length);
+                                    debugPrint("_selectedEntities.length ${_selectedEntities.length}");
 
-                                // Добаввить или удалить из SelectedItems
+                                    // Добаввить или удалить из SelectedItems
+                                  },
+                                );
                               },
-                            );
-                          }, separatorBuilder: (BuildContext context, int index) {
-                            return Divider(
-                              height: 0,
-                            );
-                            },
-                        )),
+                              separatorBuilder: (BuildContext context, int index) {
+                                return Divider(
+                                  height: 0,
+                                );
+                              },
+                            )),
                       ),
 
-
-
                       StreamBuilder<int>(
-                        stream:  _selectedItemsStreamController.stream,
-                        initialData: 0,
-                        builder: (context, snapshot) {
-                          return MetroAppBar(primaryCommands: <Widget>[
-                            widget.pageType == MeasureViewModel ? _exportToCsvButtonPrimary(context) : SizedBox(),
-                            widget.pageType == MeasureViewModel ? _exportToCsvButtonPrimary(context, shareMode: ShareMode.File) : SizedBox(),
+                          stream: _selectedItemsStreamController.stream,
+                          initialData: 0,
+                          builder: (context, snapshot) {
+                            if (snapshot.data != 1 && pageIsLap) {
+                              return SizedBox();
+                            } else {
+                              return MetroAppBar(
+                                primaryCommands: <Widget>[
+                                  widget.pageType == MeasureViewModel ? _exportToCsvButtonPrimary(context) : SizedBox(),
+                                  widget.pageType == MeasureViewModel ? _exportToCsvButtonPrimary(context, shareMode: ShareMode.File) : SizedBox(),
+                                  snapshot.data == 1
+                                      ? PrimaryCommand(
+                                          onPressed: () async {
+                                            final entityToEdit = _selectedEntities.single;
 
-                            snapshot.data == 1
-                                ? PrimaryCommand(onPressed: () async {
-                              final entityToEdit = _selectedEntities.single;
+                                            await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                                              return EntityEditPage(
+                                                entityType: widget.pageType,
+                                                entityId: entityToEdit.id,
+                                                entity: entityToEdit,
+                                              );
+                                            }));
 
-                              await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-                                return EntityEditPage(
-                                  entityType: widget.pageType,
-                                  entityId: entityToEdit.id,
-                                  entity: entityToEdit,
-                                );
-                              }));
+                                            _unselectItems();
+                                          },
+                                          pic: Icons.edit,
+                                          tooltip: "Ред.",
+                                        )
+                                      : SizedBox(),
+                                  snapshot.data >= 1 && widget.pageType == MeasureViewModel
+                                      ? PrimaryCommand(
+                                          tooltip: "Удалить",
+                                          pic: Icons.delete,
+                                          onPressed: () {
+                                            if (widget.pageType == LapViewModel) {
+                                              Toast.show("Круги нельзя удалять!", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                                              return;
+                                            }
 
-                              _unselectItems();
-                            }, pic: Icons.edit, tooltip: "Ред.",)
-                            : SizedBox(),
-
-                            snapshot.data >= 1 && widget.pageType == MeasureViewModel ?
-                            PrimaryCommand(tooltip: "Удалить", pic: Icons.delete, onPressed: () {
-                              if (widget.pageType == LapViewModel) {
-                                Toast.show("Круги нельзя удалять!", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-                                return;
-                              }
-
-                              final entitiesForDelete = List<BaseStopwatchEntity>();
-                              entitiesForDelete.addAll(_selectedEntities);
-                              _unselectItems();
-                              _storageBloc.add(DeleteStorageEvent(entitiesForDelete));
-                            },) : SizedBox(),
-                          ],
-
-                          secondaryCommands: <SecondaryCommand>[
-
-                          ],);
-
-
-                                
-
-                        }
-                      )
-
-
-
-
+                                            final entitiesForDelete = List<BaseStopwatchEntity>();
+                                            entitiesForDelete.addAll(_selectedEntities);
+                                            _unselectItems();
+                                            _storageBloc.add(DeleteStorageEvent(entitiesForDelete));
+                                          },
+                                        )
+                                      : SizedBox(),
+                                ],
+                                secondaryCommands: <SecondaryCommand>[],
+                              );
+                            }
+                          })
                     ],
                   ),
-
-
-                  Align(
-                      alignment: Alignment.bottomRight,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 56),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            availState.filtered
-                                ? RawMaterialButton(
-                              child: Icon(Icons.clear),
-                              onPressed: () {
-                                _storageBloc.add(CancelFilterEvent(widget.pageType));
-                              },
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-                              elevation: 2.0,
-                              fillColor: Theme.of(context).bottomAppBarColor,
-                              padding: const EdgeInsets.all(5.0),
-                            )
-                                : SizedBox(),
-                            availState.filtered
-                                ? SizedBox(
-                              width: 12,
-                            )
-                                : SizedBox(),
-                            SizedBox(
-                              width: 150,
-                              child: RawMaterialButton(
-                                onPressed: () async {
-                                  debugPrint("Last filter in history page ${availState.lastFilter}");
-                                  final result = await showDialog(
-                                      context: context,
-                                      builder: (context) => FilterDialog(
-                                        filter: availState.lastFilter,
-                                      ));
-
-                                  if (result != null) {
-                                    _storageBloc.add(FilterStorageEvent(widget.pageType, result));
-                                  }
-                                },
-                                child: Padding(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.filter_list,
-                                        color: Colors.white,
-                                      ),
-                                      SizedBox(
+                  StreamBuilder<int>(
+                    initialData: 0,
+                    stream: _selectedItemsStreamController.stream,
+                    builder: (context, snapshot) {
+                      return Align(
+                          alignment: Alignment.bottomRight,
+                          child: Padding(
+                            padding: EdgeInsets.only(bottom: snapshot.data != 1 && pageIsLap ? 0 : 56),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                availState.filtered
+                                    ? RawMaterialButton(
+                                        child: Icon(Icons.clear),
+                                        onPressed: () {
+                                          _storageBloc.add(CancelFilterEvent(widget.pageType));
+                                        },
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                                        elevation: 2.0,
+                                        fillColor: Theme.of(context).bottomAppBarColor,
+                                        padding: const EdgeInsets.all(5.0),
+                                      )
+                                    : SizedBox(),
+                                availState.filtered
+                                    ? SizedBox(
                                         width: 12,
-                                      ),
-                                      Text(
-                                        "Фильтр",
-                                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                  padding: EdgeInsets.symmetric(horizontal: 4.0),
-                                ),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-                                elevation: 2.0,
-                                fillColor: Theme.of(context).primaryColor,
-                                padding: const EdgeInsets.all(5.0),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )),
+                                      )
+                                    : SizedBox(),
+                                SizedBox(
+                                  width: 150,
+                                  child: RawMaterialButton(
+                                    onPressed: () async {
+                                      debugPrint("Last filter in history page ${availState.lastFilter}");
+                                      final result = await showDialog(
+                                          context: context,
+                                          builder: (context) => FilterDialog(
+                                                filter: availState.lastFilter,
+                                              ));
 
+                                      if (result != null) {
+                                        _storageBloc.add(FilterStorageEvent(widget.pageType, result));
+                                      }
+                                    },
+                                    child: Padding(
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(
+                                            Icons.filter_list,
+                                            color: Colors.white,
+                                          ),
+                                          SizedBox(
+                                            width: 12,
+                                          ),
+                                          Text(
+                                            "Фильтр",
+                                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
+                                      ),
+                                      padding: EdgeInsets.symmetric(horizontal: 4.0),
+                                    ),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                                    elevation: 2.0,
+                                    fillColor: Theme.of(context).primaryColor,
+                                    padding: const EdgeInsets.all(5.0),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ));
+                    }
+                  ),
                 ]);
               }
             },
@@ -391,7 +413,6 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
   }
   */
 
-
   PrimaryCommand _exportToCsvButtonPrimary(BuildContext context, {ShareMode shareMode = ShareMode.Email}) {
     final icon = shareMode == ShareMode.Email ? Icons.email : Icons.insert_drive_file;
     final tooltip = shareMode == ShareMode.Email ? "To email" : "To *.csv";
@@ -403,9 +424,9 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
       }
 
       final csv = await GetIt.I.get<CsvExporter>().convertToCsv(entitiesToExport.map((e) => e as MeasureViewModel).toList());
-       _unselectItems();
+      _unselectItems();
 
-      switch(shareMode){
+      switch (shareMode) {
         case ShareMode.Email:
           await _sendEmail(csv);
           break;
@@ -415,9 +436,12 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
       }
     };
 
-    return PrimaryCommand(tooltip: tooltip, pic: icon, onPressed: command,);
+    return PrimaryCommand(
+      tooltip: tooltip,
+      pic: icon,
+      onPressed: command,
+    );
   }
-
 
   _sendEmail(String body) async {
     // Вычислим адрес из настроек

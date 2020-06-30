@@ -98,7 +98,7 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
         if (widget.entity.runtimeType == MeasureViewModel)
           {
             Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-              return HistoryPage(pageType: LapViewModel, entityId: widget.entity.id);
+              return HistoryPage(pageType: LapViewModel, entityId: widget.entity);
             }))
           }
       },
@@ -128,7 +128,7 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
                   ),
                   SizedBox(height: 3),
                   date != null ?
-                      Text(DateFormat("dd-MM-yyyy").format(date), style: TextStyle(color: InheritedThemeNotifier.of(context).themeData.subtitleColor),) : SizedBox()
+                      Text(TimeDisplayer.formatDate(date), style: TextStyle(color: InheritedThemeNotifier.of(context).themeData.subtitleColor),) : SizedBox()
                 ],
               ),
             ],
