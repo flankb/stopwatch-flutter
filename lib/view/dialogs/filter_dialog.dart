@@ -117,6 +117,12 @@ class FilterFormState extends State<FilterForm> {
                         onSaved: (dt){
                           widget.filter.dateFrom = dt;
                         },
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Поле не может быть пустым!';
+                          }
+                          return null;
+                        },
                         decoration: InputDecoration(labelText: "С:", labelStyle: TextStyle(color: Theme.of(context).accentColor)),
                         initialValue: widget.filter.dateFrom,
                         onShowPicker: (context, currentValue) {
@@ -136,6 +142,12 @@ class FilterFormState extends State<FilterForm> {
                         },
                         decoration: InputDecoration(labelText: "По:", labelStyle: TextStyle(color: Theme.of(context).accentColor)),
                         initialValue: widget.filter.dateTo,
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Поле не может быть пустым!';
+                          }
+                          return null;
+                        },
                         onShowPicker: (context, currentValue) {
                           return showDatePicker(
                               context: context,
