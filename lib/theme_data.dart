@@ -37,8 +37,8 @@ final appThemeData = {
           focusColor: Colors.green,
           accentColor: Colors.green,
 
-
           textTheme: GoogleFonts.latoTextTheme(
+              ThemeData.light().textTheme
           )
 
         ),
@@ -50,7 +50,9 @@ final appThemeData = {
         accentColor: Colors.green[700],
         toggleableActiveColor: Colors.green[700],
         focusColor: Colors.green[700],
-        textTheme: GoogleFonts.latoTextTheme(),
+        textTheme: GoogleFonts.latoTextTheme(
+            ThemeData.dark().textTheme
+        ),
       ),
       subtitleColor: const Color(0xffA5A5A5)),
 
@@ -59,7 +61,9 @@ final appThemeData = {
       primaryColor: Colors.blue,
       toggleableActiveColor: Colors.blue,
       accentColor: Colors.blue,
-      textTheme: GoogleFonts.latoTextTheme(),),
+      textTheme: GoogleFonts.latoTextTheme(
+          ThemeData.light().textTheme
+      ),),
       subtitleColor: const Color(0xff4A4747),
       ),
 
@@ -68,12 +72,8 @@ final appThemeData = {
       primaryColor: Colors.blue[700],
       toggleableActiveColor: Colors.blue[700],
       accentColor: Colors.blue[700],
-      textTheme: GoogleFonts.latoTextTheme(),),
+      textTheme: GoogleFonts.latoTextTheme(
+          ThemeData.dark().textTheme
+      ),),
       subtitleColor: const Color(0xffA5A5A5)) //
 };
-
-/*
- textTheme: GoogleFonts.latoTextTheme(
-                  Theme.of(context).textTheme,
-            ),
- */
