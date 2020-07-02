@@ -214,7 +214,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                       child: RawMaterialButton(
                         child: Padding(
                           padding: EdgeInsets.all(16),
-                          child: Text("Круг", style: TextStyle(fontSize: 28, color: Colors.black)),
+                          child: Text(S.of(context).lap, style: TextStyle(fontSize: 28, color: Colors.black)),
                         ),
                         onPressed: state is MeasureStartedState
                             ? () async {
@@ -307,7 +307,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
 
                 PrimaryCommand(
                   pic: Icons.refresh,
-                  tooltip: 'Сброс',
+                  tooltip: S.of(context).reset,
                   onPressed: () {
                     BlocProvider.of<MeasureBloc>(context).add(MeasureFinishedEvent());
 
@@ -321,7 +321,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
 
                 PrimaryCommand(
                   pic: Icons.list,
-                  tooltip: 'История',
+                  tooltip: S.of(context).history,
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
                       return HistoryPage(pageType: MeasureViewModel, entityId: null,);
@@ -331,7 +331,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
 
                 PrimaryCommand(
                   pic: Icons.settings,
-                  tooltip: 'Settings',
+                  tooltip: S.of(context).settings,
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
                       return SettingsPage();
@@ -348,15 +348,16 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                         iOSAppId: "585027354",
                       );
                     },
-                    child: Text('Оценить приложение')
+                    child: Text(S.of(context).review)
                 ),
                 SecondaryCommand(
-                    commandName: "about", onPressed: () {
+                    commandName: "about",
+                    onPressed: () {
                       Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
                         return AboutPage();
                       }));
                     },
-                    child: Text('О программе')
+                    child: Text(S.of(context).about)
                 )
 
                 /*
