@@ -1,4 +1,5 @@
 
+import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/models/stopwatch_status.dart';
@@ -222,4 +223,22 @@ class MeasureViewModel extends BaseStopwatchEntity {
   String toString() {
     return 'MeasureViewModel{id: $id, comment: $comment,  elapsed: $elapsed, elapsedLap: $elapsedLap, dateCreated: $dateCreated, status: $status}';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MeasureViewModel &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          comment == other.comment &&
+          elapsed == other.elapsed &&
+          elapsedLap == other.elapsedLap &&
+          dateCreated == other.dateCreated &&
+          status == other.status &&
+          lastRestartedOverall == other.lastRestartedOverall &&
+          checkPointLapTicks == other.checkPointLapTicks;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^ comment.hashCode ^ elapsed.hashCode ^ elapsedLap.hashCode ^ dateCreated.hashCode ^ status.hashCode ^ lastRestartedOverall.hashCode ^ checkPointLapTicks.hashCode;
 }
