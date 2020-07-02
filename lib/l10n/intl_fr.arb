@@ -4,5 +4,7 @@
   "history": "L'histoire",
   "settings": "Paramètres",
   "about": "À propos",
-  "review": "Notez et évaluez"
+  "review": "Notez et évaluez",
+  "start": "Début",
+  "pause": "Pause"
 }

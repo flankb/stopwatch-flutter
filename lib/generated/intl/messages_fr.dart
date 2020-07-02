@@ -24,8 +24,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "about" : MessageLookupByLibrary.simpleMessage("À propos"),
     "history" : MessageLookupByLibrary.simpleMessage("L\'histoire"),
     "lap" : MessageLookupByLibrary.simpleMessage("Un cercle"),
+    "pause" : MessageLookupByLibrary.simpleMessage("Pause"),
     "reset" : MessageLookupByLibrary.simpleMessage("Réinitialiser"),
     "review" : MessageLookupByLibrary.simpleMessage("Notez et évaluez"),
-    "settings" : MessageLookupByLibrary.simpleMessage("Paramètres")
+    "settings" : MessageLookupByLibrary.simpleMessage("Paramètres"),
+    "start" : MessageLookupByLibrary.simpleMessage("Début")
   };
 }
