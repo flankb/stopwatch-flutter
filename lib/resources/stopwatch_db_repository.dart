@@ -8,14 +8,9 @@ part 'stopwatch_db_repository.g.dart';
 
 @UseDao(tables: [Laps, Measures, MeasureSessions, Tags])
 class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchRepositoryMixin implements BaseStopwatchRepository {
-  //MyDatabase _database;
+  StopwatchRepository() : super(MyDatabase());
 
-  // TODO В идеале в этом классе предоставить базовые CRUD-операции и возможность писать SQL-код
-
-  StopwatchRepository() : super(MyDatabase()) {
-    // TODO??
-    //_database = MyDatabase();
-  }
+  StopwatchRepository.fromDatabase(MyDatabase database) : super(database);
 
   Future<List<Measure>> getMeasuresByStatusAsync(String status) {
     return (select(measures)..where((m) => m.status.equals(status))..orderBy([(t) => OrderingTerm(expression: t.dateCreated, mode: OrderingMode.desc)])).get();

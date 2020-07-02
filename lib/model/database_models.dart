@@ -54,13 +54,13 @@ LazyDatabase _openConnection() {
   });
 }
 
-
-
 @UseMoor(tables: [Laps, Measures, MeasureSessions, Tags])
 class MyDatabase extends _$MyDatabase {
   factory MyDatabase() {
     return _instance;
   }
+
+  MyDatabase.fromCustomExecutor(QueryExecutor e) : super(e);
 
   static final MyDatabase _instance = MyDatabase._privateConstructor();
 

@@ -1,28 +1,43 @@
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:moor_ffi/moor_ffi.dart';
 import 'package:sqflite_ffi_test/sqflite_ffi_test.dart';
+import 'package:stopwatch/model/database_models.dart';
+import 'package:stopwatch/models/stopwatch_status.dart';
+import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 
-/*
 void main() {
-  group('Repositories tests', ()
+  group('Repository test', ()
   {
-    WordCategoryRepository _categoryRepository;
-    DictParserRepository _wordRepository;
+    StopwatchRepository _stopwatchRepository;
+    MyDatabase database;
 
     setUp(() async {
       WidgetsFlutterBinding.ensureInitialized();
       sqfliteFfiTestInit();
 
+      database = MyDatabase.fromCustomExecutor(VmDatabase.memory());
 
-      _categoryRepository = WordCategoryRepository();
-      _wordRepository = DictParserRepository();
+      _stopwatchRepository = StopwatchRepository.fromDatabase(database);
+    });
 
-      //await PlatformAssetBundle.loadAssets(MainDb.getAssetNames());
+    tearDown((){
+      database.close();
     });
 
     test("FloorRepository test", () async {
+    });
+
+    test("Repo test", () async {
+      await _stopwatchRepository.createNewMeasureAsync();
+      final readyMeasure = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Ready));
+
+      expect(readyMeasure.single.status == describeEnum(StopwatchStatus.Ready), true, reason: "Не создалось измерение со статусом Ready!");
+
+
     });
 
     /*test("WordCategoryRepository test", () async {
@@ -36,4 +51,3 @@ void main() {
     });*/
   });
 }
-*/
