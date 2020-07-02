@@ -1,1 +1,8 @@
-{"start":"Inizio","pause":"Pausa"}
+{
+  "lap": "Un cerchio",
+  "reset": "Ripristina",
+  "history": "Storia",
+  "settings": "Impostazioni",
+  "about": "A proposito del programma",
+  "review": "Valuta e recensisci"
+}

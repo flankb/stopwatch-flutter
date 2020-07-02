@@ -1,4 +1,8 @@
 {
-  "start": "Début",
-  "pause": "Pause"
+  "lap": "Un cercle",
+  "reset": "Réinitialiser",
+  "history": "L'histoire",
+  "settings": "Paramètres",
+  "about": "À propos",
+  "review": "Notez et évaluez"
 }

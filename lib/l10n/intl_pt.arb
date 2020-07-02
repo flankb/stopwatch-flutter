@@ -1,1 +1,8 @@
-{"start":"Começar","pause":"Pausa"}
+{
+  "lap": "Colo",
+  "reset": "Redefinir",
+  "history": "História",
+  "settings": "Configurações",
+  "about": "Sobre o programa",
+  "review": "Classifique e analise"
+}
