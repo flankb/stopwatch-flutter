@@ -76,7 +76,10 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
     final measureForUpdate = _measures.firstWhere((element) => element.id == measure.id);
     _measures.remove(measureForUpdate);
 
-    _measures.add(MeasureViewModel.fromEntity(measure));
+    final viewModel = MeasureViewModel.fromEntity(measure);
+    debugPrint("Converted from entity: " + viewModel.toString());
+
+    _measures.add(viewModel);
   }
 
   @override
