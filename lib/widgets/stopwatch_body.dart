@@ -90,16 +90,16 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
 
                   //date2.difference(birthday).inDays;
                   builder: (context, snapshot) {
-                    if (snapshot.data == -1) {
+                    /*if (snapshot.data == -1) {
                       debugPrint("Hash code 2: ${state.measure.hashCode}");
                       debugPrint("StreamBuilder ok! Measure ${state.measure} LastRestarted ${state.measure.lastRestartedOverall}");
-                    }
+                    }*/
 
-                    final delta1 = DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds;
-                    final delta2 = DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds;
+                    final delta1 = snapshot.data > 0 ? DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds : 0;
+                    //final delta2 = DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds;
 
                     final overallDifference = state.measure.elapsed + delta1; // TODO elapsed не сбрасывается
-                    final lapDifference = state.measure.elapsedLap + delta2;
+                    final lapDifference = state.measure.elapsedLap + delta1;
 
                     final d1 = Duration(milliseconds: overallDifference);
                     final d2 = Duration(milliseconds: lapDifference);

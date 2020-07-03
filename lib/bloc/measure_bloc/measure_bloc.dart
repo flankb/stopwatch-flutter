@@ -68,12 +68,6 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     }
     else {
       if (combine.length > 1) {
-        //-------------
-        // Грохнуть лишнее
-        //
-        //await _stopwatchRepository.deleteAllMeasuresDebug();
-        //-------------
-
         throw Exception("Не может быть больше одного актуального измерения");
       }
 
@@ -107,7 +101,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
         _updateElapseds(measure, DateTime.now()); //Ticker здесь не инициализирован!!!!
         //debugPrint("Hash code 1: ${measure.hashCode}");
         yield MeasurePausedState(measure); // Если есть в статусе Пауза, то PausedState
-        controller.add(-1);
+        controller.add(0);
       }
     }
   }
