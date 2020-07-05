@@ -1,9 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 
 class TimeDisplayer {
   static int _dayMills = 24 * 3600 * 1000;
 
-  static String formatDate(DateTime date){
+  static String formatDate(DateTime date, {BuildContext context}){
+    if (context != null) {
+      Locale myLocale = Localizations.localeOf(context);
+      return DateFormat.yMMMMd(myLocale.languageCode).add_Hm().format(date);
+    }
+
     return DateFormat("dd-MM-yyyy").format(date);
   }
 
@@ -16,6 +22,8 @@ class TimeDisplayer {
     final d = Duration(milliseconds: mills);
     return formatAllBeautiful(d);
   }
+
+
 
   static String formatBase(Duration d){
     if (d.inMinutes < 60) {

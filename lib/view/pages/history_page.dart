@@ -107,6 +107,8 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
     if (wasFiltered) {
       _storageBloc.add(FilterStorageEvent(widget.pageType, previousFilter));
     }
+
+
   }
 
   @override
@@ -143,7 +145,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
 
                 final overallElapsed = pageIsLap ? TimeDisplayer.formatAllBeautifulFromMills((widget.entityId as MeasureViewModel).elapsed) : "";
                 final comment = pageIsLap ? (widget.entityId as MeasureViewModel).comment : "";
-                final createDate = pageIsLap ? TimeDisplayer.formatDate((widget.entityId as MeasureViewModel).dateCreated) : "";
+                final createDate = pageIsLap ? TimeDisplayer.formatDate((widget.entityId as MeasureViewModel).dateCreated, context: context) : "";
 
                 // TODO Анимашка
                 // https://github.com/flutter/samples/blob/master/animations/lib/src/basics/05_animated_builder.dart

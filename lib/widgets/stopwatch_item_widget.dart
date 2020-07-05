@@ -128,7 +128,7 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
                   ),
                   SizedBox(height: 3),
                   date != null ?
-                      Text(TimeDisplayer.formatDate(date), style: TextStyle(color: InheritedThemeNotifier.of(context).themeData.subtitleColor),) : SizedBox()
+                      Text(TimeDisplayer.formatDate(date, context: context), style: TextStyle(color: InheritedThemeNotifier.of(context).themeData.subtitleColor),) : SizedBox()
                 ],
               ),
             ],
