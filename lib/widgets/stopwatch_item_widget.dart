@@ -46,17 +46,14 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
     //_init();
   }
 
-  _init(){
+  _init() {
     widget.selectionListController.stream.asBroadcastStream().listen((event) {
       if (event == 0) {
-
         if (this.mounted) {
           this.setState(() {
             isSelected = false;
           });
         }
-
-
       }
     });
   }
@@ -69,26 +66,25 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
 
     final entityIsMeasure = widget.entity is MeasureViewModel;
 
-    final elapsed =  entityIsMeasure
-        ? (widget.entity as MeasureViewModel).elapsed
-        : (widget.entity is LapViewModel) ? (widget.entity as LapViewModel).difference : 0;
+    final elapsed =
+        entityIsMeasure ? (widget.entity as MeasureViewModel).elapsed : (widget.entity is LapViewModel) ? (widget.entity as LapViewModel).difference : 0;
 
-    final elapsedString = TimeDisplayer.formatAllBeautiful(Duration(milliseconds : elapsed));
+    final elapsedString = TimeDisplayer.formatAllBeautiful(Duration(milliseconds: elapsed));
 
-    final date = entityIsMeasure
-        ?  (widget.entity as MeasureViewModel).dateCreated : null;
+    final date = entityIsMeasure ? (widget.entity as MeasureViewModel).dateCreated : null;
 
     final rand = r.nextInt(4);
     final num = pow(3, rand);
 
     return InkWell(
       onLongPress: () => {
-        if (mounted) {
-          this.setState(() {
-            isSelected = !isSelected;
-            widget.selectedEvent(Tuple2(widget.entity, isSelected));
-          })
-        }
+        if (mounted)
+          {
+            this.setState(() {
+              isSelected = !isSelected;
+              widget.selectedEvent(Tuple2(widget.entity, isSelected));
+            })
+          }
 
         /* Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
           return EntityEditPage(entityType: widget.entity.runtimeType, entityId: widget.entity.id);
@@ -108,27 +104,39 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              !entityIsMeasure ? SizedBox(
-                width: 32,
-                child: Text("${(widget.entity as LapViewModel).order.toString()}. ",
-                style: TextStyle(fontSize: 18, height: 1.0,),),
-              )
-              : SizedBox(),
+              !entityIsMeasure
+                  ? SizedBox(
+                      width: 32,
+                      child: Text(
+                        "${(widget.entity as LapViewModel).order.toString()}. ",
+                        style: TextStyle(
+                          fontSize: 18,
+                          height: 1.0,
+                        ),
+                      ),
+                    )
+                  : SizedBox(),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    widget.entity.comment ?? "Нет комментария",
-                    style: TextStyle(fontSize: 18, height: 1.0, color: widget.entity.comment == null ? InheritedThemeNotifier.of(context).themeData.subtitleColor : Theme.of(context).textTheme.subtitle2.color),
-                  ),
+                  Text(elapsedString, style: TextStyle(fontSize: 18,  height: 1.0,)),
                   SizedBox(height: 6),
                   Text(
-                    elapsedString,
-                      style: TextStyle(fontSize: 18)
+                    widget.entity.comment ?? "Нет комментария",
+                    style: TextStyle(
+                        fontSize: 18,
+                        height: 1.0,
+                        color: widget.entity.comment == null
+                            ? InheritedThemeNotifier.of(context).themeData.subtitleColor
+                            : Theme.of(context).textTheme.subtitle2.color),
                   ),
                   SizedBox(height: 3),
-                  date != null ?
-                      Text(TimeDisplayer.formatDate(date, context: context), style: TextStyle(color: InheritedThemeNotifier.of(context).themeData.subtitleColor),) : SizedBox()
+                  date != null
+                      ? Text(
+                          TimeDisplayer.formatDate(date, context: context),
+                          style: TextStyle(color: InheritedThemeNotifier.of(context).themeData.subtitleColor),
+                        )
+                      : SizedBox()
                 ],
               ),
             ],
