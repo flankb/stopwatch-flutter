@@ -42,7 +42,7 @@ final appThemeData = {
           )
 
         ),
-      subtitleColor: const Color(0xff4A4747)),
+      subtitleColor: const Color(0xff8e8e8e)),
   AppTheme.GreenDark: ExtendedTheme(
       ThemeData(
         brightness: Brightness.dark,
@@ -64,7 +64,7 @@ final appThemeData = {
       textTheme: GoogleFonts.latoTextTheme(
           ThemeData.light().textTheme
       ),),
-      subtitleColor: const Color(0xff4A4747),
+      subtitleColor: const Color(0xff8e8e8e),
       ),
 
   AppTheme.BlueDark: ExtendedTheme(ThemeData(
