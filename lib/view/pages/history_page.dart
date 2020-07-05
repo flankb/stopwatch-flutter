@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:get_it/get_it.dart';
+import 'package:share/share.dart';
 import 'package:stopwatch/bloc/storage_bloc/bloc.dart';
 import 'package:stopwatch/fake/fake_data_fabric.dart';
 import 'package:stopwatch/model/database_models.dart';
@@ -416,7 +417,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
   */
 
   PrimaryCommand _exportToCsvButtonPrimary(BuildContext context, {ShareMode shareMode = ShareMode.Email}) {
-    final icon = shareMode == ShareMode.Email ? Icons.email : Icons.insert_drive_file;
+    final icon = shareMode == ShareMode.Email ? Icons.share : Icons.insert_drive_file;
     final tooltip = shareMode == ShareMode.Email ? "To email" : "To *.csv";
     final command = () async {
       var entitiesToExport = _selectedEntities;
@@ -430,7 +431,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
 
       switch (shareMode) {
         case ShareMode.Email:
-          await _sendEmail(csv);
+          await _share(csv);
           break;
         case ShareMode.File:
           await GetIt.I.get<CsvExporter>().shareFile(csv);
@@ -460,6 +461,10 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
     );
 
     await FlutterEmailSender.send(email);
+  }
+
+  _share(String body){
+    Share.share(body, subject: 'Измерения от ${DateTime.now()}');
   }
 
   void _unselectItems() {
