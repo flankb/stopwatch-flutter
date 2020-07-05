@@ -103,7 +103,7 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
           }
       },
       child: Container(
-          padding: const EdgeInsets.fromLTRB(16, 3, 16, 3),
+          padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
           color: isSelected ? Theme.of(context).primaryColor : Colors.transparent,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,7 +111,7 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
               !entityIsMeasure ? SizedBox(
                 width: 32,
                 child: Text("${(widget.entity as LapViewModel).order.toString()}. ",
-                style: TextStyle(fontSize: 18),),
+                style: TextStyle(fontSize: 18, height: 1.0,),),
               )
               : SizedBox(),
               Column(
@@ -119,7 +119,7 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
                 children: <Widget>[
                   Text(
                     widget.entity.comment ?? "Нет комментария",
-                    style: TextStyle(fontSize: 18, color: widget.entity.comment == null ? InheritedThemeNotifier.of(context).themeData.subtitleColor : Theme.of(context).textTheme.subtitle2.color),
+                    style: TextStyle(fontSize: 18, height: 1.0, color: widget.entity.comment == null ? InheritedThemeNotifier.of(context).themeData.subtitleColor : Theme.of(context).textTheme.subtitle2.color),
                   ),
                   SizedBox(height: 6),
                   Text(
