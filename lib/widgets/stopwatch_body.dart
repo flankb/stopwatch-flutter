@@ -78,6 +78,8 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
     return BlocBuilder<MeasureBloc, MeasureState>(builder: (BuildContext context, MeasureState state) {
       //state.measure.lastRestartedOverall = DateTime.now();
 
+      final mediaQueryOrientation = MediaQuery.of(context).orientation;
+
       return Column(
         children: <Widget>[
           Padding(
@@ -173,8 +175,11 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
               },
             ),
           ),
-          Expanded(
-            flex: 1,
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: mediaQueryOrientation == Orientation.portrait ? 150 : 70,
+              //minHeight: 100
+            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
@@ -185,7 +190,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                       child: RawMaterialButton(
                         //enableFeedback: false
                         child: Padding(
-                          padding: EdgeInsets.all(16),
+                          padding: EdgeInsets.all(0),
                           child: Text(
                             state is MeasureStartedState ? S.of(context).pause : S.of(context).start,
                             style: TextStyle(fontSize: 28, color: Colors.white),
@@ -213,7 +218,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                       padding: const EdgeInsets.fromLTRB(4, 8, 8, 8),
                       child: RawMaterialButton(
                         child: Padding(
-                          padding: EdgeInsets.all(16),
+                          padding: EdgeInsets.all(0),
                           child: Text(S.of(context).lap, style: TextStyle(fontSize: 28, color: Colors.black)),
                         ),
                         onPressed: state is MeasureStartedState
