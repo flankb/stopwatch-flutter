@@ -39,7 +39,7 @@ class _MetroAppBarState extends State<MetroAppBar> with SingleTickerProviderStat
               color: Theme.of(context).bottomAppBarColor,
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xff3F3C3C),
+                  color: Theme.of(context).brightness == Brightness.dark ? const Color(0xff3F3C3C) : const Color(0xffd3d3d3),
                   blurRadius: 1.0,
                   spreadRadius: 0.0,
                   offset: Offset(0.3, 0.3), // shadow direction: bottom right
