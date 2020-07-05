@@ -124,7 +124,7 @@ void main() {
 
       await Future.delayed(Duration(seconds: 1));
       measureBloc.add(MeasurePausedEvent());
-      measureBloc.add(MeasureFinishedEvent());
+      measureBloc.add(MeasureFinishedEvent(true));
 
       expectLater(_testController.stream, emits(true));
     });

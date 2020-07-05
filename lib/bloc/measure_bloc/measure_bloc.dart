@@ -147,14 +147,15 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
   Stream<MeasureState> _mapFinishedToState(MeasureEvent event) async* {
     if (state is MeasureStartedState || state is MeasurePausedState) {
-      yield* _fixStopwatch(StopwatchStatus.Finished, finish : event is MeasureFinishedEvent);
+      // Не сохранять в БД, если это MeasureFinishedEvent и там указана соотв. настройка
+      final nosaveDb = event is MeasureFinishedEvent && !event.saveMeasure;
+      yield* _fixStopwatch(StopwatchStatus.Finished, finish : event is MeasureFinishedEvent, saveToDatabase: !nosaveDb);
       yield MeasureReadyState(MeasureViewModel());
     }
     else {
       yield MeasureReadyState(MeasureViewModel());
       //throw Exception("Wrong state!");
     }
-
   }
 
   Stream<MeasureState> _mapPausedToState(MeasureEvent event) async* {
@@ -233,7 +234,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     debugPrint("After _updateElapseds ${measure.toString()}");
   }
 
-  Stream<MeasureState> _fixStopwatch(StopwatchStatus status, {bool finish = false}) async* {
+  Stream<MeasureState> _fixStopwatch(StopwatchStatus status, {bool finish = false, bool saveToDatabase = true}) async* {
     debugPrint("_fixStopwatch before");
     yield MeasureUpdatingState(state.measure);
     debugPrint("_fixStopwatch after");
@@ -261,11 +262,17 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     _updateElapseds(state.measure, dateNow);
     debugPrint("state.measure after finish: " + state.measure.toString());
 
-    controller.add(0); // Как-бы фиксируем //TODO Костыль
-    await _stopwatchRepository.updateMeasureAsync(state.measure.toEntity());
+    controller.add(0); // Как-бы фиксируем
 
-    if (lastSession != null) {
-      await _stopwatchRepository.updateMeasureSession(lastSession.toEntity());
+    if (saveToDatabase) {
+      await _stopwatchRepository.updateMeasureAsync(state.measure.toEntity());
+
+      if (lastSession != null) {
+        await _stopwatchRepository.updateMeasureSession(lastSession.toEntity());
+      }
+    }
+    else {
+      await _stopwatchRepository.deleteMeasures([state.measure.id]);
     }
 
     debugPrint("fixStopwatch finished");

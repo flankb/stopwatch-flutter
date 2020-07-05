@@ -309,7 +309,9 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                   pic: Icons.refresh,
                   tooltip: S.of(context).reset,
                   onPressed: () {
-                    BlocProvider.of<MeasureBloc>(context).add(MeasureFinishedEvent());
+
+                    bool saveMeasure = PrefService.getBool("save_measures") ?? true;
+                    BlocProvider.of<MeasureBloc>(context).add(MeasureFinishedEvent(saveMeasure));
 
                     if (_controller.isCompleted) {
                       _controller.reverse();

@@ -39,6 +39,14 @@ class SettingsPage extends StatelessWidget {
                     defaultVal: true,
                     desc: "Вкл",
                   ),
+
+                  SwitchPreference(
+                    'Сохранять измерения',
+                    'save_measures',
+                    defaultVal: true,
+                    desc: "Вкл",
+                  ),
+
                   DropdownPreference<String>( //
                     'Тема приложения',
                     'theme',
@@ -47,28 +55,13 @@ class SettingsPage extends StatelessWidget {
 
 
                       AppTheme theme = AppTheme.values.firstWhere((e) => e.toString() == v.toString());
-                      debugPrint("Selected theme: " + theme.toString());
+                      //debugPrint("Selected theme: " + theme.toString());
 
                       InheritedThemeNotifier.of(context).updateTheme(theme);
                     },
                     displayValues: ['Blue Light', 'Blue Dark', 'Green Light', 'Green Dark'],
                     values: [AppTheme.BlueLight.toString(), AppTheme.BlueDark.toString(), AppTheme.GreenLight.toString(), AppTheme.GreenDark.toString()],
                   ),
-                  TextFieldPreference(
-                    'E-mail',
-                    'email',
-                    defaultVal: 'email@example.com',
-                    validator: (str) {
-                      if (!isEmail(str)) {
-                        return "Invalid email";
-                      }
-
-                      return null;
-                    },
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    autofocus: false,
-                    maxLines: 1,
-                  )
                 ]),
               ),
             ],
