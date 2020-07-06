@@ -77,14 +77,11 @@ void main() async {
 // https://pub.dev/packages/theme_provider
 // https://pub.dev/packages/dynamic_theme
 // https://api.flutter.dev/flutter/widgets/InheritedModel-class.html
-
 class MyApp extends StatelessWidget {
   final AppTheme initialTheme;
   final ThemeController themeController;
 
   const MyApp({Key key, this.initialTheme, this.themeController}) : super(key: key);
-
-
 
   // This widget is the root of your application.
   @override
