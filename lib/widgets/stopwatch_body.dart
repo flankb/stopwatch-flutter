@@ -37,35 +37,12 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 300),
-      upperBound: 150,
-      lowerBound: 0
-    );
-
-    //animation = Tween(begin: 0.0, end: 300.0).animate(_controller);
-
-    /*final Animation<double> animation2 = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.ease,
-    );*/
-
+    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300), upperBound: 150, lowerBound: 0);
     _controller.addStatusListener((status) {
-      if(status == AnimationStatus.completed){
+      if (status == AnimationStatus.completed) {
         _controller.reverse();
       }
     });
-
-    /*
-    ..addListener(() {
-    +         setState(() {
-    +           // The state that has changed here is the animation object’s value.
-    +         });
-    +       });
-    */
-
-    // TODO М.б. использовать AnimatedWidget ??
   }
 
   @override
@@ -73,11 +50,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
     debugPrint("StopwatchBody build");
 
     List<LapViewModel> items = FakeDataFabric.mainPageLaps();
-
-    //var measureBloc = BlocProvider.of<MeasureBloc>(context);
     return BlocBuilder<MeasureBloc, MeasureState>(builder: (BuildContext context, MeasureState state) {
-      //state.measure.lastRestartedOverall = DateTime.now();
-
       final mediaQueryOrientation = MediaQuery.of(context).orientation;
 
       return Column(
@@ -89,8 +62,6 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
               child: StreamBuilder<int>(
                   initialData: 0,
                   stream: widget.measureBloc.tickStream,
-
-                  //date2.difference(birthday).inDays;
                   builder: (context, snapshot) {
                     /*if (snapshot.data == -1) {
                       debugPrint("Hash code 2: ${state.measure.hashCode}");
@@ -98,8 +69,6 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                     }*/
 
                     final delta1 = snapshot.data > 0 ? DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds : 0;
-                    //final delta2 = DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds;
-
                     final overallDifference = state.measure.elapsed + delta1; // TODO elapsed не сбрасывается
                     final lapDifference = state.measure.elapsedLap + delta1;
 
@@ -107,46 +76,45 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                     final d2 = Duration(milliseconds: lapDifference);
 
                     return AnimatedBuilder(
-                      animation: _controller,
-                      builder: (context, widget) {
-                        return Transform.translate(
-                          offset: Offset(0 + _controller.value, 0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.baseline,
-                                textBaseline: TextBaseline.ideographic,
-                                children: <Widget>[
-                                  Text(
-                                    "${TimeDisplayer.formatBase(d2)},",
-                                    style: TextStyle(fontSize: 30),
-                                  ),
-                                  Text(
-                                    TimeDisplayer.formatMills(d2),
-                                    style: TextStyle(fontSize: 20),
-                                  )
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.baseline,
-                                textBaseline: TextBaseline.ideographic,
-                                children: <Widget>[
-                                  Text(
-                                    "${TimeDisplayer.formatBase(d1)},",
-                                    style: TextStyle(fontSize: 44),
-                                  ),
-                                  Text(
-                                    TimeDisplayer.formatMills(d1),
-                                    style: TextStyle(fontSize: 32),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        );
-                      }
-                    );
+                        animation: _controller,
+                        builder: (context, widget) {
+                          return Transform.translate(
+                            offset: Offset(0 + _controller.value, 0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                                  textBaseline: TextBaseline.ideographic,
+                                  children: <Widget>[
+                                    Text(
+                                      "${TimeDisplayer.formatBase(d2)},",
+                                      style: TextStyle(fontSize: 30),
+                                    ),
+                                    Text(
+                                      TimeDisplayer.formatMills(d2),
+                                      style: TextStyle(fontSize: 20),
+                                    )
+                                  ],
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                                  textBaseline: TextBaseline.ideographic,
+                                  children: <Widget>[
+                                    Text(
+                                      "${TimeDisplayer.formatBase(d1)},",
+                                      style: TextStyle(fontSize: 44),
+                                    ),
+                                    Text(
+                                      TimeDisplayer.formatMills(d1),
+                                      style: TextStyle(fontSize: 32),
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
+                          );
+                        });
                   }),
             ),
           ),
@@ -160,18 +128,12 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
 
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
-                  child: MeasureLapItem(difference: "+${lap.differenceTime()},${lap.differenceMills()}", order: lap.order, overall: "${lap.overallTime()},${lap.overallMills()}" ,),
+                  child: MeasureLapItem(
+                    difference: "+${lap.differenceTime()},${lap.differenceMills()}",
+                    order: lap.order,
+                    overall: "${lap.overallTime()},${lap.overallMills()}",
+                  ),
                 );
-
-                /*return ListTile(
-                    leading: SizedBox(width: 20, child: Text(lap.order.toString())),
-                    title: Align(
-                      alignment: Alignment.topLeft,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[Text("+${lap.differenceTime()},${lap.differenceMills()}"), Text("${lap.overallTime()},${lap.overallMills()}")],
-                      ),
-                    ));*/
               },
             ),
           ),
@@ -231,7 +193,8 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                                   _scrollController.animateTo(
                                     _scrollController.position.maxScrollExtent,
                                     duration: const Duration(milliseconds: 50),
-                                    curve: Curves.easeOut,);
+                                    curve: Curves.easeOut,
+                                  );
                                 });
 
                                 /*
@@ -242,7 +205,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                                   }
                                  */
                               }
-                            :   null,
+                            : null,
                         fillColor: Colors.yellowAccent,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -253,156 +216,65 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-            child: MetroAppBar(
-              primaryCommands: <PrimaryCommand>[
-
-                /*PrimaryCommand(
-                pic: Icons.ac_unit,
-                color: Colors.red,
-                tooltip: 'View database',
-                onPressed: () {
-                  final db = MyDatabase(); //This should be a singleton
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => MoorDbViewer(db)));
-                },
-              ),
-
-              PrimaryCommand(
-                pic: Icons.ac_unit,
-                color: Colors.blue,
-                tooltip: 'Ready (Open) state',
-                onPressed: () async {
-                  final res = await showDialog(context: context, child: new Dialog(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text("Вайпнуть БД?"),
-                        Row(
-                          children: <Widget>[
-                            RawMaterialButton(
-                              child : Text("ДА"),
-                              onPressed: () {
-                                Navigator.pop(context, true);
-                            },),
-                            RawMaterialButton(
-                              child : Text("Нет"),
-                              onPressed: () {
-                                Navigator.pop(context, false);
-                            },)
-                          ],
-                        )
-                      ],
-                    ),
-                  ));
-
-                  if (res == true){
-                    final rep = StopwatchRepository();
-                    await rep.wipeDatabaseDebug();
-
-                    // Вайп
-                    Scaffold.of(context).showSnackBar(SnackBar(
-                      content: Text("БД удалена!"),
-                    ));
-                  }
-
-                  BlocProvider.of<MeasureBloc>(context).add(MeasureOpenedEvent());
-                  //  BlocProvider.of<MeasureBloc>(context).add(MeasureOpenedEvent());
-                },
-              ),*/
-
-                PrimaryCommand(
-                  pic: Icons.refresh,
-                  tooltip: S.of(context).reset,
-                  onPressed: () {
-
-                    bool saveMeasure = PrefService.getBool("save_measures") ?? true;
-                    BlocProvider.of<MeasureBloc>(context).add(MeasureFinishedEvent(saveMeasure));
-
-                    if (_controller.isCompleted) {
-                      _controller.reverse();
-                    } else {
-                      _controller.forward();
-                    }
-                  },
-                ),
-
-                PrimaryCommand(
-                  pic: Icons.list,
-                  tooltip: S.of(context).history,
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-                      return HistoryPage(pageType: MeasureViewModel, entityId: null,);
-                    }));
-                  },
-                ),
-
-                PrimaryCommand(
-                  pic: Icons.settings,
-                  tooltip: S.of(context).settings,
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-                      return SettingsPage();
-                    }));
-                  },
-                ),
-              ],
-              secondaryCommands: <SecondaryCommand>[
-                SecondaryCommand(
-                    commandName: "review",
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+              child: MetroAppBar(
+                primaryCommands: <PrimaryCommand>[
+                  PrimaryCommand(
+                    pic: Icons.refresh,
+                    tooltip: S.of(context).reset,
                     onPressed: () {
-                      LaunchReview.launch(
-                        androidAppId: "com.garnetjuice.stopwatch",
-                        iOSAppId: "585027354",
-                      );
-                    },
-                    child: Text(S.of(context).review)
-                ),
-                SecondaryCommand(
-                    commandName: "about",
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-                        return AboutPage();
-                      }));
-                    },
-                    child: Text(S.of(context).about)
-                )
+                      bool saveMeasure = PrefService.getBool("save_measures") ?? true;
+                      BlocProvider.of<MeasureBloc>(context).add(MeasureFinishedEvent(saveMeasure));
 
-                /*
-                * PopupMenuButton<WhyFarther>(
-                onSelected: (WhyFarther result) {
-                  switch (result) {
-                    case WhyFarther.review:
-                      LaunchReview.launch(
-                        androidAppId: "com.garnetjuice.stopwatch",
-                        iOSAppId: "585027354",
-                      );
-                      break;
-                    case WhyFarther.about:
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-                        return AboutPage();
-                      }));
-                      break;
-                  }
-                },
-                itemBuilder: (BuildContext context) =>
-                <PopupMenuEntry<WhyFarther>>[
-                  const PopupMenuItem<WhyFarther>(
-                    value: WhyFarther.review,
-                    child: Text('Оценить приложение'),
+                      if (_controller.isCompleted) {
+                        _controller.reverse();
+                      } else {
+                        _controller.forward();
+                      }
+                    },
                   ),
-                  const PopupMenuItem<WhyFarther>(
-                    value: WhyFarther.about,
-                    child: Text('О программе'),
+                  PrimaryCommand(
+                    pic: Icons.list,
+                    tooltip: S.of(context).history,
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                        return HistoryPage(
+                          pageType: MeasureViewModel,
+                          entityId: null,
+                        );
+                      }));
+                    },
+                  ),
+                  PrimaryCommand(
+                    pic: Icons.settings,
+                    tooltip: S.of(context).settings,
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                        return SettingsPage();
+                      }));
+                    },
                   ),
                 ],
-              )
-                *
-                * */
-
-
-              ],
-             )
-          )
+                secondaryCommands: <SecondaryCommand>[
+                  SecondaryCommand(
+                      commandName: "review",
+                      onPressed: () {
+                        LaunchReview.launch(
+                          androidAppId: "com.garnetjuice.stopwatch",
+                          iOSAppId: "585027354",
+                        );
+                      },
+                      child: Text(S.of(context).review)),
+                  SecondaryCommand(
+                      commandName: "about",
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                          return AboutPage();
+                        }));
+                      },
+                      child: Text(S.of(context).about))
+                ],
+              ))
         ],
       );
     });
@@ -412,7 +284,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
     final vibration = PrefService.getBool('vibration') ?? true;
     if (vibration) {
       //if (await Vibration.hasVibrator()) { // TODO Куда-то впилить проверку (в InheritedWidget?)
-        Vibration.vibrate(duration: 50);
+      Vibration.vibrate(duration: 50);
       //}
     }
   }
