@@ -5,11 +5,16 @@ import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/models/stopwatch_status.dart';
 import 'package:stopwatch/util/time_displayer.dart';
 
-abstract class BaseStopwatchEntity {
+abstract class BaseStopwatchEntity with EquatableMixin {
   int id;
   String comment;
 
   BaseStopwatchEntity({this.id, this.comment});
+
+  @override
+  List<Object> get props {
+    return [id, comment];
+  }
 }
 
 class LapViewModel extends BaseStopwatchEntity {
@@ -49,34 +54,16 @@ class LapViewModel extends BaseStopwatchEntity {
         overall: entity.overall);
   }
 
-  /*static Type getClassType(){
-    return LapViewModel().runtimeType;
-  }*/
-
   @override
   String toString() {
     return 'LapViewModel{order: $order, difference: $difference, overall: $overall, comment: $comment}';
   }
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-          other is LapViewModel &&
-              runtimeType == other.runtimeType &&
-              order == other.order &&
-              difference == other.difference &&
-              overall == other.overall &&
-              comment == other.comment;
-
-  @override
-  int get hashCode =>
-      order.hashCode ^
-      difference.hashCode ^
-      overall.hashCode ^
-      comment.hashCode;
+  List<Object> get props => super.props..addAll([measureId, order, difference, overall]);
 }
 
-class MeasureSessionViewModel {
+class MeasureSessionViewModel with EquatableMixin {
   int id;
   int measureId;
   DateTime started;
@@ -99,6 +86,11 @@ class MeasureSessionViewModel {
   String toString() {
     return 'MeasureSessionViewModel{id: $id, measureId: $measureId, started: $started, finished: $finished}';
   }
+
+  @override
+  List<Object> get props {
+    return [id, measureId, started, finished];
+  }
 }
 
 class MeasureViewModel extends BaseStopwatchEntity {
@@ -111,9 +103,6 @@ class MeasureViewModel extends BaseStopwatchEntity {
 
   /// Вспомогательное свойство для динамического расчета истекшего времени
   DateTime lastRestartedOverall;
-
-  /// Вспомогательное свойство для динамического расчета истекшего времени круга
-  //DateTime lastRestartedLap;
 
   int checkPointLapTicks = 0;
 
@@ -156,17 +145,6 @@ class MeasureViewModel extends BaseStopwatchEntity {
   List<int> getCurrentLapDiffAndOverall(DateTime dateNow) {
     // Метод должен работать как при завершенной, так и незавершенной сессии
 
-    //final base = getSumOfElapsed(dateNow);
-
-    //final lastUnfinishedSession = getLastUnfinishedSession();
-    /*if (lastUnfinishedSession == null) {
-      throw Exception("Не обнаружена открытая сессия!");
-    }*/
-
-    /*final newOverall = lastUnfinishedSession != null
-        ? base + dateNow.difference(lastUnfinishedSession.started).inMilliseconds
-        : base;*/
-
     final newOverall = getSumOfElapsed(dateNow);
 
     // Здесь же можно найти разницу с предыдущим кругом
@@ -174,27 +152,6 @@ class MeasureViewModel extends BaseStopwatchEntity {
     final difference = newOverall - prevLapOverall;
 
     return [difference, newOverall];
-    /*
-    if (lastUnfinishedSession != null) {
-      final newOverall = lastUnfinishedSession != null
-          ? base + dateNow.difference(lastUnfinishedSession.started).inMilliseconds
-          : base;
-
-      // Здесь же можно найти разницу с предыдущим кругом
-      final prevLapOverall = laps.any((_) => true) ? laps.last.overall : 0;
-      final difference = newOverall - prevLapOverall;
-
-      return [difference, newOverall];
-    }
-    else {
-      final newOverall = base;
-
-      final prevLapOverall = laps.any((_) => true) ? laps.last.overall : 0;
-      final difference = newOverall - prevLapOverall;
-
-      return [difference, newOverall];
-    }
-   */
   }
 
   MeasureSessionViewModel getLastUnfinishedSession() {
@@ -225,20 +182,5 @@ class MeasureViewModel extends BaseStopwatchEntity {
   }
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is MeasureViewModel &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          comment == other.comment &&
-          elapsed == other.elapsed &&
-          elapsedLap == other.elapsedLap &&
-          dateCreated == other.dateCreated &&
-          status == other.status &&
-          lastRestartedOverall == other.lastRestartedOverall &&
-          checkPointLapTicks == other.checkPointLapTicks;
-
-  @override
-  int get hashCode =>
-      id.hashCode ^ comment.hashCode ^ elapsed.hashCode ^ elapsedLap.hashCode ^ dateCreated.hashCode ^ status.hashCode ^ lastRestartedOverall.hashCode ^ checkPointLapTicks.hashCode;
+  List<Object> get props => super.props..addAll([elapsed, elapsedLap, dateCreated, status, laps, sessions]);
 }
