@@ -50,7 +50,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
   Widget build(BuildContext context) {
     debugPrint("StopwatchBody build");
 
-    List<LapViewModel> items = FakeDataFabric.mainPageLaps();
+    //List<LapViewModel> items = FakeDataFabric.mainPageLaps();
     return BlocBuilder<MeasureBloc, MeasureState>(builder: (BuildContext context, MeasureState state) {
       final mediaQueryOrientation = MediaQuery.of(context).orientation;
 
