@@ -37,8 +37,6 @@ void main() {
       expect(measureBloc.initialState.props[0].toString(), initialState.props[0].toString());
     });
 
-    //expectLater(actual, matcher) // TODO Асинхронный expect
-
     test("Full measure bloc test", () async {
       // https://stackoverflow.com/questions/42611880/difference-between-await-for-and-listen-in-dart/42613676
       // https://pub.dev/packages/fake_async
@@ -55,7 +53,7 @@ void main() {
         final measure = state.measure;
 
         switch(counterStates){
-          case 3:
+          case 4:
             // В базе есть измерение со статусом Started
             final startedExists = await existsMeasure(repository, StopwatchStatus.Started);
             expect(startedExists, true, reason: "В базе нет измерения со статусом Started");
@@ -64,12 +62,12 @@ void main() {
             final existsSessions = (await repository.getMeasureSessions(measure.id)).length > 0;
             expect(existsSessions, true, reason: "В базе не появилось измерительных сессий");
             break;
-          case 5:
+          case 6:
             // Есть круг
             final existsLaps = (await repository.getLapsByMeasureAsync(measure.id)).any((element) => true);
             expect(existsLaps, true, reason : "Нет кругов");
             break;
-          case 7:
+          case 8:
             // В базе есть измерение в статусе Paused
             final pausedExists = await existsMeasure(repository, StopwatchStatus.Paused);
             expect(pausedExists, true, reason : "В базе нет измерение в статусе Paused"); //TODO !!!!
@@ -78,7 +76,7 @@ void main() {
             final measureElapsed = measure.elapsed >= 1990 && measure.elapsedLap >= 1000;
             expect(measureElapsed, true, reason: "Время не обновилось");
             break;
-          case 8:
+          case 10:
             // В базе есть финишированное измерение
             final finishExists = await existsMeasure(repository, StopwatchStatus.Finished);
             expect(finishExists, true, reason: "В базе нет финишированных измерений"); //TODO !!!!!
@@ -86,24 +84,27 @@ void main() {
         }
 
         /*
+        Listened: MeasureUpdatingState 0
+
+        //MeasureOpenedEvent
         Listened: MeasureUpdatingState
         Listened: MeasureReadyState
 
         //MeasureStartedEvent
         Listened: MeasureUpdatingState
-        Listened: MeasureStartedState
+        Listened: MeasureStartedState 4
 
-        //Lap Added
+        //LapAddedEvent
         Listened: MeasureUpdatingState
-        Listened: MeasureStartedState
+        Listened: MeasureStartedState 6
 
         //MeasurePausedEvent
         Listened: MeasureUpdatingState
-        Listened: MeasurePausedState
+        Listened: MeasurePausedState 8
 
         //MeasureFinishedEvent
         Listened: MeasureUpdatingState
-        Listened: MeasureReadyState
+        Listened: MeasureReadyState 10
          */
 
         // Проверим, что есть измерение со статусом Finished
@@ -132,20 +133,20 @@ void main() {
     blocTest(
       'States flow',
       build: () async => measureBloc,
+      skip: 0,
       wait: Duration(seconds: 0),
       act: (bloc) async {
         bloc.add(MeasureOpenedEvent());
         bloc.add(MeasureStartedEvent());
         bloc.add(MeasurePausedEvent());
-        /*bloc.add(MeasureOpenedEvent());
-        bloc.add(MeasureStartedEvent());
-        bloc.add(MeasurePausedEvent());*/
       },
       verify: (bloc) async {
         //debugPrint("Test state ${(bloc as MeasureBloc).state}"); // Последне состояние
         //expect((bloc as MeasureBloc).state is MeasureReadyState , equals(true));
       },
       expect: [
+        isA<MeasureUpdatingState>(),
+        isA<MeasureUpdatingState>(),
         isA<MeasureReadyState>(),
         isA<MeasureUpdatingState>(),
         isA<MeasureStartedState>(),
