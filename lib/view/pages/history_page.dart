@@ -236,7 +236,6 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
 
                                     _selectedItemsStreamController.add(_selectedEntities.length);
                                     debugPrint("_selectedEntities.length ${_selectedEntities.length}");
-
                                     // Добаввить или удалить из SelectedItems
                                   },
                                 );
@@ -310,9 +309,9 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                       return Align(
                           alignment: Alignment.bottomRight,
                           child: Padding(
-                            padding: EdgeInsets.only(bottom: snapshot.data != 1 && pageIsLap ? 0 : 56),
+                            padding: EdgeInsets.only(bottom: snapshot.data != 1 && pageIsLap ? 12 : 62, right: 16),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
                                 availState.filtered
                                     ? RawMaterialButton(
@@ -332,7 +331,8 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                       )
                                     : SizedBox(),
                                 SizedBox(
-                                  width: 150,
+                                  width: 62,
+                                  height: 62,
                                   child: RawMaterialButton(
                                     onPressed: () async {
                                       debugPrint("Last filter in history page ${availState.lastFilter}");
@@ -354,21 +354,14 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                             Icons.filter_list,
                                             color: Colors.white,
                                           ),
-                                          SizedBox(
-                                            width: 12,
-                                          ),
-                                          Text(
-                                            "Фильтр",
-                                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                          ),
                                         ],
                                       ),
                                       padding: EdgeInsets.symmetric(horizontal: 4.0),
                                     ),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-                                    elevation: 2.0,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(31.0)),
+
+                                    elevation: 6.0,
                                     fillColor: Theme.of(context).primaryColor,
-                                    padding: const EdgeInsets.all(5.0),
                                   ),
                                 ),
                               ],
@@ -384,37 +377,6 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
       ),
     );
   }
-
-  /*
-  Widget _exportToCsvButton(BuildContext context, {ShareMode shareMode = ShareMode.Email}) {
-    return IconButton(
-      icon: shareMode == ShareMode.Email ? const Icon(Icons.exit_to_app) : const Icon(Icons.insert_drive_file),
-      onPressed: () async {
-        var entitiesToExport = _selectedEntities;
-
-        if (!entitiesToExport.any((element) => true)) {
-          entitiesToExport = (BlocProvider.of<StorageBloc>(context).state as AvailableListState).entities;
-        }
-
-        final csv = await GetIt.I.get<CsvExporter>().convertToCsv(entitiesToExport.map((e) => e as MeasureViewModel).toList());
-
-        //debugPrint("Generated csv:");
-        //debugPrint(csv);
-
-        _unselectItems();
-
-        switch(shareMode){
-          case ShareMode.Email:
-            await _sendEmail(csv);
-            break;
-          case ShareMode.File:
-            await GetIt.I.get<CsvExporter>().shareFile(csv);
-            break;
-        }
-      },
-    );
-  }
-  */
 
   PrimaryCommand _exportToCsvButtonPrimary(BuildContext context, {ShareMode shareMode = ShareMode.Email}) {
     final icon = shareMode == ShareMode.Email ? Icons.share : Icons.insert_drive_file;
