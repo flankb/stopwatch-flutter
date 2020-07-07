@@ -17,4 +17,7 @@ class AvailableEntityState extends InitialEntityState {
   final BaseStopwatchEntity entity;
 
   AvailableEntityState(this.entity);
+
+  @override
+  List<Object> get props => [entity];
 }

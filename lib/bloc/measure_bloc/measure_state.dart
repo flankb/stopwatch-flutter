@@ -31,6 +31,10 @@ class MeasureStartedState extends MeasureState {
 
 class MeasureFinishedState extends MeasureState {
   MeasureFinishedState(MeasureViewModel measure) : super(measure);
+
+  void dfgdf(){
+
+  }
 }
 
 /*

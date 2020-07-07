@@ -17,6 +17,8 @@ class EntityBloc extends Bloc<EntityEvent, EntityState> {
   Stream<EntityState> mapEventToState(
     EntityEvent event,
   ) async* {
+    debugPrint("Current state ${state.toString()} Bloc event: ${event.toString()}");
+
     if (event is OpenEntityEvent) {
       yield AvailableEntityState(event.entity);
     } else if (event is SaveEntityEvent) {
