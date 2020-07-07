@@ -6,12 +6,12 @@ abstract class MeasureState extends Equatable {
   final int version;
   static int _versionPool = 0;
 
-  MeasureState(this.measure, this.version);
-
   static int getUpdatedVersion() {
     _versionPool += 1;
-    return _versionPool; // Счётчик должен быть статический!!! При передаче в конструктор, брать новое значение счетчика из статического пула!!!
+    return _versionPool;
   }
+
+  MeasureState(this.measure, this.version);
 
   @override
   List<Object> get props => [version];
