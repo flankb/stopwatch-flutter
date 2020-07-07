@@ -283,7 +283,4 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     _tickerSubscription?.cancel();
     return super.close();
   }
-
-  // TODO Ticker для срабатывания секундомера:
-  // https://bloclibrary.dev/#/fluttertimertutorial
 }

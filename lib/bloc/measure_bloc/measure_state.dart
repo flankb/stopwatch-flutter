@@ -2,56 +2,45 @@ import 'package:equatable/equatable.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 
 abstract class MeasureState extends Equatable {
-  //const MeasureState();
   final MeasureViewModel measure;
+  final int version;
+  static int _versionPool = 0;
 
-  MeasureState(this.measure);
+  MeasureState(this.measure, this.version);
+
+  static int getUpdatedVersion() {
+    _versionPool += 1;
+    return _versionPool; // Счётчик должен быть статический!!! При передаче в конструктор, брать новое значение счетчика из статического пула!!!
+  }
 
   @override
-  List<Object> get props => [measure];
+  List<Object> get props => [version];
 }
 
+//TODO Хорошо бы отрефакторить код, на Generic?
 class MeasureReadyState extends MeasureState {
-  MeasureReadyState(MeasureViewModel measure) : super(measure);
+  MeasureReadyState(MeasureViewModel measure) : super(measure, MeasureState.getUpdatedVersion());
+  //MeasureReadyState.copyFromState(MeasureState base) : super(base.measure, base.getUpdatedVersion());
 }
 
 class MeasureUpdatingState extends MeasureState {
   // Пока можно это состояние присваивать при старте программы перед загрузкой секундомера
-  MeasureUpdatingState(MeasureViewModel measure) : super(measure);
+  MeasureUpdatingState(MeasureViewModel measure) : super(measure, MeasureState.getUpdatedVersion());
+  //MeasureUpdatingState.copyFromState(MeasureState base) : super(base.measure, base.getUpdatedVersion());
 }
 
 class MeasurePausedState extends MeasureState {
-  MeasurePausedState(MeasureViewModel measure) : super(measure);
+  MeasurePausedState(MeasureViewModel measure) : super(measure, MeasureState.getUpdatedVersion());
+  //MeasurePausedState.copyFromState(MeasureState base) : super(base.measure, base.getUpdatedVersion());
 }
 
 class MeasureStartedState extends MeasureState {
-  MeasureStartedState(MeasureViewModel measure) : super(measure);
-
+  MeasureStartedState(MeasureViewModel measure) : super(measure, MeasureState.getUpdatedVersion());
+  //MeasureStartedState.copyFromState(MeasureState base) : super(base.measure, base.getUpdatedVersion());
 }
 
 class MeasureFinishedState extends MeasureState {
-  MeasureFinishedState(MeasureViewModel measure) : super(measure);
-
-  void dfgdf(){
-
-  }
+  MeasureFinishedState(MeasureViewModel measure) : super(measure, MeasureState.getUpdatedVersion());
+  //MeasureFinishedState.copyFromState(MeasureState base) : super(base.measure, base.getUpdatedVersion());
 }
-
-/*
-class TodosLoadInProgress extends TodosState {}
-
-class TodosLoadSuccess extends TodosState {
-  final List<Todo> todos;
-
-  const TodosLoadSuccess([this.todos = const []]);
-
-  @override
-  List<Object> get props => [todos];
-
-  @override
-  String toString() => 'TodosLoadSuccess { todos: $todos }';
-}
-
-class TodosLoadFailure extends TodosState {}
- */
 
