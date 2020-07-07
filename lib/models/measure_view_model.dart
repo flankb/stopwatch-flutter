@@ -24,11 +24,31 @@ class MeasureViewModel extends BaseStopwatchEntity {
     this.elapsed = 0,
     this.elapsedLap = 0,
     this.laps,
+    this.sessions,
     this.status = StopwatchStatus.Ready,
     this.dateCreated}) : super(id: id, comment : comment) {
-    lastRestartedOverall = DateTime.now();
-    laps = List<LapViewModel>();
-    sessions = List<MeasureSessionViewModel>();
+    this.lastRestartedOverall = lastRestartedOverall ?? DateTime.now();
+    this.laps = laps ?? List<LapViewModel>();
+    this.sessions = sessions ?? List<MeasureSessionViewModel>();
+  }
+
+  MeasureViewModel copyWith({int id,
+    String comment,
+    int elapsed,
+    int elapsedLap,
+    List<LapViewModel> laps,
+    List<MeasureSessionViewModel> sessions,
+    StopwatchStatus status,
+    DateTime dateCreated}) {
+    return MeasureViewModel(
+      id: id ?? this.id,
+      comment: comment ?? this.comment,
+      elapsed: elapsed ?? this.elapsed,
+      elapsedLap: elapsedLap ?? this.elapsedLap,
+      laps: laps ?? this.laps,
+      sessions: sessions ?? this.sessions,
+      status: status ?? this.status,
+      dateCreated: dateCreated ?? this.dateCreated);
   }
 
   List<String> elapsedTime() {
