@@ -23,8 +23,6 @@ class TimeDisplayer {
     return formatAllBeautiful(d);
   }
 
-
-
   static String formatBase(Duration d){
     if (d.inMinutes < 60) {
       final base = d.toString().split('.').first.padLeft(8, "0");
@@ -44,5 +42,49 @@ class TimeDisplayer {
 
       return "$days.${hours.toString().padLeft(2,'0')}:$end";
     }
+  }
+
+  static String humanFormat(Duration d) {
+    var time = formatBase(d);
+    // "00:02,05"
+    // После чего разворошить строку регэкспами и вставить текст в нужные места
+
+    //var time = "12.20:03:01,34";
+    //var time = "03:01,34";
+    //var timeDays = "12.20:03:01,34";
+    StringBuffer stringBuffer = StringBuffer();
+
+    if (time.contains('.')) {
+      final splittingDays = time.split('.');
+      final days = splittingDays[0];
+
+      stringBuffer.write(days + " сут. ");
+
+      time = splittingDays[1];
+    }
+
+    final array = time.split(',')[0].split(':');
+
+    List<String> tokens = List<String>();
+
+    array.reversed.toList().asMap().forEach((index, value) {
+      switch(index){
+        case 0:
+          tokens.add(value + ' сек.');
+          break;
+        case 1:
+          tokens.add(value + ' мин.');
+          break;
+        case 2:
+          tokens.add(value + ' час.');
+          break;
+      }
+    });
+
+    tokens.reversed.forEach((t){
+      stringBuffer.write(t + " ");
+    });
+
+    return stringBuffer.toString();
   }
 }

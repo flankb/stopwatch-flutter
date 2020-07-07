@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:launch_review/launch_review.dart';
+import 'package:path/path.dart';
 import 'package:stopwatch/bloc/measure_bloc/bloc.dart';
 import 'package:stopwatch/bloc/measure_bloc/measure_event.dart';
 import 'package:stopwatch/fake/fake_data_fabric.dart';
@@ -54,6 +55,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
       final mediaQueryOrientation = MediaQuery.of(context).orientation;
 
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 32, 0, 0),
@@ -118,6 +120,16 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                   }),
             ),
           ),
+
+          if (state is MeasurePausedState) Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Text(
+                TimeDisplayer.humanFormat(Duration(milliseconds: state.measure.elapsed)),
+              textAlign: TextAlign.left,
+              style: TextStyle(fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+            ),
+          ),
+
           Expanded(
             flex: 3,
             child: ListView.builder(
