@@ -80,6 +80,8 @@ class AboutPage extends StatelessWidget {
                         final rep = StopwatchRepository();
                         await rep.wipeDatabaseDebug();
 
+
+
                         // Вайп
                         /*Scaffold.of(context).showSnackBar(SnackBar(
                           content: Text("БД удалена!"),
