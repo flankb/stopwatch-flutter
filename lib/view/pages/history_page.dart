@@ -19,6 +19,7 @@ import 'package:stopwatch/util/time_displayer.dart';
 import 'package:stopwatch/view/dialogs/filter_dialog.dart';
 import 'package:stopwatch/widgets/buttons_bar.dart';
 import 'package:stopwatch/widgets/circular.dart';
+import 'package:stopwatch/widgets/inherited/app_theme_notified.dart';
 import 'package:stopwatch/widgets/metro_app_bar.dart';
 import 'package:stopwatch/widgets/pair_label_view.dart';
 import 'package:stopwatch/widgets/stopwatch_item_widget.dart';
@@ -108,8 +109,6 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
     if (wasFiltered) {
       _storageBloc.add(FilterStorageEvent(widget.pageType, previousFilter));
     }
-
-
   }
 
   @override
@@ -148,10 +147,13 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                 final comment = pageIsLap ? (widget.entityId as MeasureViewModel).comment : "";
                 final createDate = pageIsLap ? TimeDisplayer.formatDate((widget.entityId as MeasureViewModel).dateCreated, context: context) : "";
 
+                final existsMeasures = availState.entities.any((element) => true);
+
                 // TODO Анимашка
                 // https://github.com/flutter/samples/blob/master/animations/lib/src/basics/05_animated_builder.dart
                 return Stack(children: [
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       // Заголовок
                       Row(
@@ -210,43 +212,53 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                               )),
                         ),
 
-                      Expanded(
-                        child: Container(
-                            padding: const EdgeInsets.only(top: 6),
-                            child: ListView.separated(
-                              physics: ClampingScrollPhysics(),
-                              itemCount: availState.entities.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                BaseStopwatchEntity entity = availState.entities[index];
-                                final key = PageStorageKey<String>("entity_$index");
+                      existsMeasures
+                          ? Expanded(
+                              child: Container(
+                                  padding: const EdgeInsets.only(top: 6),
+                                  child: ListView.separated(
+                                    physics: ClampingScrollPhysics(),
+                                    itemCount: availState.entities.length,
+                                    itemBuilder: (BuildContext context, int index) {
+                                      BaseStopwatchEntity entity = availState.entities[index];
+                                      final key = PageStorageKey<String>("entity_$index");
 
-                                return StopwatchItem(
-                                  key: key,
-                                  entity: entity,
-                                  selectionListController: _selectedItemsStreamController,
-                                  selectedEvent: (b) {
-                                    // Обновить менюшку...
-                                    if (b.item2) {
-                                      debugPrint("_selectedEntities add");
-                                      _selectedEntities.add(b.item1);
-                                    } else {
-                                      debugPrint("_selectedEntities remove");
-                                      _selectedEntities.remove(b.item1);
-                                    }
+                                      return StopwatchItem(
+                                        key: key,
+                                        entity: entity,
+                                        selectionListController: _selectedItemsStreamController,
+                                        selectedEvent: (b) {
+                                          // Обновить менюшку...
+                                          if (b.item2) {
+                                            debugPrint("_selectedEntities add");
+                                            _selectedEntities.add(b.item1);
+                                          } else {
+                                            debugPrint("_selectedEntities remove");
+                                            _selectedEntities.remove(b.item1);
+                                          }
 
-                                    _selectedItemsStreamController.add(_selectedEntities.length);
-                                    debugPrint("_selectedEntities.length ${_selectedEntities.length}");
-                                    // Добаввить или удалить из SelectedItems
-                                  },
-                                );
-                              },
-                              separatorBuilder: (BuildContext context, int index) {
-                                return Divider(
-                                  height: 0,
-                                );
-                              },
-                            )),
-                      ),
+                                          _selectedItemsStreamController.add(_selectedEntities.length);
+                                          debugPrint("_selectedEntities.length ${_selectedEntities.length}");
+                                          // Добаввить или удалить из SelectedItems
+                                        },
+                                      );
+                                    },
+                                    separatorBuilder: (BuildContext context, int index) {
+                                      return Divider(
+                                        height: 0,
+                                      );
+                                    },
+                                  )),
+                            )
+                          : Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Text(
+                                "Измерения отсутствуют",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(color: InheritedThemeNotifier.of(context).themeData.subtitleColor, fontSize: 18),
+                            ),
+                              )),
 
                       StreamBuilder<int>(
                           stream: _selectedItemsStreamController.stream,
@@ -257,8 +269,8 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                             } else {
                               return MetroAppBar(
                                 primaryCommands: <Widget>[
-                                  widget.pageType == MeasureViewModel ? _exportToCsvButtonPrimary(context) : SizedBox(),
-                                  widget.pageType == MeasureViewModel ? _exportToCsvButtonPrimary(context, shareMode: ShareMode.File) : SizedBox(),
+                                  widget.pageType == MeasureViewModel ? _exportToCsvButtonPrimary(context, existsMeasures) : SizedBox(),
+                                  widget.pageType == MeasureViewModel ? _exportToCsvButtonPrimary(context, existsMeasures, shareMode: ShareMode.File) : SizedBox(),
                                   snapshot.data == 1
                                       ? PrimaryCommand(
                                           onPressed: () async {
@@ -303,72 +315,70 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                     ],
                   ),
                   StreamBuilder<int>(
-                    initialData: 0,
-                    stream: _selectedItemsStreamController.stream,
-                    builder: (context, snapshot) {
-                      return Align(
-                          alignment: Alignment.bottomRight,
-                          child: Padding(
-                            padding: EdgeInsets.only(bottom: snapshot.data != 1 && pageIsLap ? 12 : 62, right: 16),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                availState.filtered
-                                    ? RawMaterialButton(
-                                        child: Icon(Icons.clear),
-                                        onPressed: () {
-                                          _storageBloc.add(CancelFilterEvent(widget.pageType));
-                                        },
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-                                        elevation: 2.0,
-                                        fillColor: Theme.of(context).bottomAppBarColor,
-                                        padding: const EdgeInsets.all(5.0),
-                                      )
-                                    : SizedBox(),
-                                availState.filtered
-                                    ? SizedBox(
-                                        width: 12,
-                                      )
-                                    : SizedBox(),
-                                SizedBox(
-                                  width: 62,
-                                  height: 62,
-                                  child: RawMaterialButton(
-                                    onPressed: () async {
-                                      debugPrint("Last filter in history page ${availState.lastFilter}");
-                                      final result = await showDialog(
-                                          context: context,
-                                          builder: (context) => FilterDialog(
-                                                filter: availState.lastFilter,
-                                              ));
+                      initialData: 0,
+                      stream: _selectedItemsStreamController.stream,
+                      builder: (context, snapshot) {
+                        return Align(
+                            alignment: Alignment.bottomRight,
+                            child: Padding(
+                              padding: EdgeInsets.only(bottom: snapshot.data != 1 && pageIsLap ? 12 : 62, right: 16),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  availState.filtered
+                                      ? RawMaterialButton(
+                                          child: Icon(Icons.clear),
+                                          onPressed: () {
+                                            _storageBloc.add(CancelFilterEvent(widget.pageType));
+                                          },
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                                          elevation: 2.0,
+                                          fillColor: Theme.of(context).bottomAppBarColor,
+                                          padding: const EdgeInsets.all(5.0),
+                                        )
+                                      : SizedBox(),
+                                  availState.filtered
+                                      ? SizedBox(
+                                          width: 12,
+                                        )
+                                      : SizedBox(),
+                                  SizedBox(
+                                    width: 62,
+                                    height: 62,
+                                    child: RawMaterialButton(
+                                      onPressed: () async {
+                                        debugPrint("Last filter in history page ${availState.lastFilter}");
+                                        final result = await showDialog(
+                                            context: context,
+                                            builder: (context) => FilterDialog(
+                                                  filter: availState.lastFilter,
+                                                ));
 
-                                      if (result != null) {
-                                        _storageBloc.add(FilterStorageEvent(widget.pageType, result));
-                                      }
-                                    },
-                                    child: Padding(
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.filter_list,
-                                            color: Colors.white,
-                                          ),
-                                        ],
+                                        if (result != null) {
+                                          _storageBloc.add(FilterStorageEvent(widget.pageType, result));
+                                        }
+                                      },
+                                      child: Padding(
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.filter_list,
+                                              color: Colors.white,
+                                            ),
+                                          ],
+                                        ),
+                                        padding: EdgeInsets.symmetric(horizontal: 4.0),
                                       ),
-                                      padding: EdgeInsets.symmetric(horizontal: 4.0),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(31.0)),
+                                      elevation: 6.0,
+                                      fillColor: Theme.of(context).primaryColor,
                                     ),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(31.0)),
-
-                                    elevation: 6.0,
-                                    fillColor: Theme.of(context).primaryColor,
                                   ),
-                                ),
-                              ],
-                            ),
-                          ));
-                    }
-                  ),
+                                ],
+                              ),
+                            ));
+                      }),
                 ]);
               }
             },
@@ -378,9 +388,9 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
     );
   }
 
-  PrimaryCommand _exportToCsvButtonPrimary(BuildContext context, {ShareMode shareMode = ShareMode.Email}) {
+  PrimaryCommand _exportToCsvButtonPrimary(BuildContext context, bool enabled, {ShareMode shareMode = ShareMode.Email}) {
     final icon = shareMode == ShareMode.Email ? Icons.share : Icons.insert_drive_file;
-    final tooltip = shareMode == ShareMode.Email ? "To email" : "To *.csv";
+    final tooltip = shareMode == ShareMode.Email ? "Share" : "To *.csv";
     final command = () async {
       var entitiesToExport = _selectedEntities;
 
@@ -404,7 +414,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
     return PrimaryCommand(
       tooltip: tooltip,
       pic: icon,
-      onPressed: command,
+      onPressed: enabled ? command : null,
     );
   }
 
@@ -425,7 +435,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
     await FlutterEmailSender.send(email);
   }
 
-  _share(String body){
+  _share(String body) {
     Share.share(body, subject: 'Измерения от ${DateTime.now()}');
   }
 

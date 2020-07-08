@@ -165,9 +165,7 @@ class PrimaryCommand extends StatelessWidget {
     return SizedBox(
       height: 56,
       child: FlatButton(
-        onPressed: () {
-         onPressed();
-        },
+        onPressed: onPressed,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
