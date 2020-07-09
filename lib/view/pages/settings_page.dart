@@ -4,6 +4,7 @@ import 'package:preferences/preferences.dart';
 import 'package:stopwatch/widgets/inherited/app_theme_notified.dart';
 import 'package:validators/validators.dart';
 
+import '../../constants.dart';
 import '../../theme_data.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -25,31 +26,31 @@ class SettingsPage extends StatelessWidget {
                 child: PreferencePage([
                   SwitchPreference(
                     'Звук',
-                    'sound',
+                    PREF_SOUND,
                     defaultVal: true,
                   ),
                   SwitchPreference(
                     'Вибрация',
-                    'vibration',
+                    PREF_VIBRATION,
                     defaultVal: true,
                   ),
                   SwitchPreference(
-                    'Блокировка экрана',
-                    'screen_block',
-                    defaultVal: true,
+                    'Сохранять экран включенным',
+                    PREF_KEEP_SCREEN_AWAKE,
+                    defaultVal: false,
                     //desc: "Вкл",
                   ),
 
                   SwitchPreference(
                     'Сохранять измерения',
-                    'save_measures',
+                    PREF_SAVE_MEASURES,
                     defaultVal: true,
                     //desc: "Вкл",
                   ),
 
                   DropdownPreference<String>( //
                     'Тема приложения',
-                    'theme',
+                    PREF_THEME,
                     defaultVal: AppTheme.BlueLight.toString(),
                     onChange: (v) {
                       AppTheme theme = AppTheme.values.firstWhere((e) => e.toString() == v.toString());

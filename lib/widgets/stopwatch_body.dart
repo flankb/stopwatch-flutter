@@ -5,6 +5,7 @@ import 'package:launch_review/launch_review.dart';
 import 'package:path/path.dart';
 import 'package:stopwatch/bloc/measure_bloc/bloc.dart';
 import 'package:stopwatch/bloc/measure_bloc/measure_event.dart';
+import 'package:stopwatch/constants.dart';
 import 'package:stopwatch/fake/fake_data_fabric.dart';
 import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
@@ -16,6 +17,7 @@ import 'package:stopwatch/widgets/measure_lap_item.dart';
 import 'package:preferences/preference_service.dart';
 import 'package:stopwatch/widgets/metro_app_bar.dart';
 import 'package:vibration/vibration.dart';
+import 'package:wakelock/wakelock.dart';
 
 import 'buttons_bar.dart';
 import 'inherited/sound_widget.dart';
@@ -33,6 +35,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
   ScrollController _scrollController = new ScrollController();
   AnimationController _controller;
   Animation<double> animation;
+  bool _existsVibrator = false;
 
   @override
   void initState() {
@@ -44,6 +47,13 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
         _controller.reverse();
       }
     });
+
+    _initVibratorPossibility();
+    _enableWakeLock();
+  }
+
+  _initVibratorPossibility() async {
+    _existsVibrator = await Vibration.hasVibrator();
   }
 
   @override
@@ -292,21 +302,43 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
     });
   }
 
+  @override
+  void dispose() async {
+    await _disableWakelock();
+    super.dispose();
+  }
+
   _vibrate() async {
-    final vibration = PrefService.getBool('vibration') ?? true;
+    final vibration = PrefService.getBool(PREF_VIBRATION) ?? true;
     if (vibration) {
-      //if (await Vibration.hasVibrator()) { // TODO Куда-то впилить проверку (в InheritedWidget?)
-      Vibration.vibrate(duration: 50);
-      //}
+      if (_existsVibrator) {
+        Vibration.vibrate(duration: 50);
+      }
     }
   }
 
   _playSound(BuildContext context, int soundId) {
-    final sound = PrefService.getBool('sound') ?? true;
+    final sound = PrefService.getBool(PREF_SOUND) ?? true;
 
     if (sound) {
       final s = SoundWidget.of(context);
       s.soundPool.play(s.sounds[soundId]);
+    }
+  }
+
+  _enableWakeLock() async {
+    if (PrefService.getBool(PREF_KEEP_SCREEN_AWAKE) ?? false) {
+      debugPrint('Wakelock enabled!');
+
+      if(!(await Wakelock.isEnabled)){
+        await Wakelock.enable();
+      }
+    }
+  }
+
+  _disableWakelock() async {
+    if ((await Wakelock.isEnabled)) {
+      await Wakelock.disable();
     }
   }
 }
