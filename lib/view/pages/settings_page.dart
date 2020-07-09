@@ -37,14 +37,14 @@ class SettingsPage extends StatelessWidget {
                     'Блокировка экрана',
                     'screen_block',
                     defaultVal: true,
-                    desc: "Вкл",
+                    //desc: "Вкл",
                   ),
 
                   SwitchPreference(
                     'Сохранять измерения',
                     'save_measures',
                     defaultVal: true,
-                    desc: "Вкл",
+                    //desc: "Вкл",
                   ),
 
                   DropdownPreference<String>( //
@@ -52,15 +52,12 @@ class SettingsPage extends StatelessWidget {
                     'theme',
                     defaultVal: AppTheme.BlueLight.toString(),
                     onChange: (v) {
-
-
                       AppTheme theme = AppTheme.values.firstWhere((e) => e.toString() == v.toString());
                       //debugPrint("Selected theme: " + theme.toString());
-
                       InheritedThemeNotifier.of(context).updateTheme(theme);
                     },
-                    displayValues: ['Blue Light', 'Blue Dark', 'Green Light', 'Green Dark'],
-                    values: [AppTheme.BlueLight.toString(), AppTheme.BlueDark.toString(), AppTheme.GreenLight.toString(), AppTheme.GreenDark.toString()],
+                    displayValues: ['Magenta Light', 'Magenta Dark', 'Blue Light', 'Blue Dark', 'Green Light', 'Green Dark'],
+                    values: [AppTheme.MagentaLight.toString(), AppTheme.MagentaDark.toString(), AppTheme.BlueLight.toString(), AppTheme.BlueDark.toString(), AppTheme.GreenLight.toString(), AppTheme.GreenDark.toString()],
                   ),
                 ]),
               ),

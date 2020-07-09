@@ -6,6 +6,8 @@ enum AppTheme {
   GreenDark,
   BlueLight,
   BlueDark,
+  MagentaLight,
+  MagentaDark
   //PinkLight
 }
 
@@ -20,60 +22,67 @@ class ExtendedTheme {
 }
 
 ThemeData baseTheme = ThemeData(
-  //brightness: Brightness.light,
-  textTheme: GoogleFonts.latoTextTheme(),
+  brightness: Brightness.light,
+  textTheme: GoogleFonts.latoTextTheme(
+      ThemeData.light().textTheme
+  ),
+);
 
-  // https://stackoverflow.com/questions/50020523/how-to-disable-default-widget-splash-effect-in-flutter
-  //splashColor: Colors.transparent, // TODO Убираются Material-эффекты
-  //highlightColor: Colors.transparent,
+ThemeData baseThemeDark = ThemeData(
+  brightness: Brightness.dark,
+  textTheme: GoogleFonts.latoTextTheme(
+      ThemeData.dark().textTheme
+  ),
 );
 
 final appThemeData = {
-  //TODO создавать этот словарь в контексте??
+  AppTheme.MagentaLight : ExtendedTheme(
+      baseTheme.copyWith(
+          primaryColor: const Color(0xffcc0066),
+          toggleableActiveColor: const Color(0xffcc0066),
+          focusColor: const Color(0xffcc0066),
+          accentColor: const Color(0xffcc0066),
+      ),
+      subtitleColor: const Color(0xff8e8e8e)),
+
+  AppTheme.MagentaDark : ExtendedTheme(
+      baseThemeDark.copyWith(
+        primaryColor: const Color(0xffcc0066),
+        toggleableActiveColor: const Color(0xffcc0066),
+        focusColor: const Color(0xffcc0066),
+        accentColor: const Color(0xffcc0066),
+      ),
+      subtitleColor: const Color(0xffA5A5A5)),
+
   AppTheme.GreenLight: ExtendedTheme(
-      ThemeData(brightness: Brightness.light,
+      baseTheme.copyWith(
           primaryColor: Colors.green,
           toggleableActiveColor: Colors.green,
           focusColor: Colors.green,
           accentColor: Colors.green,
-
-          textTheme: GoogleFonts.latoTextTheme(
-              ThemeData.light().textTheme
-          )
-
-        ),
+      ),
       subtitleColor: const Color(0xff8e8e8e)),
+
   AppTheme.GreenDark: ExtendedTheme(
-      ThemeData(
-        brightness: Brightness.dark,
+      baseThemeDark.copyWith(
         primaryColor: Colors.green[700],
         accentColor: Colors.green[700],
         toggleableActiveColor: Colors.green[700],
         focusColor: Colors.green[700],
-        textTheme: GoogleFonts.latoTextTheme(
-            ThemeData.dark().textTheme
-        ),
       ),
       subtitleColor: const Color(0xffA5A5A5)),
 
-  AppTheme.BlueLight: ExtendedTheme(ThemeData(
-      brightness: Brightness.light,
+  AppTheme.BlueLight: ExtendedTheme(baseTheme.copyWith(
       primaryColor: Colors.blue,
       toggleableActiveColor: Colors.blue,
-      accentColor: Colors.blue,
-      textTheme: GoogleFonts.latoTextTheme(
-          ThemeData.light().textTheme
-      ),),
+      accentColor: Colors.blue,),
       subtitleColor: const Color(0xff8e8e8e),
       ),
 
-  AppTheme.BlueDark: ExtendedTheme(ThemeData(
-      brightness: Brightness.dark,
+  AppTheme.BlueDark: ExtendedTheme(baseThemeDark.copyWith(
       primaryColor: Colors.blue[700],
       toggleableActiveColor: Colors.blue[700],
       accentColor: Colors.blue[700],
-      textTheme: GoogleFonts.latoTextTheme(
-          ThemeData.dark().textTheme
-      ),),
+      ),
       subtitleColor: const Color(0xffA5A5A5)) //
 };
