@@ -112,6 +112,46 @@ class S {
       args: [],
     );
   }
+
+  /// `Если вам понравилось приложение, пожалуйста поставьте ему оценку.\nЭто поможет его развитию!`
+  String get reviewRequestMessage {
+    return Intl.message(
+      'Если вам понравилось приложение, пожалуйста поставьте ему оценку.\nЭто поможет его развитию!',
+      name: 'reviewRequestMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ОЦЕНИТЬ`
+  String get rate {
+    return Intl.message(
+      'ОЦЕНИТЬ',
+      name: 'rate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `НЕТ, СПАСИБО`
+  String get noThanks {
+    return Intl.message(
+      'НЕТ, СПАСИБО',
+      name: 'noThanks',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ПОЗЖЕ`
+  String get later {
+    return Intl.message(
+      'ПОЗЖЕ',
+      name: 'later',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

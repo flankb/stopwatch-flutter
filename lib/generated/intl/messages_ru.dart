@@ -24,9 +24,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "about" : MessageLookupByLibrary.simpleMessage("О программе"),
     "history" : MessageLookupByLibrary.simpleMessage("История"),
     "lap" : MessageLookupByLibrary.simpleMessage("Круг"),
+    "later" : MessageLookupByLibrary.simpleMessage("ПОЗЖЕ"),
+    "noThanks" : MessageLookupByLibrary.simpleMessage("НЕТ, СПАСИБО"),
     "pause" : MessageLookupByLibrary.simpleMessage("Пауза"),
+    "rate" : MessageLookupByLibrary.simpleMessage("ОЦЕНИТЬ"),
     "reset" : MessageLookupByLibrary.simpleMessage("Сброс"),
     "review" : MessageLookupByLibrary.simpleMessage("Оценить приложение"),
+    "reviewRequestMessage" : MessageLookupByLibrary.simpleMessage("Если вам понравилось приложение, пожалуйста поставьте ему оценку.\nЭто поможет его развитию!"),
     "settings" : MessageLookupByLibrary.simpleMessage("Настройки"),
     "start" : MessageLookupByLibrary.simpleMessage("Старт")
   };

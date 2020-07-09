@@ -294,15 +294,15 @@ class _MyTabPageState extends State<MyTabPageStateful>
     if (rateMyApp.shouldOpenDialog) {
       rateMyApp.showRateDialog(
         context,
-        title: 'Оценить приложение',
+        title: S.of(context).review,
         // The dialog title.
-        message: 'Если вам понравилось приложение, пожалуйста поставьте ему оценку.\nЭто поможет его развитию!',
+        message: S.of(context).reviewRequestMessage,
         // The dialog message.
-        rateButton: 'ОЦЕНИТЬ',
+        rateButton: S.of(context).rate,
         // The dialog "rate" button text.
-        noButton: 'НЕТ, СПАСИБО',
+        noButton: S.of(context).noThanks,
         // The dialog "no" button text.
-        laterButton: 'ПОЗЖЕ',
+        laterButton: S.of(context).later,
         // The dialog "later" button text.
         listener: (button) {
           // The button click listener (useful if you want to cancel the click event).

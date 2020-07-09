@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:rate_my_app/rate_my_app.dart';
-
+/*
 mixin AppReviewer {
   rateMyApp(BuildContext context) async {
     await Future.delayed(Duration(seconds: 2));
@@ -52,3 +52,4 @@ mixin AppReviewer {
     });
   }
 }
+*/
