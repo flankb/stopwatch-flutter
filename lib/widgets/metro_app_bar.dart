@@ -13,27 +13,31 @@ class MetroAppBar extends StatefulWidget {
 }
 
 class _MetroAppBarState extends State<MetroAppBar> with SingleTickerProviderStateMixin {
-  AnimationController _animationController;
-  Animation _animation;
+  //AnimationController _animationController;
+  //Animation _animation;
 
   @override
   void initState() {
     super.initState();
 
-    _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 2750));
-    _animation = Tween<double>(begin: 0, end: 24).animate(_animationController);
+    //_animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 2750));
+    //_animation = Tween<double>(begin: 0, end: 24).animate(_animationController);
 
     //_animationController.forward();
   }
 
+
+  /*
+  SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        reverse: true,
+   */
+
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, snapshot) {
-        return Container(
+      return Container(
           //color: Colors.redAccent,
-          height: 56 + _animation.value,
+          height: 56,
           decoration: BoxDecoration(
               //borderRadius: BorderRadius.circular(8.0),
               color: Theme.of(context).bottomAppBarColor,
@@ -76,7 +80,6 @@ class _MetroAppBarState extends State<MetroAppBar> with SingleTickerProviderStat
             ),
           ),
         );
-      }
-    );
+
   }
 }
