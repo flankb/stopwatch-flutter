@@ -28,6 +28,7 @@ import 'package:soundpool/soundpool.dart';
 import 'package:tuple/tuple.dart';
 //import 'package:scrollable_positioned_list/scrollable_positioned_list.dart' as scrollList;
 
+import 'constants.dart';
 import 'models/stopwatch_status.dart';
 import 'generated/l10n.dart';
 import 'theme_data.dart';
@@ -51,7 +52,7 @@ RateMyApp rateMyApp = RateMyApp(
 );
 
 AppTheme readLastTheme(){
-  final themeStr = PrefService.getString('theme') ?? AppTheme.GreenDark.toString();
+  final themeStr = PrefService.getString(PREF_THEME) ?? AppTheme.GreenDark.toString();
   AppTheme theme = AppTheme.values.firstWhere((e) => e.toString() == themeStr);
   return theme;
 }
