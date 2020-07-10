@@ -393,14 +393,13 @@ class Measure extends DataClass implements Insertable<Measure> {
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
-    final dateTimeType = db.typeSystem.forDartType<DateTime>();
     final stringType = db.typeSystem.forDartType<String>();
     return Measure(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       elapsed:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}elapsed']),
-      dateCreated: dateTimeType
-          .mapFromDatabaseResponse(data['${effectivePrefix}date_created']),
+      dateCreated: $MeasuresTable.$converter0.mapToDart(intType
+          .mapFromDatabaseResponse(data['${effectivePrefix}date_created'])),
       status:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}status']),
       comment:
@@ -417,7 +416,8 @@ class Measure extends DataClass implements Insertable<Measure> {
       map['elapsed'] = Variable<int>(elapsed);
     }
     if (!nullToAbsent || dateCreated != null) {
-      map['date_created'] = Variable<DateTime>(dateCreated);
+      final converter = $MeasuresTable.$converter0;
+      map['date_created'] = Variable<int>(converter.mapToSql(dateCreated));
     }
     if (!nullToAbsent || status != null) {
       map['status'] = Variable<String>(status);
@@ -535,7 +535,7 @@ class MeasuresCompanion extends UpdateCompanion<Measure> {
   static Insertable<Measure> custom({
     Expression<int> id,
     Expression<int> elapsed,
-    Expression<DateTime> dateCreated,
+    Expression<int> dateCreated,
     Expression<String> status,
     Expression<String> comment,
   }) {
@@ -573,7 +573,9 @@ class MeasuresCompanion extends UpdateCompanion<Measure> {
       map['elapsed'] = Variable<int>(elapsed.value);
     }
     if (dateCreated.present) {
-      map['date_created'] = Variable<DateTime>(dateCreated.value);
+      final converter = $MeasuresTable.$converter0;
+      map['date_created'] =
+          Variable<int>(converter.mapToSql(dateCreated.value));
     }
     if (status.present) {
       map['status'] = Variable<String>(status.value);
@@ -609,12 +611,12 @@ class $MeasuresTable extends Measures with TableInfo<$MeasuresTable, Measure> {
 
   final VerificationMeta _dateCreatedMeta =
       const VerificationMeta('dateCreated');
-  GeneratedDateTimeColumn _dateCreated;
+  GeneratedIntColumn _dateCreated;
   @override
-  GeneratedDateTimeColumn get dateCreated =>
+  GeneratedIntColumn get dateCreated =>
       _dateCreated ??= _constructDateCreated();
-  GeneratedDateTimeColumn _constructDateCreated() {
-    return GeneratedDateTimeColumn(
+  GeneratedIntColumn _constructDateCreated() {
+    return GeneratedIntColumn(
       'date_created',
       $tableName,
       false,
@@ -662,14 +664,7 @@ class $MeasuresTable extends Measures with TableInfo<$MeasuresTable, Measure> {
       context.handle(_elapsedMeta,
           elapsed.isAcceptableOrUnknown(data['elapsed'], _elapsedMeta));
     }
-    if (data.containsKey('date_created')) {
-      context.handle(
-          _dateCreatedMeta,
-          dateCreated.isAcceptableOrUnknown(
-              data['date_created'], _dateCreatedMeta));
-    } else if (isInserting) {
-      context.missing(_dateCreatedMeta);
-    }
+    context.handle(_dateCreatedMeta, const VerificationResult.success());
     if (data.containsKey('status')) {
       context.handle(_statusMeta,
           status.isAcceptableOrUnknown(data['status'], _statusMeta));
@@ -695,13 +690,15 @@ class $MeasuresTable extends Measures with TableInfo<$MeasuresTable, Measure> {
   $MeasuresTable createAlias(String alias) {
     return $MeasuresTable(_db, alias);
   }
+
+  static TypeConverter<DateTime, int> $converter0 = const MillisDateConverter();
 }
 
 class MeasureSession extends DataClass implements Insertable<MeasureSession> {
   final int id;
   final int measureId;
-  final DateTime started;
-  final DateTime finished;
+  final int started;
+  final int finished;
   MeasureSession(
       {@required this.id,
       @required this.measureId,
@@ -712,15 +709,14 @@ class MeasureSession extends DataClass implements Insertable<MeasureSession> {
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
-    final dateTimeType = db.typeSystem.forDartType<DateTime>();
     return MeasureSession(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       measureId:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}measure_id']),
-      started: dateTimeType
-          .mapFromDatabaseResponse(data['${effectivePrefix}started']),
-      finished: dateTimeType
-          .mapFromDatabaseResponse(data['${effectivePrefix}finished']),
+      started:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}started']),
+      finished:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}finished']),
     );
   }
   @override
@@ -733,10 +729,10 @@ class MeasureSession extends DataClass implements Insertable<MeasureSession> {
       map['measure_id'] = Variable<int>(measureId);
     }
     if (!nullToAbsent || started != null) {
-      map['started'] = Variable<DateTime>(started);
+      map['started'] = Variable<int>(started);
     }
     if (!nullToAbsent || finished != null) {
-      map['finished'] = Variable<DateTime>(finished);
+      map['finished'] = Variable<int>(finished);
     }
     return map;
   }
@@ -762,8 +758,8 @@ class MeasureSession extends DataClass implements Insertable<MeasureSession> {
     return MeasureSession(
       id: serializer.fromJson<int>(json['id']),
       measureId: serializer.fromJson<int>(json['measureId']),
-      started: serializer.fromJson<DateTime>(json['started']),
-      finished: serializer.fromJson<DateTime>(json['finished']),
+      started: serializer.fromJson<int>(json['started']),
+      finished: serializer.fromJson<int>(json['finished']),
     );
   }
   @override
@@ -772,13 +768,12 @@ class MeasureSession extends DataClass implements Insertable<MeasureSession> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'measureId': serializer.toJson<int>(measureId),
-      'started': serializer.toJson<DateTime>(started),
-      'finished': serializer.toJson<DateTime>(finished),
+      'started': serializer.toJson<int>(started),
+      'finished': serializer.toJson<int>(finished),
     };
   }
 
-  MeasureSession copyWith(
-          {int id, int measureId, DateTime started, DateTime finished}) =>
+  MeasureSession copyWith({int id, int measureId, int started, int finished}) =>
       MeasureSession(
         id: id ?? this.id,
         measureId: measureId ?? this.measureId,
@@ -812,8 +807,8 @@ class MeasureSession extends DataClass implements Insertable<MeasureSession> {
 class MeasureSessionsCompanion extends UpdateCompanion<MeasureSession> {
   final Value<int> id;
   final Value<int> measureId;
-  final Value<DateTime> started;
-  final Value<DateTime> finished;
+  final Value<int> started;
+  final Value<int> finished;
   const MeasureSessionsCompanion({
     this.id = const Value.absent(),
     this.measureId = const Value.absent(),
@@ -823,15 +818,15 @@ class MeasureSessionsCompanion extends UpdateCompanion<MeasureSession> {
   MeasureSessionsCompanion.insert({
     this.id = const Value.absent(),
     @required int measureId,
-    @required DateTime started,
+    @required int started,
     this.finished = const Value.absent(),
   })  : measureId = Value(measureId),
         started = Value(started);
   static Insertable<MeasureSession> custom({
     Expression<int> id,
     Expression<int> measureId,
-    Expression<DateTime> started,
-    Expression<DateTime> finished,
+    Expression<int> started,
+    Expression<int> finished,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -844,8 +839,8 @@ class MeasureSessionsCompanion extends UpdateCompanion<MeasureSession> {
   MeasureSessionsCompanion copyWith(
       {Value<int> id,
       Value<int> measureId,
-      Value<DateTime> started,
-      Value<DateTime> finished}) {
+      Value<int> started,
+      Value<int> finished}) {
     return MeasureSessionsCompanion(
       id: id ?? this.id,
       measureId: measureId ?? this.measureId,
@@ -864,10 +859,10 @@ class MeasureSessionsCompanion extends UpdateCompanion<MeasureSession> {
       map['measure_id'] = Variable<int>(measureId.value);
     }
     if (started.present) {
-      map['started'] = Variable<DateTime>(started.value);
+      map['started'] = Variable<int>(started.value);
     }
     if (finished.present) {
-      map['finished'] = Variable<DateTime>(finished.value);
+      map['finished'] = Variable<int>(finished.value);
     }
     return map;
   }
@@ -897,11 +892,11 @@ class $MeasureSessionsTable extends MeasureSessions
   }
 
   final VerificationMeta _startedMeta = const VerificationMeta('started');
-  GeneratedDateTimeColumn _started;
+  GeneratedIntColumn _started;
   @override
-  GeneratedDateTimeColumn get started => _started ??= _constructStarted();
-  GeneratedDateTimeColumn _constructStarted() {
-    return GeneratedDateTimeColumn(
+  GeneratedIntColumn get started => _started ??= _constructStarted();
+  GeneratedIntColumn _constructStarted() {
+    return GeneratedIntColumn(
       'started',
       $tableName,
       false,
@@ -909,11 +904,11 @@ class $MeasureSessionsTable extends MeasureSessions
   }
 
   final VerificationMeta _finishedMeta = const VerificationMeta('finished');
-  GeneratedDateTimeColumn _finished;
+  GeneratedIntColumn _finished;
   @override
-  GeneratedDateTimeColumn get finished => _finished ??= _constructFinished();
-  GeneratedDateTimeColumn _constructFinished() {
-    return GeneratedDateTimeColumn(
+  GeneratedIntColumn get finished => _finished ??= _constructFinished();
+  GeneratedIntColumn _constructFinished() {
+    return GeneratedIntColumn(
       'finished',
       $tableName,
       true,

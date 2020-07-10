@@ -12,6 +12,23 @@ import 'package:path_provider/path_provider.dart';
 // but it's needed for moor to know about the generated code
 part 'database_models.g.dart';
 
+class MillisDateConverter extends TypeConverter<DateTime, int> {
+  const MillisDateConverter();
+  @override
+  DateTime mapToDart(int fromDb) {
+    if (fromDb == null) {
+      return null;
+    }
+    return DateTime.fromMillisecondsSinceEpoch(fromDb);
+  }
+
+  @override
+  int mapToSql(DateTime value) {
+    return value?.millisecondsSinceEpoch;
+  }
+}
+
+
 class Laps extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get measureId => integer().named('measure_id').customConstraint('REFERENCES measures(id) ON DELETE CASCADE')();
@@ -24,14 +41,17 @@ class Laps extends Table {
 class MeasureSessions extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get measureId => integer().named('measure_id').customConstraint('REFERENCES measures(id) ON DELETE CASCADE')(); // TODO ON DELETE CASCADE Не работает!!!
-  DateTimeColumn get started => dateTime()();
-  DateTimeColumn get finished => dateTime().nullable()();
+  //DateTimeColumn get started => dateTime()();
+  //DateTimeColumn get finished => dateTime().nullable()();
+  IntColumn get started => integer()();
+  IntColumn get finished => integer().nullable()();
 }
 
 class Measures extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get elapsed => integer().withDefault(Constant(0))();
-  DateTimeColumn get dateCreated => dateTime()();
+  //DateTimeColumn get dateCreated => dateTime()();
+  IntColumn get dateCreated => integer().map(const MillisDateConverter())();
   TextColumn get status => text().withLength(max: 16)();
   TextColumn get comment => text().nullable()();
 }
