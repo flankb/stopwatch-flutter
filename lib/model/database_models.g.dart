@@ -380,13 +380,13 @@ class $LapsTable extends Laps with TableInfo<$LapsTable, Lap> {
 class Measure extends DataClass implements Insertable<Measure> {
   final int id;
   final int elapsed;
-  final DateTime dateCreated;
+  final DateTime dateStarted;
   final String status;
   final String comment;
   Measure(
       {@required this.id,
       @required this.elapsed,
-      @required this.dateCreated,
+      this.dateStarted,
       @required this.status,
       this.comment});
   factory Measure.fromData(Map<String, dynamic> data, GeneratedDatabase db,
@@ -398,8 +398,8 @@ class Measure extends DataClass implements Insertable<Measure> {
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       elapsed:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}elapsed']),
-      dateCreated: $MeasuresTable.$converter0.mapToDart(intType
-          .mapFromDatabaseResponse(data['${effectivePrefix}date_created'])),
+      dateStarted: $MeasuresTable.$converter0.mapToDart(intType
+          .mapFromDatabaseResponse(data['${effectivePrefix}date_started'])),
       status:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}status']),
       comment:
@@ -415,9 +415,9 @@ class Measure extends DataClass implements Insertable<Measure> {
     if (!nullToAbsent || elapsed != null) {
       map['elapsed'] = Variable<int>(elapsed);
     }
-    if (!nullToAbsent || dateCreated != null) {
+    if (!nullToAbsent || dateStarted != null) {
       final converter = $MeasuresTable.$converter0;
-      map['date_created'] = Variable<int>(converter.mapToSql(dateCreated));
+      map['date_started'] = Variable<int>(converter.mapToSql(dateStarted));
     }
     if (!nullToAbsent || status != null) {
       map['status'] = Variable<String>(status);
@@ -434,9 +434,9 @@ class Measure extends DataClass implements Insertable<Measure> {
       elapsed: elapsed == null && nullToAbsent
           ? const Value.absent()
           : Value(elapsed),
-      dateCreated: dateCreated == null && nullToAbsent
+      dateStarted: dateStarted == null && nullToAbsent
           ? const Value.absent()
-          : Value(dateCreated),
+          : Value(dateStarted),
       status:
           status == null && nullToAbsent ? const Value.absent() : Value(status),
       comment: comment == null && nullToAbsent
@@ -451,7 +451,7 @@ class Measure extends DataClass implements Insertable<Measure> {
     return Measure(
       id: serializer.fromJson<int>(json['id']),
       elapsed: serializer.fromJson<int>(json['elapsed']),
-      dateCreated: serializer.fromJson<DateTime>(json['dateCreated']),
+      dateStarted: serializer.fromJson<DateTime>(json['dateStarted']),
       status: serializer.fromJson<String>(json['status']),
       comment: serializer.fromJson<String>(json['comment']),
     );
@@ -462,7 +462,7 @@ class Measure extends DataClass implements Insertable<Measure> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'elapsed': serializer.toJson<int>(elapsed),
-      'dateCreated': serializer.toJson<DateTime>(dateCreated),
+      'dateStarted': serializer.toJson<DateTime>(dateStarted),
       'status': serializer.toJson<String>(status),
       'comment': serializer.toJson<String>(comment),
     };
@@ -471,13 +471,13 @@ class Measure extends DataClass implements Insertable<Measure> {
   Measure copyWith(
           {int id,
           int elapsed,
-          DateTime dateCreated,
+          DateTime dateStarted,
           String status,
           String comment}) =>
       Measure(
         id: id ?? this.id,
         elapsed: elapsed ?? this.elapsed,
-        dateCreated: dateCreated ?? this.dateCreated,
+        dateStarted: dateStarted ?? this.dateStarted,
         status: status ?? this.status,
         comment: comment ?? this.comment,
       );
@@ -486,7 +486,7 @@ class Measure extends DataClass implements Insertable<Measure> {
     return (StringBuffer('Measure(')
           ..write('id: $id, ')
           ..write('elapsed: $elapsed, ')
-          ..write('dateCreated: $dateCreated, ')
+          ..write('dateStarted: $dateStarted, ')
           ..write('status: $status, ')
           ..write('comment: $comment')
           ..write(')'))
@@ -498,7 +498,7 @@ class Measure extends DataClass implements Insertable<Measure> {
       id.hashCode,
       $mrjc(
           elapsed.hashCode,
-          $mrjc(dateCreated.hashCode,
+          $mrjc(dateStarted.hashCode,
               $mrjc(status.hashCode, comment.hashCode)))));
   @override
   bool operator ==(dynamic other) =>
@@ -506,7 +506,7 @@ class Measure extends DataClass implements Insertable<Measure> {
       (other is Measure &&
           other.id == this.id &&
           other.elapsed == this.elapsed &&
-          other.dateCreated == this.dateCreated &&
+          other.dateStarted == this.dateStarted &&
           other.status == this.status &&
           other.comment == this.comment);
 }
@@ -514,35 +514,34 @@ class Measure extends DataClass implements Insertable<Measure> {
 class MeasuresCompanion extends UpdateCompanion<Measure> {
   final Value<int> id;
   final Value<int> elapsed;
-  final Value<DateTime> dateCreated;
+  final Value<DateTime> dateStarted;
   final Value<String> status;
   final Value<String> comment;
   const MeasuresCompanion({
     this.id = const Value.absent(),
     this.elapsed = const Value.absent(),
-    this.dateCreated = const Value.absent(),
+    this.dateStarted = const Value.absent(),
     this.status = const Value.absent(),
     this.comment = const Value.absent(),
   });
   MeasuresCompanion.insert({
     this.id = const Value.absent(),
     this.elapsed = const Value.absent(),
-    @required DateTime dateCreated,
+    this.dateStarted = const Value.absent(),
     @required String status,
     this.comment = const Value.absent(),
-  })  : dateCreated = Value(dateCreated),
-        status = Value(status);
+  }) : status = Value(status);
   static Insertable<Measure> custom({
     Expression<int> id,
     Expression<int> elapsed,
-    Expression<int> dateCreated,
+    Expression<int> dateStarted,
     Expression<String> status,
     Expression<String> comment,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (elapsed != null) 'elapsed': elapsed,
-      if (dateCreated != null) 'date_created': dateCreated,
+      if (dateStarted != null) 'date_started': dateStarted,
       if (status != null) 'status': status,
       if (comment != null) 'comment': comment,
     });
@@ -551,13 +550,13 @@ class MeasuresCompanion extends UpdateCompanion<Measure> {
   MeasuresCompanion copyWith(
       {Value<int> id,
       Value<int> elapsed,
-      Value<DateTime> dateCreated,
+      Value<DateTime> dateStarted,
       Value<String> status,
       Value<String> comment}) {
     return MeasuresCompanion(
       id: id ?? this.id,
       elapsed: elapsed ?? this.elapsed,
-      dateCreated: dateCreated ?? this.dateCreated,
+      dateStarted: dateStarted ?? this.dateStarted,
       status: status ?? this.status,
       comment: comment ?? this.comment,
     );
@@ -572,10 +571,10 @@ class MeasuresCompanion extends UpdateCompanion<Measure> {
     if (elapsed.present) {
       map['elapsed'] = Variable<int>(elapsed.value);
     }
-    if (dateCreated.present) {
+    if (dateStarted.present) {
       final converter = $MeasuresTable.$converter0;
-      map['date_created'] =
-          Variable<int>(converter.mapToSql(dateCreated.value));
+      map['date_started'] =
+          Variable<int>(converter.mapToSql(dateStarted.value));
     }
     if (status.present) {
       map['status'] = Variable<String>(status.value);
@@ -609,17 +608,17 @@ class $MeasuresTable extends Measures with TableInfo<$MeasuresTable, Measure> {
         defaultValue: Constant(0));
   }
 
-  final VerificationMeta _dateCreatedMeta =
-      const VerificationMeta('dateCreated');
-  GeneratedIntColumn _dateCreated;
+  final VerificationMeta _dateStartedMeta =
+      const VerificationMeta('dateStarted');
+  GeneratedIntColumn _dateStarted;
   @override
-  GeneratedIntColumn get dateCreated =>
-      _dateCreated ??= _constructDateCreated();
-  GeneratedIntColumn _constructDateCreated() {
+  GeneratedIntColumn get dateStarted =>
+      _dateStarted ??= _constructDateStarted();
+  GeneratedIntColumn _constructDateStarted() {
     return GeneratedIntColumn(
-      'date_created',
+      'date_started',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -645,7 +644,7 @@ class $MeasuresTable extends Measures with TableInfo<$MeasuresTable, Measure> {
 
   @override
   List<GeneratedColumn> get $columns =>
-      [id, elapsed, dateCreated, status, comment];
+      [id, elapsed, dateStarted, status, comment];
   @override
   $MeasuresTable get asDslTable => this;
   @override
@@ -664,7 +663,7 @@ class $MeasuresTable extends Measures with TableInfo<$MeasuresTable, Measure> {
       context.handle(_elapsedMeta,
           elapsed.isAcceptableOrUnknown(data['elapsed'], _elapsedMeta));
     }
-    context.handle(_dateCreatedMeta, const VerificationResult.success());
+    context.handle(_dateStartedMeta, const VerificationResult.success());
     if (data.containsKey('status')) {
       context.handle(_statusMeta,
           status.isAcceptableOrUnknown(data['status'], _statusMeta));
@@ -697,13 +696,13 @@ class $MeasuresTable extends Measures with TableInfo<$MeasuresTable, Measure> {
 class MeasureSession extends DataClass implements Insertable<MeasureSession> {
   final int id;
   final int measureId;
-  final int started;
-  final int finished;
+  final int startedOffset;
+  final int finishedOffset;
   MeasureSession(
       {@required this.id,
       @required this.measureId,
-      @required this.started,
-      this.finished});
+      @required this.startedOffset,
+      this.finishedOffset});
   factory MeasureSession.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
@@ -713,10 +712,10 @@ class MeasureSession extends DataClass implements Insertable<MeasureSession> {
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       measureId:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}measure_id']),
-      started:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}started']),
-      finished:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}finished']),
+      startedOffset: intType
+          .mapFromDatabaseResponse(data['${effectivePrefix}started_offset']),
+      finishedOffset: intType
+          .mapFromDatabaseResponse(data['${effectivePrefix}finished_offset']),
     );
   }
   @override
@@ -728,11 +727,11 @@ class MeasureSession extends DataClass implements Insertable<MeasureSession> {
     if (!nullToAbsent || measureId != null) {
       map['measure_id'] = Variable<int>(measureId);
     }
-    if (!nullToAbsent || started != null) {
-      map['started'] = Variable<int>(started);
+    if (!nullToAbsent || startedOffset != null) {
+      map['started_offset'] = Variable<int>(startedOffset);
     }
-    if (!nullToAbsent || finished != null) {
-      map['finished'] = Variable<int>(finished);
+    if (!nullToAbsent || finishedOffset != null) {
+      map['finished_offset'] = Variable<int>(finishedOffset);
     }
     return map;
   }
@@ -743,12 +742,12 @@ class MeasureSession extends DataClass implements Insertable<MeasureSession> {
       measureId: measureId == null && nullToAbsent
           ? const Value.absent()
           : Value(measureId),
-      started: started == null && nullToAbsent
+      startedOffset: startedOffset == null && nullToAbsent
           ? const Value.absent()
-          : Value(started),
-      finished: finished == null && nullToAbsent
+          : Value(startedOffset),
+      finishedOffset: finishedOffset == null && nullToAbsent
           ? const Value.absent()
-          : Value(finished),
+          : Value(finishedOffset),
     );
   }
 
@@ -758,8 +757,8 @@ class MeasureSession extends DataClass implements Insertable<MeasureSession> {
     return MeasureSession(
       id: serializer.fromJson<int>(json['id']),
       measureId: serializer.fromJson<int>(json['measureId']),
-      started: serializer.fromJson<int>(json['started']),
-      finished: serializer.fromJson<int>(json['finished']),
+      startedOffset: serializer.fromJson<int>(json['startedOffset']),
+      finishedOffset: serializer.fromJson<int>(json['finishedOffset']),
     );
   }
   @override
@@ -768,84 +767,87 @@ class MeasureSession extends DataClass implements Insertable<MeasureSession> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'measureId': serializer.toJson<int>(measureId),
-      'started': serializer.toJson<int>(started),
-      'finished': serializer.toJson<int>(finished),
+      'startedOffset': serializer.toJson<int>(startedOffset),
+      'finishedOffset': serializer.toJson<int>(finishedOffset),
     };
   }
 
-  MeasureSession copyWith({int id, int measureId, int started, int finished}) =>
+  MeasureSession copyWith(
+          {int id, int measureId, int startedOffset, int finishedOffset}) =>
       MeasureSession(
         id: id ?? this.id,
         measureId: measureId ?? this.measureId,
-        started: started ?? this.started,
-        finished: finished ?? this.finished,
+        startedOffset: startedOffset ?? this.startedOffset,
+        finishedOffset: finishedOffset ?? this.finishedOffset,
       );
   @override
   String toString() {
     return (StringBuffer('MeasureSession(')
           ..write('id: $id, ')
           ..write('measureId: $measureId, ')
-          ..write('started: $started, ')
-          ..write('finished: $finished')
+          ..write('startedOffset: $startedOffset, ')
+          ..write('finishedOffset: $finishedOffset')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode,
-      $mrjc(measureId.hashCode, $mrjc(started.hashCode, finished.hashCode))));
+  int get hashCode => $mrjf($mrjc(
+      id.hashCode,
+      $mrjc(measureId.hashCode,
+          $mrjc(startedOffset.hashCode, finishedOffset.hashCode))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is MeasureSession &&
           other.id == this.id &&
           other.measureId == this.measureId &&
-          other.started == this.started &&
-          other.finished == this.finished);
+          other.startedOffset == this.startedOffset &&
+          other.finishedOffset == this.finishedOffset);
 }
 
 class MeasureSessionsCompanion extends UpdateCompanion<MeasureSession> {
   final Value<int> id;
   final Value<int> measureId;
-  final Value<int> started;
-  final Value<int> finished;
+  final Value<int> startedOffset;
+  final Value<int> finishedOffset;
   const MeasureSessionsCompanion({
     this.id = const Value.absent(),
     this.measureId = const Value.absent(),
-    this.started = const Value.absent(),
-    this.finished = const Value.absent(),
+    this.startedOffset = const Value.absent(),
+    this.finishedOffset = const Value.absent(),
   });
   MeasureSessionsCompanion.insert({
     this.id = const Value.absent(),
     @required int measureId,
-    @required int started,
-    this.finished = const Value.absent(),
+    @required int startedOffset,
+    this.finishedOffset = const Value.absent(),
   })  : measureId = Value(measureId),
-        started = Value(started);
+        startedOffset = Value(startedOffset);
   static Insertable<MeasureSession> custom({
     Expression<int> id,
     Expression<int> measureId,
-    Expression<int> started,
-    Expression<int> finished,
+    Expression<int> startedOffset,
+    Expression<int> finishedOffset,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (measureId != null) 'measure_id': measureId,
-      if (started != null) 'started': started,
-      if (finished != null) 'finished': finished,
+      if (startedOffset != null) 'started_offset': startedOffset,
+      if (finishedOffset != null) 'finished_offset': finishedOffset,
     });
   }
 
   MeasureSessionsCompanion copyWith(
       {Value<int> id,
       Value<int> measureId,
-      Value<int> started,
-      Value<int> finished}) {
+      Value<int> startedOffset,
+      Value<int> finishedOffset}) {
     return MeasureSessionsCompanion(
       id: id ?? this.id,
       measureId: measureId ?? this.measureId,
-      started: started ?? this.started,
-      finished: finished ?? this.finished,
+      startedOffset: startedOffset ?? this.startedOffset,
+      finishedOffset: finishedOffset ?? this.finishedOffset,
     );
   }
 
@@ -858,11 +860,11 @@ class MeasureSessionsCompanion extends UpdateCompanion<MeasureSession> {
     if (measureId.present) {
       map['measure_id'] = Variable<int>(measureId.value);
     }
-    if (started.present) {
-      map['started'] = Variable<int>(started.value);
+    if (startedOffset.present) {
+      map['started_offset'] = Variable<int>(startedOffset.value);
     }
-    if (finished.present) {
-      map['finished'] = Variable<int>(finished.value);
+    if (finishedOffset.present) {
+      map['finished_offset'] = Variable<int>(finishedOffset.value);
     }
     return map;
   }
@@ -891,32 +893,37 @@ class $MeasureSessionsTable extends MeasureSessions
         $customConstraints: 'REFERENCES measures(id) ON DELETE CASCADE');
   }
 
-  final VerificationMeta _startedMeta = const VerificationMeta('started');
-  GeneratedIntColumn _started;
+  final VerificationMeta _startedOffsetMeta =
+      const VerificationMeta('startedOffset');
+  GeneratedIntColumn _startedOffset;
   @override
-  GeneratedIntColumn get started => _started ??= _constructStarted();
-  GeneratedIntColumn _constructStarted() {
+  GeneratedIntColumn get startedOffset =>
+      _startedOffset ??= _constructStartedOffset();
+  GeneratedIntColumn _constructStartedOffset() {
     return GeneratedIntColumn(
-      'started',
+      'started_offset',
       $tableName,
       false,
     );
   }
 
-  final VerificationMeta _finishedMeta = const VerificationMeta('finished');
-  GeneratedIntColumn _finished;
+  final VerificationMeta _finishedOffsetMeta =
+      const VerificationMeta('finishedOffset');
+  GeneratedIntColumn _finishedOffset;
   @override
-  GeneratedIntColumn get finished => _finished ??= _constructFinished();
-  GeneratedIntColumn _constructFinished() {
+  GeneratedIntColumn get finishedOffset =>
+      _finishedOffset ??= _constructFinishedOffset();
+  GeneratedIntColumn _constructFinishedOffset() {
     return GeneratedIntColumn(
-      'finished',
+      'finished_offset',
       $tableName,
       true,
     );
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, measureId, started, finished];
+  List<GeneratedColumn> get $columns =>
+      [id, measureId, startedOffset, finishedOffset];
   @override
   $MeasureSessionsTable get asDslTable => this;
   @override
@@ -937,15 +944,19 @@ class $MeasureSessionsTable extends MeasureSessions
     } else if (isInserting) {
       context.missing(_measureIdMeta);
     }
-    if (data.containsKey('started')) {
-      context.handle(_startedMeta,
-          started.isAcceptableOrUnknown(data['started'], _startedMeta));
+    if (data.containsKey('started_offset')) {
+      context.handle(
+          _startedOffsetMeta,
+          startedOffset.isAcceptableOrUnknown(
+              data['started_offset'], _startedOffsetMeta));
     } else if (isInserting) {
-      context.missing(_startedMeta);
+      context.missing(_startedOffsetMeta);
     }
-    if (data.containsKey('finished')) {
-      context.handle(_finishedMeta,
-          finished.isAcceptableOrUnknown(data['finished'], _finishedMeta));
+    if (data.containsKey('finished_offset')) {
+      context.handle(
+          _finishedOffsetMeta,
+          finishedOffset.isAcceptableOrUnknown(
+              data['finished_offset'], _finishedOffsetMeta));
     }
     return context;
   }

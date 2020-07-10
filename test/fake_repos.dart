@@ -40,7 +40,7 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
   Future<int> createNewMeasureAsync() async{
     Measure measure = Measure(id: Random(43).nextInt(2000) + 100,
         elapsed: 0,
-        dateCreated: DateTime.now(),
+        dateStarted: null,//DateTime.now(),
         status: describeEnum(StopwatchStatus.Ready));
 
     _measures.add(MeasureViewModel.fromEntity(measure));

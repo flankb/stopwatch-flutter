@@ -10,14 +10,14 @@ class MeasureSessionViewModel with EquatableMixin {
   MeasureSessionViewModel({this.id, this.measureId, this.started, this.finished});
 
   MeasureSession toEntity() {
-    return MeasureSession(id: id, measureId: measureId, started: started, finished: finished);
+    return MeasureSession(id: id, measureId: measureId, startedOffset: started, finishedOffset: finished);
   }
 
   static MeasureSessionViewModel fromEntity(MeasureSession entity) {
     return MeasureSessionViewModel(id: entity.id,
         measureId: entity.measureId,
-        started: entity.started,
-        finished: entity.finished);
+        started: entity.startedOffset,
+        finished: entity.finishedOffset);
   }
 
   @override

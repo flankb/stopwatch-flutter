@@ -13,7 +13,7 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
   StopwatchRepository.fromDatabase(MyDatabase database) : super(database);
 
   Future<List<Measure>> getMeasuresByStatusAsync(String status) {
-    return (select(measures)..where((m) => m.status.equals(status))..orderBy([(t) => OrderingTerm(expression: t.dateCreated, mode: OrderingMode.desc)])).get();
+    return (select(measures)..where((m) => m.status.equals(status))..orderBy([(t) => OrderingTerm(expression: t.dateStarted, mode: OrderingMode.desc)])).get();
   }
 
   Future<Measure> getMeasuresByIdAsync(int id) {
@@ -24,7 +24,7 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
   Future<int> createNewMeasureAsync() {
     Measure measure = Measure(id: null,
         elapsed: 0,
-        dateCreated: DateTime.now(),
+        dateStarted: null,//DateTime.now(),
         status: describeEnum(StopwatchStatus.Ready));
 
     return into(measures).insert(measure);

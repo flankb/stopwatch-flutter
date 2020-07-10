@@ -28,7 +28,6 @@ class MillisDateConverter extends TypeConverter<DateTime, int> {
   }
 }
 
-
 class Laps extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get measureId => integer().named('measure_id').customConstraint('REFERENCES measures(id) ON DELETE CASCADE')();
@@ -43,15 +42,15 @@ class MeasureSessions extends Table {
   IntColumn get measureId => integer().named('measure_id').customConstraint('REFERENCES measures(id) ON DELETE CASCADE')(); // TODO ON DELETE CASCADE Не работает!!!
   //DateTimeColumn get started => dateTime()();
   //DateTimeColumn get finished => dateTime().nullable()();
-  IntColumn get started => integer()();
-  IntColumn get finished => integer().nullable()();
+  IntColumn get startedOffset => integer()();
+  IntColumn get finishedOffset => integer().nullable()();
 }
 
 class Measures extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get elapsed => integer().withDefault(Constant(0))();
   //DateTimeColumn get dateCreated => dateTime()();
-  IntColumn get dateCreated => integer().map(const MillisDateConverter())();
+  IntColumn get dateStarted => integer().nullable().map(const MillisDateConverter())();
   TextColumn get status => text().withLength(max: 16)();
   TextColumn get comment => text().nullable()();
 }
