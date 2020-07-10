@@ -4,8 +4,8 @@ import 'package:stopwatch/model/database_models.dart';
 class MeasureSessionViewModel with EquatableMixin {
   int id;
   int measureId;
-  DateTime started;
-  DateTime finished;
+  int started;
+  int finished;
 
   MeasureSessionViewModel({this.id, this.measureId, this.started, this.finished});
 

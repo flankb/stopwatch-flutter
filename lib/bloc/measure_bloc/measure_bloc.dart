@@ -196,7 +196,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       debugPrint("targetMeasure ${targetMeasure.toString()}");
 
       if (!resume) {
-        final session = MeasureSessionViewModel(id: null, measureId: targetMeasure.id, started: nowDate); // TODO id здесь пустой
+        final session = MeasureSessionViewModel(id: null, measureId: targetMeasure.id, started: targetMeasure.getElapsedSinceStarted(nowDate)); // TODO id здесь пустой
         targetMeasure.sessions.add(session);
 
         debugPrint("measureId (not resume) ${session.measureId.toString()}");
@@ -226,8 +226,6 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
   void _updateElapseds(MeasureViewModel measure, DateTime nowDate) {
     measure.lastRestartedOverall = nowDate;
-    //state.measure.lastRestartedLap = nowDate;
-
     measure.elapsed = measure.getSumOfElapsed(nowDate);
     measure.elapsedLap = measure.getCurrentLapDiffAndOverall(nowDate)[0];
 
@@ -253,8 +251,8 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       throw Exception("Не обнаружена последняя открытая сессия!");
     }
 
-    if (lastSession != null){
-      lastSession.finished = dateNow;
+    if (lastSession != null) {
+      lastSession.finished = state.measure.getElapsedSinceStarted(dateNow); //dateNow;
     }
 
     debugPrint("LastUnfinishedSession (updated): " + lastSession.toString());

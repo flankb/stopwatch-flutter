@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:moor_ffi/moor_ffi.dart';
 import 'package:sqflite_ffi_test/sqflite_ffi_test.dart';
 import 'package:stopwatch/model/database_models.dart';
+import 'package:stopwatch/models/measure_view_model.dart';
 import 'package:stopwatch/models/stopwatch_status.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 
@@ -46,7 +47,7 @@ void main() {
 
       await _stopwatchRepository.addNewLapAsync(lap);
 
-      await _stopwatchRepository.addNewMeasureSession(MeasureSession(started: DateTime.now(), finished: DateTime.now().add(Duration(seconds: 23)), measureId: measureId, id: null, ));
+      await _stopwatchRepository.addNewMeasureSession(MeasureSession(started: MeasureViewModel.fromEntity(readyMeasure.single).getElapsedSinceStarted(DateTime.now()), finished:  MeasureViewModel.fromEntity(readyMeasure.single).getElapsedSinceStarted(DateTime.now().add(Duration(seconds: 23))), measureId: measureId, id: null, ));
 
       var laps = await _stopwatchRepository.getLapsByMeasureAsync(measureId);
       var sessions = await _stopwatchRepository.getMeasureSessions(measureId);
