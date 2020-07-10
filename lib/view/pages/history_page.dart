@@ -9,6 +9,7 @@ import 'package:get_it/get_it.dart';
 import 'package:share/share.dart';
 import 'package:stopwatch/bloc/storage_bloc/bloc.dart';
 import 'package:stopwatch/fake/fake_data_fabric.dart';
+import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/models/filter.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
@@ -62,16 +63,6 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
       }
     });
 
-    /*_storageBloc.listen((state) {
-      if(state is AvailableListState){
-
-        debugPrint("dddddd " + state.toString());
-
-        if(mounted)
-          animationController.forward();
-      }
-    });*/
-
     animationController.forward();
     //animationController.forward();
 
@@ -98,12 +89,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
       _storageBloc.add(ClearStorageEvent());
     }
 
-    // TODO Перед Loaded показывается старое состояние, а вместо него требуется сбросить состояние, чтобы показывался прогресс-бар
     _storageBloc.add(LoadStorageEvent(widget.pageType, measureId: widget.entityId?.id)); // TODO Более явно перезагружать состояние?
-
-    //TODO проблема в том, что два раза срабатывает LoadStorageEvent и прогресс-бар даже не появляется!
-    //  Current state AvailableListState Bloc event: LoadStorageEvent
-    //  Current state AvailableListState Bloc event: LoadStorageEvent
 
     // Сразу же отфильтруем в случае необходимости
     if (wasFiltered) {
@@ -161,7 +147,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                         children: <Widget>[
                           BackButton(),
                           Text(
-                            pageIsLap ? "Измерение" : "Измерения",
+                            pageIsLap ? S.of(context).details : S.of(context).measures,
                             style: TextStyle(fontSize: 36),
                           )
                         ],
@@ -181,15 +167,15 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                         child: Column(
                                           children: <Widget>[
                                             PairLabelView(
-                                              caption: "Общее время",
+                                              caption: S.of(context).overall_time,
                                               value: overallElapsed,
                                             ),
                                             PairLabelView(
-                                              caption: "Комментарий",
+                                              caption: S.of(context).comment,
                                               value: comment ?? "",
                                             ),
                                             PairLabelView(
-                                              caption: "Дата создания",
+                                              caption: S.of(context).date_created,
                                               value: createDate,
                                             )
                                           ],
@@ -207,7 +193,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                           child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                "Круги: ",
+                               S.of(context).laps,
                                 style: TextStyle(fontSize: 22),
                               )),
                         ),
@@ -254,7 +240,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Text(
-                                "Измерения отсутствуют",
+                                S.of(context).no_measures,
                                 textAlign: TextAlign.left,
                                 style: TextStyle(color: InheritedThemeNotifier.of(context).themeData.subtitleColor, fontSize: 18),
                             ),
@@ -287,16 +273,16 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                             _unselectItems();
                                           },
                                           pic: Icons.edit,
-                                          tooltip: "Ред.",
+                                          tooltip:S.of(context).edit_app_bar,
                                         )
                                       : SizedBox(),
                                   snapshot.data >= 1 && widget.pageType == MeasureViewModel
                                       ? PrimaryCommand(
-                                          tooltip: "Удалить",
+                                          tooltip: S.of(context).del_app_bar,
                                           pic: Icons.delete,
                                           onPressed: () {
                                             if (widget.pageType == LapViewModel) {
-                                              Toast.show("Круги нельзя удалять!", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                                              Toast.show(S.of(context).no_possible_delete_laps, context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
                                               return;
                                             }
 
@@ -390,7 +376,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
 
   PrimaryCommand _exportToCsvButtonPrimary(BuildContext context, bool enabled, {ShareMode shareMode = ShareMode.Email}) {
     final icon = shareMode == ShareMode.Email ? Icons.share : Icons.insert_drive_file;
-    final tooltip = shareMode == ShareMode.Email ? "Share" : "To *.csv";
+    final tooltip = shareMode == ShareMode.Email ? S.of(context).share_app_bar : S.of(context).to_csv_app_bar;
     final command = () async {
       var entitiesToExport = _selectedEntities;
 
@@ -418,7 +404,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
     );
   }
 
-  _sendEmail(String body) async {
+  /*_sendEmail(String body) async {
     // Вычислим адрес из настроек
     final emailAddress = PrefService.getString('email');
 
@@ -433,10 +419,10 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
     );
 
     await FlutterEmailSender.send(email);
-  }
+  }*/
 
   _share(String body) {
-    Share.share(body, subject: 'Измерения от ${DateTime.now()}');
+    Share.share(body, subject: '${S.current.measures} ${DateTime.now()}');
   }
 
   void _unselectItems() {

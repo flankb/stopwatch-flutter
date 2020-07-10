@@ -22,16 +22,28 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
     "about" : MessageLookupByLibrary.simpleMessage("About"),
+    "comment" : MessageLookupByLibrary.simpleMessage("Comment"),
+    "date_created" : MessageLookupByLibrary.simpleMessage("Date"),
+    "del_app_bar" : MessageLookupByLibrary.simpleMessage("Delete"),
+    "details" : MessageLookupByLibrary.simpleMessage("Details"),
+    "edit_app_bar" : MessageLookupByLibrary.simpleMessage("Edit"),
     "history" : MessageLookupByLibrary.simpleMessage("History"),
     "lap" : MessageLookupByLibrary.simpleMessage("Lap"),
-    "later" : MessageLookupByLibrary.simpleMessage("ПОЗЖЕ"),
-    "noThanks" : MessageLookupByLibrary.simpleMessage("НЕТ, СПАСИБО"),
+    "laps" : MessageLookupByLibrary.simpleMessage("Laps"),
+    "later" : MessageLookupByLibrary.simpleMessage("LATER"),
+    "measures" : MessageLookupByLibrary.simpleMessage("Measurements"),
+    "noThanks" : MessageLookupByLibrary.simpleMessage("NO, THANKS"),
+    "no_measures" : MessageLookupByLibrary.simpleMessage("No Measurements"),
+    "no_possible_delete_laps" : MessageLookupByLibrary.simpleMessage("Laps cannot be removed!"),
+    "overall_time" : MessageLookupByLibrary.simpleMessage("Overall time"),
     "pause" : MessageLookupByLibrary.simpleMessage("Pause"),
-    "rate" : MessageLookupByLibrary.simpleMessage("ОЦЕНИТЬ"),
+    "rate" : MessageLookupByLibrary.simpleMessage("RATE"),
     "reset" : MessageLookupByLibrary.simpleMessage("Reset"),
     "review" : MessageLookupByLibrary.simpleMessage("Rate and review"),
-    "reviewRequestMessage" : MessageLookupByLibrary.simpleMessage("Если вам понравилось приложение, пожалуйста поставьте ему оценку.\nЭто поможет его развитию!"),
+    "reviewRequestMessage" : MessageLookupByLibrary.simpleMessage("If you liked the application, please give it a rating.\nThis will help its development!"),
     "settings" : MessageLookupByLibrary.simpleMessage("Settings"),
-    "start" : MessageLookupByLibrary.simpleMessage("Start")
+    "share_app_bar" : MessageLookupByLibrary.simpleMessage("Share"),
+    "start" : MessageLookupByLibrary.simpleMessage("Start"),
+    "to_csv_app_bar" : MessageLookupByLibrary.simpleMessage("To *csv")
   };
 }

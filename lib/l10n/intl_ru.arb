@@ -10,8 +10,17 @@
   "reviewRequestMessage" : "Если вам понравилось приложение, пожалуйста поставьте ему оценку.\nЭто поможет его развитию!",
   "rate" : "ОЦЕНИТЬ",
   "noThanks" : "НЕТ, СПАСИБО",
-  "later" : "ПОЗЖЕ"
+  "later" : "ПОЗЖЕ",
+  "details" : "Подробности",
+  "measures" : "Измерения",
+  "overall_time" : "Общее время",
+  "comment" : "Комментарий",
+  "date_created" : "Дата",
+  "laps" : "Круги",
+  "no_measures" : "Измерения отсутствуют",
+  "edit_app_bar" : "Ред.",
+  "del_app_bar" : "Удалить",
+  "no_possible_delete_laps" : "Круги нельзя удалять!",
+  "share_app_bar" : "Экспорт",
+  "to_csv_app_bar" : "В *csv"
 }
-
-
-
