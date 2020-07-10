@@ -34,7 +34,9 @@ void main() {
 
     test("Repo test", () async {
       await _stopwatchRepository.createNewMeasureAsync();
+
       final readyMeasure = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Ready));
+      //readyMeasure.single.dateStarted = DateTime.now();
 
       expect(readyMeasure.single.status == describeEnum(StopwatchStatus.Ready), true, reason: "Не создалось измерение со статусом Ready!");
 
@@ -47,7 +49,9 @@ void main() {
 
       await _stopwatchRepository.addNewLapAsync(lap);
 
-      await _stopwatchRepository.addNewMeasureSession(MeasureSession(startedOffset: MeasureViewModel.fromEntity(readyMeasure.single).getElapsedSinceStarted(DateTime.now()), finishedOffset:  MeasureViewModel.fromEntity(readyMeasure.single).getElapsedSinceStarted(DateTime.now().add(Duration(seconds: 23))), measureId: measureId, id: null, ));
+      var measureViewModel = MeasureViewModel.fromEntity(readyMeasure.single);
+      measureViewModel.dateCreated = DateTime.now();
+      await _stopwatchRepository.addNewMeasureSession(MeasureSession(startedOffset: measureViewModel.getElapsedSinceStarted(DateTime.now()), finishedOffset:  measureViewModel.getElapsedSinceStarted(DateTime.now().add(Duration(seconds: 23))), measureId: measureId, id: null, ));
 
       var laps = await _stopwatchRepository.getLapsByMeasureAsync(measureId);
       var sessions = await _stopwatchRepository.getMeasureSessions(measureId);
