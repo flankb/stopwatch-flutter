@@ -6,6 +6,8 @@ import 'package:moor/moor.dart';
 import 'package:moor_ffi/moor_ffi.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../constants.dart';
+
 //flutter packages pub run build_runner build
 
 // assuming that your file is called filename.dart. This will give an error at first,
@@ -68,7 +70,7 @@ LazyDatabase _openConnection() {
     // put the database file, called db.sqlite here, into the documents folder
     // for your app.
     final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'database.sqlite'));
+    final file = File(p.join(dbFolder.path, DATABASE_NAME));
     return VmDatabase(file);
   });
 }
