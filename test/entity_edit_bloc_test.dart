@@ -11,7 +11,7 @@ import 'fake_repos.dart';
 
 
 void main() {
-  group('EntityBloc', () {
+  group('EntityBloc test', () {
     StopwatchFakeRepository repository;
     EntityBloc entityBloc;
 
