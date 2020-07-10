@@ -23,8 +23,8 @@ class FakeDataFabric {
 
   static List<MeasureSessionViewModel> sessionsHistory() {
     final list = [
-      MeasureSessionViewModel(id: 1, measureId: 2, started: DateTime.now().add(Duration(minutes: -10)), finished: DateTime.now()),
-      MeasureSessionViewModel(id: 2, measureId: 3, started: DateTime.now().add(Duration(minutes: -10)), finished: DateTime.now())
+      MeasureSessionViewModel(id: 1, measureId: 2, started: 2000, finished: 7000),
+      MeasureSessionViewModel(id: 2, measureId: 3, started: 7500, finished: 9800)
     ];
 
     return list;

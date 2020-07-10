@@ -59,17 +59,21 @@ class MeasureViewModel extends BaseStopwatchEntity {
     return [TimeDisplayer.formatBase(Duration(milliseconds: elapsedLap)), TimeDisplayer.formatMills(Duration(milliseconds: elapsedLap))];
   }
 
+  int getElapsedSinceStarted(DateTime dateNow){
+    return dateNow.difference(dateCreated).inMilliseconds;
+  }
+
   int getSumOfElapsed(DateTime dateNow) {
     var elapsed = 0;
 
     debugPrint("All Sessions: ");
     sessions.forEach((element) { debugPrint(element.toString()); });
-    sessions.where((element) => element.finished != null).forEach((s) => elapsed += s.finished.difference(s.started).inMilliseconds); // TODO При добавлении круга здесь ошибка!
+    sessions.where((element) => element.finished != null).forEach((s) => elapsed += (s.finished - s.started)); // TODO При добавлении круга здесь ошибка!
 
     final lastUnfinishedSession = getLastUnfinishedSession();
 
     final elapsedAll = lastUnfinishedSession != null
-        ? elapsed + dateNow.difference(lastUnfinishedSession.started).inMilliseconds
+        ? elapsed + (getElapsedSinceStarted(dateNow) - lastUnfinishedSession.started) //dateNow.difference(lastUnfinishedSession.started).inMilliseconds
         : elapsed;
 
     return elapsedAll;
@@ -98,14 +102,14 @@ class MeasureViewModel extends BaseStopwatchEntity {
   }
 
   Measure toEntity() {
-    return Measure(id: id, comment: comment, status: describeEnum(status), dateCreated: dateCreated, elapsed: elapsed);
+    return Measure(id: id, comment: comment, status: describeEnum(status), dateStarted: dateCreated, elapsed: elapsed);
   }
 
   static MeasureViewModel fromEntity(Measure entity) {
     return MeasureViewModel(id: entity.id,
         comment: entity.comment,
         status: StopwatchStatus.values.firstWhere((e) => describeEnum(e) == entity.status),
-        dateCreated: entity.dateCreated,
+        dateCreated: entity.dateStarted,
         elapsed: entity.elapsed);
   }
 
