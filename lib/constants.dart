@@ -4,3 +4,4 @@ const PREF_SAVE_MEASURES = 'save_measures';
 const PREF_THEME = 'theme';
 const PREF_VIBRATION = 'vibration';
 const PREF_SOUND = 'sound';
+const DATABASE_NAME = 'database.sqlite';
