@@ -362,6 +362,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Stopwatch`
+  String get stopwatch {
+    return Intl.message(
+      'Stopwatch',
+      name: 'stopwatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Version`
+  String get version {
+    return Intl.message(
+      'Version',
+      name: 'version',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

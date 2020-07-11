@@ -51,7 +51,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "share_app_bar" : MessageLookupByLibrary.simpleMessage("Share"),
     "sound" : MessageLookupByLibrary.simpleMessage("Sound"),
     "start" : MessageLookupByLibrary.simpleMessage("Start"),
+    "stopwatch" : MessageLookupByLibrary.simpleMessage("Stopwatch"),
     "to_csv_app_bar" : MessageLookupByLibrary.simpleMessage("To *csv"),
+    "version" : MessageLookupByLibrary.simpleMessage("Version"),
     "very_long_comment" : MessageLookupByLibrary.simpleMessage("The comment cannot be longer than 256 characters!"),
     "vibration" : MessageLookupByLibrary.simpleMessage("Vibration")
   };

@@ -51,7 +51,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "share_app_bar" : MessageLookupByLibrary.simpleMessage("Экспорт"),
     "sound" : MessageLookupByLibrary.simpleMessage("Звук"),
     "start" : MessageLookupByLibrary.simpleMessage("Старт"),
+    "stopwatch" : MessageLookupByLibrary.simpleMessage("Секундомер"),
     "to_csv_app_bar" : MessageLookupByLibrary.simpleMessage("В *csv"),
+    "version" : MessageLookupByLibrary.simpleMessage("Версия"),
     "very_long_comment" : MessageLookupByLibrary.simpleMessage("Комментарий не может быть длиннее 256 символов!"),
     "vibration" : MessageLookupByLibrary.simpleMessage("Вибрация")
   };

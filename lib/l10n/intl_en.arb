@@ -31,5 +31,7 @@
   "editing" : "Edit",
   "input_comment" : "Input comment",
   "very_long_comment" : "The comment cannot be longer than 256 characters!",
-  "save" : "Save"
+  "save" : "Save",
+  "stopwatch" : "Stopwatch",
+  "version" : "Version"
 }
