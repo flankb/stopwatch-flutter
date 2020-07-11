@@ -27,5 +27,9 @@
   "vibration" : "Vibration",
   "keep_screen_on" : "Keep screen on",
   "save_measures" : "Save measurements",
-  "app_theme" : "App theme"
+  "app_theme" : "App theme",
+  "editing" : "Edit",
+  "input_comment" : "Input comment",
+  "very_long_comment" : "The comment cannot be longer than 256 characters!",
+  "save" : "Save"
 }

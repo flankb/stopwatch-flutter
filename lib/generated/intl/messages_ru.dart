@@ -28,7 +28,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "del_app_bar" : MessageLookupByLibrary.simpleMessage("Удалить"),
     "details" : MessageLookupByLibrary.simpleMessage("Подробности"),
     "edit_app_bar" : MessageLookupByLibrary.simpleMessage("Ред."),
+    "editing" : MessageLookupByLibrary.simpleMessage("Редактирование"),
     "history" : MessageLookupByLibrary.simpleMessage("История"),
+    "input_comment" : MessageLookupByLibrary.simpleMessage("Введите комментарий"),
     "keep_screen_on" : MessageLookupByLibrary.simpleMessage("Сохранять экран включенным"),
     "lap" : MessageLookupByLibrary.simpleMessage("Круг"),
     "laps" : MessageLookupByLibrary.simpleMessage("Круги"),
@@ -43,12 +45,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "reset" : MessageLookupByLibrary.simpleMessage("Сброс"),
     "review" : MessageLookupByLibrary.simpleMessage("Оценить приложение"),
     "reviewRequestMessage" : MessageLookupByLibrary.simpleMessage("Если вам понравилось приложение, пожалуйста поставьте ему оценку.\nЭто поможет его развитию!"),
+    "save" : MessageLookupByLibrary.simpleMessage("Сохранить"),
     "save_measures" : MessageLookupByLibrary.simpleMessage("Сохранять измерения"),
     "settings" : MessageLookupByLibrary.simpleMessage("Настройки"),
     "share_app_bar" : MessageLookupByLibrary.simpleMessage("Экспорт"),
     "sound" : MessageLookupByLibrary.simpleMessage("Звук"),
     "start" : MessageLookupByLibrary.simpleMessage("Старт"),
     "to_csv_app_bar" : MessageLookupByLibrary.simpleMessage("В *csv"),
+    "very_long_comment" : MessageLookupByLibrary.simpleMessage("Комментарий не может быть длиннее 256 символов!"),
     "vibration" : MessageLookupByLibrary.simpleMessage("Вибрация")
   };
 }

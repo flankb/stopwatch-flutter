@@ -322,6 +322,46 @@ class S {
       args: [],
     );
   }
+
+  /// `Edit`
+  String get editing {
+    return Intl.message(
+      'Edit',
+      name: 'editing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Input comment`
+  String get input_comment {
+    return Intl.message(
+      'Input comment',
+      name: 'input_comment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The comment cannot be longer than 256 characters!`
+  String get very_long_comment {
+    return Intl.message(
+      'The comment cannot be longer than 256 characters!',
+      name: 'very_long_comment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save`
+  String get save {
+    return Intl.message(
+      'Save',
+      name: 'save',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -28,7 +28,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "del_app_bar" : MessageLookupByLibrary.simpleMessage("Delete"),
     "details" : MessageLookupByLibrary.simpleMessage("Details"),
     "edit_app_bar" : MessageLookupByLibrary.simpleMessage("Edit"),
+    "editing" : MessageLookupByLibrary.simpleMessage("Edit"),
     "history" : MessageLookupByLibrary.simpleMessage("History"),
+    "input_comment" : MessageLookupByLibrary.simpleMessage("Input comment"),
     "keep_screen_on" : MessageLookupByLibrary.simpleMessage("Keep screen on"),
     "lap" : MessageLookupByLibrary.simpleMessage("Lap"),
     "laps" : MessageLookupByLibrary.simpleMessage("Laps"),
@@ -43,12 +45,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "reset" : MessageLookupByLibrary.simpleMessage("Reset"),
     "review" : MessageLookupByLibrary.simpleMessage("Rate and review"),
     "reviewRequestMessage" : MessageLookupByLibrary.simpleMessage("If you liked the application, please give it a rating.\nThis will help its development!"),
+    "save" : MessageLookupByLibrary.simpleMessage("Save"),
     "save_measures" : MessageLookupByLibrary.simpleMessage("Save measurements"),
     "settings" : MessageLookupByLibrary.simpleMessage("Settings"),
     "share_app_bar" : MessageLookupByLibrary.simpleMessage("Share"),
     "sound" : MessageLookupByLibrary.simpleMessage("Sound"),
     "start" : MessageLookupByLibrary.simpleMessage("Start"),
     "to_csv_app_bar" : MessageLookupByLibrary.simpleMessage("To *csv"),
+    "very_long_comment" : MessageLookupByLibrary.simpleMessage("The comment cannot be longer than 256 characters!"),
     "vibration" : MessageLookupByLibrary.simpleMessage("Vibration")
   };
 }

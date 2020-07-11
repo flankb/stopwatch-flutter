@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:stopwatch/bloc/entity_bloc/bloc.dart';
+import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 
 class EntityEditPage extends StatelessWidget {
@@ -16,7 +17,9 @@ class EntityEditPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-            child: EditForm(entity: entity,)));
+            child: EditForm(
+      entity: entity,
+    )));
   }
 }
 
@@ -73,7 +76,12 @@ class EditFormState extends State<EditForm> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             BackButton(),
-            Flexible(child: Text("Редактирование", maxLines: 1, style: TextStyle(fontSize: 36),))
+            Flexible(
+                child: Text(
+              S.of(context).editing,
+              maxLines: 1,
+              style: TextStyle(fontSize: 36),
+            ))
           ],
         ),
         Expanded(
@@ -92,28 +100,13 @@ class EditFormState extends State<EditForm> {
                       children: <Widget>[
                         TextFormField(
                           autofocus: true,
-
-
-
                           decoration: InputDecoration(
-                              labelText: 'Введите комментарий',
-                              /*labelStyle: TextStyle(
-                                  color:  Colors.blue,
-
-                              ),
-
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.blue
-                                )
-                            ),*/
-
+                            labelText: S.of(context).input_comment,
                           ),
-                          //initialValue: snapshot is AvailableEntityState ? snapshot?.entity?.comment : "",
                           controller: textController,
                           validator: (value) {
-                            if (value.isEmpty) {
-                              return 'Поле не может быть пустым!';
+                            if (value.length > 256) {
+                              return S.of(context).very_long_comment;
                             }
 
                             return null;
@@ -124,19 +117,14 @@ class EditFormState extends State<EditForm> {
                           child: RaisedButton(
                             color: Theme.of(context).primaryColor,
                             onPressed: () {
-                              // Validate returns true if the form is valid, or false
-                              // otherwise.
                               if (_formKey.currentState.validate()) {
-                                // If the form is valid, display a Snackbar.
-                                //Scaffold.of(context).showSnackBar(SnackBar(content: Text('Обработка данных..')));
-
                                 widget.entity.comment = textController.text;
                                 entityBloc.add(SaveEntityEvent(widget.entity));
 
                                 Navigator.pop(context);
                               }
                             },
-                            child: Text('Сохранить'),
+                            child: Text(S.of(context).save),
                           ),
                         ),
                       ],
