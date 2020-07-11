@@ -175,8 +175,8 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       state.measure.status = StopwatchStatus.Started;
       final nowDate = DateTime.now();
 
-      if (state.measure.dateCreated == null) {
-        state.measure.dateCreated = nowDate;
+      if (state.measure.dateStarted == null) {
+        state.measure.dateStarted = nowDate;
       }
 
       _updateElapseds(state.measure, nowDate);

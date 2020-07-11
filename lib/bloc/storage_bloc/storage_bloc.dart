@@ -57,8 +57,8 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
           result = result
               .map((e) => e as MeasureViewModel)
               .where((measure) =>
-                  measure.dateCreated.millisecondsSinceEpoch > event.filter.dateFrom.millisecondsSinceEpoch &&
-                  measure.dateCreated.millisecondsSinceEpoch < event.filter.dateTo.millisecondsSinceEpoch)
+                  measure.dateStarted.millisecondsSinceEpoch > event.filter.dateFrom.millisecondsSinceEpoch &&
+                  measure.dateStarted.millisecondsSinceEpoch < event.filter.dateTo.millisecondsSinceEpoch)
               .toList();
         }
 

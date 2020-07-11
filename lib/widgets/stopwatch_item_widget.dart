@@ -72,7 +72,7 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
     final elapsedString = TimeDisplayer.formatAllBeautiful(Duration(milliseconds: elapsed));
     final differenceString = difference != null ? "+${TimeDisplayer.formatAllBeautiful(Duration(milliseconds: difference))}" : null;
 
-    final date = entityIsMeasure ? (widget.entity as MeasureViewModel).dateCreated : null;
+    final date = entityIsMeasure ? (widget.entity as MeasureViewModel).dateStarted : null;
 
     final rand = r.nextInt(4);
     final num = pow(3, rand);

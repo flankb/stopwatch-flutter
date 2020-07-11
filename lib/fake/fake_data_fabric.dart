@@ -14,8 +14,8 @@ class FakeDataFabric {
 
   static List<MeasureViewModel> measuresHistory() {
     final list = [
-      MeasureViewModel(id: 2, comment: "Пробежка", elapsed: 10000, laps: null, status: StopwatchStatus.Finished, dateCreated: DateTime.now()),
-      MeasureViewModel(id: 3, comment: "Стометровка", elapsed: 25000, laps: null, status: StopwatchStatus.Finished, dateCreated: DateTime.now())
+      MeasureViewModel(id: 2, comment: "Пробежка", elapsed: 10000, laps: null, status: StopwatchStatus.Finished, dateStarted: DateTime.now()),
+      MeasureViewModel(id: 3, comment: "Стометровка", elapsed: 25000, laps: null, status: StopwatchStatus.Finished, dateStarted: DateTime.now())
     ];
 
     return list;

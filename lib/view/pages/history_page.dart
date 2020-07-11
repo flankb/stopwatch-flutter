@@ -131,7 +131,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
 
                 final overallElapsed = pageIsLap ? TimeDisplayer.formatAllBeautifulFromMills((widget.entityId as MeasureViewModel).elapsed) : "";
                 final comment = pageIsLap ? (widget.entityId as MeasureViewModel).comment : "";
-                final createDate = pageIsLap ? TimeDisplayer.formatDate((widget.entityId as MeasureViewModel).dateCreated, context: context) : "";
+                final createDate = pageIsLap ? TimeDisplayer.formatDate((widget.entityId as MeasureViewModel).dateStarted, context: context) : "";
 
                 final existsMeasures = availState.entities.any((element) => true);
 

@@ -9,7 +9,7 @@ import 'stopwatch_status.dart';
 class MeasureViewModel extends BaseStopwatchEntity {
   int elapsed;
   int elapsedLap;
-  DateTime dateCreated;
+  DateTime dateStarted;
   StopwatchStatus status;
   List<LapViewModel> laps;
   List<MeasureSessionViewModel> sessions;
@@ -26,7 +26,7 @@ class MeasureViewModel extends BaseStopwatchEntity {
     this.laps,
     this.sessions,
     this.status = StopwatchStatus.Ready,
-    this.dateCreated}) : super(id: id, comment : comment) {
+    this.dateStarted}) : super(id: id, comment : comment) {
     this.lastRestartedOverall = lastRestartedOverall ?? DateTime.now();
     this.laps = laps ?? List<LapViewModel>();
     this.sessions = sessions ?? List<MeasureSessionViewModel>();
@@ -48,7 +48,7 @@ class MeasureViewModel extends BaseStopwatchEntity {
       laps: laps ?? this.laps,
       sessions: sessions ?? this.sessions,
       status: status ?? this.status,
-      dateCreated: dateCreated ?? this.dateCreated);
+      dateStarted: dateCreated ?? this.dateStarted);
   }
 
   List<String> elapsedTime() {
@@ -60,7 +60,7 @@ class MeasureViewModel extends BaseStopwatchEntity {
   }
 
   int getElapsedSinceStarted(DateTime dateNow){
-    return dateNow.difference(dateCreated).inMilliseconds;
+    return dateNow.difference(dateStarted).inMilliseconds;
   }
 
   int getSumOfElapsed(DateTime dateNow) {
@@ -102,22 +102,22 @@ class MeasureViewModel extends BaseStopwatchEntity {
   }
 
   Measure toEntity() {
-    return Measure(id: id, comment: comment, status: describeEnum(status), dateStarted: dateCreated, elapsed: elapsed);
+    return Measure(id: id, comment: comment, status: describeEnum(status), dateStarted: dateStarted, elapsed: elapsed);
   }
 
   static MeasureViewModel fromEntity(Measure entity) {
     return MeasureViewModel(id: entity.id,
         comment: entity.comment,
         status: StopwatchStatus.values.firstWhere((e) => describeEnum(e) == entity.status),
-        dateCreated: entity.dateStarted,
+        dateStarted: entity.dateStarted,
         elapsed: entity.elapsed);
   }
 
   @override
   String toString() {
-    return 'MeasureViewModel{id: $id, comment: $comment,  elapsed: $elapsed, elapsedLap: $elapsedLap, dateCreated: $dateCreated, status: $status}';
+    return 'MeasureViewModel{id: $id, comment: $comment,  elapsed: $elapsed, elapsedLap: $elapsedLap, dateCreated: $dateStarted, status: $status}';
   }
 
   @override
-  List<Object> get props => super.props..addAll([elapsed, elapsedLap, dateCreated, status, laps, sessions]);
+  List<Object> get props => super.props..addAll([elapsed, elapsedLap, dateStarted, status, laps, sessions]);
 }

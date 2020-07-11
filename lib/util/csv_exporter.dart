@@ -26,7 +26,7 @@ class CsvExporter {
 
       final elapsedTime = element.elapsedTime();
 
-      String row = "${element.dateCreated}\t${elapsedTime[0]},${elapsedTime[1]}\t${element.comment}\t\t\t\t";
+      String row = "${element.dateStarted}\t${elapsedTime[0]},${elapsedTime[1]}\t${element.comment}\t\t\t\t";
       csvBody.writeln(row);
 
       // Загрузить круги для текущего измерения
