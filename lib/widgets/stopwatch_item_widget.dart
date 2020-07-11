@@ -62,6 +62,8 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     debugPrint("buildState ${widget.key}");
 
     final entityIsMeasure = widget.entity is MeasureViewModel;
@@ -75,7 +77,7 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
     final date = entityIsMeasure ? (widget.entity as MeasureViewModel).dateStarted : null;
 
     final rand = r.nextInt(4);
-    final num = pow(3, rand);
+    //final num = pow(3, rand);
 
     return InkWell(
       onLongPress: () => {
