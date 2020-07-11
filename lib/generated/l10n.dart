@@ -453,30 +453,30 @@ class S {
     );
   }
 
-  /// `hours`
+  /// `hrs.`
   String get hours {
     return Intl.message(
-      'hours',
+      'hrs.',
       name: 'hours',
       desc: '',
       args: [],
     );
   }
 
-  /// `minutes`
+  /// `min.`
   String get minutes {
     return Intl.message(
-      'minutes',
+      'min.',
       name: 'minutes',
       desc: '',
       args: [],
     );
   }
 
-  /// `seconds`
+  /// `sec.`
   String get seconds {
     return Intl.message(
-      'seconds',
+      'sec.',
       name: 'seconds',
       desc: '',
       args: [],

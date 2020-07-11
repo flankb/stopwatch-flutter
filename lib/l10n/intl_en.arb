@@ -41,7 +41,7 @@
   "to" : "To",
   "cancel" : "Cancel",
   "days" : "days",
-  "hours" : "hours",
-  "minutes" : "minutes",
-  "seconds" : "seconds"
+  "hours" : "hrs.",
+  "minutes" : "min.",
+  "seconds" : "sec."
 }
