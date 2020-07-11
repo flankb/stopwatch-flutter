@@ -236,7 +236,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                     },
                                   )),
                             )
-                          : Expanded(
+                          : widget.pageType is MeasureViewModel ? Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Text(
@@ -244,7 +244,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                 textAlign: TextAlign.left,
                                 style: TextStyle(color: InheritedThemeNotifier.of(context).themeData.subtitleColor, fontSize: 18),
                             ),
-                              )),
+                              )) : SizedBox(),
 
                       StreamBuilder<int>(
                           stream: _selectedItemsStreamController.stream,

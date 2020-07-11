@@ -120,7 +120,10 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  if(difference != null) Text(differenceString, style: TextStyle(fontSize: 18,  height: 1.0,)),
+                  if(difference != null) Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Text(differenceString, style: TextStyle(fontSize: 18,  height: 1.0,)),
+                  ),
                   Text(elapsedString, style: TextStyle(fontSize: 18,  height: 1.0, color: entityIsMeasure ? Theme.of(context).textTheme.bodyText1.color : InheritedThemeNotifier.of(context).themeData.subtitleColor)),
                   SizedBox(height: 6),
                   widget.entity.comment != null ?
