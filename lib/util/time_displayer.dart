@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'package:stopwatch/generated/l10n.dart';
 
 class TimeDisplayer {
   static int _dayMills = 24 * 3600 * 1000;
@@ -58,7 +59,7 @@ class TimeDisplayer {
       final splittingDays = time.split('.');
       final days = splittingDays[0];
 
-      stringBuffer.write(days + " сут. ");
+      stringBuffer.write(days + " ${S.current.days} ");
 
       time = splittingDays[1];
     }
@@ -70,13 +71,13 @@ class TimeDisplayer {
     array.reversed.toList().asMap().forEach((index, value) {
       switch(index){
         case 0:
-          tokens.add(value + ' сек.');
+          tokens.add(value + ' ${S.current.seconds}');
           break;
         case 1:
-          tokens.add(value + ' мин.');
+          tokens.add(value + ' ${S.current.minutes}');
           break;
         case 2:
-          tokens.add(value + ' час.');
+          tokens.add(value + ' ${S.current.hours}');
           break;
       }
     });

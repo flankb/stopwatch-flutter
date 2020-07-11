@@ -39,5 +39,9 @@
   "must_not_be_empty" : "Field must not be empty!",
   "from" : "From",
   "to" : "To",
-  "cancel" : "Cancel"
+  "cancel" : "Cancel",
+  "days" : "days",
+  "hours" : "hours",
+  "minutes" : "minutes",
+  "seconds" : "seconds"
 }
