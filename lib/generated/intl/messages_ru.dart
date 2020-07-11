@@ -22,12 +22,14 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
     "about" : MessageLookupByLibrary.simpleMessage("О программе"),
+    "app_theme" : MessageLookupByLibrary.simpleMessage("Тема приложения"),
     "comment" : MessageLookupByLibrary.simpleMessage("Комментарий"),
     "date_created" : MessageLookupByLibrary.simpleMessage("Дата"),
     "del_app_bar" : MessageLookupByLibrary.simpleMessage("Удалить"),
     "details" : MessageLookupByLibrary.simpleMessage("Подробности"),
     "edit_app_bar" : MessageLookupByLibrary.simpleMessage("Ред."),
     "history" : MessageLookupByLibrary.simpleMessage("История"),
+    "keep_screen_on" : MessageLookupByLibrary.simpleMessage("Сохранять экран включенным"),
     "lap" : MessageLookupByLibrary.simpleMessage("Круг"),
     "laps" : MessageLookupByLibrary.simpleMessage("Круги"),
     "later" : MessageLookupByLibrary.simpleMessage("ПОЗЖЕ"),
@@ -41,9 +43,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "reset" : MessageLookupByLibrary.simpleMessage("Сброс"),
     "review" : MessageLookupByLibrary.simpleMessage("Оценить приложение"),
     "reviewRequestMessage" : MessageLookupByLibrary.simpleMessage("Если вам понравилось приложение, пожалуйста поставьте ему оценку.\nЭто поможет его развитию!"),
+    "save_measures" : MessageLookupByLibrary.simpleMessage("Сохранять измерения"),
     "settings" : MessageLookupByLibrary.simpleMessage("Настройки"),
     "share_app_bar" : MessageLookupByLibrary.simpleMessage("Экспорт"),
+    "sound" : MessageLookupByLibrary.simpleMessage("Звук"),
     "start" : MessageLookupByLibrary.simpleMessage("Старт"),
-    "to_csv_app_bar" : MessageLookupByLibrary.simpleMessage("В *csv")
+    "to_csv_app_bar" : MessageLookupByLibrary.simpleMessage("В *csv"),
+    "vibration" : MessageLookupByLibrary.simpleMessage("Вибрация")
   };
 }

@@ -272,6 +272,56 @@ class S {
       args: [],
     );
   }
+
+  /// `Sound`
+  String get sound {
+    return Intl.message(
+      'Sound',
+      name: 'sound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vibration`
+  String get vibration {
+    return Intl.message(
+      'Vibration',
+      name: 'vibration',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Keep screen on`
+  String get keep_screen_on {
+    return Intl.message(
+      'Keep screen on',
+      name: 'keep_screen_on',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save measurements`
+  String get save_measures {
+    return Intl.message(
+      'Save measurements',
+      name: 'save_measures',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `App theme`
+  String get app_theme {
+    return Intl.message(
+      'App theme',
+      name: 'app_theme',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

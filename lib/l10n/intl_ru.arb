@@ -22,5 +22,10 @@
   "del_app_bar" : "Удалить",
   "no_possible_delete_laps" : "Круги нельзя удалять!",
   "share_app_bar" : "Экспорт",
-  "to_csv_app_bar" : "В *csv"
+  "to_csv_app_bar" : "В *csv",
+  "sound" : "Звук",
+  "vibration" : "Вибрация",
+  "keep_screen_on" : "Сохранять экран включенным",
+  "save_measures" : "Сохранять измерения",
+  "app_theme" : "Тема приложения"
 }

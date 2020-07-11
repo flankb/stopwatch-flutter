@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:preferences/preferences.dart';
+import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/widgets/inherited/app_theme_notified.dart';
 import 'package:validators/validators.dart';
 
@@ -19,37 +20,37 @@ class SettingsPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   BackButton(),
-                  Text("Настройки", style: TextStyle(fontSize: 36),)
+                  Text(S.of(context).settings, style: TextStyle(fontSize: 36),)
                 ],
               ),
               Expanded(
                 child: PreferencePage([
                   SwitchPreference(
-                    'Звук',
+                    S.of(context).sound,
                     PREF_SOUND,
                     defaultVal: true,
                   ),
                   SwitchPreference(
-                    'Вибрация',
+                    S.of(context).vibration,
                     PREF_VIBRATION,
                     defaultVal: true,
                   ),
                   SwitchPreference(
-                    'Сохранять экран включенным',
+                    S.of(context).keep_screen_on,
                     PREF_KEEP_SCREEN_AWAKE,
                     defaultVal: false,
                     //desc: "Вкл",
                   ),
 
                   SwitchPreference(
-                    'Сохранять измерения',
+                    S.of(context).save_measures,
                     PREF_SAVE_MEASURES,
                     defaultVal: true,
                     //desc: "Вкл",
                   ),
 
                   DropdownPreference<String>( //
-                    'Тема приложения',
+                    S.of(context).app_theme,
                     PREF_THEME,
                     defaultVal: AppTheme.BlueLight.toString(),
                     onChange: (v) {

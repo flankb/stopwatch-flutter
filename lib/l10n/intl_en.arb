@@ -22,5 +22,10 @@
   "del_app_bar" : "Delete",
   "no_possible_delete_laps" : "Laps cannot be removed!",
   "share_app_bar" : "Share",
-  "to_csv_app_bar" : "To *csv"
+  "to_csv_app_bar" : "To *csv",
+  "sound" : "Sound",
+  "vibration" : "Vibration",
+  "keep_screen_on" : "Keep screen on",
+  "save_measures" : "Save measurements",
+  "app_theme" : "App theme"
 }

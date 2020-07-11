@@ -22,12 +22,14 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
     "about" : MessageLookupByLibrary.simpleMessage("About"),
+    "app_theme" : MessageLookupByLibrary.simpleMessage("App theme"),
     "comment" : MessageLookupByLibrary.simpleMessage("Comment"),
     "date_created" : MessageLookupByLibrary.simpleMessage("Date"),
     "del_app_bar" : MessageLookupByLibrary.simpleMessage("Delete"),
     "details" : MessageLookupByLibrary.simpleMessage("Details"),
     "edit_app_bar" : MessageLookupByLibrary.simpleMessage("Edit"),
     "history" : MessageLookupByLibrary.simpleMessage("History"),
+    "keep_screen_on" : MessageLookupByLibrary.simpleMessage("Keep screen on"),
     "lap" : MessageLookupByLibrary.simpleMessage("Lap"),
     "laps" : MessageLookupByLibrary.simpleMessage("Laps"),
     "later" : MessageLookupByLibrary.simpleMessage("LATER"),
@@ -41,9 +43,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "reset" : MessageLookupByLibrary.simpleMessage("Reset"),
     "review" : MessageLookupByLibrary.simpleMessage("Rate and review"),
     "reviewRequestMessage" : MessageLookupByLibrary.simpleMessage("If you liked the application, please give it a rating.\nThis will help its development!"),
+    "save_measures" : MessageLookupByLibrary.simpleMessage("Save measurements"),
     "settings" : MessageLookupByLibrary.simpleMessage("Settings"),
     "share_app_bar" : MessageLookupByLibrary.simpleMessage("Share"),
+    "sound" : MessageLookupByLibrary.simpleMessage("Sound"),
     "start" : MessageLookupByLibrary.simpleMessage("Start"),
-    "to_csv_app_bar" : MessageLookupByLibrary.simpleMessage("To *csv")
+    "to_csv_app_bar" : MessageLookupByLibrary.simpleMessage("To *csv"),
+    "vibration" : MessageLookupByLibrary.simpleMessage("Vibration")
   };
 }
