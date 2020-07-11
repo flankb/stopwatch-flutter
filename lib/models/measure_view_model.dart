@@ -68,12 +68,12 @@ class MeasureViewModel extends BaseStopwatchEntity {
 
     debugPrint("All Sessions: ");
     sessions.forEach((element) { debugPrint(element.toString()); });
-    sessions.where((element) => element.finished != null).forEach((s) => elapsed += (s.finished - s.started)); // TODO При добавлении круга здесь ошибка!
+    sessions.where((element) => element.finishedOffset != null).forEach((s) => elapsed += (s.finishedOffset - s.startedOffset)); // TODO При добавлении круга здесь ошибка!
 
     final lastUnfinishedSession = getLastUnfinishedSession();
 
     final elapsedAll = lastUnfinishedSession != null
-        ? elapsed + (getElapsedSinceStarted(dateNow) - lastUnfinishedSession.started) //dateNow.difference(lastUnfinishedSession.started).inMilliseconds
+        ? elapsed + (getElapsedSinceStarted(dateNow) - lastUnfinishedSession.startedOffset) //dateNow.difference(lastUnfinishedSession.started).inMilliseconds
         : elapsed;
 
     return elapsedAll;
@@ -92,13 +92,13 @@ class MeasureViewModel extends BaseStopwatchEntity {
   }
 
   MeasureSessionViewModel getLastUnfinishedSession() {
-    sessions.sort((a,b) => a.started.compareTo(b.started));
+    sessions.sort((a,b) => a.startedOffset.compareTo(b.startedOffset));
 
-    if (sessions.where((element) => element.finished == null).length > 1) {
+    if (sessions.where((element) => element.finishedOffset == null).length > 1) {
       throw new Exception("Обнаружено более одной измерительной сессии с открытым окончанием!");
     }
 
-    return sessions.lastWhere((s) => s.finished == null, orElse: () => null);
+    return sessions.lastWhere((s) => s.finishedOffset == null, orElse: () => null);
   }
 
   Measure toEntity() {

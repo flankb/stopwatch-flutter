@@ -196,7 +196,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       debugPrint("targetMeasure ${targetMeasure.toString()}");
 
       if (!resume) {
-        final session = MeasureSessionViewModel(id: null, measureId: targetMeasure.id, started: targetMeasure.getElapsedSinceStarted(nowDate)); // TODO id здесь пустой
+        final session = MeasureSessionViewModel(id: null, measureId: targetMeasure.id, startedOffset: targetMeasure.getElapsedSinceStarted(nowDate)); // TODO id здесь пустой
         targetMeasure.sessions.add(session);
 
         debugPrint("measureId (not resume) ${session.measureId.toString()}");
@@ -252,7 +252,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     }
 
     if (lastSession != null) {
-      lastSession.finished = state.measure.getElapsedSinceStarted(dateNow); //dateNow;
+      lastSession.finishedOffset = state.measure.getElapsedSinceStarted(dateNow); //dateNow;
     }
 
     debugPrint("LastUnfinishedSession (updated): " + lastSession.toString());

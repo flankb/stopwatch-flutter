@@ -4,29 +4,29 @@ import 'package:stopwatch/model/database_models.dart';
 class MeasureSessionViewModel with EquatableMixin {
   int id;
   int measureId;
-  int started;
-  int finished;
+  int startedOffset;
+  int finishedOffset;
 
-  MeasureSessionViewModel({this.id, this.measureId, this.started, this.finished});
+  MeasureSessionViewModel({this.id, this.measureId, this.startedOffset, this.finishedOffset});
 
   MeasureSession toEntity() {
-    return MeasureSession(id: id, measureId: measureId, startedOffset: started, finishedOffset: finished);
+    return MeasureSession(id: id, measureId: measureId, startedOffset: startedOffset, finishedOffset: finishedOffset);
   }
 
   static MeasureSessionViewModel fromEntity(MeasureSession entity) {
     return MeasureSessionViewModel(id: entity.id,
         measureId: entity.measureId,
-        started: entity.startedOffset,
-        finished: entity.finishedOffset);
+        startedOffset: entity.startedOffset,
+        finishedOffset: entity.finishedOffset);
   }
 
   @override
   String toString() {
-    return 'MeasureSessionViewModel{id: $id, measureId: $measureId, started: $started, finished: $finished}';
+    return 'MeasureSessionViewModel{id: $id, measureId: $measureId, started: $startedOffset, finished: $finishedOffset}';
   }
 
   @override
   List<Object> get props {
-    return [id, measureId, started, finished];
+    return [id, measureId, startedOffset, finishedOffset];
   }
 }
