@@ -5,6 +5,8 @@ import 'package:stopwatch/util/time_displayer.dart';
 
 import 'stopwatch_proxy_models.dart';
 import 'stopwatch_status.dart';
+import 'package:stopwatch/util/math_helper.dart';
+
 
 class MeasureViewModel extends BaseStopwatchEntity {
   int elapsed;
@@ -82,7 +84,7 @@ class MeasureViewModel extends BaseStopwatchEntity {
   List<int> getCurrentLapDiffAndOverall(DateTime dateNow) {
     // Метод должен работать как при завершенной, так и незавершенной сессии
 
-    final newOverall = getSumOfElapsed(dateNow);
+    final newOverall = getSumOfElapsed(dateNow).truncateToHundreds();
 
     // Здесь же можно найти разницу с предыдущим кругом
     final prevLapOverall = laps.any((_) => true) ? laps.last.overall : 0;
