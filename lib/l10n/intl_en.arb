@@ -33,5 +33,11 @@
   "very_long_comment" : "The comment cannot be longer than 256 characters!",
   "save" : "Save",
   "stopwatch" : "Stopwatch",
-  "version" : "Version"
+  "version" : "Version",
+  "measures_filter" : "Filter",
+  "comment_contains" : "Comment contains...",
+  "must_not_be_empty" : "Field must not be empty!",
+  "from" : "From",
+  "to" : "To",
+  "cancel" : "Cancel"
 }

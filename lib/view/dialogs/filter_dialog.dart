@@ -3,6 +3,7 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/models/filter.dart';
 
 class FilterDialog extends StatelessWidget {
@@ -64,7 +65,8 @@ class FilterFormState extends State<FilterForm> {
 
   @override
   Widget build(BuildContext context) {
-    final format = DateFormat("yyyy-MM-dd");
+    Locale myLocale = Localizations.localeOf(context);
+    final dateFormat = DateFormat.yMMMMd(myLocale.languageCode);
 
     // Build a Form widget using the _formKey created above.
     return SingleChildScrollView(
@@ -91,14 +93,14 @@ class FilterFormState extends State<FilterForm> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text("Фильтр измерений", style: TextStyle(
+                      Text(S.of(context).measures_filter, style: TextStyle(
                         fontSize: 18
                       ),),
                       SizedBox(height: 12,),
                       TextFormField(
                         initialValue: widget.filter.query,
                         decoration: InputDecoration(
-                          hintText: "Наименование содержит..."
+                          hintText: S.of(context).comment_contains
                         ),
                         onSaved: (val) => setState(() {
                           debugPrint(val);
@@ -113,17 +115,17 @@ class FilterFormState extends State<FilterForm> {
                       ),
                       SizedBox(height: 6,),
                       DateTimeField(
-                        format: format,
+                        format: dateFormat,
                         onSaved: (dt){
                           widget.filter.dateFrom = dt;
                         },
                         validator: (value) {
                           if (value == null) {
-                            return 'Поле не может быть пустым!';
+                            return S.of(context).must_not_be_empty;
                           }
                           return null;
                         },
-                        decoration: InputDecoration(labelText: "С:", labelStyle: TextStyle(color: Theme.of(context).accentColor)),
+                        decoration: InputDecoration(labelText: "${S.of(context).from}:", labelStyle: TextStyle(color: Theme.of(context).accentColor)),
                         initialValue: widget.filter.dateFrom,
                         onShowPicker: (context, currentValue) {
                           return showDatePicker(
@@ -135,16 +137,16 @@ class FilterFormState extends State<FilterForm> {
                       ),
                       SizedBox(height: 6,),
                       DateTimeField(
-                        format: format,
+                        format: dateFormat,
                         onSaved: (dt){
-                          // TODO setState вроде не нужен
+                          // setState вроде не нужен
                           widget.filter.dateTo = dt;
                         },
-                        decoration: InputDecoration(labelText: "По:", labelStyle: TextStyle(color: Theme.of(context).accentColor)),
+                        decoration: InputDecoration(labelText: "${S.of(context).to}:", labelStyle: TextStyle(color: Theme.of(context).accentColor)),
                         initialValue: widget.filter.dateTo,
                         validator: (value) {
                           if (value == null) {
-                            return 'Поле не может быть пустым!';
+                            return S.of(context).must_not_be_empty;
                           }
                           return null;
                         },
@@ -174,7 +176,7 @@ class FilterFormState extends State<FilterForm> {
                               },
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text('СОХРАНИТЬ'),
+                                child: Text(S.of(context).save),
                               ),
                             ),
                             SizedBox(
@@ -186,7 +188,7 @@ class FilterFormState extends State<FilterForm> {
                               },
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text('ОТМЕНА'),
+                                child: Text(S.of(context).cancel),
                               ),
                             )
                           ],
@@ -200,6 +202,5 @@ class FilterFormState extends State<FilterForm> {
         ],
       ),
     );
-
   }
 }

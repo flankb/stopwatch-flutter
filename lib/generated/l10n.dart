@@ -382,6 +382,66 @@ class S {
       args: [],
     );
   }
+
+  /// `Filter`
+  String get measures_filter {
+    return Intl.message(
+      'Filter',
+      name: 'measures_filter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Comment contains...`
+  String get comment_contains {
+    return Intl.message(
+      'Comment contains...',
+      name: 'comment_contains',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Field must not be empty!`
+  String get must_not_be_empty {
+    return Intl.message(
+      'Field must not be empty!',
+      name: 'must_not_be_empty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `From`
+  String get from {
+    return Intl.message(
+      'From',
+      name: 'from',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `To`
+  String get to {
+    return Intl.message(
+      'To',
+      name: 'to',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel`
+  String get cancel {
+    return Intl.message(
+      'Cancel',
+      name: 'cancel',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
