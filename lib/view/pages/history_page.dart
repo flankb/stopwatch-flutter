@@ -236,7 +236,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                     },
                                   )),
                             )
-                          : widget.pageType is MeasureViewModel ? Expanded(
+                          : widget.pageType == MeasureViewModel ? Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Text(

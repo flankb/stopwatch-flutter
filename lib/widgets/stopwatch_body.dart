@@ -17,6 +17,7 @@ import 'package:stopwatch/widgets/measure_lap_item.dart';
 import 'package:preferences/preference_service.dart';
 import 'package:stopwatch/widgets/metro_app_bar.dart';
 import 'package:vibration/vibration.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 import 'package:wakelock/wakelock.dart';
 
 import 'buttons_bar.dart';
@@ -58,248 +59,273 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("StopwatchBody build");
+    debugPrint("StopwatchBody build. Mounted is ${mounted.toString()}");
+
+    // TODO Здесь можно инициализировать WakeLock
 
     //List<LapViewModel> items = FakeDataFabric.mainPageLaps();
-    return BlocBuilder<MeasureBloc, MeasureState>(builder: (BuildContext context, MeasureState state) {
-      final mediaQueryOrientation = MediaQuery.of(context).orientation;
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 32, 0, 0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: StreamBuilder<int>(
-                  initialData: 0,
-                  stream: widget.measureBloc.tickStream,
-                  builder: (context, snapshot) {
-                    /*if (snapshot.data == -1) {
-                      debugPrint("Hash code 2: ${state.measure.hashCode}");
-                      debugPrint("StreamBuilder ok! Measure ${state.measure} LastRestarted ${state.measure.lastRestartedOverall}");
-                    }*/
+    /*
+    key: Key('my-widget-key'),
+      onVisibilityChanged: (VisibilityInfo info) {
+        var visiblePercentage = info.visibleFraction * 100;
+        debugPrint('Widget ${info.key} is $visiblePercentage% visible');
+      },
+     */
 
-                    final delta1 = snapshot.data > 0 ? DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds : 0;
-                    final overallDifference = state.measure.elapsed + delta1; // TODO elapsed не сбрасывается
-                    final lapDifference = state.measure.elapsedLap + delta1;
+    return VisibilityDetector(
+      key: Key('STOPWATCH_VISIBILITY_key'),
+      onVisibilityChanged: (VisibilityInfo info) async {
+        var visiblePercentage = info.visibleFraction * 100;
+        debugPrint('Widget ${info.key} is $visiblePercentage% visible');
 
-                    final d1 = Duration(milliseconds: overallDifference);
-                    final d2 = Duration(milliseconds: lapDifference);
+        if(visiblePercentage > 50){
+          await _enableWakeLock();
+        }
+        else{
+          await _disableWakelock();
+        }
+      },
+      child: BlocBuilder<MeasureBloc, MeasureState>(builder: (BuildContext context, MeasureState state) {
+        final mediaQueryOrientation = MediaQuery.of(context).orientation;
 
-                    return AnimatedBuilder(
-                        animation: _controller,
-                        builder: (context, widget) {
-                          return Transform.translate(
-                            offset: Offset(0 + _controller.value, 0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                                  textBaseline: TextBaseline.ideographic,
-                                  children: <Widget>[
-                                    Text(
-                                      "${TimeDisplayer.formatBase(d2)},",
-                                      style: TextStyle(fontSize: 30),
-                                    ),
-                                    Text(
-                                      TimeDisplayer.formatMills(d2),
-                                      style: TextStyle(fontSize: 20),
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                                  textBaseline: TextBaseline.ideographic,
-                                  children: <Widget>[
-                                    Text(
-                                      "${TimeDisplayer.formatBase(d1)},",
-                                      style: TextStyle(fontSize: 44),
-                                    ),
-                                    Text(
-                                      TimeDisplayer.formatMills(d1),
-                                      style: TextStyle(fontSize: 32),
-                                    )
-                                  ],
-                                )
-                              ],
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 32, 0, 0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: StreamBuilder<int>(
+                    initialData: 0,
+                    stream: widget.measureBloc.tickStream,
+                    builder: (context, snapshot) {
+                      /*if (snapshot.data == -1) {
+                        debugPrint("Hash code 2: ${state.measure.hashCode}");
+                        debugPrint("StreamBuilder ok! Measure ${state.measure} LastRestarted ${state.measure.lastRestartedOverall}");
+                      }*/
+
+                      final delta1 = snapshot.data > 0 ? DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds : 0;
+                      final overallDifference = state.measure.elapsed + delta1; // TODO elapsed не сбрасывается
+                      final lapDifference = state.measure.elapsedLap + delta1;
+
+                      final d1 = Duration(milliseconds: overallDifference);
+                      final d2 = Duration(milliseconds: lapDifference);
+
+                      return AnimatedBuilder(
+                          animation: _controller,
+                          builder: (context, widget) {
+                            return Transform.translate(
+                              offset: Offset(0 + _controller.value, 0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                                    textBaseline: TextBaseline.ideographic,
+                                    children: <Widget>[
+                                      Text(
+                                        "${TimeDisplayer.formatBase(d2)},",
+                                        style: TextStyle(fontSize: 30),
+                                      ),
+                                      Text(
+                                        TimeDisplayer.formatMills(d2),
+                                        style: TextStyle(fontSize: 20),
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                                    textBaseline: TextBaseline.ideographic,
+                                    children: <Widget>[
+                                      Text(
+                                        "${TimeDisplayer.formatBase(d1)},",
+                                        style: TextStyle(fontSize: 44),
+                                      ),
+                                      Text(
+                                        TimeDisplayer.formatMills(d1),
+                                        style: TextStyle(fontSize: 32),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            );
+                          });
+                    }),
+              ),
+            ),
+
+            if (state is MeasurePausedState) Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: Text(
+                  TimeDisplayer.humanFormat(Duration(milliseconds: state.measure.elapsed)),
+                textAlign: TextAlign.left,
+                style: TextStyle(fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+              ),
+            ),
+
+            Expanded(
+              flex: 3,
+              child: ListView.builder(
+                itemCount: state.measure.laps.length,
+                controller: _scrollController,
+                itemBuilder: (BuildContext context, int index) {
+                  final lap = state.measure.laps[index];
+
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+                    child: MeasureLapItem(
+                      difference: "+${lap.differenceTime()},${lap.differenceMills()}",
+                      order: lap.order,
+                      overall: "${lap.overallTime()},${lap.overallMills()}",
+                    ),
+                  );
+                },
+              ),
+            ),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: mediaQueryOrientation == Orientation.portrait ? 150 : 70,
+                //minHeight: 100
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
+                        child: RawMaterialButton(
+                          //enableFeedback: false
+                          child: Padding(
+                            padding: EdgeInsets.all(0),
+                            child: Text(
+                              state is MeasureStartedState ? S.of(context).pause : S.of(context).start,
+                              style: TextStyle(fontSize: 28, color: Colors.white),
                             ),
-                          );
-                        });
-                  }),
-            ),
-          ),
+                          ),
+                          onPressed: () {
+                            if (state is MeasureReadyState || state is MeasurePausedState) {
+                              widget.measureBloc.add(MeasureStartedEvent());
+                            } else if (state is MeasureStartedState) {
+                              widget.measureBloc.add(MeasurePausedEvent());
+                            }
 
-          if (state is MeasurePausedState) Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: Text(
-                TimeDisplayer.humanFormat(Duration(milliseconds: state.measure.elapsed)),
-              textAlign: TextAlign.left,
-              style: TextStyle(fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
-            ),
-          ),
-
-          Expanded(
-            flex: 3,
-            child: ListView.builder(
-              itemCount: state.measure.laps.length,
-              controller: _scrollController,
-              itemBuilder: (BuildContext context, int index) {
-                final lap = state.measure.laps[index];
-
-                return Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
-                  child: MeasureLapItem(
-                    difference: "+${lap.differenceTime()},${lap.differenceMills()}",
-                    order: lap.order,
-                    overall: "${lap.overallTime()},${lap.overallMills()}",
-                  ),
-                );
-              },
-            ),
-          ),
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: mediaQueryOrientation == Orientation.portrait ? 150 : 70,
-              //minHeight: 100
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Expanded(
-                    flex: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
-                      child: RawMaterialButton(
-                        //enableFeedback: false
-                        child: Padding(
-                          padding: EdgeInsets.all(0),
-                          child: Text(
-                            state is MeasureStartedState ? S.of(context).pause : S.of(context).start,
-                            style: TextStyle(fontSize: 28, color: Colors.white),
+                            _playSound(context, 0);
+                            _vibrate();
+                          },
+                          fillColor: state is MeasureStartedState ? Colors.red : Theme.of(context).primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
                           ),
                         ),
-                        onPressed: () {
-                          if (state is MeasureReadyState || state is MeasurePausedState) {
-                            widget.measureBloc.add(MeasureStartedEvent());
-                          } else if (state is MeasureStartedState) {
-                            widget.measureBloc.add(MeasurePausedEvent());
-                          }
+                      )),
+                  Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(4, 8, 8, 8),
+                        child: RawMaterialButton(
+                          child: Padding(
+                            padding: EdgeInsets.all(0),
+                            child: Text(S.of(context).lap, style: TextStyle(fontSize: 28, color: Colors.black)),
+                          ),
+                          onPressed: state is MeasureStartedState
+                              ? () async {
+                                  widget.measureBloc.add(LapAddedEvent());
+                                  _playSound(context, 1);
+                                  _vibrate();
 
-                          _playSound(context, 0);
-                          _vibrate();
-                        },
-                        fillColor: state is MeasureStartedState ? Colors.red : Theme.of(context).primaryColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                                  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                                    _scrollController.animateTo(
+                                      _scrollController.position.maxScrollExtent,
+                                      duration: const Duration(milliseconds: 50),
+                                      curve: Curves.easeOut,
+                                    );
+                                  });
+
+                                  /*
+                                    if (_controller.isCompleted) {
+                                      _controller.reverse();
+                                    } else {
+                                      _controller.forward();
+                                    }
+                                   */
+                                }
+                              : null,
+                          fillColor: Colors.yellowAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                          ),
                         ),
-                      ),
-                    )),
-                Expanded(
-                    flex: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(4, 8, 8, 8),
-                      child: RawMaterialButton(
-                        child: Padding(
-                          padding: EdgeInsets.all(0),
-                          child: Text(S.of(context).lap, style: TextStyle(fontSize: 28, color: Colors.black)),
-                        ),
-                        onPressed: state is MeasureStartedState
-                            ? () async {
-                                widget.measureBloc.add(LapAddedEvent());
-                                _playSound(context, 1);
-                                _vibrate();
-
-                                WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                                  _scrollController.animateTo(
-                                    _scrollController.position.maxScrollExtent,
-                                    duration: const Duration(milliseconds: 50),
-                                    curve: Curves.easeOut,
-                                  );
-                                });
-
-                                /*
-                                  if (_controller.isCompleted) {
-                                    _controller.reverse();
-                                  } else {
-                                    _controller.forward();
-                                  }
-                                 */
-                              }
-                            : null,
-                        fillColor: Colors.yellowAccent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                        ),
-                      ),
-                    ))
-              ],
-            ),
-          ),
-          Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-              child: MetroAppBar(
-                primaryCommands: <PrimaryCommand>[
-                  PrimaryCommand(
-                    pic: Icons.refresh,
-                    tooltip: S.of(context).reset,
-                    onPressed: () {
-                      bool saveMeasure = PrefService.getBool(PREF_SAVE_MEASURES) ?? true;
-                      BlocProvider.of<MeasureBloc>(context).add(MeasureFinishedEvent(saveMeasure));
-
-                      if (_controller.isCompleted) {
-                        _controller.reverse();
-                      } else {
-                        _controller.forward();
-                      }
-                    },
-                  ),
-                  PrimaryCommand(
-                    pic: Icons.list,
-                    tooltip: S.of(context).history,
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-                        return HistoryPage(
-                          pageType: MeasureViewModel,
-                          entityId: null,
-                        );
-                      }));
-                    },
-                  ),
-                  PrimaryCommand(
-                    pic: Icons.settings,
-                    tooltip: S.of(context).settings,
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-                        return SettingsPage();
-                      }));
-                    },
-                  ),
+                      ))
                 ],
-                secondaryCommands: <SecondaryCommand>[
-                  SecondaryCommand(
-                      commandName: "review",
+              ),
+            ),
+            Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                child: MetroAppBar(
+                  primaryCommands: <PrimaryCommand>[
+                    PrimaryCommand(
+                      pic: Icons.refresh,
+                      tooltip: S.of(context).reset,
                       onPressed: () {
-                        LaunchReview.launch(
-                          androidAppId: "com.garnetjuice.stopwatch",
-                          iOSAppId: "585027354",
-                        );
+                        bool saveMeasure = PrefService.getBool(PREF_SAVE_MEASURES) ?? true;
+                        BlocProvider.of<MeasureBloc>(context).add(MeasureFinishedEvent(saveMeasure));
+
+                        if (_controller.isCompleted) {
+                          _controller.reverse();
+                        } else {
+                          _controller.forward();
+                        }
                       },
-                      child: Text(S.of(context).review)),
-                  SecondaryCommand(
-                      commandName: "about",
+                    ),
+                    PrimaryCommand(
+                      pic: Icons.list,
+                      tooltip: S.of(context).history,
                       onPressed: () {
                         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-                          return AboutPage();
+                          return HistoryPage(
+                            pageType: MeasureViewModel,
+                            entityId: null,
+                          );
                         }));
                       },
-                      child: Text(S.of(context).about))
-                ],
-              ))
-        ],
-      );
-    });
+                    ),
+                    PrimaryCommand(
+                      pic: Icons.settings,
+                      tooltip: S.of(context).settings,
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                          return SettingsPage();
+                        }));
+                      },
+                    ),
+                  ],
+                  secondaryCommands: <SecondaryCommand>[
+                    SecondaryCommand(
+                        commandName: "review",
+                        onPressed: () {
+                          LaunchReview.launch(
+                            androidAppId: "com.garnetjuice.stopwatch",
+                            iOSAppId: "585027354",
+                          );
+                        },
+                        child: Text(S.of(context).review)),
+                    SecondaryCommand(
+                        commandName: "about",
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                            return AboutPage();
+                          }));
+                        },
+                        child: Text(S.of(context).about))
+                  ],
+                ))
+          ],
+        );
+      }),
+    );
   }
 
   @override
@@ -327,18 +353,22 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
   }
 
   _enableWakeLock() async {
-    if (PrefService.getBool(PREF_KEEP_SCREEN_AWAKE) ?? false) {
-      debugPrint('Wakelock enabled!');
+    debugPrint('Start wakelock enabling!');
 
+    if (PrefService.getBool(PREF_KEEP_SCREEN_AWAKE) ?? false) {
       if(!(await Wakelock.isEnabled)){
         await Wakelock.enable();
+        debugPrint('Wakelock enabled!');
       }
     }
   }
 
   _disableWakelock() async {
+    debugPrint('Start wakelock disabling!');
+
     if ((await Wakelock.isEnabled)) {
       await Wakelock.disable();
+      debugPrint('Wakelock disabled!');
     }
   }
 }
