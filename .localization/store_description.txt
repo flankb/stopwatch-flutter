@@ -1,0 +1,57 @@
+//ru
+Регистрация и хранение измерений. Большие кнопки. Работа в фоне.
+
+Простой и полезный секундомер. 
+Возможности:
+-Звук, вибрация
+-Сохранение измерений в памяти
+-Работа в фоне
+-Возможность экспортировать сохраненные измерения
+
+//en
+Registration and storage of measurements. Big buttons. Work in the background.
+
+Simple and useful stopwatch. 
+With sound and vibration on the button click. Keeping measures in memory.
+It work in background and can export measurements
+
+//de
+Registrierung und Speicherung von Messungen. Große Knöpfe. Im Hintergrund arbeiten.
+
+Einfache und nützliche Stoppuhr. Mit Sound und Vibration auf Knopfdruck.
+Die Stoppuhr arbeitet im Hintergrund und erlaubt Ihnen, Messungen zu exportieren.
+
+//es
+Registro y almacenamiento de las mediciones. Botones grandes. Trabaja en el fondo.
+
+Simple y útil cronómetro. Con el sonido y las vibraciones en los botones clic.
+El cronómetro funciona en segundo plano y permite exportar las mediciones 
+
+//fi
+Mittausten rekisteröinti ja varastointi. Suuret painikkeet. Työskentele taustalla.
+
+Yksinkertainen ja kätevä sekuntikello.
+
+//pl
+Rejestracja i przechowywanie pomiarów. Duże guziki. Praca w tle.
+
+Prosty i wygodny stoper.
+Stoper działa w tle i pozwala na eksport pomiarów.
+
+//pt
+Registo e armazenamento das medições. Botões grandes. Trabalho em segundo plano.
+
+Cronômetro simples e útil. Com som e vibração no clique do botão.
+O cronómetro funciona no fundo e permite exportar medidas.
+
+//it
+Registrazione e memorizzazione delle misure. Grandi bottoni. Il lavoro in background.
+
+Cronometro semplice e utile. Con suono e vibrazione cliccando sui pulsanti.
+Il cronometro funziona in background e permette di esportare le misure.
+
+//fr
+Enregistrement et stockage des mesures. De gros boutons. Travailler en arrière-plan.
+
+Un chronomètre simple à utiliser. Avec son et vibration au toucher des boutons.
+Le chronomètre fonctionne en arrière-plan et vous permet d'exporter des mesures.
