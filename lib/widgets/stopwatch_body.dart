@@ -126,6 +126,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                                     children: <Widget>[
                                       Text(
                                         "${TimeDisplayer.formatBase(d2)},",
+                                        key: Key('lap_text'),
                                         style: TextStyle(fontSize: 30),
                                       ),
                                       Text(
@@ -140,6 +141,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                                     children: <Widget>[
                                       Text(
                                         "${TimeDisplayer.formatBase(d1)},",
+                                        key: Key('overall_text'),
                                         style: TextStyle(fontSize: 44),
                                       ),
                                       Text(
@@ -197,6 +199,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
                         child: RawMaterialButton(
+                          key: Key('start_button'),
                           //enableFeedback: false
                           child: Padding(
                             padding: EdgeInsets.all(0),
@@ -226,6 +229,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(4, 8, 8, 8),
                         child: RawMaterialButton(
+                          key: Key('lap_button'),
                           child: Padding(
                             padding: EdgeInsets.all(0),
                             child: Text(S.of(context).lap, style: TextStyle(fontSize: 28, color: Colors.black)),
