@@ -52,7 +52,7 @@ RateMyApp rateMyApp = RateMyApp(
 );
 
 AppTheme readLastTheme(){
-  final themeStr = PrefService.getString(PREF_THEME) ?? AppTheme.GreenDark.toString();
+  final themeStr = PrefService.getString(PREF_THEME) ?? AppTheme.GreenLight.toString();
   AppTheme theme = AppTheme.values.firstWhere((e) => e.toString() == themeStr);
   return theme;
 }
