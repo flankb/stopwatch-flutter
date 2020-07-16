@@ -74,7 +74,7 @@ void main() {
             expect(pausedExists, true, reason : "В базе нет измерение в статусе Paused"); //TODO !!!!
 
             // elapsed > 2 секунд
-            final measureElapsed = measure.elapsed >= 1990 && measure.elapsedLap >= 1000;
+            final measureElapsed = measure.elapsed >= 1900 && measure.elapsedLap >= 1000;
             expect(measureElapsed, true, reason: "Время не обновилось");
             break;
           case 10:
