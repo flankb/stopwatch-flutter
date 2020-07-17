@@ -96,7 +96,7 @@ class MyApp extends StatelessWidget {
       child: Builder(
         builder: (BuildContext context) {
           return MaterialApp(
-              title: 'Секундомер',
+              onGenerateTitle: (BuildContext context) => S.of(context).app_title,
               theme:  InheritedThemeNotifier.of(context).themeData.materialTheme,
               localizationsDelegates: [
                 S.delegate,

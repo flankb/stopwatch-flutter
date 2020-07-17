@@ -1,4 +1,5 @@
 {
+  "app_title" : "Cronógrafo",
   "start": "Inicio",
   "pause": "Pausa",
   "lap": "El círculo",

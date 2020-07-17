@@ -23,6 +23,7 @@ class MessageLookup extends MessageLookupByLibrary {
   static _notInlinedMessages(_) => <String, Function> {
     "about" : MessageLookupByLibrary.simpleMessage("O programie"),
     "app_theme" : MessageLookupByLibrary.simpleMessage("Motyw aplikacji"),
+    "app_title" : MessageLookupByLibrary.simpleMessage("Stoper"),
     "cancel" : MessageLookupByLibrary.simpleMessage("Anuluj"),
     "comment" : MessageLookupByLibrary.simpleMessage("Komentarz"),
     "comment_contains" : MessageLookupByLibrary.simpleMessage("Komentarz zawiera ..."),

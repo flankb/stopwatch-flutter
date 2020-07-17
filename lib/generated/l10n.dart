@@ -33,6 +33,16 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
+  /// `Stopwatch`
+  String get app_title {
+    return Intl.message(
+      'Stopwatch',
+      name: 'app_title',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Start`
   String get start {
     return Intl.message(
