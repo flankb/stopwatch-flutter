@@ -39,7 +39,7 @@ dependencies:
   indexed_list_view: ^1.0.8
   provider: ^4.0.5
   moor: ^3.1.0
-  moor_ffi: ^0.6.0
+  moor_ffi: ^0.5.0
   equatable: ^1.1.1
   bloc: ^4.0.0
   flutter_bloc: ^4.0.0
