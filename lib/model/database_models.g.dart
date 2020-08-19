@@ -241,6 +241,19 @@ class LapsCompanion extends UpdateCompanion<Lap> {
     }
     return map;
   }
+
+  @override
+  String toString() {
+    return (StringBuffer('LapsCompanion(')
+          ..write('id: $id, ')
+          ..write('measureId: $measureId, ')
+          ..write('difference: $difference, ')
+          ..write('order: $order, ')
+          ..write('overall: $overall, ')
+          ..write('comment: $comment')
+          ..write(')'))
+        .toString();
+  }
 }
 
 class $LapsTable extends Laps with TableInfo<$LapsTable, Lap> {
@@ -584,6 +597,18 @@ class MeasuresCompanion extends UpdateCompanion<Measure> {
     }
     return map;
   }
+
+  @override
+  String toString() {
+    return (StringBuffer('MeasuresCompanion(')
+          ..write('id: $id, ')
+          ..write('elapsed: $elapsed, ')
+          ..write('dateStarted: $dateStarted, ')
+          ..write('status: $status, ')
+          ..write('comment: $comment')
+          ..write(')'))
+        .toString();
+  }
 }
 
 class $MeasuresTable extends Measures with TableInfo<$MeasuresTable, Measure> {
@@ -868,6 +893,17 @@ class MeasureSessionsCompanion extends UpdateCompanion<MeasureSession> {
     }
     return map;
   }
+
+  @override
+  String toString() {
+    return (StringBuffer('MeasureSessionsCompanion(')
+          ..write('id: $id, ')
+          ..write('measureId: $measureId, ')
+          ..write('startedOffset: $startedOffset, ')
+          ..write('finishedOffset: $finishedOffset')
+          ..write(')'))
+        .toString();
+  }
 }
 
 class $MeasureSessionsTable extends MeasureSessions
@@ -1145,6 +1181,17 @@ class TagsCompanion extends UpdateCompanion<Tag> {
       map['name'] = Variable<String>(name.value);
     }
     return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TagsCompanion(')
+          ..write('id: $id, ')
+          ..write('dateCreated: $dateCreated, ')
+          ..write('frequency: $frequency, ')
+          ..write('name: $name')
+          ..write(')'))
+        .toString();
   }
 }
 

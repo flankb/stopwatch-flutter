@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:moor_ffi/moor_ffi.dart';
+import 'package:moor/ffi.dart';
 import 'package:sqflite_ffi_test/sqflite_ffi_test.dart';
 import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/models/measure_view_model.dart';

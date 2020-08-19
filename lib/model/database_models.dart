@@ -3,12 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'package:stopwatch/models/stopwatch_status.dart';
 import 'package:path/path.dart' as p;
 import 'package:moor/moor.dart';
-import 'package:moor_ffi/moor_ffi.dart';
 import 'package:path_provider/path_provider.dart';
-
+import 'package:moor/ffi.dart';
 import '../constants.dart';
 
-//flutter packages pub run build_runner build
+//flutter packages pub run build_runner build --delete-conflicting-outputs
 
 // assuming that your file is called filename.dart. This will give an error at first,
 // but it's needed for moor to know about the generated code
@@ -63,6 +62,12 @@ class Tags extends Table {
   IntColumn get frequency => integer()();
   TextColumn get name => text().customConstraint('UNIQUE')();
 }
+/*
+@UseMoor(tables: [Laps, Measures, MeasureSessions, Tags])
+class MyDatabase {
+
+}
+*/
 
 LazyDatabase _openConnection() {
   // the LazyDatabase util lets us find the right location for the file async.
