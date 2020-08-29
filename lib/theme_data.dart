@@ -26,6 +26,8 @@ ThemeData baseTheme = ThemeData(
   textTheme: GoogleFonts.latoTextTheme(
       ThemeData.light().textTheme
   ),
+
+   // GoogleFonts.getFont('Lato')
 );
 
 ThemeData baseThemeDark = ThemeData(
