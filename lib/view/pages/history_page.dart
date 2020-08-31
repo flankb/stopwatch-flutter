@@ -53,9 +53,11 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
     super.initState();
 
     animationController = AnimationController(vsync: this, duration: duration);
-    animation = Tween<double>(begin: 0.5, end: 1.0).animate(animationController); //ColorTween(begin: beginColor, end: endColor).animate(controller);
+    animation = Tween<double>(begin: 0.5, end: 1.0)
+        .animate(animationController); //ColorTween(begin: beginColor, end: endColor).animate(controller);
 
-    _storageBloc = GetIt.I.get<StorageBloc>(instanceName: widget.pageType == MeasureViewModel ? MeasuresBloc : LapsBloc);
+    _storageBloc =
+        GetIt.I.get<StorageBloc>(instanceName: widget.pageType == MeasureViewModel ? MeasuresBloc : LapsBloc);
 
     animationController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -89,7 +91,8 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
       _storageBloc.add(ClearStorageEvent());
     }
 
-    _storageBloc.add(LoadStorageEvent(widget.pageType, measureId: widget.entityId?.id)); // TODO Более явно перезагружать состояние?
+    _storageBloc.add(
+        LoadStorageEvent(widget.pageType, measureId: widget.entityId?.id)); // TODO Более явно перезагружать состояние?
 
     // Сразу же отфильтруем в случае необходимости
     if (wasFiltered) {
@@ -129,9 +132,13 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                 final availState = state as AvailableListState;
                 final pageIsLap = widget.pageType == LapViewModel;
 
-                final overallElapsed = pageIsLap ? TimeDisplayer.formatAllBeautifulFromMills((widget.entityId as MeasureViewModel).elapsed) : "";
+                final overallElapsed = pageIsLap
+                    ? TimeDisplayer.formatAllBeautifulFromMills((widget.entityId as MeasureViewModel).elapsed)
+                    : "";
                 final comment = pageIsLap ? (widget.entityId as MeasureViewModel).comment : "";
-                final createDate = pageIsLap ? TimeDisplayer.formatDate((widget.entityId as MeasureViewModel).dateStarted, context: context) : "";
+                final createDate = pageIsLap
+                    ? TimeDisplayer.formatDate((widget.entityId as MeasureViewModel).dateStarted, context: context)
+                    : "";
 
                 final existsMeasures = availState.entities.any((element) => true);
 
@@ -193,7 +200,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                           child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                               S.of(context).laps,
+                                S.of(context).laps,
                                 style: TextStyle(fontSize: 22),
                               )),
                         ),
@@ -204,30 +211,66 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                   padding: const EdgeInsets.only(top: 6),
                                   child: ListView.separated(
                                     physics: ClampingScrollPhysics(),
-                                    itemCount: availState.entities.length,
+                                    itemCount: availState.entities.length + 1,
                                     itemBuilder: (BuildContext context, int index) {
-                                      BaseStopwatchEntity entity = availState.entities[index];
-                                      final key = PageStorageKey<String>("entity_$index");
+                                      if (index < availState.entities.length) {
+                                        BaseStopwatchEntity entity = availState.entities[index];
+                                        final key = PageStorageKey<String>("entity_$index");
 
-                                      return StopwatchItem(
-                                        key: key,
-                                        entity: entity,
-                                        selectionListController: _selectedItemsStreamController,
-                                        selectedEvent: (b) {
-                                          // Обновить менюшку...
-                                          if (b.item2) {
-                                            debugPrint("_selectedEntities add");
-                                            _selectedEntities.add(b.item1);
-                                          } else {
-                                            debugPrint("_selectedEntities remove");
-                                            _selectedEntities.remove(b.item1);
-                                          }
+                                        return StopwatchItem(
+                                          key: key,
+                                          entity: entity,
+                                          selectionListController: _selectedItemsStreamController,
+                                          selectedEvent: (b) {
+                                            // Обновить менюшку...
+                                            if (b.item2) {
+                                              debugPrint("_selectedEntities add");
+                                              _selectedEntities.add(b.item1);
+                                            } else {
+                                              debugPrint("_selectedEntities remove");
+                                              _selectedEntities.remove(b.item1);
+                                            }
 
-                                          _selectedItemsStreamController.add(_selectedEntities.length);
-                                          debugPrint("_selectedEntities.length ${_selectedEntities.length}");
-                                          // Добаввить или удалить из SelectedItems
-                                        },
-                                      );
+                                            _selectedItemsStreamController.add(_selectedEntities.length);
+                                            debugPrint("_selectedEntities.length ${_selectedEntities.length}");
+                                            // Добаввить или удалить из SelectedItems
+                                          },
+                                        );
+                                      } else {
+                                        return Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: SizedBox(
+                                            //height: 150,
+                                            child: Card(
+                                              color: Colors.yellow,
+                                              child: Padding(
+                                                padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
+                                                child: Column(
+                                                  children: [
+                                                    Text(
+                                                        "В обычной версии можно хранить только три измерения! "
+                                                            "Приобретите Pro-пакет, чтобы снять ограничение. Стоимость 49 руб.",
+                                                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
+                                                    Align(
+                                                      alignment: Alignment.centerRight,
+                                                      child: RawMaterialButton(onPressed: () {
+
+                                                      },
+                                                        fillColor: Colors.black,
+                                                        child: Text("Купить",
+                                                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.all(Radius.circular(6)),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }
                                     },
                                     separatorBuilder: (BuildContext context, int index) {
                                       return Divider(
@@ -236,15 +279,19 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                     },
                                   )),
                             )
-                          : widget.pageType == MeasureViewModel ? Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Text(
-                                S.of(context).no_measures,
-                                textAlign: TextAlign.left,
-                                style: TextStyle(color: InheritedThemeNotifier.of(context).themeData.subtitleColor, fontSize: 18),
-                            ),
-                              )) : SizedBox(),
+                          : widget.pageType == MeasureViewModel
+                              ? Expanded(
+                                  child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Text(
+                                    S.of(context).no_measures,
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                        color: InheritedThemeNotifier.of(context).themeData.subtitleColor,
+                                        fontSize: 18),
+                                  ),
+                                ))
+                              : SizedBox(),
 
                       StreamBuilder<int>(
                           stream: _selectedItemsStreamController.stream,
@@ -255,14 +302,19 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                             } else {
                               return MetroAppBar(
                                 primaryCommands: <Widget>[
-                                  widget.pageType == MeasureViewModel ? _exportToCsvButtonPrimary(context, existsMeasures) : SizedBox(),
-                                  widget.pageType == MeasureViewModel ? _exportToCsvButtonPrimary(context, existsMeasures, shareMode: ShareMode.File) : SizedBox(),
+                                  widget.pageType == MeasureViewModel
+                                      ? _exportToCsvButtonPrimary(context, existsMeasures)
+                                      : SizedBox(),
+                                  widget.pageType == MeasureViewModel
+                                      ? _exportToCsvButtonPrimary(context, existsMeasures, shareMode: ShareMode.File)
+                                      : SizedBox(),
                                   snapshot.data == 1
                                       ? PrimaryCommand(
                                           onPressed: () async {
                                             final entityToEdit = _selectedEntities.single;
 
-                                            await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                                            await Navigator.push(context,
+                                                MaterialPageRoute(builder: (BuildContext context) {
                                               return EntityEditPage(
                                                 entityType: widget.pageType,
                                                 entityId: entityToEdit.id,
@@ -273,7 +325,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                             _unselectItems();
                                           },
                                           pic: Icons.edit,
-                                          tooltip:S.of(context).edit_app_bar,
+                                          tooltip: S.of(context).edit_app_bar,
                                         )
                                       : SizedBox(),
                                   snapshot.data >= 1 && widget.pageType == MeasureViewModel
@@ -282,7 +334,8 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                           pic: Icons.delete,
                                           onPressed: () {
                                             if (widget.pageType == LapViewModel) {
-                                              Toast.show(S.of(context).no_possible_delete_laps, context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                                              Toast.show(S.of(context).no_possible_delete_laps, context,
+                                                  duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
                                               return;
                                             }
 
@@ -374,7 +427,8 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
     );
   }
 
-  PrimaryCommand _exportToCsvButtonPrimary(BuildContext context, bool enabled, {ShareMode shareMode = ShareMode.Email}) {
+  PrimaryCommand _exportToCsvButtonPrimary(BuildContext context, bool enabled,
+      {ShareMode shareMode = ShareMode.Email}) {
     final icon = shareMode == ShareMode.Email ? Icons.share : Icons.insert_drive_file;
     final tooltip = shareMode == ShareMode.Email ? S.of(context).share_app_bar : S.of(context).to_csv_app_bar;
     final command = () async {
@@ -384,7 +438,8 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
         entitiesToExport = (BlocProvider.of<StorageBloc>(context).state as AvailableListState).entities;
       }
 
-      final csv = await GetIt.I.get<CsvExporter>().convertToCsv(entitiesToExport.map((e) => e as MeasureViewModel).toList());
+      final csv =
+          await GetIt.I.get<CsvExporter>().convertToCsv(entitiesToExport.map((e) => e as MeasureViewModel).toList());
       _unselectItems();
 
       switch (shareMode) {
