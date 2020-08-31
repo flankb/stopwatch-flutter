@@ -23,7 +23,7 @@ class ExtendedTheme {
 
 ThemeData baseTheme = ThemeData(
   brightness: Brightness.light,
-  textTheme: GoogleFonts.latoTextTheme(
+  textTheme: GoogleFonts.openSansTextTheme(
       ThemeData.light().textTheme
   ),
 
@@ -32,7 +32,7 @@ ThemeData baseTheme = ThemeData(
 
 ThemeData baseThemeDark = ThemeData(
   brightness: Brightness.dark,
-  textTheme: GoogleFonts.latoTextTheme(
+  textTheme: GoogleFonts.openSansTextTheme(
       ThemeData.dark().textTheme
   ),
 );
