@@ -133,8 +133,11 @@ class PurchaserBloc implements Bloc {
   PurchaseCompletedState _purchaseState;
   PurchaseCompletedState get purchaseState => _purchaseState;
 
-  StreamController<PurchaseCompletedState> purchaseStateStreamController = StreamController();
-  StreamController<String> purchaseErrorStreamController = StreamController();
+  StreamController<PurchaseCompletedState> _purchaseStateStreamController = StreamController.broadcast();
+  StreamController<String> _purchaseErrorStreamController = StreamController.broadcast();
+
+  Stream<PurchaseCompletedState> get purchaseStateStream => _purchaseStateStreamController.stream;//.asBroadcastStream();
+  Stream<String> get purchaseErrorStream => _purchaseErrorStreamController.stream; //.asBroadcastStream();
 
   PurchaserBloc() {
     _purchaseState = PurchaseCompletedState.empty();
@@ -265,6 +268,11 @@ class PurchaserBloc implements Bloc {
       return false;
     }
 
+    final existsProducts = productDetailResponse.productDetails.any((element) => true);
+    if(!existsProducts){
+      return false;
+    }
+
     PurchaseParam purchaseParam = PurchaseParam(
         productDetails: productDetailResponse.productDetails
             .where((element) => element.id == sku)
@@ -294,14 +302,14 @@ class PurchaserBloc implements Bloc {
 
   _emitError(String error) {
     _purchaseState = _purchaseState.copyWith(queryProductError: error);
-    purchaseErrorStreamController.add(error);
+    _purchaseErrorStreamController.sink.add(error);
   }
 
   _emitPurchaseState(PurchaseCompletedState basePurchaseState, {bool errorEmit = false}) {
     _purchaseState = basePurchaseState;
 
     debugPrint("_emitPurchaseState: ${basePurchaseState.toString()}");
-    purchaseStateStreamController.sink.add(basePurchaseState);
+    _purchaseStateStreamController.sink.add(basePurchaseState);
   }
 
   Future<bool> _getAvailability() async {
@@ -310,7 +318,7 @@ class PurchaserBloc implements Bloc {
   }
 
   dispose() {
-    purchaseStateStreamController?.close();
-    purchaseErrorStreamController?.close();
+    _purchaseStateStreamController?.close();
+    _purchaseErrorStreamController?.close();
   }
 }

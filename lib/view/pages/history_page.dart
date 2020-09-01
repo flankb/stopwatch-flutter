@@ -8,6 +8,7 @@ import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:get_it/get_it.dart';
 import 'package:share/share.dart';
 import 'package:stopwatch/bloc/storage_bloc/bloc.dart';
+import 'package:stopwatch/constants.dart';
 import 'package:stopwatch/fake/fake_data_fabric.dart';
 import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/model/database_models.dart';
@@ -27,6 +28,7 @@ import 'package:stopwatch/widgets/stopwatch_item_widget.dart';
 import 'package:preferences/preferences.dart';
 import 'package:toast/toast.dart';
 
+import '../../purchaser.dart';
 import 'entity_edit_page.dart';
 
 class HistoryPage extends StatefulWidget {
@@ -237,7 +239,22 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                           },
                                         );
                                       } else {
-                                        return PurchaseBanner();
+                                        //return SizedBox.shrink();
+
+
+                                        return StreamBuilder<PurchaseCompletedState>(
+                                            stream: getIt.get<PurchaserBloc>().purchaseStateStream,
+                                            initialData: getIt.get<PurchaserBloc>().purchaseState,
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasData && !snapshot.hasError) {
+                                                final viewBanner = !snapshot.data.skuIsAcknowledged(PRO_PACKAGE) &&
+                                                    availState.allEntities.length <= MAX_FREE_MEASURES &&
+                                                    availState.allEntities.length > 0;
+                                                return viewBanner ? PurchaseBanner() : SizedBox.shrink();
+                                              } else {
+                                                return SizedBox.shrink();
+                                              }
+                                            });
                                       }
                                     },
                                     separatorBuilder: (BuildContext context, int index) {
@@ -472,17 +489,18 @@ class PurchaseBanner extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                    "В обычной версии можно хранить только три измерения! "
-                        "Приобретите Pro-пакет, чтобы снять ограничение. Стоимость 49 руб.",
-                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
+                  "В обычной версии можно хранить только три измерения! "
+                  "Приобретите Pro-пакет, чтобы снять ограничение. Стоимость 49 руб.",
+                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                ),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: RawMaterialButton(onPressed: () {
-
-                  },
-                    fillColor: Colors.black,
-                    child: Text("Купить",
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: RawMaterialButton(
+                    onPressed: () {
+                      getIt.get<PurchaserBloc>().requestPurchase(PRO_PACKAGE);
+                    },
+                    fillColor:  const Color(0xFF3e403f),
+                    child: Text("Купить", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(6)),
                     ),

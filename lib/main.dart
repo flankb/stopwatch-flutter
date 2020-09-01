@@ -31,6 +31,7 @@ import 'package:tuple/tuple.dart';
 import 'constants.dart';
 import 'models/stopwatch_status.dart';
 import 'generated/l10n.dart';
+import 'purchaser.dart';
 import 'theme_data.dart';
 import 'util_mixins/rate_app_mixin.dart';
 import 'widgets/inherited/sound_widget.dart';
@@ -69,6 +70,13 @@ void main() async {
   final controller  = ThemeController(initialTheme, appThemeData);
 
   setupLocators();
+
+  getIt.get<PurchaserBloc>()
+    ..enablePendingPurchases()
+    ..enableConnection()
+    ..listenPurchaseUpdates()
+    ..queryPurchases(filterIds : {PRO_PACKAGE});
+
   runApp(MyApp(initialTheme: initialTheme, themeController: controller,));
 }
 

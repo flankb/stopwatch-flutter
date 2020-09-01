@@ -276,9 +276,32 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: MetroAppBar(
                   primaryCommands: [
+
+
+
+                  /*PrimaryCommand(
+                  pic: Icons.refresh,
+                  tooltip: S.of(context).reset,
+                  onPressed: () {
+                    //final measureCounts = state.measure.finishedMeasuresCount;
+                    bool saveMeasure = PrefService.getBool(PREF_SAVE_MEASURES) ?? true;
+                    //final proOwned = snapshot.data.skuIsAcknowledged(PRO_PACKAGE);
+                    //saveMeasure = saveMeasure && (proOwned || measureCounts <= MAX_FREE_MEASURES);
+
+                    BlocProvider.of<MeasureBloc>(context).add(MeasureFinishedEvent(saveMeasure));
+
+                    if (_controller.isCompleted) {
+                      _controller.reverse();
+                    } else {
+                      _controller.forward();
+                    }
+                  },
+                ),*/
+
+
                     StreamBuilder<PurchaseCompletedState>(
-                      stream: getIt.get<PurchaserBloc>().purchaseStateStreamController.stream,
-                      initialData: PurchaseCompletedState.empty(),
+                      stream: getIt.get<PurchaserBloc>().purchaseStateStream,
+                      initialData: getIt.get<PurchaserBloc>().purchaseState,
                       builder: (context, snapshot) {
                         return PrimaryCommand(
                           pic: Icons.refresh,
@@ -287,7 +310,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                             final measureCounts = state.measure.finishedMeasuresCount;
                             bool saveMeasure = PrefService.getBool(PREF_SAVE_MEASURES) ?? true;
                             final proOwned = snapshot.data.skuIsAcknowledged(PRO_PACKAGE);
-                            saveMeasure = saveMeasure && (proOwned || measureCounts <= MAX_FREE_MEASURES);
+                            saveMeasure = saveMeasure && (proOwned || measureCounts < MAX_FREE_MEASURES);
 
                             BlocProvider.of<MeasureBloc>(context).add(MeasureFinishedEvent(saveMeasure));
 
