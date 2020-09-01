@@ -271,7 +271,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       if (lastSession != null) {
         await _stopwatchRepository.updateMeasureSession(lastSession.toEntity());
       }
-      
+
       // Сохраним количество измерений
       state.measure.finishedMeasuresCount += 1;
     }

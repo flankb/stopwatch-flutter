@@ -6,3 +6,4 @@ const PREF_VIBRATION = 'vibration';
 const PREF_SOUND = 'sound';
 const DATABASE_NAME = 'database.sqlite';
 const PRO_PACKAGE = 'pro_package';
+const MAX_FREE_MEASURES = 3;

@@ -1,14 +1,19 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:path/path.dart';
 import 'package:stopwatch/bloc/measure_bloc/bloc.dart';
 import 'package:stopwatch/bloc/measure_bloc/measure_event.dart';
+import 'package:stopwatch/bloc/storage_bloc/bloc.dart';
 import 'package:stopwatch/constants.dart';
 import 'package:stopwatch/fake/fake_data_fabric.dart';
 import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
+import 'package:stopwatch/models/stopwatch_status.dart';
+import 'package:stopwatch/purchaser.dart';
+import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 import 'package:stopwatch/util/time_displayer.dart';
 import 'package:stopwatch/view/pages/about_page.dart';
 import 'package:stopwatch/view/pages/history_page.dart';
@@ -20,6 +25,7 @@ import 'package:vibration/vibration.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:wakelock/wakelock.dart';
 
+import '../service_locator.dart';
 import 'buttons_bar.dart';
 import 'inherited/sound_widget.dart';
 
@@ -269,20 +275,30 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
             Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: MetroAppBar(
-                  primaryCommands: <PrimaryCommand>[
-                    PrimaryCommand(
-                      pic: Icons.refresh,
-                      tooltip: S.of(context).reset,
-                      onPressed: () {
-                        bool saveMeasure = PrefService.getBool(PREF_SAVE_MEASURES) ?? true;
-                        BlocProvider.of<MeasureBloc>(context).add(MeasureFinishedEvent(saveMeasure));
+                  primaryCommands: [
+                    StreamBuilder<PurchaseCompletedState>(
+                      stream: getIt.get<PurchaserBloc>().purchaseStateStreamController.stream,
+                      initialData: PurchaseCompletedState.empty(),
+                      builder: (context, snapshot) {
+                        return PrimaryCommand(
+                          pic: Icons.refresh,
+                          tooltip: S.of(context).reset,
+                          onPressed: () {
+                            final measureCounts = state.measure.finishedMeasuresCount;
+                            bool saveMeasure = PrefService.getBool(PREF_SAVE_MEASURES) ?? true;
+                            final proOwned = snapshot.data.skuIsAcknowledged(PRO_PACKAGE);
+                            saveMeasure = saveMeasure && (proOwned || measureCounts <= MAX_FREE_MEASURES);
 
-                        if (_controller.isCompleted) {
-                          _controller.reverse();
-                        } else {
-                          _controller.forward();
-                        }
-                      },
+                            BlocProvider.of<MeasureBloc>(context).add(MeasureFinishedEvent(saveMeasure));
+
+                            if (_controller.isCompleted) {
+                              _controller.reverse();
+                            } else {
+                              _controller.forward();
+                            }
+                          },
+                        );
+                      }
                     ),
                     PrimaryCommand(
                       pic: Icons.list,
