@@ -5,3 +5,4 @@ const PREF_THEME = 'theme';
 const PREF_VIBRATION = 'vibration';
 const PREF_SOUND = 'sound';
 const DATABASE_NAME = 'database.sqlite';
+const PRO_PACKAGE = 'pro_package';
