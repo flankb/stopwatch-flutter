@@ -237,39 +237,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                           },
                                         );
                                       } else {
-                                        return Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: SizedBox(
-                                            //height: 150,
-                                            child: Card(
-                                              color: Colors.yellow,
-                                              child: Padding(
-                                                padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
-                                                child: Column(
-                                                  children: [
-                                                    Text(
-                                                        "В обычной версии можно хранить только три измерения! "
-                                                            "Приобретите Pro-пакет, чтобы снять ограничение. Стоимость 49 руб.",
-                                                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
-                                                    Align(
-                                                      alignment: Alignment.centerRight,
-                                                      child: RawMaterialButton(onPressed: () {
-
-                                                      },
-                                                        fillColor: Colors.black,
-                                                        child: Text("Купить",
-                                                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.all(Radius.circular(6)),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        );
+                                        return PurchaseBanner();
                                       }
                                     },
                                     separatorBuilder: (BuildContext context, int index) {
@@ -483,6 +451,49 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
   void _unselectItems() {
     _selectedItemsStreamController.add(0);
     _selectedEntities.clear();
+  }
+}
+
+class PurchaseBanner extends StatelessWidget {
+  const PurchaseBanner({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        //height: 150,
+        child: Card(
+          color: Colors.yellow,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
+            child: Column(
+              children: [
+                Text(
+                    "В обычной версии можно хранить только три измерения! "
+                        "Приобретите Pro-пакет, чтобы снять ограничение. Стоимость 49 руб.",
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: RawMaterialButton(onPressed: () {
+
+                  },
+                    fillColor: Colors.black,
+                    child: Text("Купить",
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(6)),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
