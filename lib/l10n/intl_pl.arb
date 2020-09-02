@@ -1,5 +1,5 @@
 {
-  "app_title" : "Stoper",
+  "app_title": "Stoper",
   "start": "Start",
   "pause": "Pauza",
   "lap": "Podołek",
@@ -44,5 +44,9 @@
   "input_comment": "Wpisz komentarz",
   "very_long_comment": "Komentarz nie może być dłuższy niż 256 znaków!",
   "comment_contains": "Komentarz zawiera ...",
-  "must_not_be_empty": "Pole nie może być puste!"
+  "must_not_be_empty": "Pole nie może być puste!",
+  "number_lap": "Numer okrążenia",
+  "time_lap": "Czas okrążenia",
+  "diff_prev_lap": "Różnica w stosunku do poprzedniego okrążenia",
+  "comment_of_lap": "Komentarz do okrążenia"
 }

@@ -1,5 +1,5 @@
 {
-  "app_title" : "Cronometro",
+  "app_title": "Cronometro",
   "lap": "Un cerchio",
   "reset": "Ripristina",
   "history": "Storia",
@@ -44,5 +44,9 @@
   "input_comment": "Commento di input",
   "very_long_comment": "Il commento non può superare i 256 caratteri!",
   "comment_contains": "Il commento contiene ...",
-  "must_not_be_empty": "Il campo non deve essere vuoto!"
+  "must_not_be_empty": "Il campo non deve essere vuoto!",
+  "number_lap": "Numero di giro",
+  "time_lap": "Tempo del giro",
+  "diff_prev_lap": "Differenza con il giro precedente",
+  "comment_of_lap": "Commento del cerchio"
 }

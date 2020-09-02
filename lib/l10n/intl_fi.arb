@@ -1,5 +1,5 @@
 {
-  "app_title" : "Sekuntikello",
+  "app_title": "Sekuntikello",
   "start": "alkaa",
   "pause": "Tauko",
   "lap": "Ympyrä",
@@ -44,5 +44,9 @@
   "input_comment": "Syötä kommentti",
   "very_long_comment": "Kommentti ei voi olla pidempi kuin 256 merkkiä!",
   "comment_contains": "Kommentti sisältää ...",
-  "must_not_be_empty": "Kenttä ei saa olla tyhjä!"
+  "must_not_be_empty": "Kenttä ei saa olla tyhjä!",
+  "number_lap": "Ympyrän numero",
+  "time_lap": "Kierrosaika",
+  "diff_prev_lap": "Ero edelliseen kierrokseen",
+  "comment_of_lap": "Piirin kommentti"
 }

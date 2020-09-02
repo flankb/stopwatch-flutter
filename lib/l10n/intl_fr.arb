@@ -1,5 +1,5 @@
 {
-  "app_title" : "Chronomètre",
+  "app_title": "Chronomètre",
   "lap": "Un cercle",
   "reset": "Réinitialiser",
   "history": "L'histoire",
@@ -44,5 +44,9 @@
   "input_comment": "Commentaire d'entrée",
   "very_long_comment": "Le commentaire ne peut pas dépasser 256 caractères!",
   "comment_contains": "Le commentaire contient ...",
-  "must_not_be_empty": "Le champ ne doit pas être vide!"
+  "must_not_be_empty": "Le champ ne doit pas être vide!",
+  "number_lap": "Numéro du cercle",
+  "time_lap": "Chrono",
+  "diff_prev_lap": "Différence avec le tour précédent",
+  "comment_of_lap": "Commentaire du cercle"
 }

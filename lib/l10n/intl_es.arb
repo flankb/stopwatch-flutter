@@ -1,5 +1,5 @@
 {
-  "app_title" : "Cronógrafo",
+  "app_title": "Cronógrafo",
   "start": "Inicio",
   "pause": "Pausa",
   "lap": "El círculo",
@@ -44,5 +44,9 @@
   "input_comment": "Introducir comentario",
   "very_long_comment": "¡El comentario no puede tener más de 256 caracteres!",
   "comment_contains": "El comentario contiene ...",
-  "must_not_be_empty": "¡El campo no debe estar vacío!"
+  "must_not_be_empty": "¡El campo no debe estar vacío!",
+  "number_lap": "Número de vuelta",
+  "time_lap": "Tiempo de vuelta",
+  "diff_prev_lap": "Diferencia con la vuelta anterior",
+  "comment_of_lap": "Comentario circular"
 }

@@ -1,5 +1,5 @@
 {
-  "app_title" : "Stoppuhr",
+  "app_title": "Stoppuhr",
   "start": "Start",
   "pause": "Pause",
   "lap": "Kreis",
@@ -44,5 +44,9 @@
   "input_comment": "Kommentar eingeben",
   "very_long_comment": "Der Kommentar darf nicht länger als 256 Zeichen sein!",
   "comment_contains": "Kommentar enthält ...",
-  "must_not_be_empty": "Feld darf nicht leer sein!"
+  "must_not_be_empty": "Feld darf nicht leer sein!",
+  "number_lap": "Rundennummer",
+  "time_lap": "Rundenzeit",
+  "diff_prev_lap": "Unterschied zur vorherigen Runde",
+  "comment_of_lap": "Kreis Kommentar"
 }
