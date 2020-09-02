@@ -48,5 +48,7 @@
   "number_lap": "Ympyrän numero",
   "time_lap": "Kierrosaika",
   "diff_prev_lap": "Ero edelliseen kierrokseen",
-  "comment_of_lap": "Piirin kommentti"
+  "comment_of_lap": "Piirin kommentti",
+  "purchase": "Ostaa",
+  "purchase_banner": "Vain kolme mittausta voidaan tallentaa vakioversioon! Osta Pro-paketti rajoituksen poistamiseksi."
 }

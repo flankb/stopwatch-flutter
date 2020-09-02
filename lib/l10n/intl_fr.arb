@@ -48,5 +48,7 @@
   "number_lap": "Numéro du cercle",
   "time_lap": "Chrono",
   "diff_prev_lap": "Différence avec le tour précédent",
-  "comment_of_lap": "Commentaire du cercle"
+  "comment_of_lap": "Commentaire du cercle",
+  "purchase": "achat",
+  "purchase_banner": "Seules trois mesures peuvent être enregistrées dans la version standard! Achetez le package Pro pour supprimer la restriction."
 }

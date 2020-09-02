@@ -500,8 +500,7 @@ class PurchaseBanner extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  "В обычной версии можно хранить только три измерения! "
-                  "Приобретите Pro-пакет, чтобы снять ограничение.",
+                  S.current.purchase_banner,
                   style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                 ),
                 Align(
@@ -511,7 +510,7 @@ class PurchaseBanner extends StatelessWidget {
                       getIt.get<PurchaserBloc>().requestPurchase(PRO_PACKAGE);
                     },
                     fillColor:  const Color(0xFF3e403f),
-                    child: Text("Купить", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    child: Text(S.current.purchase, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(6)),
                     ),

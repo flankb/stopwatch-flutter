@@ -53,6 +53,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "number_lap" : MessageLookupByLibrary.simpleMessage("Lap number"),
     "overall_time" : MessageLookupByLibrary.simpleMessage("Overall time"),
     "pause" : MessageLookupByLibrary.simpleMessage("Pause"),
+    "purchase" : MessageLookupByLibrary.simpleMessage("Purchase"),
+    "purchase_banner" : MessageLookupByLibrary.simpleMessage("Only three measurements can be stored in the standard version! Purchase the Pro Package to remove the restriction."),
     "rate" : MessageLookupByLibrary.simpleMessage("RATE"),
     "reset" : MessageLookupByLibrary.simpleMessage("Reset"),
     "review" : MessageLookupByLibrary.simpleMessage("Rate and review"),

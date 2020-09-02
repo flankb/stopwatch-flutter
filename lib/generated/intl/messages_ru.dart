@@ -53,6 +53,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "number_lap" : MessageLookupByLibrary.simpleMessage("Номер круга"),
     "overall_time" : MessageLookupByLibrary.simpleMessage("Общее время"),
     "pause" : MessageLookupByLibrary.simpleMessage("Пауза"),
+    "purchase" : MessageLookupByLibrary.simpleMessage("Купить"),
+    "purchase_banner" : MessageLookupByLibrary.simpleMessage("В обычной версии можно хранить только три измерения! Приобретите Pro-пакет, чтобы снять ограничение."),
     "rate" : MessageLookupByLibrary.simpleMessage("ОЦЕНИТЬ"),
     "reset" : MessageLookupByLibrary.simpleMessage("Сброс"),
     "review" : MessageLookupByLibrary.simpleMessage("Оценить приложение"),

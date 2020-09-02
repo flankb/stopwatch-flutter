@@ -33,7 +33,7 @@ class MeasuresExporter {
       final laps = (await stopwatchRepository.getLapsByMeasureAsync(element.id)).map((l) => LapViewModel.fromEntity(l));
 
       if (laps.any((element) => true)) {
-        plainBody.writeln("Круги:");
+        plainBody.writeln("${S.current.laps}:");
       }
 
       laps.toList().asMap().forEach((indexLap, lap) {

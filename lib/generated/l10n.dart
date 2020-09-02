@@ -532,6 +532,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Only three measurements can be stored in the standard version! Purchase the Pro Package to remove the restriction.`
+  String get purchase_banner {
+    return Intl.message(
+      'Only three measurements can be stored in the standard version! Purchase the Pro Package to remove the restriction.',
+      name: 'purchase_banner',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Purchase`
+  String get purchase {
+    return Intl.message(
+      'Purchase',
+      name: 'purchase',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

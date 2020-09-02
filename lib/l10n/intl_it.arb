@@ -48,5 +48,7 @@
   "number_lap": "Numero di giro",
   "time_lap": "Tempo del giro",
   "diff_prev_lap": "Differenza con il giro precedente",
-  "comment_of_lap": "Commento del cerchio"
+  "comment_of_lap": "Commento del cerchio",
+  "purchase": "Acquista",
+  "purchase_banner": "Solo tre misurazioni possono essere memorizzate nella versione standard! Acquista il pacchetto Pro per rimuovere la restrizione."
 }
