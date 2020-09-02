@@ -492,7 +492,7 @@ class PurchaseBanner extends StatelessWidget {
               children: [
                 Text(
                   "В обычной версии можно хранить только три измерения! "
-                  "Приобретите Pro-пакет, чтобы снять ограничение. Стоимость 49 руб.",
+                  "Приобретите Pro-пакет, чтобы снять ограничение.",
                   style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                 ),
                 Align(

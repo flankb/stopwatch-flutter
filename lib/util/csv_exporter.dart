@@ -7,20 +7,24 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
+import 'package:intl/intl.dart';  //for date format
 
 class MeasuresExporter {
   final StopwatchRepository stopwatchRepository;
-
+  final _formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
   MeasuresExporter(this.stopwatchRepository);
+  int lastLApsCount = 0;
 
   Future<String> convertToPlain(List<MeasureViewModel> measures) async {
     StringBuffer plainBody = StringBuffer();
-
-    //csvBody.writeln("Дата измерения\tОбщее время\tКомментарий\tНомер круга\tВремя круга\tРазница с пред. кругом\tКомментарий круга\t");
+    // csvBody.writeln("Дата измерения\tОбщее время\tКомментарий\tНомер круга\tВремя круга\tРазница с пред. кругом\tКомментарий круга\t");
 
     await Future.forEach(measures, ((element) async {
       final elapsedTime = element.elapsedTime();
-      String row = "Дата измерения: ${element.dateStarted}\nОбщее время: ${elapsedTime[0]},${elapsedTime[1]}${element.comment != null ? '\nКомментарий:' : ""}${element.comment ?? ""}";
+
+      String formatted = _formatter.format(element.dateStarted);
+
+      String row = "Дата измерения: $formatted\nОбщее время: ${elapsedTime[0]},${elapsedTime[1]}${element.comment != null ? '\nКомментарий: ' : ""}${element.comment ?? ""}";
       plainBody.writeln(row);
 
       final laps = (await stopwatchRepository.getLapsByMeasureAsync(element.id)).map((l) => LapViewModel.fromEntity(l));
@@ -29,16 +33,23 @@ class MeasuresExporter {
         plainBody.writeln("Круги:");
       }
 
-      laps.forEach((lap) {
-        String lapRow = "${lap.order}) ${lap.overallTime()}\n+${lap.differenceTime()}${lap.comment != null ? '\n' : ""}${lap.comment ?? ""}";
+      laps.toList().asMap().forEach((indexLap, lap) {
+        String lapRow = "${lap.order}) ${lap.overallTime()},${lap.overallMills()}\n+${lap.differenceTime()},${lap.differenceMills()}${lap.comment != null ? '\n' : ""}${lap.comment ?? ""}";
         //debugPrint("lap: ${lapRow}");
         plainBody.writeln(lapRow);
       });
 
       plainBody.writeln("");
+
+      lastLApsCount = laps.length;
     }));
 
-    final plain = plainBody.toString();
+    var plain = plainBody.toString();
+
+    // Обрезать 2 \n в конце
+    if(plain.length > 2 /*&& lastLApsCount > 0*/){
+      plain = plain.substring(0, plain.length-2);
+    }
 
     return plain;
   }
@@ -53,10 +64,10 @@ class MeasuresExporter {
 
     await Future.forEach(measures, ((element) async {
       debugPrint("Exported to csv $element");
-
+      String formatted = _formatter.format(element.dateStarted);
       final elapsedTime = element.elapsedTime();
 
-      String row = "${element.dateStarted}\t${elapsedTime[0]},${elapsedTime[1]}\t${element.comment}\t\t\t\t";
+      String row = "$formatted\t${elapsedTime[0]},${elapsedTime[1]}\t${element.comment}\t\t\t\t";
       csvBody.writeln(row);
 
       // Загрузить круги для текущего измерения
@@ -65,7 +76,7 @@ class MeasuresExporter {
       //debugPrint("lap len: ${laps.length}");
 
       laps.forEach((lap) {
-        String lapRow = "\t\t\t${lap.order}\t${lap.overallTime()}\t${lap.differenceTime()}\t${lap.comment ?? ""}";
+        String lapRow = "\t\t\t${lap.order}\t${lap.overallTime()},${lap.overallMills()}\t${lap.differenceTime()},${lap.differenceMills()}\t${lap.comment ?? ""}";
 
         //debugPrint("lap: ${lapRow}");
 
