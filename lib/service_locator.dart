@@ -23,6 +23,6 @@ setupLocators() {
   getIt.registerFactory<MeasureBloc>(() => MeasureBloc(Ticker3(), getIt.get<StopwatchRepository>()));
   getIt.registerFactory(() => EntityBloc(getIt.get<StopwatchRepository>()));
 
-  getIt.registerFactory(() => CsvExporter(getIt.get<StopwatchRepository>()));
+  getIt.registerFactory(() => MeasuresExporter(getIt.get<StopwatchRepository>()));
   getIt.registerSingleton<PurchaserBloc>(PurchaserBloc());
 }

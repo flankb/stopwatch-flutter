@@ -8,10 +8,10 @@ import 'package:flutter/services.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 
-class CsvExporter {
+class MeasuresExporter {
   final StopwatchRepository stopwatchRepository;
 
-  CsvExporter(this.stopwatchRepository);
+  MeasuresExporter(this.stopwatchRepository);
 
   Future<String> convertToPlain(List<MeasureViewModel> measures) async {
     StringBuffer plainBody = StringBuffer();
