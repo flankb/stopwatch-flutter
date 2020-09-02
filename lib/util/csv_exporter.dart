@@ -13,6 +13,36 @@ class CsvExporter {
 
   CsvExporter(this.stopwatchRepository);
 
+  Future<String> convertToPlain(List<MeasureViewModel> measures) async {
+    StringBuffer plainBody = StringBuffer();
+
+    //csvBody.writeln("Дата измерения\tОбщее время\tКомментарий\tНомер круга\tВремя круга\tРазница с пред. кругом\tКомментарий круга\t");
+
+    await Future.forEach(measures, ((element) async {
+      final elapsedTime = element.elapsedTime();
+      String row = "Дата измерения: ${element.dateStarted}\nОбщее время: ${elapsedTime[0]},${elapsedTime[1]}${element.comment != null ? '\nКомментарий:' : ""}${element.comment ?? ""}";
+      plainBody.writeln(row);
+
+      final laps = (await stopwatchRepository.getLapsByMeasureAsync(element.id)).map((l) => LapViewModel.fromEntity(l));
+
+      if (laps.any((element) => true)) {
+        plainBody.writeln("Круги:");
+      }
+
+      laps.forEach((lap) {
+        String lapRow = "${lap.order}) ${lap.overallTime()}\n+${lap.differenceTime()}${lap.comment != null ? '\n' : ""}${lap.comment ?? ""}";
+        //debugPrint("lap: ${lapRow}");
+        plainBody.writeln(lapRow);
+      });
+
+      plainBody.writeln("");
+    }));
+
+    final plain = plainBody.toString();
+
+    return plain;
+  }
+
   Future<String> convertToCsv(List<MeasureViewModel> measures) async {
     // TODO Для экспорта файла плагины:
     // https://pub.dev/packages/esys_flutter_share

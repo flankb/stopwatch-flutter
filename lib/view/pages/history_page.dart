@@ -423,8 +423,10 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
         entitiesToExport = (BlocProvider.of<StorageBloc>(context).state as AvailableListState).entities;
       }
 
-      final csv =
-          await GetIt.I.get<CsvExporter>().convertToCsv(entitiesToExport.map((e) => e as MeasureViewModel).toList());
+      final exporter = GetIt.I.get<CsvExporter>();
+      final entities = entitiesToExport.map((e) => e as MeasureViewModel).toList();
+
+      final csv = shareMode == ShareMode.Email ? await exporter.convertToPlain(entities) :  await exporter.convertToCsv(entities);
       _unselectItems();
 
       switch (shareMode) {
