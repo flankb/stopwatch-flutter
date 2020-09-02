@@ -34,7 +34,7 @@ class MeasuresExporter {
       }
 
       laps.toList().asMap().forEach((indexLap, lap) {
-        String lapRow = "${lap.order}) ${lap.overallTime()},${lap.overallMills()}\n+${lap.differenceTime()},${lap.differenceMills()}${lap.comment != null ? '\n' : ""}${lap.comment ?? ""}";
+        String lapRow = "${lap.order}) +${lap.differenceTime()},${lap.differenceMills()}\n${lap.overallTime()},${lap.overallMills()}${lap.comment != null ? '\n' : ""}${lap.comment ?? ""}";
         //debugPrint("lap: ${lapRow}");
         plainBody.writeln(lapRow);
       });
@@ -77,7 +77,6 @@ class MeasuresExporter {
 
       laps.forEach((lap) {
         String lapRow = "\t\t\t${lap.order}\t${lap.overallTime()},${lap.overallMills()}\t${lap.differenceTime()},${lap.differenceMills()}\t${lap.comment ?? ""}";
-
         //debugPrint("lap: ${lapRow}");
 
         csvBody.writeln(lapRow);
