@@ -307,7 +307,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                           pic: Icons.refresh,
                           tooltip: S.of(context).reset,
                           onPressed: () {
-                            final measureCounts = state.measure.finishedMeasuresCount;
+                            final measureCounts = MeasureViewModel.finishedMeasuresCount;
                             bool saveMeasure = PrefService.getBool(PREF_SAVE_MEASURES) ?? true;
                             final proOwned = snapshot.data.skuIsAcknowledged(PRO_PACKAGE);
                             saveMeasure = saveMeasure && (proOwned || measureCounts < MAX_FREE_MEASURES);

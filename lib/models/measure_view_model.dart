@@ -16,7 +16,8 @@ class MeasureViewModel extends BaseStopwatchEntity {
   List<LapViewModel> laps;
   List<MeasureSessionViewModel> sessions;
 
-  int finishedMeasuresCount;
+  //TODO Плохо, как-то инкапсулировать!
+  static int finishedMeasuresCount = 0;
   /// Вспомогательное свойство для динамического расчета истекшего времени
   DateTime lastRestartedOverall;
 
@@ -26,7 +27,6 @@ class MeasureViewModel extends BaseStopwatchEntity {
     String comment,
     this.elapsed = 0,
     this.elapsedLap = 0,
-    this.finishedMeasuresCount = 0,
     this.laps,
     this.sessions,
     this.status = StopwatchStatus.Ready,
@@ -49,7 +49,6 @@ class MeasureViewModel extends BaseStopwatchEntity {
       comment: comment ?? this.comment,
       elapsed: elapsed ?? this.elapsed,
       elapsedLap: elapsedLap ?? this.elapsedLap,
-      finishedMeasuresCount: finishedMeasuresCount ?? this.finishedMeasuresCount,
       laps: laps ?? List.from(this.laps),
       sessions: sessions ?? List.from(this.sessions),
       status: status ?? this.status,
