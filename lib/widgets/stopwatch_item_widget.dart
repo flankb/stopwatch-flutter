@@ -29,6 +29,7 @@ class StopwatchItem extends StatefulWidget {
 
 class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveClientMixin {
   bool isSelected = false;
+  bool anybodySelected = false;
 
   @override
   void initState() {
@@ -52,6 +53,14 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
         if (this.mounted) {
           this.setState(() {
             isSelected = false;
+            anybodySelected = false;
+          });
+        }
+      }
+      else{
+        if (this.mounted) {
+          this.setState(() {
+            anybodySelected = true;
           });
         }
       }
@@ -94,7 +103,17 @@ class _StopwatchItemState extends State<StopwatchItem> with AutomaticKeepAliveCl
         }))*/
       },
       onTap: () => {
-        if (widget.entity.runtimeType == MeasureViewModel)
+        if (anybodySelected) {
+          if (mounted)
+            {
+              this.setState(() {
+                isSelected = !isSelected;
+                widget.selectedEvent(Tuple2(widget.entity, isSelected));
+              })
+            }
+        }
+
+        else if (widget.entity.runtimeType == MeasureViewModel)
           {
             Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
               return HistoryPage(pageType: LapViewModel, entityId: widget.entity);
