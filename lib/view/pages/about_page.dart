@@ -5,12 +5,21 @@ import 'package:moor_db_viewer/moor_db_viewer.dart';
 import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String version = '1.0.1'; // Использовать https://pub.dev/packages/package_info
     final debuggable = false;
+
+    final Uri _emailLaunchUri = Uri(
+        scheme: 'mailto',
+        path: 'everyapp@yandex.ru',
+        queryParameters: {
+          'subject': 'Message about stopwatch (Flutter) program'
+        }
+    );
 
     return Scaffold(
       body: SafeArea(
@@ -33,10 +42,31 @@ class AboutPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Flexible(
-                        child: Text(S.of(context).stopwatch, style: TextStyle(fontSize: 20)),
+                      Text(S.of(context).stopwatch, style: TextStyle(fontSize: 20)),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: Text('Copyright © 2020 Garnet Juice', style: TextStyle(fontSize: 18),),
                       ),
-                      Flexible(child: Text('${S.of(context).version} $version', style: TextStyle(fontSize: 20))),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text('${S.of(context).version} $version', style: TextStyle(fontSize: 20)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            launch(_emailLaunchUri.toString());
+                          },
+                          child: Text(
+                            'everyapp@yandex.ru',
+                            style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 18
+                            ),
+                          ),
+                        ),
+                      )
                     ],
                   )),
             ),
