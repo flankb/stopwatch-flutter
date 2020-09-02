@@ -273,10 +273,10 @@ class S {
     );
   }
 
-  /// `To *csv`
+  /// `To *.csv`
   String get to_csv_app_bar {
     return Intl.message(
-      'To *csv',
+      'To *.csv',
       name: 'to_csv_app_bar',
       desc: '',
       args: [],
@@ -488,6 +488,46 @@ class S {
     return Intl.message(
       'sec.',
       name: 'seconds',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Lap number`
+  String get number_lap {
+    return Intl.message(
+      'Lap number',
+      name: 'number_lap',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Lap time`
+  String get time_lap {
+    return Intl.message(
+      'Lap time',
+      name: 'time_lap',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Difference with previous lap`
+  String get diff_prev_lap {
+    return Intl.message(
+      'Difference with previous lap',
+      name: 'diff_prev_lap',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Lap comment`
+  String get comment_of_lap {
+    return Intl.message(
+      'Lap comment',
+      name: 'comment_of_lap',
       desc: '',
       args: [],
     );

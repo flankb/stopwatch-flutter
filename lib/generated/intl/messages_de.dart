@@ -63,7 +63,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "start" : MessageLookupByLibrary.simpleMessage("Start"),
     "stopwatch" : MessageLookupByLibrary.simpleMessage("Stoppuhr"),
     "to" : MessageLookupByLibrary.simpleMessage("Durch"),
-    "to_csv_app_bar" : MessageLookupByLibrary.simpleMessage("Zu * csv"),
+    "to_csv_app_bar" : MessageLookupByLibrary.simpleMessage("Zu *.csv"),
     "version" : MessageLookupByLibrary.simpleMessage("Version"),
     "very_long_comment" : MessageLookupByLibrary.simpleMessage("Der Kommentar darf nicht länger als 256 Zeichen sein!"),
     "vibration" : MessageLookupByLibrary.simpleMessage("Vibration")

@@ -37,7 +37,7 @@
   "overall_time": "Kokonaisaika",
   "no_measures": "Ei mittauksia",
   "no_possible_delete_laps": "Piireissä se on mahdotonta poistaa!",
-  "to_csv_app_bar": "Kohteeseen * csv",
+  "to_csv_app_bar": "Kohteeseen *.csv",
   "keep_screen_on": "Pidä näyttö päällä",
   "save_measures": "Tallenna mittaukset",
   "app_theme": "Sovelluksen teema",

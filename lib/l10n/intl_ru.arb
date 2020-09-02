@@ -23,7 +23,7 @@
   "del_app_bar" : "Удалить",
   "no_possible_delete_laps" : "Круги нельзя удалять!",
   "share_app_bar" : "Экспорт",
-  "to_csv_app_bar" : "В *csv",
+  "to_csv_app_bar" : "В *.csv",
   "sound" : "Звук",
   "vibration" : "Вибрация",
   "keep_screen_on" : "Сохранять экран включенным",
@@ -44,5 +44,9 @@
   "days" : "сут.",
   "hours" : "час.",
   "minutes" : "мин.",
-  "seconds" : "сек."
+  "seconds" : "сек.",
+  "number_lap" : "Номер круга",
+  "time_lap" : "Время круга",
+  "diff_prev_lap" : "Разница с пред. кругом",
+  "comment_of_lap" : "Комментарий круга"
 }

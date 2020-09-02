@@ -18,7 +18,6 @@ class StopwatchItem extends StatefulWidget {
   final StreamController<int> selectionListController;
 
   // Сделать данный класс Generic ?
-
   const StopwatchItem({Key key, this.entity, this.selectedEvent, this.selectionListController}) : super(key: key);
 
   @override

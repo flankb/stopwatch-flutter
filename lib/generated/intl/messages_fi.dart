@@ -63,7 +63,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "start" : MessageLookupByLibrary.simpleMessage("alkaa"),
     "stopwatch" : MessageLookupByLibrary.simpleMessage("Sekuntikello"),
     "to" : MessageLookupByLibrary.simpleMessage("jotta"),
-    "to_csv_app_bar" : MessageLookupByLibrary.simpleMessage("Kohteeseen * csv"),
+    "to_csv_app_bar" : MessageLookupByLibrary.simpleMessage("Kohteeseen *.csv"),
     "version" : MessageLookupByLibrary.simpleMessage("Versio"),
     "very_long_comment" : MessageLookupByLibrary.simpleMessage("Kommentti ei voi olla pidempi kuin 256 merkkiä!"),
     "vibration" : MessageLookupByLibrary.simpleMessage("värähtely")
