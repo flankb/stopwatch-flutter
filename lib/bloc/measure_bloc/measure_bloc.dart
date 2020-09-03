@@ -57,8 +57,8 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     final measuredPaused = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Paused));
     final measuredReady = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Ready));
 
-    final measureFinished = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished));
-    MeasureViewModel.finishedMeasuresCount = measureFinished.length;
+    //final measureFinished = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished));
+    //MeasureViewModel.finishedMeasuresCount = measureFinished.length;
 
     List<Measure> combine = List<Measure>();
 
@@ -271,9 +271,6 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       if (lastSession != null) {
         await _stopwatchRepository.updateMeasureSession(lastSession.toEntity());
       }
-
-      // Сохраним количество измерений
-      MeasureViewModel.finishedMeasuresCount += 1;
     }
     else {
       await _stopwatchRepository.deleteMeasures([state.measure.id]);

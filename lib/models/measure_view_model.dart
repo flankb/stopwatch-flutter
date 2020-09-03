@@ -15,9 +15,6 @@ class MeasureViewModel extends BaseStopwatchEntity {
   StopwatchStatus status;
   List<LapViewModel> laps;
   List<MeasureSessionViewModel> sessions;
-
-  //TODO Плохо, как-то инкапсулировать!
-  static int finishedMeasuresCount = 0;
   /// Вспомогательное свойство для динамического расчета истекшего времени
   DateTime lastRestartedOverall;
 

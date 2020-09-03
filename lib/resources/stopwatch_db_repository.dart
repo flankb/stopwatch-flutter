@@ -8,12 +8,32 @@ part 'stopwatch_db_repository.g.dart';
 
 @UseDao(tables: [Laps, Measures, MeasureSessions, Tags])
 class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchRepositoryMixin implements BaseStopwatchRepository {
+  int _guaranteedAmountOfFinishedMeasures;
+
+  int get guaranteedAmountOfFinishedMeasures => _guaranteedAmountOfFinishedMeasures;
   StopwatchRepository() : super(MyDatabase());
 
   StopwatchRepository.fromDatabase(MyDatabase database) : super(database);
 
-  Future<List<Measure>> getMeasuresByStatusAsync(String status) {
-    return (select(measures)..where((m) => m.status.equals(status))..orderBy([(t) => OrderingTerm(expression: t.dateStarted, mode: OrderingMode.desc)])).get();
+  Stream<List<Measure>> watcher;
+
+  watchFinishedMeasures(int limit) {
+    var statement = (select(measures)..where((m) => m.status.equals(describeEnum(StopwatchStatus.Finished)))..limit(limit));
+    watcher = statement.watch();
+
+    watcher.listen((event) {
+      _guaranteedAmountOfFinishedMeasures = event.length;
+      debugPrint('watchFinishedMeasures $_guaranteedAmountOfFinishedMeasures');
+    });
+  }
+
+  Future<List<Measure>> getMeasuresByStatusAsync(String status, {int limit}) {
+    var statement = (select(measures)..where((m) => m.status.equals(status))..orderBy([(t) => OrderingTerm(expression: t.dateStarted, mode: OrderingMode.desc)]));
+    if (limit != null) {
+      statement = statement..limit(limit);
+    }
+
+    return statement.get();
   }
 
   Future<Measure> getMeasuresByIdAsync(int id) {
@@ -97,5 +117,9 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
     await delete(laps).go();
     await delete(tags).go();
     await delete(measures).go();*/
+  }
+
+  dispose() {
+
   }
 }

@@ -27,7 +27,7 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
   }
   
   @override
-  Future<List<Measure>> getMeasuresByStatusAsync(String status) async {
+  Future<List<Measure>> getMeasuresByStatusAsync(String status, {int limit}) async {
     return _measures.where((element) => describeEnum(element.status) == status).map((e) => e.toEntity()).toList();
   }
 

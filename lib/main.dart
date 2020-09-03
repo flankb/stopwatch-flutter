@@ -71,11 +71,15 @@ void main() async {
 
   setupLocators();
 
+  getIt.get<StopwatchRepository>().watchFinishedMeasures(MAX_FREE_MEASURES);
+
   getIt.get<PurchaserBloc>()
     ..enablePendingPurchases()
     ..enableConnection()
     ..listenPurchaseUpdates()
     ..queryPurchases(filterIds : {PRO_PACKAGE});
+
+
 
   runApp(MyApp(initialTheme: initialTheme, themeController: controller,));
 }

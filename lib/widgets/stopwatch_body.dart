@@ -307,10 +307,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                           pic: Icons.refresh,
                           tooltip: S.of(context).reset,
                           onPressed: () {
-                            final measureCounts = MeasureViewModel.finishedMeasuresCount;
-                            bool saveMeasure = PrefService.getBool(PREF_SAVE_MEASURES) ?? true;
-                            final proOwned = snapshot.data.skuIsAcknowledged(PRO_PACKAGE);
-                            saveMeasure = saveMeasure && (proOwned || measureCounts < MAX_FREE_MEASURES);
+                            bool saveMeasure = _isSaveMeasure(snapshot);
 
                             BlocProvider.of<MeasureBloc>(context).add(MeasureFinishedEvent(saveMeasure));
 
@@ -369,6 +366,17 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
         );
       }),
     );
+  }
+
+  bool _isSaveMeasure(AsyncSnapshot<PurchaseCompletedState> snapshot) {
+    final measureCounts = getIt.get<StopwatchRepository>().guaranteedAmountOfFinishedMeasures; // TODO Плохо здесь ссылаться на репозиторий!
+    bool saveMeasure = PrefService.getBool(PREF_SAVE_MEASURES) ?? true;
+    final proOwned = snapshot.data.skuIsAcknowledged(PRO_PACKAGE);
+    saveMeasure = saveMeasure && (proOwned || measureCounts < MAX_FREE_MEASURES);
+
+    debugPrint("_isSaveMeasure $saveMeasure");
+
+    return saveMeasure;
   }
 
   @override
