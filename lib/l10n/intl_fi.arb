@@ -50,5 +50,10 @@
   "diff_prev_lap": "Ero edelliseen kierrokseen",
   "comment_of_lap": "Piirin kommentti",
   "purchase": "Ostaa",
-  "purchase_banner": "Vain kolme mittausta voidaan tallentaa vakioversioon! Osta Pro-paketti rajoituksen poistamiseksi."
+  "purchase_banner": "Vain kolme mittausta voidaan tallentaa vakioversioon! Osta Pro-paketti rajoituksen poistamiseksi.",
+  "magenta": "Violetti",
+  "breeze": "Tuulta",
+  "cedar": "Setri",
+  "sunrise": "Auringonnousu",
+  "twilight": "Iltahämärä"
 }

@@ -50,5 +50,10 @@
   "diff_prev_lap": "Diferencia con la vuelta anterior",
   "comment_of_lap": "Comentario circular",
   "purchase": "Compra",
-  "purchase_banner": "¡Solo se pueden almacenar tres mediciones en la versión estándar! Compre el paquete Pro para eliminar la restricción."
+  "purchase_banner": "¡Solo se pueden almacenar tres mediciones en la versión estándar! Compre el paquete Pro para eliminar la restricción.",
+  "magenta": "Púrpura",
+  "breeze": "Brisa",
+  "cedar": "Cedro",
+  "sunrise": "Amanecer",
+  "twilight": "Crepúsculo"
 }

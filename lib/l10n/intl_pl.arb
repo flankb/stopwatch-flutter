@@ -50,5 +50,10 @@
   "diff_prev_lap": "Różnica w stosunku do poprzedniego okrążenia",
   "comment_of_lap": "Komentarz do okrążenia",
   "purchase": "Zakup",
-  "purchase_banner": "W wersji standardowej można zapisać tylko trzy pomiary! Kup pakiet Pro, aby usunąć ograniczenie."
+  "purchase_banner": "W wersji standardowej można zapisać tylko trzy pomiary! Kup pakiet Pro, aby usunąć ograniczenie.",
+  "magenta": "Fioletowy",
+  "breeze": "Bryza",
+  "cedar": "Cedr",
+  "sunrise": "Wschód",
+  "twilight": "Zmierzch"
 }

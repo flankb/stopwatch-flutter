@@ -50,5 +50,10 @@
   "diff_prev_lap": "Unterschied zur vorherigen Runde",
   "comment_of_lap": "Kreis Kommentar",
   "purchase": "Kauf",
-  "purchase_banner": "In der Standardversion können nur drei Messungen gespeichert werden! Kaufen Sie das Pro-Paket, um die Einschränkung aufzuheben."
+  "purchase_banner": "In der Standardversion können nur drei Messungen gespeichert werden! Kaufen Sie das Pro-Paket, um die Einschränkung aufzuheben.",
+  "magenta": "Lila",
+  "breeze": "Brise",
+  "cedar": "Zeder",
+  "sunrise": "Sonnenaufgang",
+  "twilight": "Dämmerung"
 }

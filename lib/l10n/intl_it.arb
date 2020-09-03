@@ -50,5 +50,10 @@
   "diff_prev_lap": "Differenza con il giro precedente",
   "comment_of_lap": "Commento del cerchio",
   "purchase": "Acquista",
-  "purchase_banner": "Solo tre misurazioni possono essere memorizzate nella versione standard! Acquista il pacchetto Pro per rimuovere la restrizione."
+  "purchase_banner": "Solo tre misurazioni possono essere memorizzate nella versione standard! Acquista il pacchetto Pro per rimuovere la restrizione.",
+  "magenta": "Viola",
+  "breeze": "Brezza",
+  "cedar": "Cedro",
+  "sunrise": "Alba",
+  "twilight": "Crepuscolo"
 }
