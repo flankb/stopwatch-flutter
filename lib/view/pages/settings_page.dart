@@ -7,22 +7,27 @@ import 'package:validators/validators.dart';
 
 import '../../constants.dart';
 import '../../theme_data.dart';
+import 'history_page.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final sunrise = S.current.sunrise;
+    final twilight = S.current.twilight;
+
     return Scaffold(
       body: SafeArea(
           child: Column(
             children: <Widget>[
               // Заголовок
-              Row(
+              PageCaption(caption : S.of(context).settings),
+              /*Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   BackButton(),
                   Text(S.of(context).settings, style: TextStyle(fontSize: 36),)
                 ],
-              ),
+              ),*/
               Expanded(
                 child: PreferencePage([
                   SwitchPreference(
@@ -58,7 +63,12 @@ class SettingsPage extends StatelessWidget {
                       //debugPrint("Selected theme: " + theme.toString());
                       InheritedThemeNotifier.of(context).updateTheme(theme);
                     },
-                    displayValues: ['Magenta Light', 'Magenta Dark', 'Blue Light', 'Blue Dark', 'Green Light', 'Green Dark'],
+                    displayValues: ['${S.current.magenta} $sunrise',
+                      '${S.current.magenta} $twilight',
+                      '${S.current.breeze} $sunrise',
+                      '${S.current.breeze} $twilight',
+                      '${S.current.cedar} $sunrise',
+                      '${S.current.cedar} $twilight'],
                     values: [AppTheme.MagentaLight.toString(), AppTheme.MagentaDark.toString(), AppTheme.BlueLight.toString(), AppTheme.BlueDark.toString(), AppTheme.GreenLight.toString(), AppTheme.GreenDark.toString()],
                   ),
                 ]),

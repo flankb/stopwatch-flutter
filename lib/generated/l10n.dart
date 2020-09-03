@@ -552,6 +552,56 @@ class S {
       args: [],
     );
   }
+
+  /// `Purple`
+  String get magenta {
+    return Intl.message(
+      'Purple',
+      name: 'magenta',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Breeze`
+  String get breeze {
+    return Intl.message(
+      'Breeze',
+      name: 'breeze',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cedar`
+  String get cedar {
+    return Intl.message(
+      'Cedar',
+      name: 'cedar',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sunrise`
+  String get sunrise {
+    return Intl.message(
+      'Sunrise',
+      name: 'sunrise',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Twilight`
+  String get twilight {
+    return Intl.message(
+      'Twilight',
+      name: 'twilight',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

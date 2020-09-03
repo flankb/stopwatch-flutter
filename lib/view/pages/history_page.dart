@@ -159,16 +159,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         // Заголовок
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            BackButton(),
-                            Text(
-                              pageIsLap ? S.of(context).details : S.of(context).measures,
-                              style: TextStyle(fontSize: 36),
-                            )
-                          ],
-                        ),
+                        PageCaption(caption : pageIsLap ? S.of(context).details : S.of(context).measures),
 
                         pageIsLap
                             ? AnimatedBuilder(
@@ -479,6 +470,32 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
   void _unselectItems() {
     _selectedEntities.clear();
     _selectedItemsStreamController.add(0);
+  }
+}
+
+class PageCaption extends StatelessWidget {
+  const PageCaption({
+    Key key,
+    @required this.caption,
+  }) : super(key: key);
+
+  final String caption;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          BackButton(),
+          Text(
+            caption,
+            style: TextStyle(fontSize: 36),
+          )
+        ],
+      ),
+    );
   }
 }
 

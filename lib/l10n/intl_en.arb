@@ -50,5 +50,10 @@
   "diff_prev_lap" : "Difference with previous lap",
   "comment_of_lap" : "Lap comment",
   "purchase_banner": "Only three measurements can be stored in the standard version! Purchase the Pro Package to remove the restriction.",
-  "purchase" : "Purchase"
+  "purchase" : "Purchase",
+  "magenta" : "Purple",
+  "breeze" : "Breeze",
+  "cedar" : "Cedar",
+  "sunrise": "Sunrise",
+  "twilight": "Twilight"
 }

@@ -79,8 +79,6 @@ void main() async {
     ..listenPurchaseUpdates()
     ..queryPurchases(filterIds : {PRO_PACKAGE});
 
-
-
   runApp(MyApp(initialTheme: initialTheme, themeController: controller,));
 }
 

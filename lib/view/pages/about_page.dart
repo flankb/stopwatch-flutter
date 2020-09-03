@@ -7,6 +7,8 @@ import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'history_page.dart';
+
 class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,8 @@ class AboutPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Row(
+            PageCaption(caption : S.of(context).about),
+            /*Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 BackButton(),
@@ -35,7 +38,7 @@ class AboutPage extends StatelessWidget {
                   style: TextStyle(fontSize: 36),
                 )
               ],
-            ),
+            ),*/
             Expanded(
               child: Container(
                   margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
