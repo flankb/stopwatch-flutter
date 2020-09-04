@@ -1,0 +1,64 @@
+1.1.0
+
+<en-US>
+The format of exporting measurements has been changed
+Unselect rows by pressing the Back button
+One-touch highlighting of additional lines
+Correction of a database loading error on some devices
+</en-US>
+
+<de-DE>
+Das Format des Messexports wurde geändert
+Heben Sie die Markierung von Zeilen auf, indem Sie die Schaltfläche Zurück drücken.
+Hervorhebung zusätzlicher Zeilen auf Knopfdruck
+Korrekturen für Datenbank-Boot-Fehler auf einigen Geräten
+</de-DE>
+
+<es-ES>
+Se cambió el formato de la exportación de las mediciones
+Deseleccione las filas presionando el botón Back
+Resaltado con un solo toque de las filas adicionales
+Corrige el error de arranque de la base de datos en algunos dispositivos
+</es-ES>
+
+<fi-FI>
+Vientiraportin mitattu muoto
+Rakennusten vihkiminen painikkeella Takaisin
+Lisäsivustojen tekeminen yksitellen
+Virhe tietokannan käsittelyssä joissakin laitteissa
+</fi-FI>
+
+<fr-FR>
+Le format de l'exportation des mesures a été modifié
+Désélectionner des lignes en appuyant sur le bouton "Retour
+Mise en évidence des lignes supplémentaires par simple pression d'une touche
+Correction d'une erreur de démarrage de la base de données sur certains périphériques
+</fr-FR>
+
+<it-IT>
+Il formato dell'esportazione delle misure è stato cambiato
+Deselezionare le righe premendo il tasto Indietro
+Evidenziazione one-touch di righe aggiuntive
+Corregge l'errore di avvio del database su alcuni dispositivi
+</it-IT>
+
+<pl-PL>
+Zmieniono format eksportu pomiarów
+Odzyskać zaznaczenie wierszy poprzez naciśnięcie przycisku Wstecz
+Podświetlanie za jednym dotknięciem dodatkowych rzędów
+Poprawki dla błędu uruchamiania bazy danych na niektórych urządzeniach
+</pl-PL>
+
+<pt-BR>
+O formato da exportação das medidas foi alterado
+Desselecione as linhas pressionando o botão Voltar
+Destaque de linhas adicionais com um toque
+Corrige erros de inicialização do banco de dados em alguns dispositivos
+</pt-BR>
+
+<ru-RU>
+Изменен формат экспорта измерений
+Снятие выделения строк по кнопке Назад
+Выделение дополнительных строк одним прикосновением
+Исправление ошибки загрузки базы данных на некоторых устройствах
+</ru-RU>

@@ -12,7 +12,7 @@ import 'history_page.dart';
 class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    String version = '1.0.1'; // Использовать https://pub.dev/packages/package_info
+    String version = '1.1.0'; // Использовать https://pub.dev/packages/package_info
     final debuggable = false;
 
     final Uri _emailLaunchUri = Uri(
