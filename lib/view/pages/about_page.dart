@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';
+import 'package:package_info/package_info.dart';
 import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
@@ -12,7 +13,6 @@ import 'history_page.dart';
 class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    String version = '1.1.0'; // Использовать https://pub.dev/packages/package_info
     final debuggable = false;
 
     final Uri _emailLaunchUri = Uri(
@@ -23,22 +23,14 @@ class AboutPage extends StatelessWidget {
         }
     );
 
+    final infoFuture = PackageInfo.fromPlatform();
+
     return Scaffold(
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             PageCaption(caption : S.of(context).about),
-            /*Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                BackButton(),
-                Text(
-                  S.of(context).about,
-                  style: TextStyle(fontSize: 36),
-                )
-              ],
-            ),*/
             Expanded(
               child: Container(
                   margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
@@ -52,7 +44,12 @@ class AboutPage extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
-                        child: Text('${S.of(context).version} $version', style: TextStyle(fontSize: 20)),
+                        child: FutureBuilder<PackageInfo>(
+                          future: infoFuture,
+                          builder: (context, snapshot) {
+                            return Text(snapshot.hasData ? '${S.of(context).version} ${snapshot.data.version}' : '', style: TextStyle(fontSize: 20));
+                          }
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),

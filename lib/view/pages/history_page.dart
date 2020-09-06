@@ -1,20 +1,15 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:get_it/get_it.dart';
 import 'package:share/share.dart';
 import 'package:stopwatch/bloc/storage_bloc/bloc.dart';
 import 'package:stopwatch/constants.dart';
-import 'package:stopwatch/fake/fake_data_fabric.dart';
 import 'package:stopwatch/generated/l10n.dart';
-import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/models/filter.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
-import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 import 'package:stopwatch/service_locator.dart';
 import 'package:stopwatch/util/csv_exporter.dart';
 import 'package:stopwatch/util/time_displayer.dart';
@@ -25,7 +20,6 @@ import 'package:stopwatch/widgets/inherited/app_theme_notified.dart';
 import 'package:stopwatch/widgets/metro_app_bar.dart';
 import 'package:stopwatch/widgets/pair_label_view.dart';
 import 'package:stopwatch/widgets/stopwatch_item_widget.dart';
-import 'package:preferences/preferences.dart';
 import 'package:toast/toast.dart';
 
 import '../../purchaser.dart';
@@ -68,7 +62,6 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
     });
 
     animationController.forward();
-    //animationController.forward();
 
     _selectedItemsStreamController = StreamController<int>.broadcast();
     // https://github.com/felangel/bloc/issues/74
@@ -118,9 +111,6 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
     // Статья про эффективное использование BLoC
     // https://medium.com/flutterpub/effective-bloc-pattern-45c36d76d5fe
     return BlocProvider.value(
-      /*create: (BuildContext context) {
-        return _storageBloc;
-      },*/
       value: _storageBloc,
       child: WillPopScope(
       onWillPop: () async {
@@ -131,8 +121,6 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
         return true;
       },
         child: Scaffold(
-          // Вариант:
-          //https://stackoverflow.com/questions/53733548/dynamic-appbar-of-flutter
           body: SafeArea(
             child: BlocBuilder<StorageBloc, StorageState>(
               builder: (BuildContext context, state) {
@@ -152,15 +140,25 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
 
                   final existsMeasures = availState.entities.any((element) => true);
 
-                  // TODO Анимашка
-                  // https://github.com/flutter/samples/blob/master/animations/lib/src/basics/05_animated_builder.dart
                   return Stack(children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         // Заголовок
                         PageCaption(caption : pageIsLap ? S.of(context).details : S.of(context).measures),
+                        StreamBuilder<String>( // Информатор взаимодействия с магазином
+                            initialData: null,
+                            stream: getIt.get<PurchaserBloc>().purchaseErrorStream,
+                            builder: (context, snapshot){
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                if(snapshot.hasData && snapshot.data != null){
+                                  Toast.show(snapshot.data, context);
+                                }
+                              });
 
+                              return const SizedBox();
+                            }
+                        ),
                         pageIsLap
                             ? AnimatedBuilder(
                                 animation: animation,
@@ -239,15 +237,12 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                           );
                                         } else {
                                           //return SizedBox.shrink();
-
-
                                           return StreamBuilder<PurchaseCompletedState>(
                                               stream: getIt.get<PurchaserBloc>().purchaseStateStream,
                                               initialData: getIt.get<PurchaserBloc>().purchaseState,
                                               builder: (context, snapshot) {
                                                 if (snapshot.hasData && !snapshot.hasError) {
                                                   final viewBanner = !snapshot.data.skuIsAcknowledged(PRO_PACKAGE) &&
-                                                      availState.allEntities.length <= MAX_FREE_MEASURES &&
                                                       availState.allEntities.length > 0;
                                                   return viewBanner ? PurchaseBanner() : SizedBox.shrink();
                                                 } else {

@@ -57,7 +57,7 @@ class SettingsPage extends StatelessWidget {
                   DropdownPreference<String>( //
                     S.of(context).app_theme,
                     PREF_THEME,
-                    defaultVal: AppTheme.BlueLight.toString(),
+                    defaultVal: AppTheme.GreenLight.toString(),
                     onChange: (v) {
                       AppTheme theme = AppTheme.values.firstWhere((e) => e.toString() == v.toString());
                       //debugPrint("Selected theme: " + theme.toString());
