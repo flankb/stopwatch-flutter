@@ -2,10 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 // TODO https://stackoverflow.com/questions/63098352/flutter-in-app-purchase-what-should-i-include-in-verifypurchase
-
 class InheritedPurchaserBlocProvider extends InheritedWidget {
   final Widget child;
   final PurchaserBloc bloc;
@@ -200,9 +198,7 @@ class PurchaserBloc implements Bloc {
       await Future.forEach(purchaseResponse.pastPurchases, (PurchaseDetails purchasesDetail) async {
         if (purchasesDetail.status == PurchaseStatus.purchased) {
           // Здесь можно проверить receipt или еще какие-то штуки
-          if (purchasesDetail.pendingCompletePurchase) {
-            await InAppPurchaseConnection.instance.completePurchase(purchasesDetail);
-          }
+          _acknowledgePurchase(purchasesDetail);
         }
       });
     }
@@ -226,48 +222,25 @@ class PurchaserBloc implements Bloc {
           // Ошибка при обновлении статуса покупок
           _emitPurchaseMessage("Error during purchase!");
         } else if (purchasesDetail.status == PurchaseStatus.purchased) {
-          bool purchaseConfirmed = false;
           // Здесь можно проверить receipt или еще какие-то штуки
-          if (purchasesDetail.pendingCompletePurchase) {
-            final completeResult = await InAppPurchaseConnection.instance.completePurchase(purchasesDetail);
-            debugPrint("Pending result! $completeResult");
-
-            if (completeResult.responseCode != BillingResponse.ok) {
-              debugPrint("Purchase is not acknowledged!");
-              _emitPurchaseMessage("Purchase is not acknowledged!");
-            } else {
-              debugPrint("Purchase is not acknowledged!");
-              purchaseConfirmed = true;
-            }
-          } else {
-            purchaseConfirmed = true;
-          }
-
-          /*if (purchaseConfirmed) {
-            // Занесем покупку в кэш
-            await prefs.setBool(purchasesDetail.productID, true);
-          }*/
-
-          /*
-          При покупке
-          I/flutter (19917): Pending result! Instance of 'BillingResultWrapper'
-          I/flutter (19917): Pending result is no oK! Instance of 'BillingResultWrapper'
-          I/flutter (19917): Purchase is acknowledged!! false and true
-          I/flutter (19917): _emitPurchaseState: PurchaseCompletedState{products: {}, purchases: pro_package: PurchaseStatus.purchased pendingCompletePurchase: true acknowledged: false, isAvailable: false, loading: true, queryProductError: null}
-          I/flutter (19917): Purchase data in stream builder PurchaseCompletedState{products: {}, purchases: pro_package: PurchaseStatus.purchased pendingCompletePurchase: true acknowledged: false, isAvailable: false, loading: true, queryProductError: null}
-           */
-
-          // TODO Здесь isAcknowledged == false, даже если результат прищел true!
-          // TODO Но если сделать queryPurchases, то баннер исчезнет!
-          //debugPrint(
-          //    "Purchase is acknowledged!! ${purchasesDetail.billingClientPurchase.isAcknowledged} and $purchaseConfirmed");
+          await _acknowledgePurchase(purchasesDetail);
         }
       }
-
-      //_purchaseState.purchases[purchasesDetail.productID] = purchasesDetail; // TODO Не работает!
     });
 
     await queryPurchases();
+  }
+
+  Future _acknowledgePurchase(PurchaseDetails purchasesDetail) async {
+     if (purchasesDetail.pendingCompletePurchase) {
+      final completeResult = await InAppPurchaseConnection.instance.completePurchase(purchasesDetail);
+
+      if (completeResult.responseCode != BillingResponse.ok) {
+        _emitPurchaseMessage("Purchase is not acknowledged!");
+      } else {
+        _emitPurchaseMessage("Purchase is acknowledged!");
+      }
+    }
   }
 
   /// Запросить покупку
