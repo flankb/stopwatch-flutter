@@ -20,7 +20,7 @@ class InheritedPurchaserBlocProvider extends InheritedWidget {
   }
 }
 
-abstract class Bloc {
+abstract class BasePurchaseBloc {
   void dispose();
 }
 
@@ -66,8 +66,8 @@ class PurchaseCompletedState {
 
   PurchaseCompletedState copyWith(
       {List<String> notFoundIds,
-      List<ProductDetails> products,
-      List<PurchaseDetails> purchases,
+      Map<String, ProductDetails> products,
+      Map<String, PurchaseDetails> purchases,
       List<String> consumables,
       bool isAvailable,
       bool purchasePending,
@@ -119,7 +119,7 @@ class PurchaseCompletedState {
   }
 }
 
-class PurchaserBloc implements Bloc {
+class PurchaserBloc implements BasePurchaseBloc {
   InAppPurchaseConnection _connection; // = InAppPurchaseConnection.instance;
   StreamSubscription<List<PurchaseDetails>> _subscription;
 
@@ -167,12 +167,12 @@ class PurchaserBloc implements Bloc {
     }
 
     ProductDetailsResponse productDetailResponse = await _connection.queryProductDetails(productIds);
+    
+    final Map<String, ProductDetails> productsMap = Map.fromIterable(productDetailResponse.productDetails,
+        key: (item) => item.id,
+        value: (item) => item);
 
-    productDetailResponse.productDetails.forEach((ProductDetails pd) {
-      _purchaseState.products[pd.id] = pd;
-    });
-
-    _emitPurchaseState(_purchaseState);
+    _emitPurchaseState(_purchaseState.copyWith(products: productsMap));
   }
 
   /// Проверяются покупки
@@ -192,7 +192,11 @@ class PurchaserBloc implements Bloc {
       return;
     }
 
-    final newState = _purchaseState.copyWith(purchases: purchaseResponse.pastPurchases);
+    final Map<String, PurchaseDetails> purchasesMap = Map.fromIterable(purchaseResponse.pastPurchases,
+        key: (item) => item.productID,
+        value: (item) => item);
+
+    final newState = _purchaseState.copyWith(purchases: purchasesMap);
 
     if (acknowledgePendingPurchases) {
       await Future.forEach(purchaseResponse.pastPurchases, (PurchaseDetails purchasesDetail) async {
@@ -244,9 +248,9 @@ class PurchaserBloc implements Bloc {
   }
 
   /// Запросить покупку
-  /// [sku] - идентификатор покупки
-  Future requestPurchase(String sku) async {
-    ProductDetailsResponse productDetailResponse = await _connection.queryProductDetails({sku});
+  /// [productId] - идентификатор покупки
+  Future requestPurchase(String productId) async {
+    ProductDetailsResponse productDetailResponse = await _connection.queryProductDetails({productId});
 
     if (productDetailResponse.error != null) {
       _emitPurchaseMessage("Billing service is unavailable!");
@@ -260,7 +264,7 @@ class PurchaserBloc implements Bloc {
 
     PurchaseParam purchaseParam = PurchaseParam(
         productDetails: productDetailResponse.productDetails
-            .where((element) => element.id == sku)
+            .where((element) => element.id == productId)
             .first); // applicationUserName: null, sandboxTesting: true);
 
     _connection.buyNonConsumable(purchaseParam: purchaseParam);

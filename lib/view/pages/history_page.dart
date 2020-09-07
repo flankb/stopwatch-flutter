@@ -244,6 +244,9 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                                 if (snapshot.hasData && !snapshot.hasError) {
                                                   final viewBanner = !snapshot.data.skuIsAcknowledged(PRO_PACKAGE) &&
                                                       availState.allEntities.length > 0;
+
+                                                  debugPrint("Purchase data in stream builder ${snapshot.data}");
+
                                                   return viewBanner ? PurchaseBanner() : SizedBox.shrink();
                                                 } else {
                                                   return SizedBox.shrink();
@@ -365,6 +368,8 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                       height: 62,
                                       child: RawMaterialButton(
                                         onPressed: () async {
+                                          //getIt.get<PurchaserBloc>().queryPurchases(filterIds : {PRO_PACKAGE});
+
                                           debugPrint("Last filter in history page ${availState.lastFilter}");
                                           final result = await showDialog(
                                               context: context,
