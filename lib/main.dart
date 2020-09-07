@@ -77,7 +77,7 @@ void main() async {
     ..enablePendingPurchases()
     ..enableConnection()
     ..listenPurchaseUpdates()
-    ..queryPurchases(filterIds : {PRO_PACKAGE});
+    ..queryPurchases(acknowledgePendingPurchases: true);
 
   runApp(MyApp(initialTheme: initialTheme, themeController: controller,));
 }

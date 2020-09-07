@@ -26,20 +26,16 @@ abstract class Bloc {
   void dispose();
 }
 
-enum UpdateCause {
-  Loading,
-  Products,
-  Error
-}
+enum UpdateCause { Loading, Products, Error }
 
-class PurchaseCompletedState  {
+class PurchaseCompletedState {
   final List<String> notFoundIds;
   final Map<String, ProductDetails> products;
   final Map<String, PurchaseDetails> purchases;
   final List<String> consumables;
   final bool isAvailable; // = false;
   final bool purchasePending; // = false;
-  final bool loading;// = true;
+  final bool loading; // = true;
   final UpdateCause updateCause;
 
   @deprecated
@@ -58,7 +54,7 @@ class PurchaseCompletedState  {
         updateCause: UpdateCause.Loading);
   }
 
-  PurchaseCompletedState( {
+  PurchaseCompletedState({
     @required this.notFoundIds,
     @required this.products,
     @required this.purchases,
@@ -70,28 +66,26 @@ class PurchaseCompletedState  {
     @required this.updateCause,
   });
 
-  PurchaseCompletedState copyWith({
-    List<String> notFoundIds,
-    List<ProductDetails> products,
-    List<PurchaseDetails> purchases,
-    List<String> consumables,
-    bool isAvailable,
-    bool purchasePending,
-    bool loading,
-    String queryProductError,
-    UpdateCause updateCause
-  }) {
+  PurchaseCompletedState copyWith(
+      {List<String> notFoundIds,
+      List<ProductDetails> products,
+      List<PurchaseDetails> purchases,
+      List<String> consumables,
+      bool isAvailable,
+      bool purchasePending,
+      bool loading,
+      String queryProductError,
+      UpdateCause updateCause}) {
     return new PurchaseCompletedState(
-      notFoundIds: notFoundIds ?? this.notFoundIds,
-      products: products ?? this.products,
-      purchases: purchases ?? this.purchases,
-      consumables: consumables ?? this.consumables,
-      isAvailable: isAvailable ?? this.isAvailable,
-      purchasePending: purchasePending ?? this.purchasePending,
-      loading: loading ?? this.loading,
-      queryProductError: queryProductError ?? this.queryProductError,
-      updateCause: updateCause ?? this.updateCause
-    );
+        notFoundIds: notFoundIds ?? this.notFoundIds,
+        products: products ?? this.products,
+        purchases: purchases ?? this.purchases,
+        consumables: consumables ?? this.consumables,
+        isAvailable: isAvailable ?? this.isAvailable,
+        purchasePending: purchasePending ?? this.purchasePending,
+        loading: loading ?? this.loading,
+        queryProductError: queryProductError ?? this.queryProductError,
+        updateCause: updateCause ?? this.updateCause);
   }
 
   bool skuIsAcknowledged(String sku) {
@@ -117,7 +111,8 @@ class PurchaseCompletedState  {
             value.status.toString() +
             " pendingCompletePurchase: " +
             value.pendingCompletePurchase.toString() +
-            " acknowledged: " + value.billingClientPurchase?.isAcknowledged.toString())
+            " acknowledged: " +
+            value.billingClientPurchase?.isAcknowledged.toString())
         .join("\n ");
 
     return 'PurchaseCompletedState{products: $products, '
@@ -131,12 +126,14 @@ class PurchaserBloc implements Bloc {
   StreamSubscription<List<PurchaseDetails>> _subscription;
 
   PurchaseCompletedState _purchaseState;
+
   PurchaseCompletedState get purchaseState => _purchaseState;
 
   StreamController<PurchaseCompletedState> _purchaseStateStreamController = StreamController.broadcast();
   StreamController<String> _purchaseErrorStreamController = StreamController.broadcast();
 
-  Stream<PurchaseCompletedState> get purchaseStateStream => _purchaseStateStreamController.stream;//.asBroadcastStream();
+  Stream<PurchaseCompletedState> get purchaseStateStream =>
+      _purchaseStateStreamController.stream; //.asBroadcastStream();
   Stream<String> get purchaseErrorStream => _purchaseErrorStreamController.stream; //.asBroadcastStream();
 
   PurchaserBloc() {
@@ -163,15 +160,15 @@ class PurchaserBloc implements Bloc {
   }
 
   /// Выдать список доступных продуктов
-  /// Из тех, которые указаны в [skus]
-  Future queryProductDetails(Set<String> skus) async {
+  /// Из тех, которые указаны в [productIds]
+  Future queryProductDetails(Set<String> productIds) async {
     if (!(await _getAvailability())) {
       _emitPurchaseState(_purchaseState.copyWith(isAvailable: false));
-      _emitError("Billing service is unavailable!");
+      _emitPurchaseMessage("Billing service is unavailable!");
       return;
     }
 
-    ProductDetailsResponse productDetailResponse = await _connection.queryProductDetails(skus);
+    ProductDetailsResponse productDetailResponse = await _connection.queryProductDetails(productIds);
 
     productDetailResponse.productDetails.forEach((ProductDetails pd) {
       _purchaseState.products[pd.id] = pd;
@@ -182,9 +179,10 @@ class PurchaserBloc implements Bloc {
 
   /// Проверяются покупки
   /// В [filterIds] передаются идентификаторы покупок, которые нужно проверить
-  Future queryPurchases({Set<String> filterIds}) async {
+  Future queryPurchases({bool acknowledgePendingPurchases = false}) async {
     if (!(await _getAvailability())) {
       _emitPurchaseState(_purchaseState.copyWith(isAvailable: false));
+      _emitPurchaseMessage("Connection error!");
       return;
     }
 
@@ -192,70 +190,84 @@ class PurchaserBloc implements Bloc {
     /// does not return items that are no longer owned.
     final QueryPurchaseDetailsResponse purchaseResponse = await _connection.queryPastPurchases();
     if (purchaseResponse.error != null) {
-      _emitError("Connection error!");
+      _emitPurchaseMessage("Query purchases error!");
       return;
     }
 
-    if (filterIds != null) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      // В этом же методе можно выявлять возвращенные покупки, т.е. делать запрос на список всех покупок и выявлять такие покупки
-      await Future.forEach(filterIds, (String element) async {
-        final cached = prefs.getBool(element) ?? false;
+    final newState = _purchaseState.copyWith(purchases: purchaseResponse.pastPurchases);
 
-        // Удалим закэшированную покупку, если она исчезла из кэша BillingApi
-        if (cached && !purchaseResponse.pastPurchases.map((PurchaseDetails pd) => pd.productID).contains(element)) {
-          await prefs.setBool(element, false);
+    if (acknowledgePendingPurchases) {
+      await Future.forEach(purchaseResponse.pastPurchases, (PurchaseDetails purchasesDetail) async {
+        if (purchasesDetail.status == PurchaseStatus.purchased) {
+          // Здесь можно проверить receipt или еще какие-то штуки
+          if (purchasesDetail.pendingCompletePurchase) {
+            await InAppPurchaseConnection.instance.completePurchase(purchasesDetail);
+          }
         }
       });
     }
 
-    await _querySelectedPurchases(purchaseResponse.pastPurchases, requestStartLoading: false);
+    _emitPurchaseState(newState);
   }
 
-  /// Когда нужно проверить только несколько покупок
-  Future _querySelectedPurchases(List<PurchaseDetails> purchasesDetails, {bool requestStartLoading = true}) async {
+  /// Колбэк отслеживания за изменением состояния покупок
+  Future _updatePurchases(List<PurchaseDetails> purchasesDetails, {bool requestStartLoading = true}) async {
     if (!(await _getAvailability())) {
       _emitPurchaseState(_purchaseState.copyWith(isAvailable: false));
-      _emitError("Billing service is unavailable!");
+      _emitPurchaseMessage("Billing service is unavailable!");
       return;
     }
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
     await Future.forEach(purchasesDetails, (PurchaseDetails purchasesDetail) async {
       if (purchasesDetail.status == PurchaseStatus.pending) {
-        // Информируем потребителя о том, что покупка отложена
-        _emitError("Purchase is pending!");
+        _emitPurchaseMessage("Purchase is pending!");
       } else {
         if (purchasesDetail.status == PurchaseStatus.error) {
           // Ошибка при обновлении статуса покупок
-          _emitError("Error during purchase!");
+          _emitPurchaseMessage("Error during purchase!");
         } else if (purchasesDetail.status == PurchaseStatus.purchased) {
           bool purchaseConfirmed = false;
           // Здесь можно проверить receipt или еще какие-то штуки
           if (purchasesDetail.pendingCompletePurchase) {
             final completeResult = await InAppPurchaseConnection.instance.completePurchase(purchasesDetail);
+            debugPrint("Pending result! $completeResult");
 
             if (completeResult.responseCode != BillingResponse.ok) {
-              _emitError("Purchase is not acknowledged!");
+              debugPrint("Purchase is not acknowledged!");
+              _emitPurchaseMessage("Purchase is not acknowledged!");
             } else {
+              debugPrint("Purchase is not acknowledged!");
               purchaseConfirmed = true;
             }
           } else {
             purchaseConfirmed = true;
           }
 
-          if (purchaseConfirmed) {
+          /*if (purchaseConfirmed) {
             // Занесем покупку в кэш
             await prefs.setBool(purchasesDetail.productID, true);
-          }
+          }*/
+
+          /*
+          При покупке
+          I/flutter (19917): Pending result! Instance of 'BillingResultWrapper'
+          I/flutter (19917): Pending result is no oK! Instance of 'BillingResultWrapper'
+          I/flutter (19917): Purchase is acknowledged!! false and true
+          I/flutter (19917): _emitPurchaseState: PurchaseCompletedState{products: {}, purchases: pro_package: PurchaseStatus.purchased pendingCompletePurchase: true acknowledged: false, isAvailable: false, loading: true, queryProductError: null}
+          I/flutter (19917): Purchase data in stream builder PurchaseCompletedState{products: {}, purchases: pro_package: PurchaseStatus.purchased pendingCompletePurchase: true acknowledged: false, isAvailable: false, loading: true, queryProductError: null}
+           */
+
+          // TODO Здесь isAcknowledged == false, даже если результат прищел true!
+          // TODO Но если сделать queryPurchases, то баннер исчезнет!
+          //debugPrint(
+          //    "Purchase is acknowledged!! ${purchasesDetail.billingClientPurchase.isAcknowledged} and $purchaseConfirmed");
         }
       }
 
-      _purchaseState.purchases[purchasesDetail.productID] = purchasesDetail;
+      //_purchaseState.purchases[purchasesDetail.productID] = purchasesDetail; // TODO Не работает!
     });
 
-    _emitPurchaseState(_purchaseState);
+    await queryPurchases();
   }
 
   /// Запросить покупку
@@ -264,12 +276,12 @@ class PurchaserBloc implements Bloc {
     ProductDetailsResponse productDetailResponse = await _connection.queryProductDetails({sku});
 
     if (productDetailResponse.error != null) {
-      _emitError("Billing service is unavailable!");
+      _emitPurchaseMessage("Billing service is unavailable!");
       return false;
     }
 
     final existsProducts = productDetailResponse.productDetails.any((element) => true);
-    if(!existsProducts){
+    if (!existsProducts) {
       return false;
     }
 
@@ -281,34 +293,19 @@ class PurchaserBloc implements Bloc {
     _connection.buyNonConsumable(purchaseParam: purchaseParam);
   }
 
-  /// Проверить покупки из кэша
-  /// [sku] - идентификатор покупки, [thenCheckFromStore] - запустить проверку с помощью сервиса Google Play
-  @Deprecated('По-хорошему избавиться от этого метода (т.к. кэш дублирует функциионал Google Play Api)')
-  Future<bool> queryPurchasesFromCache(String sku, {bool thenCheckFromStore = false}) async {
-    // Проверяем кэш
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool purchased = prefs.getBool(sku) ?? false;
-
-    if (thenCheckFromStore) {
-      queryPurchases();
-    }
-
-    return purchased;
-  }
-
   Future _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) async {
-    await _querySelectedPurchases(purchaseDetailsList);
+    await _updatePurchases(purchaseDetailsList);
   }
 
-  _emitError(String error) {
-    _purchaseState = _purchaseState.copyWith(queryProductError: error);
-    _purchaseErrorStreamController.sink.add(error);
+  _emitPurchaseMessage(String purchaseMessage) {
+    debugPrint("Emit Purchase message: $purchaseMessage}");
+    _purchaseState = _purchaseState.copyWith(queryProductError: purchaseMessage);
+    _purchaseErrorStreamController.sink.add(purchaseMessage);
   }
 
-  _emitPurchaseState(PurchaseCompletedState basePurchaseState, {bool errorEmit = false}) {
+  _emitPurchaseState(PurchaseCompletedState basePurchaseState) {
+    debugPrint("Emit Purchase state: ${basePurchaseState.toString()}");
     _purchaseState = basePurchaseState;
-
-    debugPrint("_emitPurchaseState: ${basePurchaseState.toString()}");
     _purchaseStateStreamController.sink.add(basePurchaseState);
   }
 
