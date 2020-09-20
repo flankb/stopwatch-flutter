@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:multiselect_scope/multiselect_scope.dart';
 import 'package:share/share.dart';
 import 'package:stopwatch/bloc/storage_bloc/bloc.dart';
 import 'package:stopwatch/constants.dart';
@@ -35,25 +36,31 @@ class HistoryPage extends StatefulWidget {
   _HistoryPageState createState() => _HistoryPageState();
 }
 
-class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStateMixin {
+class _HistoryPageState extends State<HistoryPage>
+    with SingleTickerProviderStateMixin {
   StorageBloc _storageBloc;
-  StreamController _selectedItemsStreamController;
+  //StreamController _selectedItemsStreamController;
   List<BaseStopwatchEntity> _selectedEntities = List<BaseStopwatchEntity>();
 
   Duration duration = Duration(milliseconds: 800);
   AnimationController animationController;
   Animation<double> animation;
 
+  MultiselectController _multiselectController;
+
   @override
   void initState() {
     super.initState();
 
-    animationController = AnimationController(vsync: this, duration: duration);
-    animation = Tween<double>(begin: 0.5, end: 1.0)
-        .animate(animationController); //ColorTween(begin: beginColor, end: endColor).animate(controller);
+    _multiselectController = MultiselectController();
 
-    _storageBloc =
-        GetIt.I.get<StorageBloc>(instanceName: widget.pageType == MeasureViewModel ? MeasuresBloc : LapsBloc);
+    animationController = AnimationController(vsync: this, duration: duration);
+    animation = Tween<double>(begin: 0.5, end: 1.0).animate(
+        animationController); //ColorTween(begin: beginColor, end: endColor).animate(controller);
+
+    _storageBloc = GetIt.I.get<StorageBloc>(
+        instanceName:
+            widget.pageType == MeasureViewModel ? MeasuresBloc : LapsBloc);
 
     animationController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -63,7 +70,7 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
 
     animationController.forward();
 
-    _selectedItemsStreamController = StreamController<int>.broadcast();
+    //_selectedItemsStreamController = StreamController<int>.broadcast();
     // https://github.com/felangel/bloc/issues/74
     // https://github.com/felangel/bloc/blob/master/packages/flutter_bloc/README.md
 
@@ -86,8 +93,9 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
       _storageBloc.add(ClearStorageEvent());
     }
 
-    _storageBloc.add(
-        LoadStorageEvent(widget.pageType, measureId: widget.entityId?.id)); // TODO Более явно перезагружать состояние?
+    _storageBloc.add(LoadStorageEvent(widget.pageType,
+        measureId:
+            widget.entityId?.id)); // TODO Более явно перезагружать состояние?
 
     // Сразу же отфильтруем в случае необходимости
     if (wasFiltered) {
@@ -112,191 +120,223 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
     // https://medium.com/flutterpub/effective-bloc-pattern-45c36d76d5fe
     return BlocProvider.value(
       value: _storageBloc,
-      child: WillPopScope(
-      onWillPop: () async {
-        if(_selectedEntities.length > 0){
-          _unselectItems();
-          return false;
-        }
-        return true;
-      },
-        child: Scaffold(
-          body: SafeArea(
-            child: BlocBuilder<StorageBloc, StorageState>(
-              builder: (BuildContext context, state) {
-                if (!(state is AvailableListState)) {
-                  return CenterCircularWidget();
-                } else {
-                  final availState = state as AvailableListState;
-                  final pageIsLap = widget.pageType == LapViewModel;
+      child: Scaffold(
+        body: SafeArea(
+          child: BlocBuilder<StorageBloc, StorageState>(
+            builder: (BuildContext context, state) {
+              if (!(state is AvailableListState)) {
+                return CenterCircularWidget();
+              } else {
+                final availState = state as AvailableListState;
+                final pageIsLap = widget.pageType == LapViewModel;
 
-                  final overallElapsed = pageIsLap
-                      ? TimeDisplayer.formatAllBeautifulFromMills((widget.entityId as MeasureViewModel).elapsed)
-                      : "";
-                  final comment = pageIsLap ? (widget.entityId as MeasureViewModel).comment : "";
-                  final createDate = pageIsLap
-                      ? TimeDisplayer.formatDate((widget.entityId as MeasureViewModel).dateStarted, context: context)
-                      : "";
+                final overallElapsed = pageIsLap
+                    ? TimeDisplayer.formatAllBeautifulFromMills(
+                        (widget.entityId as MeasureViewModel).elapsed)
+                    : "";
+                final comment = pageIsLap
+                    ? (widget.entityId as MeasureViewModel).comment
+                    : "";
+                final createDate = pageIsLap
+                    ? TimeDisplayer.formatDate(
+                        (widget.entityId as MeasureViewModel).dateStarted,
+                        context: context)
+                    : "";
 
-                  final existsMeasures = availState.entities.any((element) => true);
+                final existsMeasures =
+                    availState.entities.any((element) => true);
 
-                  return Stack(children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        // Заголовок
-                        PageCaption(caption : pageIsLap ? S.of(context).details : S.of(context).measures),
-                        StreamBuilder<String>( // Информатор взаимодействия с магазином
-                            initialData: null,
-                            stream: getIt.get<PurchaserBloc>().purchaseErrorStream,
-                            builder: (context, snapshot){
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                if(snapshot.hasData && snapshot.data != null){
-                                  Toast.show(snapshot.data, context);
-                                }
-                              });
+                return GreatMultiselect<BaseStopwatchEntity>(
+                  itemsCount: availState.entities.length,
+                  clearSelectionOnBackPressed: true,
+                  controller: _multiselectController,
+                  onSelectionChanged: (indexes) {
+                    debugPrint("Custom listener invoked! $indexes");
+                  },
+                  child: Builder(builder: (context) {
+                    return Stack(children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          // Заголовок
+                          PageCaption(
+                              caption: pageIsLap
+                                  ? S.of(context).details
+                                  : S.of(context).measures),
+                          StreamBuilder<String>(
+                              // Информатор взаимодействия с магазином
+                              initialData: null,
+                              stream: getIt
+                                  .get<PurchaserBloc>()
+                                  .purchaseErrorStream,
+                              builder: (context, snapshot) {
+                                WidgetsBinding.instance
+                                    .addPostFrameCallback((_) {
+                                  if (snapshot.hasData &&
+                                      snapshot.data != null) {
+                                    Toast.show(snapshot.data, context);
+                                  }
+                                });
 
-                              return const SizedBox();
-                            }
-                        ),
-                        pageIsLap
-                            ? AnimatedBuilder(
-                                animation: animation,
-                                builder: (context, snapshot) {
-                                  return Transform.scale(
-                                    scale: animation.value,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Card(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Column(
-                                            children: <Widget>[
-                                              PairLabelView(
-                                                caption: S.of(context).overall_time,
-                                                value: overallElapsed,
-                                              ),
-                                              PairLabelView(
-                                                caption: S.of(context).comment,
-                                                value: comment ?? "",
-                                              ),
-                                              PairLabelView(
-                                                caption: S.of(context).date_created,
-                                                value: createDate,
-                                              )
-                                            ],
+                                return const SizedBox();
+                              }),
+                          pageIsLap
+                              ? AnimatedBuilder(
+                                  animation: animation,
+                                  builder: (context, snapshot) {
+                                    return Transform.scale(
+                                      scale: animation.value,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Card(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(
+                                              children: <Widget>[
+                                                PairLabelView(
+                                                  caption: S
+                                                      .of(context)
+                                                      .overall_time,
+                                                  value: overallElapsed,
+                                                ),
+                                                PairLabelView(
+                                                  caption:
+                                                      S.of(context).comment,
+                                                  value: comment ?? "",
+                                                ),
+                                                PairLabelView(
+                                                  caption: S
+                                                      .of(context)
+                                                      .date_created,
+                                                  value: createDate,
+                                                )
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                })
-                            : SizedBox(),
+                                    );
+                                  })
+                              : SizedBox(),
 
-                        if (pageIsLap && availState.entities.any((element) => true))
-                          Padding(
-                            padding: const EdgeInsets.only(left: 16),
-                            child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  S.of(context).laps,
-                                  style: TextStyle(fontSize: 22),
-                                )),
-                          ),
+                          if (pageIsLap &&
+                              availState.entities.any((element) => true))
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16),
+                              child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    S.of(context).laps,
+                                    style: TextStyle(fontSize: 22),
+                                  )),
+                            ),
 
-                        existsMeasures
-                            ? Expanded(
-                                child: Container(
-                                    padding: const EdgeInsets.only(top: 6),
-                                    child: ListView.separated(
-                                      physics: ClampingScrollPhysics(),
-                                      itemCount: availState.entities.length + 1,
-                                      itemBuilder: (BuildContext context, int index) {
-                                        if (index < availState.entities.length) {
-                                          BaseStopwatchEntity entity = availState.entities[index];
-                                          final key = PageStorageKey<String>("entity_$index");
+                          existsMeasures
+                              ? Expanded(
+                                  child: Container(
+                                      padding: const EdgeInsets.only(top: 6),
+                                      child: ListView.separated(
+                                        physics: ClampingScrollPhysics(),
+                                        itemCount:
+                                            availState.entities.length + 1,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          if (index <
+                                              availState.entities.length) {
+                                            BaseStopwatchEntity entity =
+                                                availState.entities[index];
+                                            final key = PageStorageKey<String>(
+                                                "entity_$index");
 
-                                          return StopwatchItem(
-                                            key: key,
-                                            entity: entity,
-                                            selectionListController: _selectedItemsStreamController,
-                                            selectedEvent: (b) {
-                                              // Обновить менюшку...
-                                              if (b.item2) {
-                                                debugPrint("_selectedEntities add");
-                                                _selectedEntities.add(b.item1);
-                                              } else {
-                                                debugPrint("_selectedEntities remove");
-                                                _selectedEntities.remove(b.item1);
-                                              }
+                                            return StopwatchItem(
+                                                key: key,
+                                                entity: entity,
+                                                index: index);
+                                          } else {
+                                            //return SizedBox.shrink();
+                                            return StreamBuilder<
+                                                    PurchaseCompletedState>(
+                                                stream: getIt
+                                                    .get<PurchaserBloc>()
+                                                    .purchaseStateStream,
+                                                initialData: getIt
+                                                    .get<PurchaserBloc>()
+                                                    .purchaseState,
+                                                builder: (context, snapshot) {
+                                                  if (snapshot.hasData &&
+                                                      !snapshot.hasError) {
+                                                    final viewBanner = !snapshot
+                                                            .data
+                                                            .skuIsAcknowledged(
+                                                                PRO_PACKAGE) &&
+                                                        availState.allEntities
+                                                                .length >
+                                                            0;
 
-                                              _selectedItemsStreamController.add(_selectedEntities.length);
-                                              debugPrint("_selectedEntities.length ${_selectedEntities.length}");
-                                              // Добаввить или удалить из SelectedItems
-                                            },
+                                                    debugPrint(
+                                                        "Purchase data in stream builder ${snapshot.data}");
+
+                                                    return viewBanner
+                                                        ? PurchaseBanner()
+                                                        : SizedBox.shrink();
+                                                  } else {
+                                                    return SizedBox.shrink();
+                                                  }
+                                                });
+                                          }
+                                        },
+                                        separatorBuilder:
+                                            (BuildContext context, int index) {
+                                          return Divider(
+                                            height: 0,
                                           );
-                                        } else {
-                                          //return SizedBox.shrink();
-                                          return StreamBuilder<PurchaseCompletedState>(
-                                              stream: getIt.get<PurchaserBloc>().purchaseStateStream,
-                                              initialData: getIt.get<PurchaserBloc>().purchaseState,
-                                              builder: (context, snapshot) {
-                                                if (snapshot.hasData && !snapshot.hasError) {
-                                                  final viewBanner = !snapshot.data.skuIsAcknowledged(PRO_PACKAGE) &&
-                                                      availState.allEntities.length > 0;
+                                        },
+                                      )),
+                                )
+                              : widget.pageType == MeasureViewModel
+                                  ? Expanded(
+                                      child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Text(
+                                        S.of(context).no_measures,
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                            color: InheritedThemeNotifier.of(
+                                                    context)
+                                                .themeData
+                                                .subtitleColor,
+                                            fontSize: 18),
+                                      ),
+                                    ))
+                                  : SizedBox(),
 
-                                                  debugPrint("Purchase data in stream builder ${snapshot.data}");
-
-                                                  return viewBanner ? PurchaseBanner() : SizedBox.shrink();
-                                                } else {
-                                                  return SizedBox.shrink();
-                                                }
-                                              });
-                                        }
-                                      },
-                                      separatorBuilder: (BuildContext context, int index) {
-                                        return Divider(
-                                          height: 0,
-                                        );
-                                      },
-                                    )),
-                              )
-                            : widget.pageType == MeasureViewModel
-                                ? Expanded(
-                                    child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Text(
-                                      S.of(context).no_measures,
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                          color: InheritedThemeNotifier.of(context).themeData.subtitleColor,
-                                          fontSize: 18),
-                                    ),
-                                  ))
-                                : SizedBox(),
-
-                        StreamBuilder<int>(
-                            stream: _selectedItemsStreamController.stream,
-                            initialData: 0,
-                            builder: (context, snapshot) {
-                              if (snapshot.data != 1 && pageIsLap) {
-                                return SizedBox();
-                              } else {
-                                return MetroAppBar(
+                          GreatMultiselect.of(context).selectedIndexes.length !=
+                                      1 &&
+                                  pageIsLap
+                              ? SizedBox()
+                              : MetroAppBar(
                                   primaryCommands: <Widget>[
                                     widget.pageType == MeasureViewModel
-                                        ? _exportToCsvButtonPrimary(context, existsMeasures)
+                                        ? _exportToCsvButtonPrimary(
+                                            context, existsMeasures)
                                         : SizedBox(),
                                     widget.pageType == MeasureViewModel
-                                        ? _exportToCsvButtonPrimary(context, existsMeasures, shareMode: ShareMode.File)
+                                        ? _exportToCsvButtonPrimary(
+                                            context, existsMeasures,
+                                            shareMode: ShareMode.File)
                                         : SizedBox(),
-                                    snapshot.data == 1
+                                    GreatMultiselect.of(context)
+                                                .selectedIndexes
+                                                .length ==
+                                            1
                                         ? PrimaryCommand(
                                             onPressed: () async {
-                                              final entityToEdit = _selectedEntities.single;
+                                              final entityToEdit =
+                                                  _selectedEntities.single;
 
                                               await Navigator.push(context,
-                                                  MaterialPageRoute(builder: (BuildContext context) {
+                                                  MaterialPageRoute(builder:
+                                                      (BuildContext context) {
                                                 return EntityEditPage(
                                                   entityType: widget.pageType,
                                                   entityId: entityToEdit.id,
@@ -304,45 +344,61 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                                 );
                                               }));
 
-                                              _unselectItems();
+                                              _unselectItems(context);
                                             },
                                             pic: Icons.edit,
                                             tooltip: S.of(context).edit_app_bar,
                                           )
                                         : SizedBox(),
-                                    snapshot.data >= 1 && widget.pageType == MeasureViewModel
+                                    GreatMultiselect.of(context)
+                                                    .selectedIndexes
+                                                    .length >=
+                                                1 &&
+                                            widget.pageType == MeasureViewModel
                                         ? PrimaryCommand(
                                             tooltip: S.of(context).del_app_bar,
                                             pic: Icons.delete,
                                             onPressed: () {
-                                              if (widget.pageType == LapViewModel) {
-                                                Toast.show(S.of(context).no_possible_delete_laps, context,
-                                                    duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                                              if (widget.pageType ==
+                                                  LapViewModel) {
+                                                Toast.show(
+                                                    S
+                                                        .of(context)
+                                                        .no_possible_delete_laps,
+                                                    context,
+                                                    duration:
+                                                        Toast.LENGTH_SHORT,
+                                                    gravity: Toast.BOTTOM);
                                                 return;
                                               }
 
-                                              final entitiesForDelete = List<BaseStopwatchEntity>();
-                                              entitiesForDelete.addAll(_selectedEntities);
-                                              _unselectItems();
-                                              _storageBloc.add(DeleteStorageEvent(entitiesForDelete));
+                                              final entitiesForDelete =
+                                                  List<BaseStopwatchEntity>();
+                                              entitiesForDelete
+                                                  .addAll(_selectedEntities);
+                                              _unselectItems(context);
+                                              _storageBloc.add(
+                                                  DeleteStorageEvent(
+                                                      entitiesForDelete));
                                             },
                                           )
                                         : SizedBox(),
                                   ],
                                   secondaryCommands: <SecondaryCommand>[],
-                                );
-                              }
-                            })
-                      ],
-                    ),
-                    StreamBuilder<int>(
-                        initialData: 0,
-                        stream: _selectedItemsStreamController.stream,
-                        builder: (context, snapshot) {
-                          return Align(
+                                ),
+
+                          Align(
                               alignment: Alignment.bottomRight,
                               child: Padding(
-                                padding: EdgeInsets.only(bottom: snapshot.data != 1 && pageIsLap ? 12 : 62, right: 16),
+                                padding: EdgeInsets.only(
+                                    bottom: GreatMultiselect.of(context)
+                                                    .selectedIndexes
+                                                    .length !=
+                                                1 &&
+                                            pageIsLap
+                                        ? 12
+                                        : 62,
+                                    right: 16),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
@@ -350,11 +406,17 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                         ? RawMaterialButton(
                                             child: Icon(Icons.clear),
                                             onPressed: () {
-                                              _storageBloc.add(CancelFilterEvent(widget.pageType));
+                                              _storageBloc.add(
+                                                  CancelFilterEvent(
+                                                      widget.pageType));
                                             },
-                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        20.0)),
                                             elevation: 2.0,
-                                            fillColor: Theme.of(context).bottomAppBarColor,
+                                            fillColor: Theme.of(context)
+                                                .bottomAppBarColor,
                                             padding: const EdgeInsets.all(5.0),
                                           )
                                         : SizedBox(),
@@ -370,20 +432,25 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                         onPressed: () async {
                                           //getIt.get<PurchaserBloc>().queryPurchases(filterIds : {PRO_PACKAGE});
 
-                                          debugPrint("Last filter in history page ${availState.lastFilter}");
+                                          debugPrint(
+                                              "Last filter in history page ${availState.lastFilter}");
                                           final result = await showDialog(
                                               context: context,
-                                              builder: (context) => FilterDialog(
-                                                    filter: availState.lastFilter,
+                                              builder: (context) =>
+                                                  FilterDialog(
+                                                    filter:
+                                                        availState.lastFilter,
                                                   ));
 
                                           if (result != null) {
-                                            _storageBloc.add(FilterStorageEvent(widget.pageType, result));
+                                            _storageBloc.add(FilterStorageEvent(
+                                                widget.pageType, result));
                                           }
                                         },
                                         child: Padding(
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: <Widget>[
                                               Icon(
                                                 Icons.filter_list,
@@ -391,21 +458,27 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
                                               ),
                                             ],
                                           ),
-                                          padding: EdgeInsets.symmetric(horizontal: 4.0),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 4.0),
                                         ),
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(31.0)),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(31.0)),
                                         elevation: 6.0,
-                                        fillColor: Theme.of(context).primaryColor,
+                                        fillColor:
+                                            Theme.of(context).primaryColor,
                                       ),
                                     ),
                                   ],
                                 ),
-                              ));
-                        }),
-                  ]);
-                }
-              },
-            ),
+                              ))
+                        ],
+                      ),
+                    ]);
+                  }),
+                );
+              }
+            },
           ),
         ),
       ),
@@ -414,20 +487,28 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
 
   PrimaryCommand _exportToCsvButtonPrimary(BuildContext context, bool enabled,
       {ShareMode shareMode = ShareMode.Email}) {
-    final icon = shareMode == ShareMode.Email ? Icons.share : Icons.insert_drive_file;
-    final tooltip = shareMode == ShareMode.Email ? S.of(context).share_app_bar : S.of(context).to_csv_app_bar;
+    final icon =
+        shareMode == ShareMode.Email ? Icons.share : Icons.insert_drive_file;
+    final tooltip = shareMode == ShareMode.Email
+        ? S.of(context).share_app_bar
+        : S.of(context).to_csv_app_bar;
     final command = () async {
       var entitiesToExport = _selectedEntities;
 
       if (!entitiesToExport.any((element) => true)) {
-        entitiesToExport = (BlocProvider.of<StorageBloc>(context).state as AvailableListState).entities;
+        entitiesToExport =
+            (BlocProvider.of<StorageBloc>(context).state as AvailableListState)
+                .entities;
       }
 
       final exporter = GetIt.I.get<MeasuresExporter>();
-      final entities = entitiesToExport.map((e) => e as MeasureViewModel).toList();
+      final entities =
+          entitiesToExport.map((e) => e as MeasureViewModel).toList();
 
-      final csv = shareMode == ShareMode.Email ? await exporter.convertToPlain(entities) :  await exporter.convertToCsv(entities);
-      _unselectItems();
+      final csv = shareMode == ShareMode.Email
+          ? await exporter.convertToPlain(entities)
+          : await exporter.convertToCsv(entities);
+      _unselectItems(context);
 
       switch (shareMode) {
         case ShareMode.Email:
@@ -467,9 +548,8 @@ class _HistoryPageState extends State<HistoryPage> with SingleTickerProviderStat
     Share.share(body, subject: '${S.current.measures} ${DateTime.now()}');
   }
 
-  void _unselectItems() {
-    _selectedEntities.clear();
-    _selectedItemsStreamController.add(0);
+  void _unselectItems(BuildContext context) {
+    GreatMultiselect.of(context).clearSelection();
   }
 }
 
@@ -518,7 +598,8 @@ class PurchaseBanner extends StatelessWidget {
               children: [
                 Text(
                   S.current.purchase_banner,
-                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold),
                 ),
                 Align(
                   alignment: Alignment.centerRight,
@@ -526,8 +607,10 @@ class PurchaseBanner extends StatelessWidget {
                     onPressed: () {
                       getIt.get<PurchaserBloc>().requestPurchase(PRO_PACKAGE);
                     },
-                    fillColor:  const Color(0xFF3e403f),
-                    child: Text(S.current.purchase, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    fillColor: const Color(0xFF3e403f),
+                    child: Text(S.current.purchase,
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold)),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(6)),
                     ),

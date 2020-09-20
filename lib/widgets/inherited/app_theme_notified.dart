@@ -7,7 +7,8 @@ class ThemeController extends ChangeNotifier {
   AppTheme _appTheme;
   Map<AppTheme, ExtendedTheme> _availableThemes;
 
-  ThemeController(AppTheme initialTheme, Map<AppTheme, ExtendedTheme> availableThemes) {
+  ThemeController(
+      AppTheme initialTheme, Map<AppTheme, ExtendedTheme> availableThemes) {
     _appTheme = initialTheme;
     _availableThemes = availableThemes;
   }
@@ -26,15 +27,18 @@ class ThemeController extends ChangeNotifier {
   }
 }
 
-class InheritedThemeNotifier extends InheritedNotifier<ThemeController>{
+class InheritedThemeNotifier extends InheritedNotifier<ThemeController> {
   final ThemeController controller;
 
-  const InheritedThemeNotifier({Key key, @required Widget child, @required this.controller})
+  const InheritedThemeNotifier(
+      {Key key, @required Widget child, @required this.controller})
       : super(key: key, child: child, notifier: controller);
 
   static ThemeController of(BuildContext context) {
     // Здесь каким-то образом подменить текстовую тему? (Известен контекст)
 
-    return context.dependOnInheritedWidgetOfExactType<InheritedThemeNotifier>().controller;
+    return context
+        .dependOnInheritedWidgetOfExactType<InheritedThemeNotifier>()
+        .controller;
   }
 }
