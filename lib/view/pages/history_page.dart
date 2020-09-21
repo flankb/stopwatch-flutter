@@ -147,13 +147,17 @@ class _HistoryPageState extends State<HistoryPage>
                     availState.entities.any((element) => true);
 
                 return GreatMultiselect<BaseStopwatchEntity>(
-                  itemsCount: availState.entities.length,
-                  clearSelectionOnBackPressed: true,
+                  //itemsCount: availState.entities.length,
+                  dataSource: availState.entities,
+                  clearSelectionOnPop: true,
                   controller: _multiselectController,
                   onSelectionChanged: (indexes) {
                     debugPrint("Custom listener invoked! $indexes");
+                    _selectedEntities = _multiselectController
+                        .getSelectedItems(availState.entities);
                   },
                   child: Builder(builder: (context) {
+                    debugPrint("build GreatMultiselect builder");
                     return Stack(children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,93 +225,12 @@ class _HistoryPageState extends State<HistoryPage>
 
                           if (pageIsLap &&
                               availState.entities.any((element) => true))
-                            Padding(
-                              padding: const EdgeInsets.only(left: 16),
-                              child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    S.of(context).laps,
-                                    style: TextStyle(fontSize: 22),
-                                  )),
-                            ),
+                            LapsCaption(),
 
                           existsMeasures
-                              ? Expanded(
-                                  child: Container(
-                                      padding: const EdgeInsets.only(top: 6),
-                                      child: ListView.separated(
-                                        physics: ClampingScrollPhysics(),
-                                        itemCount:
-                                            availState.entities.length + 1,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          if (index <
-                                              availState.entities.length) {
-                                            BaseStopwatchEntity entity =
-                                                availState.entities[index];
-                                            final key = PageStorageKey<String>(
-                                                "entity_$index");
-
-                                            return StopwatchItem(
-                                                key: key,
-                                                entity: entity,
-                                                index: index);
-                                          } else {
-                                            //return SizedBox.shrink();
-                                            return StreamBuilder<
-                                                    PurchaseCompletedState>(
-                                                stream: getIt
-                                                    .get<PurchaserBloc>()
-                                                    .purchaseStateStream,
-                                                initialData: getIt
-                                                    .get<PurchaserBloc>()
-                                                    .purchaseState,
-                                                builder: (context, snapshot) {
-                                                  if (snapshot.hasData &&
-                                                      !snapshot.hasError) {
-                                                    final viewBanner = !snapshot
-                                                            .data
-                                                            .skuIsAcknowledged(
-                                                                PRO_PACKAGE) &&
-                                                        availState.allEntities
-                                                                .length >
-                                                            0;
-
-                                                    debugPrint(
-                                                        "Purchase data in stream builder ${snapshot.data}");
-
-                                                    return viewBanner
-                                                        ? PurchaseBanner()
-                                                        : SizedBox.shrink();
-                                                  } else {
-                                                    return SizedBox.shrink();
-                                                  }
-                                                });
-                                          }
-                                        },
-                                        separatorBuilder:
-                                            (BuildContext context, int index) {
-                                          return Divider(
-                                            height: 0,
-                                          );
-                                        },
-                                      )),
-                                )
+                              ? ListOfMeasures(availState: availState)
                               : widget.pageType == MeasureViewModel
-                                  ? Expanded(
-                                      child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Text(
-                                        S.of(context).no_measures,
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                            color: InheritedThemeNotifier.of(
-                                                    context)
-                                                .themeData
-                                                .subtitleColor,
-                                            fontSize: 18),
-                                      ),
-                                    ))
+                                  ? MessageNoMeasures()
                                   : SizedBox(),
 
                           GreatMultiselect.of(context).selectedIndexes.length !=
@@ -386,94 +309,13 @@ class _HistoryPageState extends State<HistoryPage>
                                   ],
                                   secondaryCommands: <SecondaryCommand>[],
                                 ),
-
-                          Align(
-                              alignment: Alignment.bottomRight,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    bottom: GreatMultiselect.of(context)
-                                                    .selectedIndexes
-                                                    .length !=
-                                                1 &&
-                                            pageIsLap
-                                        ? 12
-                                        : 62,
-                                    right: 16),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: <Widget>[
-                                    availState.filtered
-                                        ? RawMaterialButton(
-                                            child: Icon(Icons.clear),
-                                            onPressed: () {
-                                              _storageBloc.add(
-                                                  CancelFilterEvent(
-                                                      widget.pageType));
-                                            },
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        20.0)),
-                                            elevation: 2.0,
-                                            fillColor: Theme.of(context)
-                                                .bottomAppBarColor,
-                                            padding: const EdgeInsets.all(5.0),
-                                          )
-                                        : SizedBox(),
-                                    availState.filtered
-                                        ? SizedBox(
-                                            width: 12,
-                                          )
-                                        : SizedBox(),
-                                    SizedBox(
-                                      width: 62,
-                                      height: 62,
-                                      child: RawMaterialButton(
-                                        onPressed: () async {
-                                          //getIt.get<PurchaserBloc>().queryPurchases(filterIds : {PRO_PACKAGE});
-
-                                          debugPrint(
-                                              "Last filter in history page ${availState.lastFilter}");
-                                          final result = await showDialog(
-                                              context: context,
-                                              builder: (context) =>
-                                                  FilterDialog(
-                                                    filter:
-                                                        availState.lastFilter,
-                                                  ));
-
-                                          if (result != null) {
-                                            _storageBloc.add(FilterStorageEvent(
-                                                widget.pageType, result));
-                                          }
-                                        },
-                                        child: Padding(
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: <Widget>[
-                                              Icon(
-                                                Icons.filter_list,
-                                                color: Colors.white,
-                                              ),
-                                            ],
-                                          ),
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 4.0),
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(31.0)),
-                                        elevation: 6.0,
-                                        fillColor:
-                                            Theme.of(context).primaryColor,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ))
                         ],
                       ),
+                      FilterButtons(
+                          pageIsLap: pageIsLap,
+                          availState: availState,
+                          storageBloc: _storageBloc,
+                          pageType: widget.pageType)
                     ]);
                   }),
                 );
@@ -550,6 +392,192 @@ class _HistoryPageState extends State<HistoryPage>
 
   void _unselectItems(BuildContext context) {
     GreatMultiselect.of(context).clearSelection();
+  }
+}
+
+class LapsCaption extends StatelessWidget {
+  const LapsCaption({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16),
+      child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            S.of(context).laps,
+            style: TextStyle(fontSize: 22),
+          )),
+    );
+  }
+}
+
+class ListOfMeasures extends StatelessWidget {
+  const ListOfMeasures({
+    Key key,
+    @required this.availState,
+  }) : super(key: key);
+
+  final AvailableListState availState;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+          padding: const EdgeInsets.only(top: 6),
+          child: ListView.separated(
+            physics: ClampingScrollPhysics(),
+            itemCount: availState.entities.length + 1,
+            itemBuilder: (BuildContext context, int index) {
+              if (index < availState.entities.length) {
+                BaseStopwatchEntity entity = availState.entities[index];
+                final key = PageStorageKey<String>("entity_$index");
+
+                return StopwatchItem(key: key, entity: entity, index: index);
+              } else {
+                //return SizedBox.shrink();
+                return StreamBuilder<PurchaseCompletedState>(
+                    stream: getIt.get<PurchaserBloc>().purchaseStateStream,
+                    initialData: getIt.get<PurchaserBloc>().purchaseState,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData && !snapshot.hasError) {
+                        final viewBanner =
+                            !snapshot.data.skuIsAcknowledged(PRO_PACKAGE) &&
+                                availState.allEntities.length > 0;
+
+                        debugPrint(
+                            "Purchase data in stream builder ${snapshot.data}");
+
+                        return viewBanner
+                            ? PurchaseBanner()
+                            : SizedBox.shrink();
+                      } else {
+                        return SizedBox.shrink();
+                      }
+                    });
+              }
+            },
+            separatorBuilder: (BuildContext context, int index) {
+              return Divider(
+                height: 0,
+              );
+            },
+          )),
+    );
+  }
+}
+
+class MessageNoMeasures extends StatelessWidget {
+  const MessageNoMeasures({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Text(
+        S.of(context).no_measures,
+        textAlign: TextAlign.left,
+        style: TextStyle(
+            color: InheritedThemeNotifier.of(context).themeData.subtitleColor,
+            fontSize: 18),
+      ),
+    ));
+  }
+}
+
+class FilterButtons extends StatelessWidget {
+  const FilterButtons({
+    Key key,
+    @required this.pageIsLap,
+    @required this.availState,
+    @required StorageBloc storageBloc,
+    @required this.pageType,
+  })  : _storageBloc = storageBloc,
+        super(key: key);
+
+  final bool pageIsLap;
+  final AvailableListState availState;
+  final StorageBloc _storageBloc;
+  final Type pageType;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+        alignment: Alignment.bottomRight,
+        child: Padding(
+          padding: EdgeInsets.only(
+              bottom:
+                  GreatMultiselect.of(context).selectedIndexes.length != 1 &&
+                          pageIsLap
+                      ? 12
+                      : 62,
+              right: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              availState.filtered
+                  ? RawMaterialButton(
+                      child: Icon(Icons.clear),
+                      onPressed: () {
+                        _storageBloc.add(CancelFilterEvent(pageType));
+                      },
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                      elevation: 2.0,
+                      fillColor: Theme.of(context).bottomAppBarColor,
+                      padding: const EdgeInsets.all(5.0),
+                    )
+                  : SizedBox(),
+              availState.filtered
+                  ? SizedBox(
+                      width: 12,
+                    )
+                  : SizedBox(),
+              SizedBox(
+                width: 62,
+                height: 62,
+                child: RawMaterialButton(
+                  onPressed: () async {
+                    //getIt.get<PurchaserBloc>().queryPurchases(filterIds : {PRO_PACKAGE});
+
+                    debugPrint(
+                        "Last filter in history page ${availState.lastFilter}");
+                    final result = await showDialog(
+                        context: context,
+                        builder: (context) => FilterDialog(
+                              filter: availState.lastFilter,
+                            ));
+
+                    if (result != null) {
+                      _storageBloc.add(FilterStorageEvent(pageType, result));
+                    }
+                  },
+                  child: Padding(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          Icons.filter_list,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 4.0),
+                  ),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(31.0)),
+                  elevation: 6.0,
+                  fillColor: Theme.of(context).primaryColor,
+                ),
+              ),
+            ],
+          ),
+        ));
   }
 }
 

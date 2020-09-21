@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -6,10 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:multiselect_scope/multiselect_scope.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 import 'package:stopwatch/util/time_displayer.dart';
-import 'package:stopwatch/view/pages/entity_edit_page.dart';
 import 'package:stopwatch/view/pages/history_page.dart';
-import 'package:tuple/tuple.dart';
-import 'package:intl/intl.dart';
 
 import 'inherited/app_theme_notified.dart';
 

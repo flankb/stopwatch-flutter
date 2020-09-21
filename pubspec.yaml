@@ -65,7 +65,11 @@ dependencies:
   cupertino_icons: ^0.1.2
 
   multiselect_scope:
-    path: ../../Packages/multiselect_scope
+    git:
+      url: ../../Packages/multiselect_scope
+      ref: master
+      path: 
+    # path: ../../Packages/multiselect_scope
 
 dev_dependencies:
   flutter_test:

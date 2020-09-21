@@ -531,9 +531,11 @@ packages:
   multiselect_scope:
     dependency: "direct main"
     description:
-      path: "../../Packages/multiselect_scope"
-      relative: true
-    source: path
+      path: "."
+      ref: master
+      resolved-ref: b766ba3f59e881de50e4c91ce66711e9d41f0077
+      url: "../../Packages/multiselect_scope"
+    source: git
     version: "0.0.1"
   nested:
     dependency: transitive
