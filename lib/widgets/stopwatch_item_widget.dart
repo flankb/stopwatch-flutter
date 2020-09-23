@@ -94,7 +94,7 @@ class _StopwatchItemState extends State<StopwatchItem>
         : null;
 
     final controller =
-        GreatMultiselect.of(context); //MultiselectScope.of(context);
+        MultiselectScope.of(context); //MultiselectScope.of(context);
 
     final itemIsSelected = controller.indexIsSelected(widget.index);
 

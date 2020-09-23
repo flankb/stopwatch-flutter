@@ -146,7 +146,7 @@ class _HistoryPageState extends State<HistoryPage>
                 final existsMeasures =
                     availState.entities.any((element) => true);
 
-                return GreatMultiselect<BaseStopwatchEntity>(
+                return MultiselectScope<BaseStopwatchEntity>(
                   //itemsCount: availState.entities.length,
                   dataSource: availState.entities,
                   clearSelectionOnPop: true,
@@ -233,7 +233,7 @@ class _HistoryPageState extends State<HistoryPage>
                                   ? MessageNoMeasures()
                                   : SizedBox(),
 
-                          GreatMultiselect.of(context).selectedIndexes.length !=
+                          MultiselectScope.of(context).selectedIndexes.length !=
                                       1 &&
                                   pageIsLap
                               ? SizedBox()
@@ -248,7 +248,7 @@ class _HistoryPageState extends State<HistoryPage>
                                             context, existsMeasures,
                                             shareMode: ShareMode.File)
                                         : SizedBox(),
-                                    GreatMultiselect.of(context)
+                                    MultiselectScope.of(context)
                                                 .selectedIndexes
                                                 .length ==
                                             1
@@ -273,7 +273,7 @@ class _HistoryPageState extends State<HistoryPage>
                                             tooltip: S.of(context).edit_app_bar,
                                           )
                                         : SizedBox(),
-                                    GreatMultiselect.of(context)
+                                    MultiselectScope.of(context)
                                                     .selectedIndexes
                                                     .length >=
                                                 1 &&
@@ -391,7 +391,7 @@ class _HistoryPageState extends State<HistoryPage>
   }
 
   void _unselectItems(BuildContext context) {
-    GreatMultiselect.of(context).clearSelection();
+    MultiselectScope.of(context).clearSelection();
   }
 }
 
@@ -512,7 +512,7 @@ class FilterButtons extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.only(
               bottom:
-                  GreatMultiselect.of(context).selectedIndexes.length != 1 &&
+                  MultiselectScope.of(context).selectedIndexes.length != 1 &&
                           pageIsLap
                       ? 12
                       : 62,
