@@ -1,14 +1,6 @@
+import 'package:extended_theme/extended_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-enum AppTheme {
-  GreenLight,
-  GreenDark,
-  BlueLight,
-  BlueDark,
-  MagentaLight,
-  MagentaDark
-}
 
 const GreenLight = 'AppTheme.GreenLight';
 const GreenDark = 'AppTheme.GreenDark';
@@ -17,16 +9,24 @@ const BlueDark = 'AppTheme.BlueDark';
 const MagentaLight = 'AppTheme.MagentaLight';
 const MagentaDark = 'AppTheme.MagentaDark';
 
-class ExtendedTheme {
-  final ThemeData materialTheme;
+const ColorMagenta = const Color(0xffcc0066);
+
+class AppTheme extends ExtendedTheme {
   final Color shadowColor;
   final buttonPauseColor;
   final subtitleColor;
 
-  ExtendedTheme(this.materialTheme,
+  AppTheme(ThemeData materialTheme,
       {this.shadowColor = const Color(0xff3F3C3C),
       this.buttonPauseColor = Colors.black,
-      this.subtitleColor = const Color(0xffE6E6E6)});
+      this.subtitleColor = const Color(0xffE6E6E6)})
+      : super(materialTheme: materialTheme);
+}
+
+extension InheritedThemeExtensions on BuildContext {
+  ThemeController<AppTheme> theme() {
+    return this.t<AppTheme>();
+  }
 }
 
 ThemeData baseTheme = ThemeData(
@@ -42,25 +42,25 @@ ThemeData baseThemeDark = ThemeData(
 );
 
 final appThemeData = {
-  AppTheme.MagentaLight: ExtendedTheme(
+  MagentaLight: AppTheme(
       baseTheme.copyWith(
-        primaryColor: const Color(0xffcc0066),
-        toggleableActiveColor: const Color(0xffcc0066),
-        focusColor: const Color(0xffcc0066),
-        accentColor: const Color(0xffcc0066),
+        primaryColor: ColorMagenta,
+        toggleableActiveColor: ColorMagenta,
+        focusColor: ColorMagenta,
+        accentColor: ColorMagenta,
       ),
       subtitleColor: const Color(0xff8e8e8e)),
 
-  AppTheme.MagentaDark: ExtendedTheme(
+  MagentaDark: AppTheme(
       baseThemeDark.copyWith(
-        primaryColor: const Color(0xffcc0066),
-        toggleableActiveColor: const Color(0xffcc0066),
-        focusColor: const Color(0xffcc0066),
-        accentColor: const Color(0xffcc0066),
+        primaryColor: ColorMagenta,
+        toggleableActiveColor: ColorMagenta,
+        focusColor: ColorMagenta,
+        accentColor: ColorMagenta,
       ),
       subtitleColor: const Color(0xffA5A5A5)),
 
-  AppTheme.GreenLight: ExtendedTheme(
+  GreenLight: AppTheme(
       baseTheme.copyWith(
         primaryColor: Colors.green,
         toggleableActiveColor: Colors.green,
@@ -69,7 +69,7 @@ final appThemeData = {
       ),
       subtitleColor: const Color(0xff8e8e8e)),
 
-  AppTheme.GreenDark: ExtendedTheme(
+  GreenDark: AppTheme(
       baseThemeDark.copyWith(
         primaryColor: Colors.green[700],
         accentColor: Colors.green[700],
@@ -78,7 +78,7 @@ final appThemeData = {
       ),
       subtitleColor: const Color(0xffA5A5A5)),
 
-  AppTheme.BlueLight: ExtendedTheme(
+  BlueLight: AppTheme(
     baseTheme.copyWith(
       primaryColor: Colors.blue,
       toggleableActiveColor: Colors.blue,
@@ -87,7 +87,7 @@ final appThemeData = {
     subtitleColor: const Color(0xff8e8e8e),
   ),
 
-  AppTheme.BlueDark: ExtendedTheme(
+  BlueDark: AppTheme(
       baseThemeDark.copyWith(
         primaryColor: Colors.blue[700],
         toggleableActiveColor: Colors.blue[700],

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:metro_appbar/metro_appbar.dart';
 import 'package:multiselect_scope/multiselect_scope.dart';
 import 'package:share/share.dart';
 import 'package:stopwatch/bloc/storage_bloc/bloc.dart';
@@ -17,9 +18,7 @@ import 'package:stopwatch/theme_data.dart';
 import 'package:stopwatch/util/csv_exporter.dart';
 import 'package:stopwatch/util/time_displayer.dart';
 import 'package:stopwatch/view/dialogs/filter_dialog.dart';
-import 'package:stopwatch/widgets/buttons_bar.dart';
 import 'package:stopwatch/widgets/circular.dart';
-import 'package:stopwatch/widgets/metro_app_bar.dart';
 import 'package:stopwatch/widgets/pair_label_view.dart';
 import 'package:stopwatch/widgets/stopwatch_item_widget.dart';
 import 'package:toast/toast.dart';
@@ -271,7 +270,7 @@ class _HistoryPageState extends State<HistoryPage>
                                               _unselectItems(context);
                                             },
                                             pic: Icons.edit,
-                                            tooltip: S.of(context).edit_app_bar,
+                                            text: S.of(context).edit_app_bar,
                                           )
                                         : SizedBox(),
                                     MultiselectScope.of(context)
@@ -280,7 +279,7 @@ class _HistoryPageState extends State<HistoryPage>
                                                 1 &&
                                             widget.pageType == MeasureViewModel
                                         ? PrimaryCommand(
-                                            tooltip: S.of(context).del_app_bar,
+                                            text: S.of(context).del_app_bar,
                                             pic: Icons.delete,
                                             onPressed: () {
                                               if (widget.pageType ==
@@ -364,7 +363,7 @@ class _HistoryPageState extends State<HistoryPage>
     };
 
     return PrimaryCommand(
-      tooltip: tooltip,
+      text: tooltip,
       pic: icon,
       onPressed: enabled ? command : null,
     );

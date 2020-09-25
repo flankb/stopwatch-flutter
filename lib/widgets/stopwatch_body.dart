@@ -3,15 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:launch_review/launch_review.dart';
-import 'package:path/path.dart';
+import 'package:metro_appbar/metro_appbar.dart';
 import 'package:stopwatch/bloc/measure_bloc/bloc.dart';
 import 'package:stopwatch/bloc/measure_bloc/measure_event.dart';
-import 'package:stopwatch/bloc/storage_bloc/bloc.dart';
 import 'package:stopwatch/constants.dart';
-import 'package:stopwatch/fake/fake_data_fabric.dart';
 import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
-import 'package:stopwatch/models/stopwatch_status.dart';
 import 'package:stopwatch/purchaser.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 import 'package:stopwatch/util/time_displayer.dart';
@@ -20,13 +17,11 @@ import 'package:stopwatch/view/pages/history_page.dart';
 import 'package:stopwatch/view/pages/settings_page.dart';
 import 'package:stopwatch/widgets/measure_lap_item.dart';
 import 'package:preferences/preference_service.dart';
-import 'package:stopwatch/widgets/metro_app_bar.dart';
 import 'package:vibration/vibration.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '../service_locator.dart';
-import 'buttons_bar.dart';
 import 'inherited/sound_widget.dart';
 
 class StopwatchBody extends StatefulWidget {
@@ -38,7 +33,8 @@ class StopwatchBody extends StatefulWidget {
   _StopwatchBodyState createState() => _StopwatchBodyState();
 }
 
-class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateMixin {
+class _StopwatchBodyState extends State<StopwatchBody>
+    with TickerProviderStateMixin {
   ScrollController _scrollController = new ScrollController();
   AnimationController _controller;
   Animation<double> animation;
@@ -48,7 +44,11 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
   void initState() {
     super.initState();
 
-    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300), upperBound: 150, lowerBound: 0);
+    _controller = AnimationController(
+        vsync: this,
+        duration: Duration(milliseconds: 300),
+        upperBound: 150,
+        lowerBound: 0);
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _controller.reverse();
@@ -85,14 +85,14 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
         var visiblePercentage = info.visibleFraction * 100;
         debugPrint('Widget ${info.key} is $visiblePercentage% visible');
 
-        if(visiblePercentage > 50){
+        if (visiblePercentage > 50) {
           await _enableWakeLock();
-        }
-        else{
+        } else {
           await _disableWakelock();
         }
       },
-      child: BlocBuilder<MeasureBloc, MeasureState>(builder: (BuildContext context, MeasureState state) {
+      child: BlocBuilder<MeasureBloc, MeasureState>(
+          builder: (BuildContext context, MeasureState state) {
         final mediaQueryOrientation = MediaQuery.of(context).orientation;
 
         return Column(
@@ -111,8 +111,13 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                         debugPrint("StreamBuilder ok! Measure ${state.measure} LastRestarted ${state.measure.lastRestartedOverall}");
                       }*/
 
-                      final delta1 = snapshot.data > 0 ? DateTime.now().difference(state.measure.lastRestartedOverall).inMilliseconds : 0;
-                      final overallDifference = state.measure.elapsed + delta1; // TODO elapsed не сбрасывается
+                      final delta1 = snapshot.data > 0
+                          ? DateTime.now()
+                              .difference(state.measure.lastRestartedOverall)
+                              .inMilliseconds
+                          : 0;
+                      final overallDifference = state.measure.elapsed +
+                          delta1; // TODO elapsed не сбрасывается
                       final lapDifference = state.measure.elapsedLap + delta1;
 
                       final d1 = Duration(milliseconds: overallDifference);
@@ -127,7 +132,8 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.baseline,
                                     textBaseline: TextBaseline.ideographic,
                                     children: <Widget>[
                                       Text(
@@ -142,7 +148,8 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                                     ],
                                   ),
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.baseline,
                                     textBaseline: TextBaseline.ideographic,
                                     children: <Widget>[
                                       Text(
@@ -163,16 +170,19 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                     }),
               ),
             ),
-
-            if (state is MeasurePausedState) Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: Text(
-                  TimeDisplayer.humanFormat(Duration(milliseconds: state.measure.elapsed)),
-                textAlign: TextAlign.left,
-                style: TextStyle(fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+            if (state is MeasurePausedState)
+              Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Text(
+                  TimeDisplayer.humanFormat(
+                      Duration(milliseconds: state.measure.elapsed)),
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-
             Expanded(
               flex: 3,
               child: ListView.builder(
@@ -184,7 +194,8 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
                     child: MeasureLapItem(
-                      difference: "+${lap.differenceTime()},${lap.differenceMills()}",
+                      difference:
+                          "+${lap.differenceTime()},${lap.differenceMills()}",
                       order: lap.order,
                       overall: "${lap.overallTime()},${lap.overallMills()}",
                     ),
@@ -194,7 +205,8 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
             ),
             ConstrainedBox(
               constraints: BoxConstraints(
-                maxHeight: mediaQueryOrientation == Orientation.portrait ? 150 : 70,
+                maxHeight:
+                    mediaQueryOrientation == Orientation.portrait ? 150 : 70,
                 //minHeight: 100
               ),
               child: Row(
@@ -210,12 +222,16 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                           child: Padding(
                             padding: EdgeInsets.all(0),
                             child: Text(
-                              state is MeasureStartedState ? S.of(context).pause : S.of(context).start,
-                              style: TextStyle(fontSize: 28, color: Colors.white),
+                              state is MeasureStartedState
+                                  ? S.of(context).pause
+                                  : S.of(context).start,
+                              style:
+                                  TextStyle(fontSize: 28, color: Colors.white),
                             ),
                           ),
                           onPressed: () {
-                            if (state is MeasureReadyState || state is MeasurePausedState) {
+                            if (state is MeasureReadyState ||
+                                state is MeasurePausedState) {
                               widget.measureBloc.add(MeasureStartedEvent());
                             } else if (state is MeasureStartedState) {
                               widget.measureBloc.add(MeasurePausedEvent());
@@ -224,7 +240,9 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                             _playSound(context, 0);
                             _vibrate();
                           },
-                          fillColor: state is MeasureStartedState ? Colors.red : Theme.of(context).primaryColor,
+                          fillColor: state is MeasureStartedState
+                              ? Colors.red
+                              : Theme.of(context).primaryColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(12)),
                           ),
@@ -238,7 +256,9 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                           key: Key('lap_button'),
                           child: Padding(
                             padding: EdgeInsets.all(0),
-                            child: Text(S.of(context).lap, style: TextStyle(fontSize: 28, color: Colors.black)),
+                            child: Text(S.of(context).lap,
+                                style: TextStyle(
+                                    fontSize: 28, color: Colors.black)),
                           ),
                           onPressed: state is MeasureStartedState
                               ? () async {
@@ -246,10 +266,13 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                                   _playSound(context, 1);
                                   _vibrate();
 
-                                  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                                  WidgetsBinding.instance
+                                      .addPostFrameCallback((timeStamp) {
                                     _scrollController.animateTo(
-                                      _scrollController.position.maxScrollExtent,
-                                      duration: const Duration(milliseconds: 50),
+                                      _scrollController
+                                          .position.maxScrollExtent,
+                                      duration:
+                                          const Duration(milliseconds: 50),
                                       curve: Curves.easeOut,
                                     );
                                   });
@@ -276,10 +299,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: MetroAppBar(
                   primaryCommands: [
-
-
-
-                  /*PrimaryCommand(
+                    /*PrimaryCommand(
                   pic: Icons.refresh,
                   tooltip: S.of(context).reset,
                   onPressed: () {
@@ -298,33 +318,33 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                   },
                 ),*/
 
-
                     StreamBuilder<PurchaseCompletedState>(
-                      stream: getIt.get<PurchaserBloc>().purchaseStateStream,
-                      initialData: getIt.get<PurchaserBloc>().purchaseState,
-                      builder: (context, snapshot) {
-                        return PrimaryCommand(
-                          pic: Icons.refresh,
-                          tooltip: S.of(context).reset,
-                          onPressed: () {
-                            bool saveMeasure = _isSaveMeasure(snapshot);
+                        stream: getIt.get<PurchaserBloc>().purchaseStateStream,
+                        initialData: getIt.get<PurchaserBloc>().purchaseState,
+                        builder: (context, snapshot) {
+                          return PrimaryCommand(
+                            pic: Icons.refresh,
+                            text: S.of(context).reset,
+                            onPressed: () {
+                              bool saveMeasure = _isSaveMeasure(snapshot);
 
-                            BlocProvider.of<MeasureBloc>(context).add(MeasureFinishedEvent(saveMeasure));
+                              BlocProvider.of<MeasureBloc>(context)
+                                  .add(MeasureFinishedEvent(saveMeasure));
 
-                            if (_controller.isCompleted) {
-                              _controller.reverse();
-                            } else {
-                              _controller.forward();
-                            }
-                          },
-                        );
-                      }
-                    ),
+                              if (_controller.isCompleted) {
+                                _controller.reverse();
+                              } else {
+                                _controller.forward();
+                              }
+                            },
+                          );
+                        }),
                     PrimaryCommand(
                       pic: Icons.list,
-                      tooltip: S.of(context).history,
+                      text: S.of(context).history,
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (BuildContext context) {
                           return HistoryPage(
                             pageType: MeasureViewModel,
                             entityId: null,
@@ -334,9 +354,10 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                     ),
                     PrimaryCommand(
                       pic: Icons.settings,
-                      tooltip: S.of(context).settings,
+                      text: S.of(context).settings,
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (BuildContext context) {
                           return SettingsPage();
                         }));
                       },
@@ -355,7 +376,8 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
                     SecondaryCommand(
                         commandName: "about",
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                          Navigator.push(context, MaterialPageRoute(
+                              builder: (BuildContext context) {
                             return AboutPage();
                           }));
                         },
@@ -369,10 +391,13 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
   }
 
   bool _isSaveMeasure(AsyncSnapshot<PurchaseCompletedState> snapshot) {
-    final measureCounts = getIt.get<StopwatchRepository>().guaranteedAmountOfFinishedMeasures; // TODO Плохо здесь ссылаться на репозиторий!
+    final measureCounts = getIt
+        .get<StopwatchRepository>()
+        .guaranteedAmountOfFinishedMeasures; // TODO Плохо здесь ссылаться на репозиторий!
     bool saveMeasure = PrefService.getBool(PREF_SAVE_MEASURES) ?? true;
     final proOwned = snapshot.data.skuIsAcknowledged(PRO_PACKAGE);
-    saveMeasure = saveMeasure && (proOwned || measureCounts < MAX_FREE_MEASURES);
+    saveMeasure =
+        saveMeasure && (proOwned || measureCounts < MAX_FREE_MEASURES);
 
     debugPrint("_isSaveMeasure $saveMeasure");
 
@@ -407,7 +432,7 @@ class _StopwatchBodyState extends State<StopwatchBody> with TickerProviderStateM
     debugPrint('Start wakelock enabling!');
 
     if (PrefService.getBool(PREF_KEEP_SCREEN_AWAKE) ?? false) {
-      if(!(await Wakelock.isEnabled)){
+      if (!(await Wakelock.isEnabled)) {
         await Wakelock.enable();
         debugPrint('Wakelock enabled!');
       }

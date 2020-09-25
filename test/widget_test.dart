@@ -7,26 +7,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:preferences/preferences.dart';
-import 'package:stopwatch/bloc/measure_bloc/measure_bloc.dart';
-import 'package:stopwatch/bloc/measure_bloc/measure_event.dart';
+import 'package:metro_appbar/metro_appbar.dart';
 
-import 'package:stopwatch/main.dart';
-import 'package:stopwatch/resources/stopwatch_db_repository.dart';
-import 'package:stopwatch/service_locator.dart';
-import 'package:stopwatch/util/ticker.dart';
-import 'package:stopwatch/widgets/buttons_bar.dart';
 import 'package:stopwatch/widgets/circular.dart';
-import 'package:stopwatch/widgets/metro_app_bar.dart';
-import 'package:stopwatch/widgets/stopwatch_body.dart';
 
 void main() {
   //MeasureBloc measureBloc;
 
   setUp(() async {
-     //measureBloc = MeasureBloc(Ticker3(), StopwatchRepository());
-     //setupLocators();
-     //await PrefService.init(prefix: 'pref_'); // Настройки
+    //measureBloc = MeasureBloc(Ticker3(), StopwatchRepository());
+    //setupLocators();
+    //await PrefService.init(prefix: 'pref_'); // Настройки
   });
 
   tearDown(() {
@@ -34,11 +25,14 @@ void main() {
   });
 
   testWidgets('Widget test', (WidgetTester tester) async {
-    final metroAppBar = MetroAppBar(primaryCommands: <Widget>[
-        PrimaryCommand(onPressed: (){}, pic: Icons.comment, tooltip: 'Test')
-    ], secondaryCommands: <SecondaryCommand>[
-      SecondaryCommand(commandName: 'about', onPressed: () {}, child: Text('Hello'))
-    ],
+    final metroAppBar = MetroAppBar(
+      primaryCommands: <Widget>[
+        PrimaryCommand(onPressed: () {}, pic: Icons.comment, text: 'Test')
+      ],
+      secondaryCommands: <SecondaryCommand>[
+        SecondaryCommand(
+            commandName: 'about', onPressed: () {}, child: Text('Hello'))
+      ],
     );
 
     // Create the widget by telling the tester to build it.
