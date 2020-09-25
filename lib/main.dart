@@ -1,21 +1,18 @@
 import 'package:after_layout/after_layout.dart';
+import 'package:extended_theme/extended_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:get_it/get_it.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:stopwatch/bloc/measure_bloc/bloc.dart';
-import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 import 'package:stopwatch/service_locator.dart';
-import 'package:stopwatch/util/ticker.dart';
 import 'package:stopwatch/view/pages/about_page.dart';
 import 'package:stopwatch/view/pages/settings_page.dart';
 import 'package:stopwatch/widgets/circular.dart';
-import 'package:stopwatch/widgets/inherited/app_theme_notified.dart';
 import 'package:stopwatch/widgets/stopwatch_body.dart';
 import 'package:preferences/preferences.dart';
 import 'package:rate_my_app/rate_my_app.dart';
@@ -23,7 +20,6 @@ import 'package:scoped_model/scoped_model.dart';
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:soundpool/soundpool.dart';
 import 'package:tuple/tuple.dart';
 //import 'package:scrollable_positioned_list/scrollable_positioned_list.dart' as scrollList;
@@ -33,7 +29,6 @@ import 'models/stopwatch_status.dart';
 import 'generated/l10n.dart';
 import 'purchaser.dart';
 import 'theme_data.dart';
-import 'util_mixins/rate_app_mixin.dart';
 import 'widgets/inherited/sound_widget.dart';
 
 // Рефакторинг
@@ -52,14 +47,16 @@ RateMyApp rateMyApp = RateMyApp(
   appStoreIdentifier: '585027354',
 );
 
-AppTheme readLastTheme(){
-  final themeStr = PrefService.getString(PREF_THEME) ?? AppTheme.GreenLight.toString();
-  AppTheme theme = AppTheme.values.firstWhere((e) => e.toString() == themeStr);
-  return theme;
+String readLastTheme() {
+  final themeStr = PrefService.getString(PREF_THEME) ?? GreenLight;
+
+  debugPrint('Readed last theme:$themeStr');
+  return themeStr;
 }
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // This allows to use async methods in the main method without any problem.
+  WidgetsFlutterBinding
+      .ensureInitialized(); // This allows to use async methods in the main method without any problem.
 
   // https://github.com/Skyost/rate_my_app/blob/master/example/lib/main.dart
   await rateMyApp.init();
@@ -67,7 +64,7 @@ void main() async {
 
   // Здесь прочитать какая тема (перед инициализацией приложения)
   final initialTheme = readLastTheme();
-  final controller  = ThemeController(initialTheme, appThemeData);
+  final controller = ThemeController<AppTheme>(initialTheme, appThemeData);
 
   setupLocators();
 
@@ -79,7 +76,9 @@ void main() async {
     ..listenPurchaseUpdates()
     ..queryPurchases(acknowledgePendingPurchases: true);
 
-  runApp(MyApp(initialTheme: initialTheme, themeController: controller,));
+  runApp(MyApp(
+    themeController: controller,
+  ));
 }
 
 // Добавление темной темы во Flutter:
@@ -89,10 +88,10 @@ void main() async {
 // https://pub.dev/packages/dynamic_theme
 // https://api.flutter.dev/flutter/widgets/InheritedModel-class.html
 class MyApp extends StatelessWidget {
-  final AppTheme initialTheme;
-  final ThemeController themeController;
+  //final AppTheme initialTheme;
+  final ThemeController<AppTheme> themeController;
 
-  const MyApp({Key key, this.initialTheme, this.themeController}) : super(key: key);
+  const MyApp({Key key, this.themeController}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -101,24 +100,23 @@ class MyApp extends StatelessWidget {
 
     //final textTheme = Theme.of(context).textTheme;
 
-    return InheritedThemeNotifier(
+    return ExtentedThemeProvider<AppTheme>(
       controller: themeController,
-      child: Builder(
-        builder: (BuildContext context) {
-          return MaterialApp(
-              onGenerateTitle: (BuildContext context) => S.of(context).app_title,
-              theme:  InheritedThemeNotifier.of(context).themeData.materialTheme,
-              localizationsDelegates: [
-                S.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              supportedLocales: S.delegate.supportedLocales,
-              home: MyTabPageStateful() //MyHomePage(title: 'Flutter Demo Home Page'),
-              );
-        }
-      ),
+      child: Builder(builder: (BuildContext context) {
+        return MaterialApp(
+            onGenerateTitle: (BuildContext context) => S.of(context).app_title,
+            theme: context.theme().theme.materialTheme,
+            localizationsDelegates: [
+              S.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: S.delegate.supportedLocales,
+            home:
+                MyTabPageStateful() //MyHomePage(title: 'Flutter Demo Home Page'),
+            );
+      }),
     );
   }
 }
@@ -129,11 +127,13 @@ class CaptionModel extends Model {
   String get caption => _captionValue;
 
   void updateCaption(String caption) {
-    _captionValue = caption == '' ? 'ВЕСЬ СЛОВАРЬ' : "#${caption.toUpperCase()}";
+    _captionValue =
+        caption == '' ? 'ВЕСЬ СЛОВАРЬ' : "#${caption.toUpperCase()}";
     notifyListeners();
   }
 
-  static CaptionModel of(BuildContext context) => ScopedModel.of<CaptionModel>(context);
+  static CaptionModel of(BuildContext context) =>
+      ScopedModel.of<CaptionModel>(context);
 }
 
 class Choice {
@@ -157,7 +157,8 @@ const List<Choice> choices = const <Choice>[
       title: 'Настройки',
       //icon: Icons.settings,
       settingsType: SettingsType.Settings),
-  const Choice(title: 'О программе', icon: Icons.info, settingsType: SettingsType.About),
+  const Choice(
+      title: 'О программе', icon: Icons.info, settingsType: SettingsType.About),
   //const Choice(title: 'Walk', icon: Icons.directions_walk),
 ];
 
@@ -207,11 +208,13 @@ class _MyTabPageState extends State<MyTabPageStateful>
         break;
 
       case SettingsType.Settings:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => SettingsPage()));
         break;
 
       case SettingsType.About:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => AboutPage()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => AboutPage()));
         break;
 
       default:
@@ -275,11 +278,15 @@ class _MyTabPageState extends State<MyTabPageStateful>
   Future<Tuple2<Soundpool, List<int>>> _loadSounds() async {
     final pool = Soundpool(streamType: StreamType.notification);
 
-    final soundId1 = await rootBundle.load("assets/sounds/sound1.wav").then((ByteData soundData) {
+    final soundId1 = await rootBundle
+        .load("assets/sounds/sound1.wav")
+        .then((ByteData soundData) {
       return pool.load(soundData);
     });
 
-    final soundId2 = await rootBundle.load("assets/sounds/sound2.wav").then((ByteData soundData) {
+    final soundId2 = await rootBundle
+        .load("assets/sounds/sound2.wav")
+        .then((ByteData soundData) {
       return pool.load(soundData);
     });
 
@@ -334,8 +341,8 @@ class _MyTabPageState extends State<MyTabPageStateful>
         // Set to false if you want to show the native Apple app rating dialog on iOS.
         dialogStyle: DialogStyle(),
         // Custom dialog styles.
-        onDismissed: () => rateMyApp.callEvent(
-            RateMyAppEventType.laterButtonPressed), // Called when the user dismissed the dialog (either by taping outside or by pressing the "back" button).
+        onDismissed: () => rateMyApp.callEvent(RateMyAppEventType
+            .laterButtonPressed), // Called when the user dismissed the dialog (either by taping outside or by pressing the "back" button).
         // actionsBuilder: (_) => [], // This one allows you to use your own buttons.
       );
     }
@@ -375,7 +382,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
                 future: _soundsLoader,
                 builder: (context, snapshot) {
                   return snapshot.hasData
-                    ? SoundWidget(
+                      ? SoundWidget(
                           soundPool: snapshot.data.item1,
                           sounds: snapshot.data.item2,
                           child: StopwatchBody(

@@ -71,6 +71,12 @@ dependencies:
       path: 
     # path: ../../Packages/multiselect_scope
 
+  extended_theme:
+    path: ../../Packages/extended_theme
+
+  #metro_appbar:
+  #  path: ../../Packages/metro_appbar
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:extended_theme/extended_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:multiselect_scope/multiselect_scope.dart';
@@ -7,7 +8,7 @@ import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 import 'package:stopwatch/util/time_displayer.dart';
 import 'package:stopwatch/view/pages/history_page.dart';
 
-import 'inherited/app_theme_notified.dart';
+import '../theme_data.dart';
 
 class StopwatchItem extends StatefulWidget {
   final BaseStopwatchEntity entity;
@@ -157,8 +158,8 @@ class _StopwatchItemState extends State<StopwatchItem>
                           height: 1.0,
                           color: entityIsMeasure
                               ? Theme.of(context).textTheme.bodyText1.color
-                              : InheritedThemeNotifier.of(context)
-                                  .themeData
+                              : ExtentedThemeProvider.of<AppTheme>(context)
+                                  .theme
                                   .subtitleColor)),
                   SizedBox(height: 6),
                   widget.entity.comment != null
@@ -168,8 +169,8 @@ class _StopwatchItemState extends State<StopwatchItem>
                               fontSize: 18,
                               height: 1.0,
                               color: widget.entity.comment == null
-                                  ? InheritedThemeNotifier.of(context)
-                                      .themeData
+                                  ? ExtentedThemeProvider.of<AppTheme>(context)
+                                      .theme
                                       .subtitleColor
                                   : Theme.of(context)
                                       .textTheme
@@ -182,8 +183,8 @@ class _StopwatchItemState extends State<StopwatchItem>
                       ? Text(
                           TimeDisplayer.formatDate(date, context: context),
                           style: TextStyle(
-                              color: InheritedThemeNotifier.of(context)
-                                  .themeData
+                              color: ExtentedThemeProvider.of<AppTheme>(context)
+                                  .theme
                                   .subtitleColor),
                         )
                       : SizedBox()

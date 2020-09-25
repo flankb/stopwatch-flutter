@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:extended_theme/extended_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,12 +13,12 @@ import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/models/filter.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 import 'package:stopwatch/service_locator.dart';
+import 'package:stopwatch/theme_data.dart';
 import 'package:stopwatch/util/csv_exporter.dart';
 import 'package:stopwatch/util/time_displayer.dart';
 import 'package:stopwatch/view/dialogs/filter_dialog.dart';
 import 'package:stopwatch/widgets/buttons_bar.dart';
 import 'package:stopwatch/widgets/circular.dart';
-import 'package:stopwatch/widgets/inherited/app_theme_notified.dart';
 import 'package:stopwatch/widgets/metro_app_bar.dart';
 import 'package:stopwatch/widgets/pair_label_view.dart';
 import 'package:stopwatch/widgets/stopwatch_item_widget.dart';
@@ -483,7 +484,8 @@ class MessageNoMeasures extends StatelessWidget {
         S.of(context).no_measures,
         textAlign: TextAlign.left,
         style: TextStyle(
-            color: InheritedThemeNotifier.of(context).themeData.subtitleColor,
+            color:
+                ExtentedThemeProvider.of<AppTheme>(context).theme.subtitleColor,
             fontSize: 18),
       ),
     ));
