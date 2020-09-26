@@ -263,9 +263,11 @@ packages:
   extended_theme:
     dependency: "direct main"
     description:
-      path: "../../Packages/extended_theme"
-      relative: true
-    source: path
+      path: "."
+      ref: master
+      resolved-ref: fe17a97c6734d01de2f4755b45392d532b37a489
+      url: "../../Packages/extended_theme"
+    source: git
     version: "0.0.1"
   fake_async:
     dependency: transitive
@@ -423,6 +425,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.4+9"
+  inapp_purchase_scaffold:
+    dependency: "direct main"
+    description:
+      path: "../../Packages/inapp-purchase-scaffold"
+      relative: true
+    source: path
+    version: "0.0.1"
   indexed_list_view:
     dependency: "direct main"
     description:
@@ -496,9 +505,11 @@ packages:
   metro_appbar:
     dependency: "direct main"
     description:
-      path: "../../Packages/metro_appbar"
-      relative: true
-    source: path
+      path: "."
+      ref: master
+      resolved-ref: "226ea468189e2416a29cceb212bfb4abd34ac097"
+      url: "../../Packages/metro_appbar"
+    source: git
     version: "0.0.1"
   mime:
     dependency: transitive

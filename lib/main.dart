@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:get_it/get_it.dart';
+import 'package:inapp_purchase_scaffold/inapp_purchase_scaffold.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:stopwatch/bloc/measure_bloc/bloc.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
@@ -27,7 +28,6 @@ import 'package:tuple/tuple.dart';
 import 'constants.dart';
 import 'models/stopwatch_status.dart';
 import 'generated/l10n.dart';
-import 'purchaser.dart';
 import 'theme_data.dart';
 import 'widgets/inherited/sound_widget.dart';
 

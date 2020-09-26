@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inapp_purchase_scaffold/inapp_purchase_scaffold.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:metro_appbar/metro_appbar.dart';
 import 'package:stopwatch/bloc/measure_bloc/bloc.dart';
@@ -9,7 +10,6 @@ import 'package:stopwatch/bloc/measure_bloc/measure_event.dart';
 import 'package:stopwatch/constants.dart';
 import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
-import 'package:stopwatch/purchaser.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 import 'package:stopwatch/util/time_displayer.dart';
 import 'package:stopwatch/view/pages/about_page.dart';
@@ -395,7 +395,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
         .get<StopwatchRepository>()
         .guaranteedAmountOfFinishedMeasures; // TODO Плохо здесь ссылаться на репозиторий!
     bool saveMeasure = PrefService.getBool(PREF_SAVE_MEASURES) ?? true;
-    final proOwned = snapshot.data.skuIsAcknowledged(PRO_PACKAGE);
+    final proOwned = snapshot.data.productIsAcknowledged(PRO_PACKAGE);
     saveMeasure =
         saveMeasure && (proOwned || measureCounts < MAX_FREE_MEASURES);
 

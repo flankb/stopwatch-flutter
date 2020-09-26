@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:inapp_purchase_scaffold/inapp_purchase_scaffold.dart';
 import 'package:metro_appbar/metro_appbar.dart';
 import 'package:multiselect_scope/multiselect_scope.dart';
 import 'package:share/share.dart';
@@ -22,8 +23,6 @@ import 'package:stopwatch/widgets/circular.dart';
 import 'package:stopwatch/widgets/pair_label_view.dart';
 import 'package:stopwatch/widgets/stopwatch_item_widget.dart';
 import 'package:toast/toast.dart';
-
-import '../../purchaser.dart';
 import 'entity_edit_page.dart';
 
 class HistoryPage extends StatefulWidget {
@@ -167,23 +166,6 @@ class _HistoryPageState extends State<HistoryPage>
                               caption: pageIsLap
                                   ? S.of(context).details
                                   : S.of(context).measures),
-                          StreamBuilder<String>(
-                              // Информатор взаимодействия с магазином
-                              initialData: null,
-                              stream: getIt
-                                  .get<PurchaserBloc>()
-                                  .purchaseErrorStream,
-                              builder: (context, snapshot) {
-                                WidgetsBinding.instance
-                                    .addPostFrameCallback((_) {
-                                  if (snapshot.hasData &&
-                                      snapshot.data != null) {
-                                    Toast.show(snapshot.data, context);
-                                  }
-                                });
-
-                                return const SizedBox();
-                              }),
                           pageIsLap
                               ? AnimatedBuilder(
                                   animation: animation,
@@ -443,8 +425,13 @@ class ListOfMeasures extends StatelessWidget {
                     initialData: getIt.get<PurchaserBloc>().purchaseState,
                     builder: (context, snapshot) {
                       if (snapshot.hasData && !snapshot.hasError) {
+                        // Здесь же покажем ошибку
+                        if (snapshot.data.productIsPending(PRO_PACKAGE)) {
+                          return (Text('Purchase is pending!'));
+                        }
+
                         final viewBanner =
-                            !snapshot.data.skuIsAcknowledged(PRO_PACKAGE) &&
+                            !snapshot.data.productIsAcknowledged(PRO_PACKAGE) &&
                                 availState.allEntities.length > 0;
 
                         debugPrint(

@@ -69,13 +69,21 @@ dependencies:
       url: ../../Packages/multiselect_scope
       ref: master
       path: 
-    # path: ../../Packages/multiselect_scope
 
   extended_theme:
-    path: ../../Packages/extended_theme
+    git:
+      url: ../../Packages/extended_theme
+      ref: master
+      path: 
 
   metro_appbar:
-    path: ../../Packages/metro_appbar
+    git:
+      url: ../../Packages/metro_appbar
+      ref: master
+      path: 
+
+  inapp_purchase_scaffold:
+    path: ../../Packages/inapp-purchase-scaffold
 
 dev_dependencies:
   flutter_test:
