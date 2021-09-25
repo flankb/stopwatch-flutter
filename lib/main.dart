@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:get_it/get_it.dart';
-import 'package:inapp_purchase_scaffold/inapp_purchase_scaffold.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:stopwatch/bloc/measure_bloc/bloc.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
@@ -23,7 +22,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:soundpool/soundpool.dart';
 import 'package:tuple/tuple.dart';
-//import 'package:scrollable_positioned_list/scrollable_positioned_list.dart' as scrollList;
 
 import 'constants.dart';
 import 'models/stopwatch_status.dart';
@@ -64,20 +62,13 @@ void main() async {
 
   // Здесь прочитать какая тема (перед инициализацией приложения)
   final initialTheme = readLastTheme();
-  final controller = ThemeController<AppTheme>(initialTheme, appThemeData);
 
   setupLocators();
 
   getIt.get<StopwatchRepository>().watchFinishedMeasures(MAX_FREE_MEASURES);
 
-  getIt.get<PurchaserBloc>()
-    ..enablePendingPurchases()
-    ..enableConnection()
-    ..listenPurchaseUpdates()
-    ..queryPurchases(acknowledgePendingPurchases: true);
-
   runApp(MyApp(
-    themeController: controller,
+    initialThemeId: initialTheme,
   ));
 }
 
@@ -88,36 +79,36 @@ void main() async {
 // https://pub.dev/packages/dynamic_theme
 // https://api.flutter.dev/flutter/widgets/InheritedModel-class.html
 class MyApp extends StatelessWidget {
-  //final AppTheme initialTheme;
-  final ThemeController<AppTheme> themeController;
+  final String initialThemeId;
+  //final ThemeController<AppTheme> themeController;
 
-  const MyApp({Key key, this.themeController}) : super(key: key);
+  const MyApp({Key key, this.initialThemeId}) : super(key: key);
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    debugPrint("themeController.themeData " + themeController.theme.toString());
+    //debugPrint("themeController.themeData " + themeController.theme.toString());
 
     //final textTheme = Theme.of(context).textTheme;
 
-    return ExtentedThemeProvider<AppTheme>(
-      controller: themeController,
-      child: Builder(builder: (BuildContext context) {
-        return MaterialApp(
-            onGenerateTitle: (BuildContext context) => S.of(context).app_title,
-            theme: context.theme().theme.materialTheme,
-            localizationsDelegates: [
-              S.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: S.delegate.supportedLocales,
-            home:
-                MyTabPageStateful() //MyHomePage(title: 'Flutter Demo Home Page'),
-            );
-      }),
-    );
+    return ThemeScope<AppTheme>(
+        themeId: initialThemeId,
+        themeBuilder: (context, appTheme) {
+          return MaterialApp(
+              onGenerateTitle: (BuildContext context) =>
+                  S.of(context).app_title,
+              theme: appTheme.material,
+              localizationsDelegates: [
+                S.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: S.delegate.supportedLocales,
+              home:
+                  MyTabPageStateful() //MyHomePage(title: 'Flutter Demo Home Page'),
+              );
+        });
   }
 }
 

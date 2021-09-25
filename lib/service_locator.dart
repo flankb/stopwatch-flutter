@@ -1,5 +1,4 @@
 import 'package:get_it/get_it.dart';
-import 'package:inapp_purchase_scaffold/inapp_purchase_scaffold.dart';
 import 'package:stopwatch/bloc/entity_bloc/bloc.dart';
 import 'package:stopwatch/bloc/storage_bloc/storage_bloc.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
@@ -29,5 +28,4 @@ setupLocators() {
 
   getIt.registerFactory(
       () => MeasuresExporter(getIt.get<StopwatchRepository>()));
-  getIt.registerSingleton<PurchaserBloc>(PurchaserBloc());
 }

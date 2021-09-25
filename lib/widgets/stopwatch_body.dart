@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inapp_purchase_scaffold/inapp_purchase_scaffold.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:metro_appbar/metro_appbar.dart';
 import 'package:stopwatch/bloc/measure_bloc/bloc.dart';
@@ -10,7 +9,6 @@ import 'package:stopwatch/bloc/measure_bloc/measure_event.dart';
 import 'package:stopwatch/constants.dart';
 import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
-import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 import 'package:stopwatch/util/time_displayer.dart';
 import 'package:stopwatch/view/pages/about_page.dart';
 import 'package:stopwatch/view/pages/history_page.dart';
@@ -21,7 +19,6 @@ import 'package:vibration/vibration.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:wakelock/wakelock.dart';
 
-import '../service_locator.dart';
 import 'inherited/sound_widget.dart';
 
 class StopwatchBody extends StatefulWidget {
@@ -299,48 +296,8 @@ class _StopwatchBodyState extends State<StopwatchBody>
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: MetroAppBar(
                   primaryCommands: [
-                    /*PrimaryCommand(
-                  pic: Icons.refresh,
-                  tooltip: S.of(context).reset,
-                  onPressed: () {
-                    //final measureCounts = state.measure.finishedMeasuresCount;
-                    bool saveMeasure = PrefService.getBool(PREF_SAVE_MEASURES) ?? true;
-                    //final proOwned = snapshot.data.skuIsAcknowledged(PRO_PACKAGE);
-                    //saveMeasure = saveMeasure && (proOwned || measureCounts <= MAX_FREE_MEASURES);
-
-                    BlocProvider.of<MeasureBloc>(context).add(MeasureFinishedEvent(saveMeasure));
-
-                    if (_controller.isCompleted) {
-                      _controller.reverse();
-                    } else {
-                      _controller.forward();
-                    }
-                  },
-                ),*/
-
-                    StreamBuilder<PurchaseCompletedState>(
-                        stream: getIt.get<PurchaserBloc>().purchaseStateStream,
-                        initialData: getIt.get<PurchaserBloc>().purchaseState,
-                        builder: (context, snapshot) {
-                          return PrimaryCommand(
-                            pic: Icons.refresh,
-                            text: S.of(context).reset,
-                            onPressed: () {
-                              bool saveMeasure = _isSaveMeasure(snapshot);
-
-                              BlocProvider.of<MeasureBloc>(context)
-                                  .add(MeasureFinishedEvent(saveMeasure));
-
-                              if (_controller.isCompleted) {
-                                _controller.reverse();
-                              } else {
-                                _controller.forward();
-                              }
-                            },
-                          );
-                        }),
                     PrimaryCommand(
-                      pic: Icons.list,
+                      icon: Icons.list,
                       text: S.of(context).history,
                       onPressed: () {
                         Navigator.push(context,
@@ -353,7 +310,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
                       },
                     ),
                     PrimaryCommand(
-                      pic: Icons.settings,
+                      icon: Icons.settings,
                       text: S.of(context).settings,
                       onPressed: () {
                         Navigator.push(context,
@@ -365,23 +322,22 @@ class _StopwatchBodyState extends State<StopwatchBody>
                   ],
                   secondaryCommands: <SecondaryCommand>[
                     SecondaryCommand(
-                        commandName: "review",
-                        onPressed: () {
-                          LaunchReview.launch(
-                            androidAppId: "com.garnetjuice.stopwatch",
-                            iOSAppId: "585027354",
-                          );
-                        },
-                        child: Text(S.of(context).review)),
+                      text: S.of(context).review,
+                      onPressed: () {
+                        LaunchReview.launch(
+                          androidAppId: "com.garnetjuice.stopwatch",
+                          iOSAppId: "585027354",
+                        );
+                      },
+                    ),
                     SecondaryCommand(
-                        commandName: "about",
+                        text: S.of(context).about,
                         onPressed: () {
                           Navigator.push(context, MaterialPageRoute(
                               builder: (BuildContext context) {
                             return AboutPage();
                           }));
-                        },
-                        child: Text(S.of(context).about))
+                        })
                   ],
                 ))
           ],
@@ -390,14 +346,14 @@ class _StopwatchBodyState extends State<StopwatchBody>
     );
   }
 
-  bool _isSaveMeasure(AsyncSnapshot<PurchaseCompletedState> snapshot) {
-    final measureCounts = getIt
-        .get<StopwatchRepository>()
-        .guaranteedAmountOfFinishedMeasures; // TODO Плохо здесь ссылаться на репозиторий!
+  bool _isSaveMeasure() {
+    // final measureCounts = getIt
+    //     .get<StopwatchRepository>()
+    //     .guaranteedAmountOfFinishedMeasures; // TODO Плохо здесь ссылаться на репозиторий!
     bool saveMeasure = PrefService.getBool(PREF_SAVE_MEASURES) ?? true;
-    final proOwned = snapshot.data.productIsAcknowledged(PRO_PACKAGE);
-    saveMeasure =
-        saveMeasure && (proOwned || measureCounts < MAX_FREE_MEASURES);
+    // final proOwned = snapshot.data.productIsAcknowledged(PRO_PACKAGE);
+    // saveMeasure =
+    //     saveMeasure && (proOwned || measureCounts < MAX_FREE_MEASURES);
 
     debugPrint("_isSaveMeasure $saveMeasure");
 

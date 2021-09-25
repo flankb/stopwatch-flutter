@@ -27,11 +27,10 @@ void main() {
   testWidgets('Widget test', (WidgetTester tester) async {
     final metroAppBar = MetroAppBar(
       primaryCommands: <Widget>[
-        PrimaryCommand(onPressed: () {}, pic: Icons.comment, text: 'Test')
+        PrimaryCommand(onPressed: () {}, icon: Icons.comment, text: 'Test')
       ],
       secondaryCommands: <SecondaryCommand>[
-        SecondaryCommand(
-            commandName: 'about', onPressed: () {}, child: Text('Hello'))
+        SecondaryCommand(text: 'about', onPressed: () {})
       ],
     );
 

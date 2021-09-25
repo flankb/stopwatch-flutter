@@ -20,13 +20,7 @@ class AppTheme extends ExtendedTheme {
       {this.shadowColor = const Color(0xff3F3C3C),
       this.buttonPauseColor = Colors.black,
       this.subtitleColor = const Color(0xffE6E6E6)})
-      : super(materialTheme: materialTheme);
-}
-
-extension InheritedThemeExtensions on BuildContext {
-  ThemeController<AppTheme> theme() {
-    return this.t<AppTheme>();
-  }
+      : super(material: materialTheme);
 }
 
 ThemeData baseTheme = ThemeData(

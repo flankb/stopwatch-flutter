@@ -34,9 +34,8 @@ class MeasureLapItem extends StatelessWidget {
             Text("$overall",
                 style: TextStyle(
                     fontSize: 16,
-                    color: ExtentedThemeProvider.of<AppTheme>(context)
-                        .theme
-                        .subtitleColor))
+                    color:
+                        ThemeHolder.themeOf<AppTheme>(context).subtitleColor))
           ],
         )
       ],

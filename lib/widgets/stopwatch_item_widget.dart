@@ -95,9 +95,9 @@ class _StopwatchItemState extends State<StopwatchItem>
         : null;
 
     final controller =
-        MultiselectScope.of(context); //MultiselectScope.of(context);
+        MultiselectScope.controllerOf(context); //MultiselectScope.of(context);
 
-    final itemIsSelected = controller.indexIsSelected(widget.index);
+    final itemIsSelected = controller.isSelected(widget.index);
 
     return InkWell(
       onLongPress: () => {
@@ -158,7 +158,7 @@ class _StopwatchItemState extends State<StopwatchItem>
                           height: 1.0,
                           color: entityIsMeasure
                               ? Theme.of(context).textTheme.bodyText1.color
-                              : ExtentedThemeProvider.of<AppTheme>(context)
+                              : ThemeHolder.of<AppTheme>(context)
                                   .theme
                                   .subtitleColor)),
                   SizedBox(height: 6),
@@ -169,7 +169,7 @@ class _StopwatchItemState extends State<StopwatchItem>
                               fontSize: 18,
                               height: 1.0,
                               color: widget.entity.comment == null
-                                  ? ExtentedThemeProvider.of<AppTheme>(context)
+                                  ? ThemeHolder.of<AppTheme>(context)
                                       .theme
                                       .subtitleColor
                                   : Theme.of(context)
@@ -183,7 +183,7 @@ class _StopwatchItemState extends State<StopwatchItem>
                       ? Text(
                           TimeDisplayer.formatDate(date, context: context),
                           style: TextStyle(
-                              color: ExtentedThemeProvider.of<AppTheme>(context)
+                              color: ThemeHolder.of<AppTheme>(context)
                                   .theme
                                   .subtitleColor),
                         )
@@ -196,6 +196,5 @@ class _StopwatchItemState extends State<StopwatchItem>
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }
