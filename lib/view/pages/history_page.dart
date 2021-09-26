@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:inapp_purchase_scaffold/inapp_purchase_scaffold.dart';
 import 'package:metro_appbar/metro_appbar.dart';
 import 'package:multiselect_scope/multiselect_scope.dart';
 import 'package:share/share.dart';
@@ -53,7 +52,7 @@ class _HistoryPageState extends State<HistoryPage>
 
     _multiselectController = MultiselectController();
 
-    animationController = AnimationController(vsync: this, duration: duration);
+    animationController = AnimationController(duration: duration, vsync: this);
     animation = Tween<double>(begin: 0.5, end: 1.0).animate(
         animationController); //ColorTween(begin: beginColor, end: endColor).animate(controller);
 
@@ -150,10 +149,11 @@ class _HistoryPageState extends State<HistoryPage>
                   dataSource: availState.entities,
                   clearSelectionOnPop: true,
                   controller: _multiselectController,
-                  onSelectionChanged: (indexes) {
+                  onSelectionChanged: (indexes, items) {
                     debugPrint("Custom listener invoked! $indexes");
-                    _selectedEntities = _multiselectController
-                        .getSelectedItems(availState.entities);
+                    _selectedEntities = items;
+                    // _multiselectController
+                    //     .getSelectedItems(availState.entities);
                   },
                   child: Builder(builder: (context) {
                     debugPrint("build GreatMultiselect builder");
@@ -215,7 +215,9 @@ class _HistoryPageState extends State<HistoryPage>
                                   ? MessageNoMeasures()
                                   : SizedBox(),
 
-                          MultiselectScope.of(context).selectedIndexes.length !=
+                          MultiselectScope.controllerOf(context)
+                                          .selectedIndexes
+                                          .length !=
                                       1 &&
                                   pageIsLap
                               ? SizedBox()
@@ -230,7 +232,7 @@ class _HistoryPageState extends State<HistoryPage>
                                             context, existsMeasures,
                                             shareMode: ShareMode.File)
                                         : SizedBox(),
-                                    MultiselectScope.of(context)
+                                    MultiselectScope.controllerOf(context)
                                                 .selectedIndexes
                                                 .length ==
                                             1
@@ -251,18 +253,18 @@ class _HistoryPageState extends State<HistoryPage>
 
                                               _unselectItems(context);
                                             },
-                                            pic: Icons.edit,
+                                            icon: Icons.edit,
                                             text: S.of(context).edit_app_bar,
                                           )
                                         : SizedBox(),
-                                    MultiselectScope.of(context)
+                                    MultiselectScope.controllerOf(context)
                                                     .selectedIndexes
                                                     .length >=
                                                 1 &&
                                             widget.pageType == MeasureViewModel
                                         ? PrimaryCommand(
                                             text: S.of(context).del_app_bar,
-                                            pic: Icons.delete,
+                                            icon: Icons.delete,
                                             onPressed: () {
                                               if (widget.pageType ==
                                                   LapViewModel) {
@@ -346,7 +348,7 @@ class _HistoryPageState extends State<HistoryPage>
 
     return PrimaryCommand(
       text: tooltip,
-      pic: icon,
+      icon: icon,
       onPressed: enabled ? command : null,
     );
   }
@@ -373,7 +375,7 @@ class _HistoryPageState extends State<HistoryPage>
   }
 
   void _unselectItems(BuildContext context) {
-    MultiselectScope.of(context).clearSelection();
+    MultiselectScope.controllerOf(context).clearSelection();
   }
 }
 
@@ -419,31 +421,7 @@ class ListOfMeasures extends StatelessWidget {
 
                 return StopwatchItem(key: key, entity: entity, index: index);
               } else {
-                //return SizedBox.shrink();
-                return StreamBuilder<PurchaseCompletedState>(
-                    stream: getIt.get<PurchaserBloc>().purchaseStateStream,
-                    initialData: getIt.get<PurchaserBloc>().purchaseState,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData && !snapshot.hasError) {
-                        // Здесь же покажем ошибку
-                        if (snapshot.data.productIsPending(PRO_PACKAGE)) {
-                          return (Text('Purchase is pending!'));
-                        }
-
-                        final viewBanner =
-                            !snapshot.data.productIsAcknowledged(PRO_PACKAGE) &&
-                                availState.allEntities.length > 0;
-
-                        debugPrint(
-                            "Purchase data in stream builder ${snapshot.data}");
-
-                        return viewBanner
-                            ? PurchaseBanner()
-                            : SizedBox.shrink();
-                      } else {
-                        return SizedBox.shrink();
-                      }
-                    });
+                return SizedBox.shrink();
               }
             },
             separatorBuilder: (BuildContext context, int index) {
@@ -470,8 +448,7 @@ class MessageNoMeasures extends StatelessWidget {
         S.of(context).no_measures,
         textAlign: TextAlign.left,
         style: TextStyle(
-            color:
-                ExtentedThemeProvider.of<AppTheme>(context).theme.subtitleColor,
+            color: ThemeHolder.themeOf<AppTheme>(context).subtitleColor,
             fontSize: 18),
       ),
     ));
@@ -499,11 +476,13 @@ class FilterButtons extends StatelessWidget {
         alignment: Alignment.bottomRight,
         child: Padding(
           padding: EdgeInsets.only(
-              bottom:
-                  MultiselectScope.of(context).selectedIndexes.length != 1 &&
-                          pageIsLap
-                      ? 12
-                      : 62,
+              bottom: MultiselectScope.controllerOf(context)
+                              .selectedIndexes
+                              .length !=
+                          1 &&
+                      pageIsLap
+                  ? 12
+                  : 62,
               right: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -621,7 +600,7 @@ class PurchaseBanner extends StatelessWidget {
                   alignment: Alignment.centerRight,
                   child: RawMaterialButton(
                     onPressed: () {
-                      getIt.get<PurchaserBloc>().requestPurchase(PRO_PACKAGE);
+                      //getIt.get<PurchaserBloc>().requestPurchase(PRO_PACKAGE);
                     },
                     fillColor: const Color(0xFF3e403f),
                     child: Text(S.current.purchase,

@@ -93,6 +93,7 @@ class MyApp extends StatelessWidget {
 
     return ThemeScope<AppTheme>(
         themeId: initialThemeId,
+        availableThemes: appThemeData,
         themeBuilder: (context, appTheme) {
           return MaterialApp(
               onGenerateTitle: (BuildContext context) =>

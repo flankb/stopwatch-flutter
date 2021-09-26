@@ -42,10 +42,10 @@ class _StopwatchBodyState extends State<StopwatchBody>
     super.initState();
 
     _controller = AnimationController(
-        vsync: this,
         duration: Duration(milliseconds: 300),
         upperBound: 150,
-        lowerBound: 0);
+        lowerBound: 0,
+        vsync: this);
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _controller.reverse();

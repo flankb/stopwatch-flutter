@@ -57,7 +57,7 @@ class SettingsPage extends StatelessWidget {
                 PREF_THEME,
                 defaultVal: GreenLight,
                 onChange: (v) {
-                  ExtentedThemeProvider.of<AppTheme>(context).updateTheme(v);
+                  ThemeHolder.of<AppTheme>(context).updateTheme(v);
                 },
                 displayValues: [
                   '${S.current.magenta} $sunrise',
