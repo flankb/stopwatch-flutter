@@ -38,7 +38,8 @@ dependencies:
   indexed_list_view: ^1.0.8
   provider: ^4.0.5
   moor: ^3.3.1
-  sqlite3_flutter_libs: ^0.2.0
+  sqlite3_flutter_libs:
+    path: ../../samples/sqlite3.dart/sqlite3_flutter_libs/
   equatable: ^1.1.1
   bloc: ^4.0.0
   flutter_bloc: ^4.0.0
