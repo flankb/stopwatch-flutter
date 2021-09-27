@@ -297,6 +297,26 @@ class _StopwatchBodyState extends State<StopwatchBody>
                 child: MetroAppBar(
                   primaryCommands: [
                     PrimaryCommand(
+                      icon: Icons.refresh,
+                      text: S.of(context).reset,
+                      onPressed: () {
+                        //final measureCounts = state.measure.finishedMeasuresCount;
+                        bool saveMeasure =
+                            PrefService.getBool(PREF_SAVE_MEASURES) ?? true;
+                        //final proOwned = snapshot.data.skuIsAcknowledged(PRO_PACKAGE);
+                        //saveMeasure = saveMeasure && (proOwned || measureCounts <= MAX_FREE_MEASURES);
+
+                        BlocProvider.of<MeasureBloc>(context)
+                            .add(MeasureFinishedEvent(saveMeasure));
+
+                        if (_controller.isCompleted) {
+                          _controller.reverse();
+                        } else {
+                          _controller.forward();
+                        }
+                      },
+                    ),
+                    PrimaryCommand(
                       icon: Icons.list,
                       text: S.of(context).history,
                       onPressed: () {
