@@ -37,14 +37,14 @@ dependencies:
   scrollable_positioned_list: ^0.2.2
   indexed_list_view: ^2.0.1
   provider: ^6.0.1
-  moor: ^4.6.1
+  drift: ^1.0.1
   sqlite3_flutter_libs: ^0.5.1
   equatable: ^2.0.3
   bloc: ^7.2.1
   flutter_bloc: ^7.3.0
   csv: ^5.0.0
   datetime_picker_formfield: ^2.0.0
-  moor_db_viewer: ^4.4.0
+  #moor_db_viewer: ^4.4.0
   tuple: ^2.0.0
   get_it: ^7.2.0
   soundpool: ^2.2.0
@@ -76,7 +76,7 @@ dev_dependencies:
 
   bloc_test: ^8.3.0
   analyzer: ^2.6.0
-  moor_generator: ^4.6.0
+  drift_dev: ^1.0.2
   build_runner: ^2.1.4
   mockito: ^5.0.16
   # sqflite_ffi_test:

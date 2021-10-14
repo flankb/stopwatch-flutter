@@ -226,14 +226,14 @@ packages:
     source: hosted
     version: "2.0.0"
   drift:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: drift
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
   drift_dev:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: drift_dev
       url: "https://pub.dartlang.org"
@@ -521,27 +521,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.4"
-  moor:
-    dependency: "direct main"
-    description:
-      name: moor
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.6.1"
-  moor_db_viewer:
-    dependency: "direct main"
-    description:
-      name: moor_db_viewer
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.4.0"
-  moor_generator:
-    dependency: "direct dev"
-    description:
-      name: moor_generator
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.6.0"
   multiselect_scope:
     dependency: "direct main"
     description:
