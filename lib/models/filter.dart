@@ -1,13 +1,14 @@
-
 /// Фильтр
 class Filter {
-  DateTime dateFrom;
-  DateTime dateTo;
+  DateTime? dateFrom;
+  DateTime? dateTo;
   String query;
 
-  Filter(this.query, {this.dateFrom, this.dateTo}) : assert (query != null);
+  Filter(this.query, {this.dateFrom, this.dateTo});
   factory Filter.defaultFilter() {
-    return Filter("", dateFrom : DateTime.now().subtract(Duration(days: 30)), dateTo: DateTime.now());
+    return Filter("",
+        dateFrom: DateTime.now().subtract(Duration(days: 30)),
+        dateTo: DateTime.now());
   }
 
   @override

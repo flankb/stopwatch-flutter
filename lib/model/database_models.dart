@@ -2,9 +2,9 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:stopwatch/models/stopwatch_status.dart';
 import 'package:path/path.dart' as p;
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:moor/ffi.dart';
+import 'package:drift/native.dart';
 import '../constants.dart';
 
 //flutter packages pub run build_runner build --delete-conflicting-outputs
@@ -16,7 +16,7 @@ part 'database_models.g.dart';
 class MillisDateConverter extends TypeConverter<DateTime, int> {
   const MillisDateConverter();
   @override
-  DateTime mapToDart(int fromDb) {
+  DateTime? mapToDart(int? fromDb) {
     if (fromDb == null) {
       return null;
     }
@@ -24,14 +24,16 @@ class MillisDateConverter extends TypeConverter<DateTime, int> {
   }
 
   @override
-  int mapToSql(DateTime value) {
+  int? mapToSql(DateTime? value) {
     return value?.millisecondsSinceEpoch;
   }
 }
 
 class Laps extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get measureId => integer().named('measure_id').customConstraint('REFERENCES measures(id) ON DELETE CASCADE')();
+  IntColumn get measureId => integer()
+      .named('measure_id')
+      .customConstraint('REFERENCES measures(id) ON DELETE CASCADE')();
   IntColumn get difference => integer()();
   IntColumn get order => integer()();
   IntColumn get overall => integer()();
@@ -40,7 +42,8 @@ class Laps extends Table {
 
 class MeasureSessions extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get measureId => integer().named('measure_id').customConstraint('REFERENCES measures(id) ON DELETE CASCADE')(); // TODO ON DELETE CASCADE Не работает!!!
+  IntColumn get measureId => integer().named('measure_id').customConstraint(
+      'REFERENCES measures(id) ON DELETE CASCADE')(); // TODO ON DELETE CASCADE Не работает!!!
   //DateTimeColumn get started => dateTime()();
   //DateTimeColumn get finished => dateTime().nullable()();
   IntColumn get startedOffset => integer()();
@@ -51,7 +54,8 @@ class Measures extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get elapsed => integer().withDefault(Constant(0))();
   //DateTimeColumn get dateCreated => dateTime()();
-  IntColumn get dateStarted => integer().nullable().map(const MillisDateConverter())();
+  IntColumn get dateStarted =>
+      integer().nullable().map(const MillisDateConverter())();
   TextColumn get status => text().withLength(max: 16)();
   TextColumn get comment => text().nullable()();
 }
@@ -62,12 +66,6 @@ class Tags extends Table {
   IntColumn get frequency => integer()();
   TextColumn get name => text().customConstraint('UNIQUE')();
 }
-/*
-@UseMoor(tables: [Laps, Measures, MeasureSessions, Tags])
-class MyDatabase {
-
-}
-*/
 
 LazyDatabase _openConnection() {
   // the LazyDatabase util lets us find the right location for the file async.
@@ -76,11 +74,11 @@ LazyDatabase _openConnection() {
     // for your app.
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(p.join(dbFolder.path, DATABASE_NAME));
-    return VmDatabase(file);
+    return NativeDatabase(file);
   });
 }
 
-@UseMoor(tables: [Laps, Measures, MeasureSessions, Tags])
+@DriftDatabase(tables: [Laps, Measures, MeasureSessions, Tags])
 class MyDatabase extends _$MyDatabase {
   factory MyDatabase() {
     return _instance;
@@ -98,4 +96,3 @@ class MyDatabase extends _$MyDatabase {
   @override
   int get schemaVersion => 1;
 }
-

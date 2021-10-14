@@ -25,17 +25,31 @@ class LapViewModel extends BaseStopwatchEntity {
     return TimeDisplayer.formatMills(Duration(milliseconds: overall));
   }
 
-  LapViewModel({int id, String comment, this.measureId, this.order, this.difference = 0, this.overall = 0}) : super(id: id, comment : comment);
+  LapViewModel(
+      {required int id,
+      String? comment,
+      required this.measureId,
+      required this.order,
+      this.difference = 0,
+      this.overall = 0})
+      : super(id: id, comment: comment);
 
   Lap toEntity() {
-    return Lap(id: id, measureId: measureId, order: order, difference : difference, comment: comment, overall: overall);
+    return Lap(
+        id: id,
+        measureId: measureId,
+        order: order,
+        difference: difference,
+        comment: comment,
+        overall: overall);
   }
 
   static LapViewModel fromEntity(Lap entity) {
-    return LapViewModel(id: entity.id,
+    return LapViewModel(
+        id: entity.id,
         measureId: entity.measureId,
         order: entity.order,
-        difference : entity.difference,
+        difference: entity.difference,
         comment: entity.comment,
         overall: entity.overall);
   }
@@ -46,5 +60,6 @@ class LapViewModel extends BaseStopwatchEntity {
   }
 
   @override
-  List<Object> get props => super.props..addAll([measureId, order, difference, overall]);
+  List<Object> get props =>
+      super.props..addAll([measureId, order, difference, overall]);
 }

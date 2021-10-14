@@ -11,7 +11,12 @@ class EntityEditPage extends StatelessWidget {
   final int entityId;
   final BaseStopwatchEntity entity;
 
-  const EntityEditPage({Key key, this.entityType, this.entityId, this.entity}) : super(key: key);
+  const EntityEditPage(
+      {Key? key,
+      required this.entityType,
+      required this.entityId,
+      required this.entity})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +48,8 @@ class EditFormState extends State<EditForm> {
   //
   // Note: This is a `GlobalKey<FormState>`,
   // not a GlobalKey<MyCustomFormState>.
-  final _formKey = GlobalKey<FormState>(); // TODO У формы обязательно должен быть ключ!!!
+  final _formKey =
+      GlobalKey<FormState>(); // TODO У формы обязательно должен быть ключ!!!
 
   EntityBloc entityBloc;
   TextEditingController textController;
@@ -92,7 +98,8 @@ class EditFormState extends State<EditForm> {
                 create: (BuildContext context) {
                   return entityBloc;
                 },
-                child: BlocBuilder<EntityBloc, EntityState>(builder: (context, snapshot) {
+                child: BlocBuilder<EntityBloc, EntityState>(
+                    builder: (context, snapshot) {
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
                     child: Column(

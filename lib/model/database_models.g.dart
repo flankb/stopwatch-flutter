@@ -391,9 +391,9 @@ class $LapsTable extends Laps with TableInfo<$LapsTable, Lap> {
 }
 
 class Measure extends DataClass implements Insertable<Measure> {
-  final int id;
+  final int? id;
   final int elapsed;
-  final DateTime dateStarted;
+  final DateTime? dateStarted;
   final String status;
   final String comment;
   Measure(

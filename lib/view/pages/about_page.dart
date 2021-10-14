@@ -20,8 +20,7 @@ class AboutPage extends StatelessWidget {
         path: 'everyapp@yandex.ru',
         queryParameters: {
           'subject': 'Message about stopwatch (Flutter) program'
-        }
-    );
+        });
 
     final infoFuture = PackageInfo.fromPlatform();
 
@@ -30,26 +29,34 @@ class AboutPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            PageCaption(caption : S.of(context).about),
+            PageCaption(caption: S.of(context).about),
             Expanded(
               child: Container(
-                  margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+                  margin:
+                      const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(S.of(context).stopwatch, style: TextStyle(fontSize: 20)),
+                      Text(S.of(context).stopwatch,
+                          style: TextStyle(fontSize: 20)),
                       Padding(
                         padding: const EdgeInsets.only(top: 16.0),
-                        child: Text('Copyright © 2020 Garnet Juice', style: TextStyle(fontSize: 18),),
+                        child: Text(
+                          'Copyright © 2020 Garnet Juice',
+                          style: TextStyle(fontSize: 18),
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: FutureBuilder<PackageInfo>(
-                          future: infoFuture,
-                          builder: (context, snapshot) {
-                            return Text(snapshot.hasData ? '${S.of(context).version} ${snapshot.data.version}' : '', style: TextStyle(fontSize: 20));
-                          }
-                        ),
+                            future: infoFuture,
+                            builder: (context, snapshot) {
+                              return Text(
+                                  snapshot.hasData
+                                      ? '${S.of(context).version} ${snapshot.data?.version}'
+                                      : '',
+                                  style: TextStyle(fontSize: 20));
+                            }),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
@@ -60,10 +67,9 @@ class AboutPage extends StatelessWidget {
                           child: Text(
                             'everyapp@yandex.ru',
                             style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              color: Theme.of(context).primaryColor,
-                              fontSize: 18
-                            ),
+                                decoration: TextDecoration.underline,
+                                color: Theme.of(context).primaryColor,
+                                fontSize: 18),
                           ),
                         ),
                       )
@@ -82,30 +88,30 @@ class AboutPage extends StatelessWidget {
                       onPressed: () async {
                         final res = await showDialog(
                             context: context,
-                            child: new Dialog(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Text("Вайпнуть БД?"),
-                                  Row(
+                            builder: (ctx) => new Dialog(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
-                                      RawMaterialButton(
-                                        child: Text("ДА"),
-                                        onPressed: () {
-                                          Navigator.pop(context, true);
-                                        },
-                                      ),
-                                      RawMaterialButton(
-                                        child: Text("Нет"),
-                                        onPressed: () {
-                                          Navigator.pop(context, false);
-                                        },
+                                      Text("Вайпнуть БД?"),
+                                      Row(
+                                        children: <Widget>[
+                                          RawMaterialButton(
+                                            child: Text("ДА"),
+                                            onPressed: () {
+                                              Navigator.pop(context, true);
+                                            },
+                                          ),
+                                          RawMaterialButton(
+                                            child: Text("Нет"),
+                                            onPressed: () {
+                                              Navigator.pop(context, false);
+                                            },
+                                          )
+                                        ],
                                       )
                                     ],
-                                  )
-                                ],
-                              ),
-                            ));
+                                  ),
+                                ));
 
                         if (res == true) {
                           final rep = StopwatchRepository();
@@ -127,7 +133,8 @@ class AboutPage extends StatelessWidget {
                         fillColor: Colors.green,
                         onPressed: () {
                           final db = MyDatabase(); //This should be a singleton
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => MoorDbViewer(db)));
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => MoorDbViewer(db)));
                         }),
                   )
                 ],

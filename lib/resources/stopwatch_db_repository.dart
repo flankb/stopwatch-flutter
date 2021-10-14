@@ -2,15 +2,18 @@ import 'package:flutter/foundation.dart';
 import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/models/stopwatch_status.dart';
 import 'package:stopwatch/resources/base/base_stopwatch_db_repository.dart';
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 
 part 'stopwatch_db_repository.g.dart';
 
-@UseDao(tables: [Laps, Measures, MeasureSessions, Tags])
-class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchRepositoryMixin implements BaseStopwatchRepository {
+@DriftAccessor(tables: [Laps, Measures, MeasureSessions, Tags])
+class StopwatchRepository extends DatabaseAccessor<MyDatabase>
+    with _$StopwatchRepositoryMixin
+    implements BaseStopwatchRepository {
   int _guaranteedAmountOfFinishedMeasures;
 
-  int get guaranteedAmountOfFinishedMeasures => _guaranteedAmountOfFinishedMeasures;
+  int get guaranteedAmountOfFinishedMeasures =>
+      _guaranteedAmountOfFinishedMeasures;
   StopwatchRepository() : super(MyDatabase());
 
   StopwatchRepository.fromDatabase(MyDatabase database) : super(database);
@@ -18,7 +21,9 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
   Stream<List<Measure>> watcher;
 
   watchFinishedMeasures(int limit) {
-    var statement = (select(measures)..where((m) => m.status.equals(describeEnum(StopwatchStatus.Finished)))..limit(limit));
+    var statement = (select(measures)
+      ..where((m) => m.status.equals(describeEnum(StopwatchStatus.Finished)))
+      ..limit(limit));
     watcher = statement.watch();
 
     watcher.listen((event) {
@@ -27,8 +32,12 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
     });
   }
 
-  Future<List<Measure>> getMeasuresByStatusAsync(String status, {int limit}) {
-    var statement = (select(measures)..where((m) => m.status.equals(status))..orderBy([(t) => OrderingTerm(expression: t.dateStarted, mode: OrderingMode.desc)]));
+  Future<List<Measure>> getMeasuresByStatusAsync(String status, {int? limit}) {
+    var statement = (select(measures)
+      ..where((m) => m.status.equals(status))
+      ..orderBy([
+        (t) => OrderingTerm(expression: t.dateStarted, mode: OrderingMode.desc)
+      ]));
     if (limit != null) {
       statement = statement..limit(limit);
     }
@@ -42,9 +51,10 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
 
   // returns the generated id
   Future<int> createNewMeasureAsync() {
-    Measure measure = Measure(id: null,
+    Measure measure = Measure(
+        id: null,
         elapsed: 0,
-        dateStarted: null,//DateTime.now(),
+        dateStarted: null, //DateTime.now(),
         status: describeEnum(StopwatchStatus.Ready));
 
     return into(measures).insert(measure);
@@ -59,7 +69,9 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
   }
 
   Future<List<MeasureSession>> getMeasureSessions(int measureId) {
-    return (select(measureSessions)..where((m) => m.measureId.equals(measureId))).get();
+    return (select(measureSessions)
+          ..where((m) => m.measureId.equals(measureId)))
+        .get();
   }
 
   Future updateMeasureAsync(Measure measure) {
@@ -70,11 +82,13 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
     // Here, this means that the row that has the same id as entry will be updated to reflect
     // the entry's title, content and category. As it set's its where clause automatically, it
     // can not be used together with where.
-    return update(measures).replace(measure); //TODO Возможно заменить на insert.replace!
+    return update(measures)
+        .replace(measure); //TODO Возможно заменить на insert.replace!
   }
 
   Future<bool> updateMeasureSession(MeasureSession measureSession) async {
-    debugPrint("updateMeasureSessionAsync measureSession ${measureSession.toString()}");
+    debugPrint(
+        "updateMeasureSessionAsync measureSession ${measureSession.toString()}");
 
     return update(measureSessions).replace(measureSession);
   }
@@ -93,14 +107,20 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
   }
 
   Future deleteMeasures(List<int> measureIds) async {
-    final lapsToDelete = (await (select(laps)..where((l) => l.measureId.isIn(measureIds))).get()).map((e) => e.id);
-    final sessionsToDelete = (await (select(measureSessions)..where((m) => m.measureId.isIn(measureIds))).get()).map((e) => e.id);
+    final lapsToDelete =
+        (await (select(laps)..where((l) => l.measureId.isIn(measureIds))).get())
+            .map((e) => e.id);
+    final sessionsToDelete = (await (select(measureSessions)
+              ..where((m) => m.measureId.isIn(measureIds)))
+            .get())
+        .map((e) => e.id);
 
     return transaction(() async {
       // Удалить круги
       await (delete(laps)..where((l) => l.id.isIn(lapsToDelete))).go();
       // Удалить изм. сессии
-      await (delete(measureSessions)..where((m) => m.id.isIn(sessionsToDelete))).go();
+      await (delete(measureSessions)..where((m) => m.id.isIn(sessionsToDelete)))
+          .go();
 
       await (delete(measures)..where((m) => m.id.isIn(measureIds))).go();
     });
@@ -111,7 +131,8 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
   }
 
   Future wipeDatabaseDebug() async {
-    final finished = await getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished));
+    final finished =
+        await getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished));
     await deleteMeasures(finished.map((l) => l.id).toList());
     /*await delete(measureSessions).go();
     await delete(laps).go();
@@ -119,7 +140,5 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase> with _$StopwatchR
     await delete(measures).go();*/
   }
 
-  dispose() {
-
-  }
+  dispose() {}
 }
