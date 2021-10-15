@@ -60,6 +60,6 @@ class LapViewModel extends BaseStopwatchEntity {
   }
 
   @override
-  List<Object> get props =>
+  List<Object?> get props =>
       super.props..addAll([measureId, order, difference, overall]);
 }

@@ -5,16 +5,25 @@ class MeasureSessionViewModel with EquatableMixin {
   int id;
   int measureId;
   int startedOffset;
-  int finishedOffset;
+  int? finishedOffset;
 
-  MeasureSessionViewModel({this.id, this.measureId, this.startedOffset, this.finishedOffset});
+  MeasureSessionViewModel(
+      {required this.id,
+      required this.measureId,
+      required this.startedOffset,
+      this.finishedOffset});
 
   MeasureSession toEntity() {
-    return MeasureSession(id: id, measureId: measureId, startedOffset: startedOffset, finishedOffset: finishedOffset);
+    return MeasureSession(
+        id: id,
+        measureId: measureId,
+        startedOffset: startedOffset,
+        finishedOffset: finishedOffset);
   }
 
   static MeasureSessionViewModel fromEntity(MeasureSession entity) {
-    return MeasureSessionViewModel(id: entity.id,
+    return MeasureSessionViewModel(
+        id: entity.id,
         measureId: entity.measureId,
         startedOffset: entity.startedOffset,
         finishedOffset: entity.finishedOffset);
@@ -26,7 +35,7 @@ class MeasureSessionViewModel with EquatableMixin {
   }
 
   @override
-  List<Object> get props {
+  List<Object?> get props {
     return [id, measureId, startedOffset, finishedOffset];
   }
 }
