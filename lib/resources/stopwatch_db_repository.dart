@@ -10,7 +10,7 @@ part 'stopwatch_db_repository.g.dart';
 class StopwatchRepository extends DatabaseAccessor<MyDatabase>
     with _$StopwatchRepositoryMixin
     implements BaseStopwatchRepository {
-  int _guaranteedAmountOfFinishedMeasures;
+  late int _guaranteedAmountOfFinishedMeasures;
 
   int get guaranteedAmountOfFinishedMeasures =>
       _guaranteedAmountOfFinishedMeasures;
@@ -18,7 +18,7 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase>
 
   StopwatchRepository.fromDatabase(MyDatabase database) : super(database);
 
-  Stream<List<Measure>> watcher;
+  late Stream<List<Measure>> watcher;
 
   watchFinishedMeasures(int limit) {
     var statement = (select(measures)
@@ -51,13 +51,18 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase>
 
   // returns the generated id
   Future<int> createNewMeasureAsync() {
-    Measure measure = Measure(
-        id: null,
-        elapsed: 0,
-        dateStarted: null, //DateTime.now(),
+    final measureInsert = MeasuresCompanion.insert(
+        elapsed: const Value(0),
+        dateStarted: const Value(null),
         status: describeEnum(StopwatchStatus.Ready));
 
-    return into(measures).insert(measure);
+    // Measure measure = Measure(
+    //     id: null,
+    //     elapsed: 0,
+    //     dateStarted: null, //DateTime.now(),
+    //     status: describeEnum(StopwatchStatus.Ready));
+
+    return into(measures).insert(measureInsert);
   }
 
   Future<int> addNewLapAsync(Lap lap) {
