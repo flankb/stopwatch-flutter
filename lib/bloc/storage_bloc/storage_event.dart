@@ -35,7 +35,7 @@ class DeleteStorageEvent extends StorageEvent {
 }
 
 class FilterStorageEvent extends StorageEvent {
-  final Filter filter;
+  final Filter? filter;
   final Type entityType;
 
   FilterStorageEvent(this.entityType, this.filter);

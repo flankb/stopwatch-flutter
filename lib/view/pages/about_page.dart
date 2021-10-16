@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:moor_db_viewer/moor_db_viewer.dart';
 import 'package:package_info/package_info.dart';
 import 'package:stopwatch/generated/l10n.dart';
-import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -132,9 +130,9 @@ class AboutPage extends StatelessWidget {
                         padding: const EdgeInsets.all(16),
                         fillColor: Colors.green,
                         onPressed: () {
-                          final db = MyDatabase(); //This should be a singleton
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => MoorDbViewer(db)));
+                          //final db = MyDatabase(); //This should be a singleton
+                          // Navigator.of(context).push(MaterialPageRoute(
+                          //     builder: (context) => MoorDbViewer(db)));
                         }),
                   )
                 ],

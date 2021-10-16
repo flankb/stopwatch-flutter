@@ -32,7 +32,7 @@ class EntityEditPage extends StatelessWidget {
 class EditForm extends StatefulWidget {
   final BaseStopwatchEntity entity;
 
-  const EditForm({Key key, this.entity}) : super(key: key);
+  const EditForm({Key? key, required this.entity}) : super(key: key);
 
   @override
   EditFormState createState() {
@@ -51,8 +51,8 @@ class EditFormState extends State<EditForm> {
   final _formKey =
       GlobalKey<FormState>(); // TODO У формы обязательно должен быть ключ!!!
 
-  EntityBloc entityBloc;
-  TextEditingController textController;
+  late EntityBloc entityBloc;
+  late TextEditingController textController;
 
   @override
   void dispose() {
@@ -112,7 +112,7 @@ class EditFormState extends State<EditForm> {
                           ),
                           controller: textController,
                           validator: (value) {
-                            if (value.length > 256) {
+                            if (value != null && value.length > 256) {
                               return S.of(context).very_long_comment;
                             }
 
@@ -121,10 +121,13 @@ class EditFormState extends State<EditForm> {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          child: RaisedButton(
-                            color: Theme.of(context).primaryColor,
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  Theme.of(context).primaryColor),
+                            ),
                             onPressed: () {
-                              if (_formKey.currentState.validate()) {
+                              if (_formKey.currentState?.validate() ?? false) {
                                 widget.entity.comment = textController.text;
                                 entityBloc.add(SaveEntityEvent(widget.entity));
 

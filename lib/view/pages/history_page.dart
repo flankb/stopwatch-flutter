@@ -4,6 +4,7 @@ import 'package:extended_theme/extended_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:metro_appbar/metro_appbar.dart';
 import 'package:multiselect_scope/multiselect_scope.dart';
@@ -21,14 +22,14 @@ import 'package:stopwatch/view/dialogs/filter_dialog.dart';
 import 'package:stopwatch/widgets/circular.dart';
 import 'package:stopwatch/widgets/pair_label_view.dart';
 import 'package:stopwatch/widgets/stopwatch_item_widget.dart';
-import 'package:toast/toast.dart';
 import 'entity_edit_page.dart';
 
 class HistoryPage extends StatefulWidget {
   final Type pageType;
   final BaseStopwatchEntity entityId;
 
-  HistoryPage({Key key, this.pageType, this.entityId}) : super(key: key);
+  HistoryPage({Key? key, required this.pageType, required this.entityId})
+      : super(key: key);
 
   @override
   _HistoryPageState createState() => _HistoryPageState();
@@ -36,15 +37,15 @@ class HistoryPage extends StatefulWidget {
 
 class _HistoryPageState extends State<HistoryPage>
     with SingleTickerProviderStateMixin {
-  StorageBloc _storageBloc;
+  late StorageBloc _storageBloc;
   //StreamController _selectedItemsStreamController;
-  List<BaseStopwatchEntity> _selectedEntities = List<BaseStopwatchEntity>();
+  List<BaseStopwatchEntity> _selectedEntities = <BaseStopwatchEntity>[];
 
   Duration duration = Duration(milliseconds: 800);
-  AnimationController animationController;
-  Animation<double> animation;
+  late AnimationController animationController;
+  late Animation<double> animation;
 
-  MultiselectController _multiselectController;
+  late MultiselectController _multiselectController;
 
   @override
   void initState() {
@@ -76,7 +77,7 @@ class _HistoryPageState extends State<HistoryPage>
 
     // Инициализировать фильтр
     var wasFiltered = false;
-    Filter previousFilter;
+    Filter? previousFilter;
 
     debugPrint("${_storageBloc.state}");
 
@@ -93,7 +94,7 @@ class _HistoryPageState extends State<HistoryPage>
 
     _storageBloc.add(LoadStorageEvent(widget.pageType,
         measureId:
-            widget.entityId?.id)); // TODO Более явно перезагружать состояние?
+            widget.entityId.id!)); // TODO Более явно перезагружать состояние?
 
     // Сразу же отфильтруем в случае необходимости
     if (wasFiltered) {
@@ -125,7 +126,7 @@ class _HistoryPageState extends State<HistoryPage>
               if (!(state is AvailableListState)) {
                 return CenterCircularWidget();
               } else {
-                final availState = state as AvailableListState;
+                final availState = state;
                 final pageIsLap = widget.pageType == LapViewModel;
 
                 final overallElapsed = pageIsLap
@@ -137,7 +138,7 @@ class _HistoryPageState extends State<HistoryPage>
                     : "";
                 final createDate = pageIsLap
                     ? TimeDisplayer.formatDate(
-                        (widget.entityId as MeasureViewModel).dateStarted,
+                        (widget.entityId as MeasureViewModel).dateStarted!,
                         context: context)
                     : "";
 
@@ -246,7 +247,7 @@ class _HistoryPageState extends State<HistoryPage>
                                                       (BuildContext context) {
                                                 return EntityEditPage(
                                                   entityType: widget.pageType,
-                                                  entityId: entityToEdit.id,
+                                                  entityId: entityToEdit.id!,
                                                   entity: entityToEdit,
                                                 );
                                               }));
@@ -268,19 +269,20 @@ class _HistoryPageState extends State<HistoryPage>
                                             onPressed: () {
                                               if (widget.pageType ==
                                                   LapViewModel) {
-                                                Toast.show(
-                                                    S
-                                                        .of(context)
-                                                        .no_possible_delete_laps,
-                                                    context,
-                                                    duration:
-                                                        Toast.LENGTH_SHORT,
-                                                    gravity: Toast.BOTTOM);
+                                                Fluttertoast.showToast(
+                                                  msg: S
+                                                      .of(context)
+                                                      .no_possible_delete_laps,
+                                                  toastLength:
+                                                      Toast.LENGTH_SHORT,
+                                                  gravity: ToastGravity.BOTTOM,
+                                                );
+
                                                 return;
                                               }
 
                                               final entitiesForDelete =
-                                                  List<BaseStopwatchEntity>();
+                                                  <BaseStopwatchEntity>[];
                                               entitiesForDelete
                                                   .addAll(_selectedEntities);
                                               _unselectItems(context);
@@ -349,7 +351,7 @@ class _HistoryPageState extends State<HistoryPage>
     return PrimaryCommand(
       text: tooltip,
       icon: icon,
-      onPressed: enabled ? command : null,
+      onPressed: enabled ? command : () {}, // null //TODO Исправить пакет!
     );
   }
 
@@ -381,7 +383,7 @@ class _HistoryPageState extends State<HistoryPage>
 
 class LapsCaption extends StatelessWidget {
   const LapsCaption({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -400,8 +402,8 @@ class LapsCaption extends StatelessWidget {
 
 class ListOfMeasures extends StatelessWidget {
   const ListOfMeasures({
-    Key key,
-    @required this.availState,
+    Key? key,
+    required this.availState,
   }) : super(key: key);
 
   final AvailableListState availState;
@@ -436,7 +438,7 @@ class ListOfMeasures extends StatelessWidget {
 
 class MessageNoMeasures extends StatelessWidget {
   const MessageNoMeasures({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -457,11 +459,11 @@ class MessageNoMeasures extends StatelessWidget {
 
 class FilterButtons extends StatelessWidget {
   const FilterButtons({
-    Key key,
-    @required this.pageIsLap,
-    @required this.availState,
-    @required StorageBloc storageBloc,
-    @required this.pageType,
+    Key? key,
+    required this.pageIsLap,
+    required this.availState,
+    required StorageBloc storageBloc,
+    required this.pageType,
   })  : _storageBloc = storageBloc,
         super(key: key);
 
@@ -517,7 +519,9 @@ class FilterButtons extends StatelessWidget {
                     final result = await showDialog(
                         context: context,
                         builder: (context) => FilterDialog(
-                              filter: availState.lastFilter,
+                              entityType: pageType,
+                              filter: availState.lastFilter ??
+                                  Filter.defaultFilter(),
                             ));
 
                     if (result != null) {
@@ -550,8 +554,8 @@ class FilterButtons extends StatelessWidget {
 
 class PageCaption extends StatelessWidget {
   const PageCaption({
-    Key key,
-    @required this.caption,
+    Key? key,
+    required this.caption,
   }) : super(key: key);
 
   final String caption;
@@ -576,7 +580,7 @@ class PageCaption extends StatelessWidget {
 
 class PurchaseBanner extends StatelessWidget {
   const PurchaseBanner({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
