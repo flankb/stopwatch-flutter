@@ -5,7 +5,7 @@ import 'package:stopwatch/generated/l10n.dart';
 class TimeDisplayer {
   static int _dayMills = 24 * 3600 * 1000;
 
-  static String formatDate(DateTime date, {BuildContext context}){
+  static String formatDate(DateTime date, {required BuildContext context}) {
     if (context != null) {
       Locale myLocale = Localizations.localeOf(context);
       return DateFormat.yMMMMd(myLocale.languageCode).add_Hm().format(date);
@@ -15,7 +15,7 @@ class TimeDisplayer {
   }
 
   // Сотые секунды
-  static formatMills(Duration d) => d.toString().split('.')[1].substring(0,2);
+  static formatMills(Duration d) => d.toString().split('.')[1].substring(0, 2);
 
   static formatAllBeautiful(Duration d) => "${formatBase(d)},${formatMills(d)}";
 
@@ -24,16 +24,16 @@ class TimeDisplayer {
     return formatAllBeautiful(d);
   }
 
-  static String formatBase(Duration d){
+  static String formatBase(Duration d) {
     if (d.inMinutes < 60) {
       final base = d.toString().split('.').first.padLeft(8, "0");
-      return base.substring(3,8);
+      return base.substring(3, 8);
     } else if (d.inHours < 24) {
       final base = d.toString().split('.').first.padLeft(8, "0");
       return base;
     } else {
       var base = d.toString().split('.').first;
-      final end  = base.substring(base.length - 5, base.length);
+      final end = base.substring(base.length - 5, base.length);
 
       final days = d.inHours ~/ 24;
       final hours = d.inHours - days * 24;
@@ -41,7 +41,7 @@ class TimeDisplayer {
       // final minutes = d.inMinutes - hours * 60; // TODO По-хорошему переделать на такой вариант
       // final seconds = d.inSeconds - minutes * 60;
 
-      return "$days.${hours.toString().padLeft(2,'0')}:$end";
+      return "$days.${hours.toString().padLeft(2, '0')}:$end";
     }
   }
 
@@ -66,10 +66,10 @@ class TimeDisplayer {
 
     final array = time.split(',')[0].split(':');
 
-    List<String> tokens = List<String>();
+    List<String> tokens = <String>[];
 
     array.reversed.toList().asMap().forEach((index, value) {
-      switch(index){
+      switch (index) {
         case 0:
           tokens.add(value + ' ${S.current.seconds}');
           break;
@@ -82,7 +82,7 @@ class TimeDisplayer {
       }
     });
 
-    tokens.reversed.forEach((t){
+    tokens.reversed.forEach((t) {
       stringBuffer.write(t + " ");
     });
 
