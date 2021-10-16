@@ -22,15 +22,17 @@ class LoadingStorageState extends StorageState {
 }
 
 class AvailableListState extends StorageState {
-   final List<BaseStopwatchEntity> allEntities;
-   final List<BaseStopwatchEntity> entities;
-   final Filter lastFilter;
-   final bool filtered;
+  final List<BaseStopwatchEntity> allEntities;
+  final List<BaseStopwatchEntity> entities;
+  final Filter? lastFilter;
+  final bool filtered;
 
-   // Можно здесь же хранить фильтр
+  // Можно здесь же хранить фильтр
 
-   @override
-   List<Object> get props => [entities, filtered];
+  @override
+  List<Object> get props => [entities, filtered];
 
-   AvailableListState(this.entities, this.allEntities, this.lastFilter, {this.filtered = false}) : super(StorageState.getUpdatedVersion());
+  AvailableListState(this.entities, this.allEntities, this.lastFilter,
+      {this.filtered = false})
+      : super(StorageState.getUpdatedVersion());
 }

@@ -13,28 +13,27 @@ import 'package:stopwatch/util/ticker.dart';
 import 'measure_event.dart';
 import 'measure_state.dart';
 
-
 class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
   final Ticker3 _ticker;
-  final StopwatchRepository _stopwatchRepository; // TODO Заменить на интерфейс репозитория (либо на DI)
+  final StopwatchRepository
+      _stopwatchRepository; // TODO Заменить на интерфейс репозитория (либо на DI)
 
-  StreamSubscription<int> _tickerSubscription;
+  late StreamSubscription<int> _tickerSubscription;
   //Stream<int> _tickStream;
   Stream<int> get tickStream => controller.stream;
 
   var controller = new StreamController<int>();
-  MeasureBloc(this._ticker, this._stopwatchRepository);
-
-  @override
-  MeasureState get initialState => MeasureUpdatingState(MeasureViewModel());
+  // TODO Что-то придумать с инициализацией идентификатора!!!
+  MeasureBloc(this._ticker, this._stopwatchRepository)
+      : super(MeasureUpdatingState(MeasureViewModel(id: -1)));
 
   @override
   Stream<MeasureState> mapEventToState(
     MeasureEvent event,
   ) async* {
-    debugPrint("Current state ${state.toString()} Bloc event: ${event.toString()}");
+    debugPrint(
+        "Current state ${state.toString()} Bloc event: ${event.toString()}");
 
-    // Для каждого события что-то делаем и возвращаем состояние
     if (event is TickEvent) {
       yield* _mapTickToState(event);
     } else if (event is MeasureOpenedEvent) {
@@ -53,57 +52,70 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
   Stream<MeasureState> _mapOpenedToState(MeasureOpenedEvent event) async* {
     yield MeasureUpdatingState(state.measure);
     // Прочитать измерение с БД со всеми кругами и сессиями
-    final measuresStarted = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Started));
-    final measuredPaused = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Paused));
-    final measuredReady = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Ready));
+    final measuresStarted = await _stopwatchRepository
+        .getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Started));
+    final measuredPaused = await _stopwatchRepository
+        .getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Paused));
+    final measuredReady = await _stopwatchRepository
+        .getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Ready));
 
     //final measureFinished = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished));
     //MeasureViewModel.finishedMeasuresCount = measureFinished.length;
 
-    List<Measure> combine = List<Measure>();
+    List<Measure> combine = <Measure>[];
 
     combine.addAll(measuresStarted);
     combine.addAll(measuredPaused);
     combine.addAll(measuredReady);
 
     if (combine.length == 0) {
-      yield MeasureReadyState(MeasureViewModel()); // Если в БД ниче нет, то ReadyState
-    }
-    else {
+      yield MeasureReadyState(
+          MeasureViewModel(id: -1)); // Если в БД ниче нет, то ReadyState
+    } else {
       if (combine.length > 1) {
         throw Exception("Не может быть больше одного актуального измерения");
       }
 
       final measure = MeasureViewModel.fromEntity(combine.single);
 
-      debugPrint( "Restored sessions by Id ${measure.id}: ${(await _stopwatchRepository.getMeasureSessions(measure.id)).length}");
+      debugPrint(
+          "Restored sessions by Id ${measure.id}: ${(await _stopwatchRepository.getMeasureSessions(measure.id)).length}");
 
-      final sessions = (await _stopwatchRepository.getMeasureSessions(measure.id))
-                    .map((session) => MeasureSessionViewModel.fromEntity(session));
+      final sessions =
+          (await _stopwatchRepository.getMeasureSessions(measure.id))
+              .map((session) => MeasureSessionViewModel.fromEntity(session));
 
-      final laps = (await _stopwatchRepository.getLapsByMeasureAsync(measure.id))
-                    .map((lap) => LapViewModel.fromEntity(lap));
+      final laps =
+          (await _stopwatchRepository.getLapsByMeasureAsync(measure.id))
+              .map((lap) => LapViewModel.fromEntity(lap));
 
       measure.laps.addAll(laps);
       measure.sessions.addAll(sessions);
 
       debugPrint("Laps added: ${measure.laps.length}");
-      measure.laps.forEach((element) {debugPrint(element.toString());});
+      measure.laps.forEach((element) {
+        debugPrint(element.toString());
+      });
       debugPrint("Sessions added: ${measure.sessions.length}");
-      measure.sessions.forEach((element) {debugPrint(element.toString());});
+      measure.sessions.forEach((element) {
+        debugPrint(element.toString());
+      });
       debugPrint("Restored measure: ${measure.toString()}");
 
-      if (measure.status == StopwatchStatus.Started) {  // Если есть в статусе Запущено, то ReadyState, а затем в add(startEvent)
+      if (measure.status == StopwatchStatus.Started) {
+        // Если есть в статусе Запущено, то ReadyState, а затем в add(startEvent)
         yield MeasureReadyState(measure);
-        add(MeasureStartedEvent(resume : true));
+        add(MeasureStartedEvent(resume: true));
       } else if (measure.status == StopwatchStatus.Paused) {
         // TODO Повнимательнее с паттерном BLoC, нужно очень четко следить за состоянием
 
         //debugPrint("In Opened before paused: $measure");
 
-        _updateElapseds(measure, DateTime.now()); //Ticker здесь не инициализирован!!!!
+        _updateElapseds(
+            measure, DateTime.now()); //Ticker здесь не инициализирован!!!!
         //debugPrint("Hash code 1: ${measure.hashCode}");
-        yield MeasurePausedState(measure); // Если есть в статусе Пауза, то PausedState
+        yield MeasurePausedState(
+            measure); // Если есть в статусе Пауза, то PausedState
         controller.add(0);
       }
     }
@@ -125,13 +137,15 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       final dateNow = DateTime.now();
       //state.measure.lastRestartedLap = dateNow;
 
-      final lapProps = state.measure.getCurrentLapDiffAndOverall(DateTime.now());
+      final lapProps =
+          state.measure.getCurrentLapDiffAndOverall(DateTime.now());
 
-      LapViewModel newLap = LapViewModel();
-      newLap.measureId = state.measure.id;
-      newLap.order = state.measure.laps.length + 1;
-      newLap.difference = lapProps[0];
-      newLap.overall = lapProps[1];
+      LapViewModel newLap = LapViewModel(
+          id: -1,
+          measureId: state.measure.id,
+          order: state.measure.laps.length + 1,
+          difference: lapProps[0],
+          overall: lapProps[1]);
       //newLap.comment = "Temp";
 
       state.measure.laps.add(newLap);
@@ -142,8 +156,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       debugPrint("Before yield MeasureStartedState(state.measure);");
       yield MeasureStartedState(state.measure);
       debugPrint("After yield MeasureStartedState(state.measure);");
-    }
-    else {
+    } else {
       throw Exception("Wrong state!");
     }
   }
@@ -152,11 +165,11 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     if (state is MeasureStartedState || state is MeasurePausedState) {
       // Не сохранять в БД, если это MeasureFinishedEvent и там указана соотв. настройка
       final nosaveDb = event is MeasureFinishedEvent && !event.saveMeasure;
-      yield* _fixStopwatch(StopwatchStatus.Finished, finish : event is MeasureFinishedEvent, saveToDatabase: !nosaveDb);
-      yield MeasureReadyState(MeasureViewModel());
-    }
-    else {
-      yield MeasureReadyState(MeasureViewModel());
+      yield* _fixStopwatch(StopwatchStatus.Finished,
+          finish: event is MeasureFinishedEvent, saveToDatabase: !nosaveDb);
+      yield MeasureReadyState(MeasureViewModel(id: -1));
+    } else {
+      yield MeasureReadyState(MeasureViewModel(id: -1));
       //throw Exception("Wrong state!");
     }
   }
@@ -165,13 +178,13 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     if (state is MeasureStartedState) {
       yield* _fixStopwatch(StopwatchStatus.Paused);
       yield MeasurePausedState(state.measure);
-    }
-    else {
+    } else {
       throw Exception("Wrong state!");
     }
   }
 
-  Stream<MeasureState> _mapStartedToState(MeasureEvent event, {bool resume = false}) async* {
+  Stream<MeasureState> _mapStartedToState(MeasureEvent event,
+      {bool resume = false}) async* {
     if (state is MeasureReadyState || state is MeasurePausedState) {
       yield MeasureUpdatingState(state.measure);
       // Устанавливаем поля в модели, делаем запись в репозитории
@@ -199,13 +212,18 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       debugPrint("targetMeasure ${targetMeasure.toString()}");
 
       if (!resume) {
-        final session = MeasureSessionViewModel(id: null, measureId: targetMeasure.id, startedOffset: targetMeasure.getElapsedSinceStarted(nowDate)); // TODO id здесь пустой
+        final session = MeasureSessionViewModel(
+            id: null,
+            measureId: targetMeasure.id,
+            startedOffset: targetMeasure
+                .getElapsedSinceStarted(nowDate)); // TODO id здесь пустой
         targetMeasure.sessions.add(session);
 
         debugPrint("measureId (not resume) ${session.measureId.toString()}");
 
         // Если в БД есть такая запись - то обновить, иначе создать новую
-        session.id = await _stopwatchRepository.addNewMeasureSession(session.toEntity());
+        session.id =
+            await _stopwatchRepository.addNewMeasureSession(session.toEntity());
       }
 
       _startTicker();
@@ -214,8 +232,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       await _stopwatchRepository.updateMeasureAsync(targetMeasure.toEntity());
 
       yield MeasureStartedState(targetMeasure);
-    }
-    else {
+    } else {
       throw Exception("Wrong state! $state");
     }
   }
@@ -235,7 +252,8 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     debugPrint("After _updateElapseds ${measure.toString()}");
   }
 
-  Stream<MeasureState> _fixStopwatch(StopwatchStatus status, {bool finish = false, bool saveToDatabase = true}) async* {
+  Stream<MeasureState> _fixStopwatch(StopwatchStatus status,
+      {bool finish = false, bool saveToDatabase = true}) async* {
     debugPrint("_fixStopwatch before");
     yield MeasureUpdatingState(state.measure);
     debugPrint("_fixStopwatch after");
@@ -255,7 +273,8 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     }
 
     if (lastSession != null) {
-      lastSession.finishedOffset = state.measure.getElapsedSinceStarted(dateNow); //dateNow;
+      lastSession.finishedOffset =
+          state.measure.getElapsedSinceStarted(dateNow); //dateNow;
     }
 
     debugPrint("LastUnfinishedSession (updated): " + lastSession.toString());
@@ -271,8 +290,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       if (lastSession != null) {
         await _stopwatchRepository.updateMeasureSession(lastSession.toEntity());
       }
-    }
-    else {
+    } else {
       await _stopwatchRepository.deleteMeasures([state.measure.id]);
     }
 

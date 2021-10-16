@@ -20,6 +20,7 @@ class MeasureViewModel extends BaseStopwatchEntity {
 
   int checkPointLapTicks = 0;
 
+  // TODO Что-то придумать с инициализацией идентификатора!!!
   MeasureViewModel(
       {required int id,
       String? comment,

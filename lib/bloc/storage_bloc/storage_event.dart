@@ -6,7 +6,7 @@ abstract class StorageEvent extends Equatable {
   const StorageEvent();
 
   @override
-  List<Object> get props => null;
+  List<Object> get props => [];
 }
 
 class LoadStorageEvent extends StorageEvent {
@@ -14,15 +14,13 @@ class LoadStorageEvent extends StorageEvent {
   final Type entityType;
   final int measureId;
 
-  LoadStorageEvent(this.entityType, {this.measureId});
+  LoadStorageEvent(this.entityType, {required this.measureId});
 
   @override
   List<Object> get props => [entityType, measureId];
 }
 
-class ClearStorageEvent extends StorageEvent {
-
-}
+class ClearStorageEvent extends StorageEvent {}
 
 /*
 class RequestEditEvent extends StorageEvent {

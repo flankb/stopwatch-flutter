@@ -6,10 +6,10 @@ abstract class MeasureEvent extends Equatable {
 
 class MeasureBaseEvent extends MeasureEvent {
   @override
-  List<Object> get props => null;
+  List<Object?> get props => [];
 }
 
-class MeasureOpenedEvent extends MeasureBaseEvent{}
+class MeasureOpenedEvent extends MeasureBaseEvent {}
 
 class MeasureStartedEvent extends MeasureBaseEvent {
   final bool resume;
@@ -17,9 +17,9 @@ class MeasureStartedEvent extends MeasureBaseEvent {
   MeasureStartedEvent({this.resume = false});
 }
 
-class MeasureFixSnapshotEvent extends MeasureBaseEvent { }
+class MeasureFixSnapshotEvent extends MeasureBaseEvent {}
 
-class MeasurePausedEvent extends MeasureBaseEvent { }
+class MeasurePausedEvent extends MeasureBaseEvent {}
 
 class MeasureFinishedEvent extends MeasureBaseEvent {
   final bool saveMeasure;
@@ -27,7 +27,7 @@ class MeasureFinishedEvent extends MeasureBaseEvent {
   MeasureFinishedEvent(this.saveMeasure);
 }
 
-class LapAddedEvent extends MeasureBaseEvent { }
+class LapAddedEvent extends MeasureBaseEvent {}
 
 class TickEvent extends MeasureBaseEvent {
   final int duration;
