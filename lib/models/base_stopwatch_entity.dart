@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
 
 abstract class BaseStopwatchEntity with EquatableMixin {
-  int id;
+  int? id;
   String? comment;
 
-  BaseStopwatchEntity({required this.id, this.comment});
+  BaseStopwatchEntity({this.id, this.comment});
 
   @override
   List<Object?> get props {

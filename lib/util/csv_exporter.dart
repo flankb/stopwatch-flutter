@@ -28,8 +28,9 @@ class MeasuresExporter {
           "${S.current.date_created}: $formatted\n${S.current.overall_time}: ${elapsedTime[0]},${elapsedTime[1]}${element.comment != null ? '\n${S.current.comment}: ' : ""}${element.comment ?? ""}";
       plainBody.writeln(row);
 
-      final laps = (await stopwatchRepository.getLapsByMeasureAsync(element.id))
-          .map((l) => LapViewModel.fromEntity(l));
+      final laps =
+          (await stopwatchRepository.getLapsByMeasureAsync(element.id!))
+              .map((l) => LapViewModel.fromEntity(l));
 
       if (laps.any((element) => true)) {
         plainBody.writeln("${S.current.laps}:");
@@ -72,8 +73,9 @@ class MeasuresExporter {
       csvBody.writeln(row);
 
       // Загрузить круги для текущего измерения
-      final laps = (await stopwatchRepository.getLapsByMeasureAsync(element.id))
-          .map((l) => LapViewModel.fromEntity(l));
+      final laps =
+          (await stopwatchRepository.getLapsByMeasureAsync(element.id!))
+              .map((l) => LapViewModel.fromEntity(l));
 
       //debugPrint("lap len: ${laps.length}");
 

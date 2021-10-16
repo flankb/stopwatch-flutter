@@ -65,11 +65,11 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase>
     return into(measures).insert(measureInsert);
   }
 
-  Future<int> addNewLapAsync(Lap lap) {
+  Future<int> addNewLapAsync(Insertable<Lap> lap) {
     return into(laps).insert(lap);
   }
 
-  Future<int> addNewMeasureSession(MeasureSession measureSession) {
+  Future<int> addNewMeasureSession(Insertable<MeasureSession> measureSession) {
     return into(measureSessions).insert(measureSession);
   }
 
@@ -79,7 +79,7 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase>
         .get();
   }
 
-  Future updateMeasureAsync(Measure measure) {
+  Future updateMeasureAsync(Insertable<Measure> measure) {
     //into(measures).insert(measure).
 
     // using replace will update all fields from the entry that are not marked as a primary key.
@@ -91,14 +91,15 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase>
         .replace(measure); //TODO Возможно заменить на insert.replace!
   }
 
-  Future<bool> updateMeasureSession(MeasureSession measureSession) async {
+  Future<bool> updateMeasureSession(
+      Insertable<MeasureSession> measureSession) async {
     debugPrint(
         "updateMeasureSessionAsync measureSession ${measureSession.toString()}");
 
     return update(measureSessions).replace(measureSession);
   }
 
-  Future updateLapAsync(Lap lap) {
+  Future updateLapAsync(Insertable<Lap> lap) {
     // using replace will update all fields from the entry that are not marked as a primary key.
     // it will also make sure that only the entry with the same primary key will be updated.
     // Here, this means that the row that has the same id as entry will be updated to reflect

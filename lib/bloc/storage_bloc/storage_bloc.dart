@@ -99,8 +99,10 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
             .difference(event.entitiesForDelete.toSet())
             .toList();
 
-        await stopwatchRepository
-            .deleteMeasures(event.entitiesForDelete.map((e) => e.id).toList());
+        await stopwatchRepository.deleteMeasures(event.entitiesForDelete
+            .where((e) => e.id != null)
+            .map((e) => e.id!)
+            .toList());
         yield AvailableListState(entities, all, availState.lastFilter,
             filtered: availState.filtered);
       } else {

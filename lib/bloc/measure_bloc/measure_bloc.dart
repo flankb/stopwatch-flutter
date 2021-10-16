@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 import 'package:stopwatch/models/stopwatch_status.dart';
-import 'package:stopwatch/resources/base/base_stopwatch_db_repository.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 import 'package:stopwatch/util/ticker.dart';
 
@@ -23,9 +22,8 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
   Stream<int> get tickStream => controller.stream;
 
   var controller = new StreamController<int>();
-  // TODO Что-то придумать с инициализацией идентификатора!!!
   MeasureBloc(this._ticker, this._stopwatchRepository)
-      : super(MeasureUpdatingState(MeasureViewModel(id: -1)));
+      : super(MeasureUpdatingState(MeasureViewModel(id: null)));
 
   @override
   Stream<MeasureState> mapEventToState(
@@ -70,7 +68,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
     if (combine.length == 0) {
       yield MeasureReadyState(
-          MeasureViewModel(id: -1)); // Если в БД ниче нет, то ReadyState
+          MeasureViewModel(id: null)); // Если в БД ничего нет, то ReadyState
     } else {
       if (combine.length > 1) {
         throw Exception("Не может быть больше одного актуального измерения");
@@ -79,14 +77,14 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       final measure = MeasureViewModel.fromEntity(combine.single);
 
       debugPrint(
-          "Restored sessions by Id ${measure.id}: ${(await _stopwatchRepository.getMeasureSessions(measure.id)).length}");
+          "Restored sessions by Id ${measure.id}: ${(await _stopwatchRepository.getMeasureSessions(measure.id!)).length}");
 
       final sessions =
-          (await _stopwatchRepository.getMeasureSessions(measure.id))
+          (await _stopwatchRepository.getMeasureSessions(measure.id!))
               .map((session) => MeasureSessionViewModel.fromEntity(session));
 
       final laps =
-          (await _stopwatchRepository.getLapsByMeasureAsync(measure.id))
+          (await _stopwatchRepository.getLapsByMeasureAsync(measure.id!))
               .map((lap) => LapViewModel.fromEntity(lap));
 
       measure.laps.addAll(laps);
@@ -141,8 +139,8 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
           state.measure.getCurrentLapDiffAndOverall(DateTime.now());
 
       LapViewModel newLap = LapViewModel(
-          id: -1,
-          measureId: state.measure.id,
+          id: null,
+          measureId: state.measure.id!,
           order: state.measure.laps.length + 1,
           difference: lapProps[0],
           overall: lapProps[1]);
@@ -214,7 +212,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       if (!resume) {
         final session = MeasureSessionViewModel(
             id: null,
-            measureId: targetMeasure.id,
+            measureId: targetMeasure.id!,
             startedOffset: targetMeasure
                 .getElapsedSinceStarted(nowDate)); // TODO id здесь пустой
         targetMeasure.sessions.add(session);
@@ -291,7 +289,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
         await _stopwatchRepository.updateMeasureSession(lastSession.toEntity());
       }
     } else {
-      await _stopwatchRepository.deleteMeasures([state.measure.id]);
+      await _stopwatchRepository.deleteMeasures([state.measure.id!]);
     }
 
     debugPrint("fixStopwatch finished");

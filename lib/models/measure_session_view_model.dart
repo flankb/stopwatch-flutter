@@ -1,24 +1,25 @@
+import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
 import 'package:stopwatch/model/database_models.dart';
 
 class MeasureSessionViewModel with EquatableMixin {
-  int id;
+  int? id;
   int measureId;
   int startedOffset;
   int? finishedOffset;
 
   MeasureSessionViewModel(
-      {required this.id,
+      {this.id,
       required this.measureId,
       required this.startedOffset,
       this.finishedOffset});
 
-  MeasureSession toEntity() {
-    return MeasureSession(
-        id: id,
-        measureId: measureId,
-        startedOffset: startedOffset,
-        finishedOffset: finishedOffset);
+  MeasureSessionsCompanion toEntity() {
+    return MeasureSessionsCompanion(
+        id: id != null ? Value(id!) : Value.absent(),
+        measureId: Value(measureId),
+        startedOffset: Value(startedOffset),
+        finishedOffset: Value(finishedOffset));
   }
 
   static MeasureSessionViewModel fromEntity(MeasureSession entity) {

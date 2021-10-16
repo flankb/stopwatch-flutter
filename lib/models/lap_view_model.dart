@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/util/time_displayer.dart';
 
@@ -26,7 +27,7 @@ class LapViewModel extends BaseStopwatchEntity {
   }
 
   LapViewModel(
-      {required int id,
+      {int? id,
       String? comment,
       required this.measureId,
       required this.order,
@@ -34,14 +35,14 @@ class LapViewModel extends BaseStopwatchEntity {
       this.overall = 0})
       : super(id: id, comment: comment);
 
-  Lap toEntity() {
-    return Lap(
-        id: id,
-        measureId: measureId,
-        order: order,
-        difference: difference,
-        comment: comment,
-        overall: overall);
+  LapsCompanion toEntity() {
+    return LapsCompanion(
+        id: id != null ? Value(id!) : Value.absent(),
+        measureId: Value(measureId),
+        order: Value(order),
+        difference: Value(difference),
+        comment: Value(comment),
+        overall: Value(overall));
   }
 
   static LapViewModel fromEntity(Lap entity) {

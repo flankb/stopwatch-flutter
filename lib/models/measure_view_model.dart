@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stopwatch/model/database_models.dart';
@@ -22,7 +23,7 @@ class MeasureViewModel extends BaseStopwatchEntity {
 
   // TODO Что-то придумать с инициализацией идентификатора!!!
   MeasureViewModel(
-      {required int id,
+      {int? id,
       String? comment,
       this.elapsed = 0,
       this.elapsedLap = 0,
@@ -120,13 +121,13 @@ class MeasureViewModel extends BaseStopwatchEntity {
     return sessions.lastWhere((s) => s.finishedOffset == null);
   }
 
-  Measure toEntity() {
-    return Measure(
-        id: id,
-        comment: comment,
-        status: describeEnum(status),
-        dateStarted: dateStarted,
-        elapsed: elapsed);
+  MeasuresCompanion toEntity() {
+    return MeasuresCompanion(
+        id: id != null ? Value<int>(id!) : Value.absent(),
+        comment: Value(comment),
+        status: Value(describeEnum(status)),
+        dateStarted: Value(dateStarted),
+        elapsed: Value(elapsed));
   }
 
   static MeasureViewModel fromEntity(Measure entity) {
