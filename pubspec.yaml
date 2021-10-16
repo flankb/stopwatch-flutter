@@ -52,6 +52,7 @@ dependencies:
   validators: ^3.0.0
   flutter_email_sender: ^5.0.2
   #esys_flutter_share: ^1.0.2
+  share_plus: ^3.0.4
   google_fonts: ^2.1.0
   share: ^2.0.4
   wakelock: ^0.5.6
