@@ -1,14 +1,48 @@
 import 'package:extended_theme/extended_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:preferences/preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stopwatch/generated/l10n.dart';
+import 'package:stopwatch/widgets/circular.dart';
 
 import '../../constants.dart';
 import '../../theme_data.dart';
 import 'history_page.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  late bool sound;
+  late bool vibration;
+  late bool keepScreenAwake;
+  late bool persistMeasure;
+  late String theme;
+
+  late Future _initPrefsAction;
+  late SharedPreferences _sharedPrefs;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _initPrefsAction = _initPrefs();
+  }
+
+  Future _initPrefs() async {
+    _sharedPrefs = await SharedPreferences.getInstance();
+
+    sound = _sharedPrefs.getBool(PREF_SOUND) ?? true;
+    vibration = _sharedPrefs.getBool(PREF_VIBRATION) ?? true;
+    keepScreenAwake = _sharedPrefs.getBool(PREF_KEEP_SCREEN_AWAKE) ?? false;
+    persistMeasure = _sharedPrefs.getBool(PREF_SAVE_MEASURES) ?? true;
+    theme = _sharedPrefs.getString(PREF_THEME) ?? GreenLight;
+  }
+
+  _writeBoolValue(String key, bool value) {}
+
   @override
   Widget build(BuildContext context) {
     final sunrise = S.current.sunrise;
@@ -28,55 +62,90 @@ class SettingsPage extends StatelessWidget {
                 ],
               ),*/
           Expanded(
-            child: PreferencePage([
-              SwitchPreference(
-                S.of(context).sound,
-                PREF_SOUND,
-                defaultVal: true,
-              ),
-              SwitchPreference(
-                S.of(context).vibration,
-                PREF_VIBRATION,
-                defaultVal: true,
-              ),
-              SwitchPreference(
-                S.of(context).keep_screen_on,
-                PREF_KEEP_SCREEN_AWAKE,
-                defaultVal: false,
-                //desc: "Вкл",
-              ),
-              SwitchPreference(
-                S.of(context).save_measures,
-                PREF_SAVE_MEASURES,
-                defaultVal: true,
-                //desc: "Вкл",
-              ),
-              DropdownPreference<String>(
-                //
-                S.of(context).app_theme,
-                PREF_THEME,
-                defaultVal: GreenLight,
-                onChange: (v) {
-                  ThemeHolder.of<AppTheme>(context).updateThemeById(v);
-                },
-                displayValues: [
-                  '${S.current.magenta} $sunrise',
-                  '${S.current.magenta} $twilight',
-                  '${S.current.breeze} $sunrise',
-                  '${S.current.breeze} $twilight',
-                  '${S.current.cedar} $sunrise',
-                  '${S.current.cedar} $twilight'
-                ],
-                values: [
-                  MagentaLight,
-                  MagentaDark,
-                  BlueLight,
-                  BlueDark,
-                  GreenLight,
-                  GreenDark
-                ],
-              ),
-            ]),
+            child: FutureBuilder(
+                future: _initPrefsAction,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return CenterCircularWidget();
+                  }
+
+                  return Column(children: [
+                    SwitchListTile(
+                      title: Text(S.of(context).sound),
+                      value: sound,
+                      onChanged: (bool value) {
+                        setState(() {
+                          sound = value;
+                          _writeBoolValue(PREF_SOUND, value);
+                        });
+                      },
+                    ),
+                    SwitchListTile(
+                      title: Text(S.of(context).vibration),
+                      value: vibration,
+                      onChanged: (bool value) {
+                        setState(() {
+                          vibration = value;
+                          _writeBoolValue(PREF_VIBRATION, value);
+                        });
+                      },
+                    ),
+                    SwitchListTile(
+                      title: Text(S.of(context).keep_screen_on),
+                      value: keepScreenAwake,
+                      onChanged: (bool value) {
+                        setState(() {
+                          keepScreenAwake = value;
+                          _writeBoolValue(PREF_KEEP_SCREEN_AWAKE, value);
+                        });
+                      },
+                    ),
+                    SwitchListTile(
+                      title: Text(S.of(context).save_measures),
+                      value: persistMeasure,
+                      onChanged: (bool value) {
+                        setState(() {
+                          persistMeasure = value;
+                          _writeBoolValue(PREF_SAVE_MEASURES, value);
+                        });
+                      },
+                    ),
+                    DropdownButton<String>(
+                      value: theme,
+                      icon: const Icon(Icons.arrow_downward),
+                      iconSize: 24,
+                      elevation: 16,
+                      // style: const TextStyle(color: Colors.deepPurple),
+                      // underline: Container(
+                      //   height: 2,
+                      //   color: Colors.deepPurpleAccent,
+                      // ),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          theme = newValue!;
+                          _sharedPrefs.setString(PREF_THEME, newValue);
+                          ThemeHolder.of<AppTheme>(context)
+                              .updateThemeById(newValue);
+                          // Обновить тему
+                        });
+                      },
+                      items: <String, String>{
+                        MagentaLight: '${S.current.magenta} $sunrise',
+                        MagentaDark: '${S.current.magenta} $twilight',
+                        BlueLight: '${S.current.breeze} $sunrise',
+                        BlueDark: '${S.current.breeze} $twilight',
+                        GreenLight: '${S.current.cedar} $sunrise',
+                        GreenDark: '${S.current.cedar} $twilight'
+                      }.entries.map<DropdownMenuItem<String>>(
+                          (MapEntry<String, String> entry) {
+                        return DropdownMenuItem<String>(
+                          value: entry.key,
+                          child: Text(entry.value),
+                        );
+                      }).toList(),
+                    )
+                  ]);
+                }),
           ),
         ],
       ),

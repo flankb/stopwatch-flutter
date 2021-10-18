@@ -58,8 +58,6 @@ void main() async {
 
   // https://github.com/Skyost/rate_my_app/blob/master/example/lib/main.dart
   await rateMyApp.init();
-  await PrefService.init(prefix: 'pref_'); // Настройки
-
   // Здесь прочитать какая тема (перед инициализацией приложения)
   final initialTheme = readLastTheme();
 
