@@ -17,7 +17,8 @@ class StopwatchItem extends StatefulWidget {
   //final StreamController<int> selectionListController;
 
   // Сделать данный класс Generic ?
-  const StopwatchItem({Key key, this.entity, this.index}) : super(key: key);
+  const StopwatchItem({Key? key, required this.entity, required this.index})
+      : super(key: key);
 
   @override
   _StopwatchItemState createState() {
@@ -146,7 +147,7 @@ class _StopwatchItemState extends State<StopwatchItem>
                   if (difference != null)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Text(differenceString,
+                      child: Text(differenceString!,
                           style: TextStyle(
                             fontSize: 18,
                             height: 1.0,
@@ -157,14 +158,15 @@ class _StopwatchItemState extends State<StopwatchItem>
                           fontSize: 18,
                           height: 1.0,
                           color: entityIsMeasure
-                              ? Theme.of(context).textTheme.bodyText1.color
+                              ? Theme.of(context).textTheme.bodyText1!.color
                               : ThemeHolder.of<AppTheme>(context)
                                   .theme
                                   .subtitleColor)),
                   SizedBox(height: 6),
                   widget.entity.comment != null
                       ? Text(
-                          widget.entity.comment, // ?? "Нет комментария",
+                          widget.entity.comment ??
+                              "Нет комментария", // ?? "Нет комментария",
                           style: TextStyle(
                               fontSize: 18,
                               height: 1.0,
@@ -174,7 +176,7 @@ class _StopwatchItemState extends State<StopwatchItem>
                                       .subtitleColor
                                   : Theme.of(context)
                                       .textTheme
-                                      .subtitle2
+                                      .subtitle2!
                                       .color),
                         )
                       : SizedBox(),

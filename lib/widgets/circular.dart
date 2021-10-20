@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class CenterCircularWidget extends StatelessWidget {
   const CenterCircularWidget({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override

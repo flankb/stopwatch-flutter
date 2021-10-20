@@ -6,16 +6,19 @@ class SoundWidget extends InheritedWidget {
   final List<int> sounds;
   //final Widget child;
 
-  SoundWidget({@required this.soundPool,
-    @required this.sounds,
-    @required Widget child, Key key}) : super(child: child, key: key);
+  SoundWidget(
+      {required this.soundPool,
+      required this.sounds,
+      required Widget child,
+      Key? key})
+      : super(child: child, key: key);
 
   @override
   bool updateShouldNotify(SoundWidget oldWidget) {
     return true;
   }
 
-  static SoundWidget of(BuildContext context) {
+  static SoundWidget? of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<SoundWidget>();
   }
 }

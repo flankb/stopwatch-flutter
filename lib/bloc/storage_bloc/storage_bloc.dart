@@ -31,7 +31,7 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
         yield AvailableListState(resultList, resultList, null);
       } else if (openStorageEvent.entityType == LapViewModel) {
         final laps = (await stopwatchRepository
-                .getLapsByMeasureAsync(openStorageEvent.measureId))
+                .getLapsByMeasureAsync(openStorageEvent.measureId!))
             .map((l) => LapViewModel.fromEntity(l))
             .toList();
 
@@ -49,11 +49,11 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
 
         var result = availState.entities;
 
-        if (event.filter.query != null && event.filter.query != "") {
+        if (event.filter?.query != null && event.filter!.query != "") {
           result = result
               .where((en) =>
                   en.comment != null &&
-                  en.comment!.contains(event.filter.query))
+                  en.comment!.contains(event.filter!.query))
               .toList();
         }
 
@@ -62,9 +62,9 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
               .map((e) => e as MeasureViewModel)
               .where((measure) =>
                   measure.dateStarted!.millisecondsSinceEpoch >
-                      event.filter.dateFrom!.millisecondsSinceEpoch &&
+                      event.filter!.dateFrom!.millisecondsSinceEpoch &&
                   measure.dateStarted!.millisecondsSinceEpoch <
-                      event.filter.dateTo!.millisecondsSinceEpoch)
+                      event.filter!.dateTo!.millisecondsSinceEpoch)
               .toList();
         }
 

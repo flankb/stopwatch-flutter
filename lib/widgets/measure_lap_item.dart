@@ -9,10 +9,10 @@ class MeasureLapItem extends StatelessWidget {
   final String overall;
 
   const MeasureLapItem(
-      {Key key,
-      @required this.order,
-      @required this.difference,
-      @required this.overall})
+      {Key? key,
+      required this.order,
+      required this.difference,
+      required this.overall})
       : super(key: key);
 
   @override

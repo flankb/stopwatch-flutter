@@ -26,7 +26,7 @@ import 'entity_edit_page.dart';
 
 class HistoryPage extends StatefulWidget {
   final Type pageType;
-  final BaseStopwatchEntity entityId;
+  final BaseStopwatchEntity? entityId;
 
   HistoryPage({Key? key, required this.pageType, required this.entityId})
       : super(key: key);
@@ -93,8 +93,8 @@ class _HistoryPageState extends State<HistoryPage>
     }
 
     _storageBloc.add(LoadStorageEvent(widget.pageType,
-        measureId:
-            widget.entityId.id!)); // TODO Более явно перезагружать состояние?
+        measureId: widget.entityId?.id ??
+            null)); // TODO Более явно перезагружать состояние?
 
     // Сразу же отфильтруем в случае необходимости
     if (wasFiltered) {

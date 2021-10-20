@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:launch_review/launch_review.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:stopwatch/bloc/measure_bloc/bloc.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 import 'package:stopwatch/service_locator.dart';
@@ -14,7 +14,6 @@ import 'package:stopwatch/view/pages/about_page.dart';
 import 'package:stopwatch/view/pages/settings_page.dart';
 import 'package:stopwatch/widgets/circular.dart';
 import 'package:stopwatch/widgets/stopwatch_body.dart';
-import 'package:preferences/preferences.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'dart:async';
@@ -27,6 +26,7 @@ import 'constants.dart';
 import 'models/stopwatch_status.dart';
 import 'generated/l10n.dart';
 import 'theme_data.dart';
+import 'util/pref_service.dart';
 import 'widgets/inherited/sound_widget.dart';
 
 // Рефакторинг
@@ -46,7 +46,8 @@ RateMyApp rateMyApp = RateMyApp(
 );
 
 String readLastTheme() {
-  final themeStr = PrefService.getString(PREF_THEME) ?? GreenLight;
+  final themeStr =
+      PrefService.instance.sharedPrefs.getString(PREF_THEME) ?? GreenLight;
 
   debugPrint('Readed last theme:$themeStr');
   return themeStr;
@@ -55,6 +56,8 @@ String readLastTheme() {
 void main() async {
   WidgetsFlutterBinding
       .ensureInitialized(); // This allows to use async methods in the main method without any problem.
+
+  await PrefService.instance.init();
 
   // https://github.com/Skyost/rate_my_app/blob/master/example/lib/main.dart
   await rateMyApp.init();
@@ -80,7 +83,7 @@ class MyApp extends StatelessWidget {
   final String initialThemeId;
   //final ThemeController<AppTheme> themeController;
 
-  const MyApp({Key key, this.initialThemeId}) : super(key: key);
+  const MyApp({Key? key, required this.initialThemeId}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -127,10 +130,11 @@ class CaptionModel extends Model {
 }
 
 class Choice {
-  const Choice({this.title, this.icon, this.settingsType = SettingsType.None});
+  const Choice(
+      {required this.title, this.icon, this.settingsType = SettingsType.None});
 
   final String title;
-  final IconData icon;
+  final IconData? icon;
   final SettingsType settingsType;
 }
 
@@ -175,7 +179,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
           content: new Text(message),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
-            new FlatButton(
+            new TextButton(
               child: new Text("Close"),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -213,16 +217,16 @@ class _MyTabPageState extends State<MyTabPageStateful>
     // Causes the app to rebuild with the new _selectedChoice.
   }
 
-  CaptionModel captionModel;
+  late CaptionModel captionModel;
 
-  ItemScrollController _categoryScrollController;
+  late ItemScrollController _categoryScrollController;
   bool categoryInited = false;
 
   //int _selectedIndex = 0;
 
-  Future _soundsLoader;
+  late Future<Tuple2<Soundpool, List<int>>> _soundsLoader;
 
-  MeasureBloc measureBloc;
+  late MeasureBloc measureBloc;
 
   @override
   void initState() {
@@ -232,7 +236,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
       DeviceOrientation.portraitUp
     ]);*/
 
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance?.addObserver(this);
 
     _categoryScrollController = ItemScrollController();
 
@@ -249,14 +253,10 @@ class _MyTabPageState extends State<MyTabPageStateful>
   }
 
   _init() {
-    if (captionModel == null) {
-      captionModel = CaptionModel();
-    }
+    captionModel = CaptionModel();
 
-    if (measureBloc == null /*|| true*/) {
-      measureBloc = GetIt.I.get<MeasureBloc>();
-      measureBloc.add(MeasureOpenedEvent());
-    }
+    measureBloc = GetIt.I.get<MeasureBloc>();
+    measureBloc.add(MeasureOpenedEvent());
 
     _soundsLoader = _loadSounds();
   }
@@ -266,7 +266,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
   int _soundId2;*/
 
   Future<Tuple2<Soundpool, List<int>>> _loadSounds() async {
-    final pool = Soundpool(streamType: StreamType.notification);
+    final pool = Soundpool.fromOptions();
 
     final soundId1 = await rootBundle
         .load("assets/sounds/sound1.wav")
@@ -292,7 +292,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
       DeviceOrientation.portraitDown,
     ]);*/
 
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance?.removeObserver(this);
     await measureBloc.close();
     super.dispose();
   }
@@ -327,7 +327,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
 
           return true; // Return false if you want to cancel the click event.
         },
-        ignoreIOS: false,
+        // ignoreIOS: false,
         // Set to false if you want to show the native Apple app rating dialog on iOS.
         dialogStyle: DialogStyle(),
         // Custom dialog styles.
@@ -349,7 +349,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
   Widget build(BuildContext context) {
     debugPrint('Main page loaded!');
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
       await Future.delayed(Duration(seconds: 2));
       _showRateDialog(context);
     });
@@ -363,18 +363,18 @@ class _MyTabPageState extends State<MyTabPageStateful>
 
     //(child: StopwatchBody()),
 
-    debugPrint("measureBloc == null " + (measureBloc == null).toString());
+    // debugPrint("measureBloc == null " + (measureBloc == null).toString());
 
     return Scaffold(
         body: BlocProvider(
             create: (BuildContext context) => measureBloc,
-            child: FutureBuilder(
+            child: FutureBuilder<Tuple2<Soundpool, List<int>>>(
                 future: _soundsLoader,
                 builder: (context, snapshot) {
                   return snapshot.hasData
                       ? SoundWidget(
-                          soundPool: snapshot.data.item1,
-                          sounds: snapshot.data.item2,
+                          soundPool: snapshot.data!.item1,
+                          sounds: snapshot.data!.item2,
                           child: StopwatchBody(
                             measureBloc: measureBloc,
                           ),

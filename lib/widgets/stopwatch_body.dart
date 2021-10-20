@@ -9,12 +9,12 @@ import 'package:stopwatch/bloc/measure_bloc/measure_event.dart';
 import 'package:stopwatch/constants.dart';
 import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
+import 'package:stopwatch/util/pref_service.dart';
 import 'package:stopwatch/util/time_displayer.dart';
 import 'package:stopwatch/view/pages/about_page.dart';
 import 'package:stopwatch/view/pages/history_page.dart';
 import 'package:stopwatch/view/pages/settings_page.dart';
 import 'package:stopwatch/widgets/measure_lap_item.dart';
-import 'package:preferences/preference_service.dart';
 import 'package:vibration/vibration.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:wakelock/wakelock.dart';
@@ -24,7 +24,7 @@ import 'inherited/sound_widget.dart';
 class StopwatchBody extends StatefulWidget {
   final MeasureBloc measureBloc;
 
-  const StopwatchBody({Key key, this.measureBloc}) : super(key: key);
+  const StopwatchBody({Key? key, required this.measureBloc}) : super(key: key);
 
   @override
   _StopwatchBodyState createState() => _StopwatchBodyState();
@@ -33,8 +33,8 @@ class StopwatchBody extends StatefulWidget {
 class _StopwatchBodyState extends State<StopwatchBody>
     with TickerProviderStateMixin {
   ScrollController _scrollController = new ScrollController();
-  AnimationController _controller;
-  Animation<double> animation;
+  late AnimationController _controller;
+  late Animation<double> animation;
   bool _existsVibrator = false;
 
   @override
@@ -57,7 +57,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
   }
 
   _initVibratorPossibility() async {
-    _existsVibrator = await Vibration.hasVibrator();
+    _existsVibrator = (await Vibration.hasVibrator()) ?? false;
   }
 
   @override
@@ -108,9 +108,9 @@ class _StopwatchBodyState extends State<StopwatchBody>
                         debugPrint("StreamBuilder ok! Measure ${state.measure} LastRestarted ${state.measure.lastRestartedOverall}");
                       }*/
 
-                      final delta1 = snapshot.data > 0
+                      final delta1 = snapshot.data != null && snapshot.data! > 0
                           ? DateTime.now()
-                              .difference(state.measure.lastRestartedOverall)
+                              .difference(state.measure.lastRestartedOverall!)
                               .inMilliseconds
                           : 0;
                       final overallDifference = state.measure.elapsed +
@@ -264,7 +264,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
                                   _vibrate();
 
                                   WidgetsBinding.instance
-                                      .addPostFrameCallback((timeStamp) {
+                                      ?.addPostFrameCallback((timeStamp) {
                                     _scrollController.animateTo(
                                       _scrollController
                                           .position.maxScrollExtent,
@@ -301,8 +301,9 @@ class _StopwatchBodyState extends State<StopwatchBody>
                       text: S.of(context).reset,
                       onPressed: () {
                         //final measureCounts = state.measure.finishedMeasuresCount;
-                        bool saveMeasure =
-                            PrefService.getBool(PREF_SAVE_MEASURES) ?? true;
+                        bool saveMeasure = PrefService.instance.sharedPrefs
+                                .getBool(PREF_SAVE_MEASURES) ??
+                            true;
                         //final proOwned = snapshot.data.skuIsAcknowledged(PRO_PACKAGE);
                         //saveMeasure = saveMeasure && (proOwned || measureCounts <= MAX_FREE_MEASURES);
 
@@ -370,7 +371,8 @@ class _StopwatchBodyState extends State<StopwatchBody>
     // final measureCounts = getIt
     //     .get<StopwatchRepository>()
     //     .guaranteedAmountOfFinishedMeasures; // TODO Плохо здесь ссылаться на репозиторий!
-    bool saveMeasure = PrefService.getBool(PREF_SAVE_MEASURES) ?? true;
+    bool saveMeasure =
+        PrefService.instance.sharedPrefs.getBool(PREF_SAVE_MEASURES) ?? true;
     // final proOwned = snapshot.data.productIsAcknowledged(PRO_PACKAGE);
     // saveMeasure =
     //     saveMeasure && (proOwned || measureCounts < MAX_FREE_MEASURES);
@@ -387,7 +389,8 @@ class _StopwatchBodyState extends State<StopwatchBody>
   }
 
   _vibrate() async {
-    final vibration = PrefService.getBool(PREF_VIBRATION) ?? true;
+    final vibration =
+        PrefService.instance.sharedPrefs.getBool(PREF_VIBRATION) ?? true;
     if (vibration) {
       if (_existsVibrator) {
         Vibration.vibrate(duration: 50);
@@ -396,19 +399,20 @@ class _StopwatchBodyState extends State<StopwatchBody>
   }
 
   _playSound(BuildContext context, int soundId) {
-    final sound = PrefService.getBool(PREF_SOUND) ?? true;
+    final sound = PrefService.instance.sharedPrefs.getBool(PREF_SOUND) ?? true;
 
     if (sound) {
       final s = SoundWidget.of(context);
-      s.soundPool.play(s.sounds[soundId]);
+      s?.soundPool.play(s.sounds[soundId]);
     }
   }
 
   _enableWakeLock() async {
     debugPrint('Start wakelock enabling!');
 
-    if (PrefService.getBool(PREF_KEEP_SCREEN_AWAKE) ?? false) {
-      if (!(await Wakelock.isEnabled)) {
+    if (PrefService.instance.sharedPrefs.getBool(PREF_KEEP_SCREEN_AWAKE) ??
+        false) {
+      if (!(await Wakelock.enabled)) {
         await Wakelock.enable();
         debugPrint('Wakelock enabled!');
       }
@@ -418,7 +422,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
   _disableWakelock() async {
     debugPrint('Start wakelock disabling!');
 
-    if ((await Wakelock.isEnabled)) {
+    if ((await Wakelock.enabled)) {
       await Wakelock.disable();
       debugPrint('Wakelock disabled!');
     }
