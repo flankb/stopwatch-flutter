@@ -9,7 +9,7 @@ void main() {
     final textFinder = find.byValueKey('overall_text');
     final buttonFinder = find.byValueKey('start_button');
 
-    FlutterDriver driver;
+    late FlutterDriver driver;
 
     // Connect to the Flutter driver before running any tests.
     setUpAll(() async {
@@ -18,9 +18,7 @@ void main() {
 
     // Close the connection to the driver after the tests have completed.
     tearDownAll(() async {
-      if (driver != null) {
-        driver.close();
-      }
+      driver.close();
     });
 
     test('Start test', () async {

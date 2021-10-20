@@ -5,23 +5,23 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:stopwatch/bloc/measure_bloc/measure_bloc.dart';
 import 'package:stopwatch/bloc/measure_bloc/measure_event.dart';
 import 'package:stopwatch/bloc/measure_bloc/measure_state.dart';
-import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 import 'package:stopwatch/models/stopwatch_status.dart';
-import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 import 'package:stopwatch/util/ticker.dart';
 import 'package:bloc_test/bloc_test.dart';
 
 import 'fake_repos.dart';
 
-Future<bool> existsMeasure(StopwatchFakeRepository repository, StopwatchStatus status) async {
-  final measures = await repository.getMeasuresByStatusAsync(describeEnum(status));
+Future<bool> existsMeasure(
+    StopwatchFakeRepository repository, StopwatchStatus status) async {
+  final measures =
+      await repository.getMeasuresByStatusAsync(describeEnum(status));
   return measures.length > 0;
 }
 
 void main() {
   group('MeasureBloc', () {
-    MeasureBloc measureBloc;
-    StopwatchFakeRepository repository;
+    late MeasureBloc measureBloc;
+    late StopwatchFakeRepository repository;
 
     setUp(() {
       repository = StopwatchFakeRepository();
@@ -29,12 +29,12 @@ void main() {
     });
 
     tearDown(() {
-      measureBloc?.close();
+      measureBloc.close();
     });
 
     test('Initial state test', () {
       //final initialState = MeasureUpdatingState(MeasureViewModel());
-      expect(measureBloc.initialState is MeasureUpdatingState, equals(true));
+      expect(measureBloc.state is MeasureUpdatingState, equals(true));
       //expect(measureBloc.initialState.props[0].toString(), initialState.props[0].toString());
     });
 
@@ -53,34 +53,45 @@ void main() {
         debugPrint("Listened: " + state.toString());
         final measure = state.measure;
 
-        switch(counterStates){
+        switch (counterStates) {
           case 4:
             // В базе есть измерение со статусом Started
-            final startedExists = await existsMeasure(repository, StopwatchStatus.Started);
-            expect(startedExists, true, reason: "В базе нет измерения со статусом Started");
+            final startedExists =
+                await existsMeasure(repository, StopwatchStatus.Started);
+            expect(startedExists, true,
+                reason: "В базе нет измерения со статусом Started");
 
             // В базе появилась измерительная сессия
-            final existsSessions = (await repository.getMeasureSessions(measure.id)).length > 0;
-            expect(existsSessions, true, reason: "В базе не появилось измерительных сессий");
+            final existsSessions =
+                (await repository.getMeasureSessions(measure.id!)).length > 0;
+            expect(existsSessions, true,
+                reason: "В базе не появилось измерительных сессий");
             break;
           case 6:
             // Есть круг
-            final existsLaps = (await repository.getLapsByMeasureAsync(measure.id)).any((element) => true);
-            expect(existsLaps, true, reason : "Нет кругов");
+            final existsLaps =
+                (await repository.getLapsByMeasureAsync(measure.id!))
+                    .any((element) => true);
+            expect(existsLaps, true, reason: "Нет кругов");
             break;
           case 8:
             // В базе есть измерение в статусе Paused
-            final pausedExists = await existsMeasure(repository, StopwatchStatus.Paused);
-            expect(pausedExists, true, reason : "В базе нет измерение в статусе Paused"); //TODO !!!!
+            final pausedExists =
+                await existsMeasure(repository, StopwatchStatus.Paused);
+            expect(pausedExists, true,
+                reason: "В базе нет измерение в статусе Paused"); //TODO !!!!
 
             // elapsed > 2 секунд
-            final measureElapsed = measure.elapsed >= 1900 && measure.elapsedLap >= 1000;
+            final measureElapsed =
+                measure.elapsed >= 1900 && measure.elapsedLap >= 1000;
             expect(measureElapsed, true, reason: "Время не обновилось");
             break;
           case 10:
             // В базе есть финишированное измерение
-            final finishExists = await existsMeasure(repository, StopwatchStatus.Finished);
-            expect(finishExists, true, reason: "В базе нет финишированных измерений"); //TODO !!!!!
+            final finishExists =
+                await existsMeasure(repository, StopwatchStatus.Finished);
+            expect(finishExists, true,
+                reason: "В базе нет финишированных измерений"); //TODO !!!!!
             break;
         }
 
@@ -109,7 +120,8 @@ void main() {
          */
 
         // Проверим, что есть измерение со статусом Finished
-        final finished = await existsMeasure(repository, StopwatchStatus.Finished);
+        final finished =
+            await existsMeasure(repository, StopwatchStatus.Finished);
         if (finished && !_testController.isClosed) {
           _testController.add(true);
           _testController.close();
@@ -131,9 +143,9 @@ void main() {
       expectLater(_testController.stream, emits(true));
     });
 
-    blocTest(
+    blocTest<MeasureBloc, MeasureState>(
       'States flow',
-      build: () async => measureBloc,
+      build: () => measureBloc,
       skip: 0,
       wait: Duration(seconds: 0),
       act: (bloc) async {
@@ -145,7 +157,7 @@ void main() {
         //debugPrint("Test state ${(bloc as MeasureBloc).state}"); // Последне состояние
         //expect((bloc as MeasureBloc).state is MeasureReadyState , equals(true));
       },
-      expect: [
+      expect: () => [
         isA<MeasureUpdatingState>(),
         isA<MeasureUpdatingState>(),
         isA<MeasureReadyState>(),

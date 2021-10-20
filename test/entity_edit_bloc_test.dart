@@ -9,11 +9,10 @@ import 'package:bloc_test/bloc_test.dart';
 
 import 'fake_repos.dart';
 
-
 void main() {
   group('EntityBloc test', () {
-    StopwatchFakeRepository repository;
-    EntityBloc entityBloc;
+    late StopwatchFakeRepository repository;
+    late EntityBloc entityBloc;
 
     setUp(() {
       repository = StopwatchFakeRepository(preBuild: true);
@@ -31,15 +30,19 @@ void main() {
     test("Full entity bloc test", () async {
       final _testController = StreamController<bool>();
       int counterStates = 0;
-      MeasureViewModel measure = MeasureViewModel.fromEntity((await repository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished))).first);
+      MeasureViewModel measure = MeasureViewModel.fromEntity((await repository
+              .getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished)))
+          .first);
 
       entityBloc.listen((state) async {
         debugPrint("Listened: " + state.toString());
         if (counterStates == 2) {
           // Проверим, что сущность изменилась
-          final measureUpdate = (await repository.getMeasuresByIdAsync(measure.id));
+          final measureUpdate =
+              (await repository.getMeasuresByIdAsync(measure.id!));
           debugPrint("Red entity: " + measureUpdate.toString());
-          expect(measureUpdate.comment == "Added comment", true, reason: "Не обновился комментарий!");
+          expect(measureUpdate.comment == "Added comment", true,
+              reason: "Не обновился комментарий!");
         }
 
         if (counterStates == 2) {
@@ -57,22 +60,24 @@ void main() {
       expectLater(_testController.stream, emits(true));
     });
 
-    blocTest(
+    blocTest<EntityBloc, EntityState>(
       'States flow entity bloc',
-      build: () async => entityBloc,
+      build: () => entityBloc,
       wait: Duration(seconds: 0),
       skip: 0,
       act: (bloc) async {
-        MeasureViewModel measure = MeasureViewModel.fromEntity((await repository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished))).first);
+        MeasureViewModel measure = MeasureViewModel.fromEntity(
+            (await repository.getMeasuresByStatusAsync(
+                    describeEnum(StopwatchStatus.Finished)))
+                .first);
 
         bloc.add(OpenEntityEvent(measure));
         measure.comment = "100 m";
 
         bloc.add(SaveEntityEvent(measure));
       },
-      verify: (bloc) async {
-      },
-      expect: [
+      verify: (bloc) async {},
+      expect: () => [
         isA<LoadingEntityState>(),
         isA<AvailableEntityState>(),
         isA<AvailableEntityState>(),

@@ -10,37 +10,44 @@ import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 import 'package:mockito/mockito.dart';
 
 class StopwatchFakeRepository extends Fake implements StopwatchRepository {
-  List<MeasureViewModel> _measures;
-  List<LapViewModel> _laps;
-  List<MeasureSessionViewModel> sessions;
-  
-  StopwatchFakeRepository({bool preBuild =false}) {
+  late List<MeasureViewModel> _measures;
+  late List<LapViewModel> _laps;
+  late List<MeasureSessionViewModel> sessions;
+
+  StopwatchFakeRepository({bool preBuild = false}) {
     if (preBuild) {
       _measures = FakeDataFabric.measuresHistory();
       _laps = FakeDataFabric.lapsHistory();
       sessions = FakeDataFabric.sessionsHistory();
     } else {
-      _measures = List<MeasureViewModel>();
-      _laps = List<LapViewModel>();
-      sessions = List<MeasureSessionViewModel>();
+      _measures = <MeasureViewModel>[];
+      _laps = <LapViewModel>[];
+      sessions = <MeasureSessionViewModel>[];
     }
   }
-  
+
   @override
-  Future<List<Measure>> getMeasuresByStatusAsync(String status, {int limit}) async {
-    return _measures.where((element) => describeEnum(element.status) == status).map((e) => e.toEntity()).toList();
+  Future<List<Measure>> getMeasuresByStatusAsync(String status,
+      {int? limit}) async {
+    return _measures
+        .where((element) => describeEnum(element.status) == status)
+        .map((e) => e.toEntity())
+        .toList();
   }
 
   @override
   Future<Measure> getMeasuresByIdAsync(int id) async {
-      return _measures.firstWhere((element) => element.id == id, orElse: () => null).toEntity();
+    return _measures
+        .firstWhere((element) => element.id == id, orElse: () => null)
+        .toEntity();
   }
 
   @override
-  Future<int> createNewMeasureAsync() async{
-    Measure measure = Measure(id: Random(43).nextInt(2000) + 100,
+  Future<int> createNewMeasureAsync() async {
+    Measure measure = Measure(
+        id: Random(43).nextInt(2000) + 100,
         elapsed: 0,
-        dateStarted: null,//DateTime.now(),
+        dateStarted: null, //DateTime.now(),
         status: describeEnum(StopwatchStatus.Ready));
 
     _measures.add(MeasureViewModel.fromEntity(measure));
@@ -59,7 +66,8 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
 
   @override
   Future<int> addNewMeasureSession(MeasureSession measureSession) async {
-    MeasureSessionViewModel session = MeasureSessionViewModel.fromEntity(measureSession);
+    MeasureSessionViewModel session =
+        MeasureSessionViewModel.fromEntity(measureSession);
     session.id = Random(55).nextInt(2000) + 100;
 
     sessions.add(session);
@@ -68,12 +76,16 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
 
   @override
   Future<List<MeasureSession>> getMeasureSessions(int measureId) async {
-    return sessions.where((element) => element.measureId == measureId).map((e) => e.toEntity()).toList();
+    return sessions
+        .where((element) => element.measureId == measureId)
+        .map((e) => e.toEntity())
+        .toList();
   }
 
   @override
   Future updateMeasureAsync(Measure measure) async {
-    final measureForUpdate = _measures.firstWhere((element) => element.id == measure.id);
+    final measureForUpdate =
+        _measures.firstWhere((element) => element.id == measure.id);
     _measures.remove(measureForUpdate);
 
     final viewModel = MeasureViewModel.fromEntity(measure);
@@ -84,7 +96,8 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
 
   @override
   Future<bool> updateMeasureSession(MeasureSession measureSession) async {
-    final sessionForUpdate = sessions.firstWhere((element) => element.id == measureSession.id);
+    final sessionForUpdate =
+        sessions.firstWhere((element) => element.id == measureSession.id);
     sessions.remove(sessionForUpdate);
 
     sessions.add(MeasureSessionViewModel.fromEntity(measureSession));
@@ -101,7 +114,10 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
 
   @override
   Future<List<Lap>> getLapsByMeasureAsync(int measureId) async {
-    return _laps.where((element) => element.measureId == measureId).map((e) => e.toEntity()).toList();
+    return _laps
+        .where((element) => element.measureId == measureId)
+        .map((e) => e.toEntity())
+        .toList();
   }
 
   @override
