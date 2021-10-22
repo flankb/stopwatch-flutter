@@ -17,7 +17,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
   final StopwatchRepository
       _stopwatchRepository; // TODO Заменить на интерфейс репозитория (либо на DI)
 
-  late StreamSubscription<int> _tickerSubscription;
+  StreamSubscription<int>? _tickerSubscription;
   //Stream<int> _tickStream;
   Stream<int> get tickStream => controller.stream;
 
@@ -195,7 +195,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
       _updateElapseds(state.measure, nowDate);
 
-      var targetMeasure = state.measure;
+      var targetMeasure = state.measure.copyWith();
 
       // Если сущности не было, то необходимо создать и получить идентификатор
       if (targetMeasure.id == null) {
@@ -215,7 +215,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
             measureId: targetMeasure.id!,
             startedOffset: targetMeasure
                 .getElapsedSinceStarted(nowDate)); // TODO id здесь пустой
-        targetMeasure.sessions.add(session);
+        targetMeasure.sessions.add(session); // TODO Unmodifable list!
 
         debugPrint("measureId (not resume) ${session.measureId.toString()}");
 

@@ -7,6 +7,7 @@ import 'package:stopwatch/util/time_displayer.dart';
 import 'stopwatch_proxy_models.dart';
 import 'stopwatch_status.dart';
 import 'package:stopwatch/util/math_helper.dart';
+import 'package:collection/collection.dart';
 
 class MeasureViewModel extends BaseStopwatchEntity {
   int elapsed;
@@ -109,16 +110,16 @@ class MeasureViewModel extends BaseStopwatchEntity {
   }
 
   MeasureSessionViewModel? getLastUnfinishedSession() {
-    sessions.sort((a, b) => a.startedOffset.compareTo(b.startedOffset));
+    // TODO Спорный момент с сортировкой!
+    //sessions.sort((a, b) => a.startedOffset.compareTo(b.startedOffset));
 
-    if (sessions != null &&
-        sessions.where((element) => element.finishedOffset == null).length >
-            1) {
+    if (sessions.where((element) => element.finishedOffset == null).length >
+        1) {
       throw new Exception(
           "Обнаружено более одной измерительной сессии с открытым окончанием!");
     }
 
-    return sessions.lastWhere((s) => s.finishedOffset == null);
+    return sessions.lastWhereOrNull((s) => s.finishedOffset == null);
   }
 
   MeasuresCompanion toEntity() {

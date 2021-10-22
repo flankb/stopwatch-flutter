@@ -61,7 +61,7 @@ class FilterFormState extends State<FilterForm> {
     super.initState();
     debugPrint("init FormState");
     // Создать контроллеры
-    widget.filter ??= Filter.defaultFilter();
+    widget.filter = Filter.defaultFilter();
   }
 
   @override
