@@ -165,9 +165,9 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       final nosaveDb = event is MeasureFinishedEvent && !event.saveMeasure;
       yield* _fixStopwatch(StopwatchStatus.Finished,
           finish: event is MeasureFinishedEvent, saveToDatabase: !nosaveDb);
-      yield MeasureReadyState(MeasureViewModel(id: -1));
+      yield MeasureReadyState(MeasureViewModel());
     } else {
-      yield MeasureReadyState(MeasureViewModel(id: -1));
+      yield MeasureReadyState(MeasureViewModel());
       //throw Exception("Wrong state!");
     }
   }
