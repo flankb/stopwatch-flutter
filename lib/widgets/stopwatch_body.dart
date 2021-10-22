@@ -295,10 +295,12 @@ class _StopwatchBodyState extends State<StopwatchBody>
             Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: MetroAppBar(
+                  height: 60,
                   primaryCommands: [
                     PrimaryCommand(
                       icon: Icons.refresh,
                       text: S.of(context).reset,
+                      color: Theme.of(context).textTheme.bodyText1!.color,
                       onPressed: () {
                         //final measureCounts = state.measure.finishedMeasuresCount;
                         bool saveMeasure = PrefService.instance.sharedPrefs
@@ -320,6 +322,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
                     PrimaryCommand(
                       icon: Icons.list,
                       text: S.of(context).history,
+                      color: Theme.of(context).textTheme.bodyText1!.color,
                       onPressed: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (BuildContext context) {
@@ -333,6 +336,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
                     PrimaryCommand(
                       icon: Icons.settings,
                       text: S.of(context).settings,
+                      color: Theme.of(context).textTheme.bodyText1!.color,
                       onPressed: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (BuildContext context) {

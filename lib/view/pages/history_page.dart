@@ -223,6 +223,7 @@ class _HistoryPageState extends State<HistoryPage>
                                   pageIsLap
                               ? SizedBox()
                               : MetroAppBar(
+                                  height: 60,
                                   primaryCommands: <Widget>[
                                     widget.pageType == MeasureViewModel
                                         ? _exportToCsvButtonPrimary(
@@ -238,6 +239,10 @@ class _HistoryPageState extends State<HistoryPage>
                                                 .length ==
                                             1
                                         ? PrimaryCommand(
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodyText1!
+                                                .color,
                                             onPressed: () async {
                                               final entityToEdit =
                                                   _selectedEntities.single;
@@ -351,7 +356,8 @@ class _HistoryPageState extends State<HistoryPage>
     return PrimaryCommand(
       text: tooltip,
       icon: icon,
-      onPressed: enabled ? command : () {}, // null //TODO Исправить пакет!
+      color: Theme.of(context).textTheme.bodyText1!.color,
+      onPressed: enabled ? command : () {},
     );
   }
 
