@@ -65,7 +65,7 @@ class _SettingsPageState extends State<SettingsPage> {
             child: FutureBuilder(
                 future: _initPrefsAction,
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
+                  if (snapshot.connectionState != ConnectionState.done) {
                     return CenterCircularWidget();
                   }
 
@@ -110,39 +110,45 @@ class _SettingsPageState extends State<SettingsPage> {
                         });
                       },
                     ),
-                    DropdownButton<String>(
-                      value: theme,
-                      icon: const Icon(Icons.arrow_downward),
-                      iconSize: 24,
-                      elevation: 16,
-                      // style: const TextStyle(color: Colors.deepPurple),
-                      // underline: Container(
-                      //   height: 2,
-                      //   color: Colors.deepPurpleAccent,
-                      // ),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          theme = newValue!;
-                          _sharedPrefs.setString(PREF_THEME, newValue);
-                          ThemeHolder.of<AppTheme>(context)
-                              .updateThemeById(newValue);
-                          // Обновить тему
-                        });
-                      },
-                      items: <String, String>{
-                        MagentaLight: '${S.current.magenta} $sunrise',
-                        MagentaDark: '${S.current.magenta} $twilight',
-                        BlueLight: '${S.current.breeze} $sunrise',
-                        BlueDark: '${S.current.breeze} $twilight',
-                        GreenLight: '${S.current.cedar} $sunrise',
-                        GreenDark: '${S.current.cedar} $twilight'
-                      }.entries.map<DropdownMenuItem<String>>(
-                          (MapEntry<String, String> entry) {
-                        return DropdownMenuItem<String>(
-                          value: entry.key,
-                          child: Text(entry.value),
-                        );
-                      }).toList(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: DropdownButton<String>(
+                          value: theme,
+                          icon: const Icon(Icons.arrow_downward),
+                          iconSize: 24,
+                          elevation: 16,
+                          // style: const TextStyle(color: Colors.deepPurple),
+                          // underline: Container(
+                          //   height: 2,
+                          //   color: Colors.deepPurpleAccent,
+                          // ),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              theme = newValue!;
+                              _sharedPrefs.setString(PREF_THEME, newValue);
+                              ThemeHolder.of<AppTheme>(context)
+                                  .updateThemeById(newValue);
+                              // Обновить тему
+                            });
+                          },
+                          items: <String, String>{
+                            MagentaLight: '${S.current.magenta} $sunrise',
+                            MagentaDark: '${S.current.magenta} $twilight',
+                            BlueLight: '${S.current.breeze} $sunrise',
+                            BlueDark: '${S.current.breeze} $twilight',
+                            GreenLight: '${S.current.cedar} $sunrise',
+                            GreenDark: '${S.current.cedar} $twilight'
+                          }.entries.map<DropdownMenuItem<String>>(
+                              (MapEntry<String, String> entry) {
+                            return DropdownMenuItem<String>(
+                              value: entry.key,
+                              child: Text(entry.value),
+                            );
+                          }).toList(),
+                        ),
+                      ),
                     )
                   ]);
                 }),
