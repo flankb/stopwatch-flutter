@@ -128,8 +128,10 @@ class EditFormState extends State<EditForm> {
                             ),
                             onPressed: () {
                               if (_formKey.currentState?.validate() ?? false) {
-                                widget.entity.comment = textController.text;
-                                entityBloc.add(SaveEntityEvent(widget.entity));
+                                //widget.entity.comment = textController.text;
+
+                                entityBloc.add(SaveEntityEvent(widget.entity,
+                                    comment: textController.text));
 
                                 Navigator.pop(context);
                               }

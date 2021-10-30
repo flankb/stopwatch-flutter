@@ -23,7 +23,8 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
   var controller = new StreamController<int>();
   MeasureBloc(this._ticker, this._stopwatchRepository)
-      : super(MeasureUpdatingState(MeasureViewModel(id: null)));
+      : super(MeasureUpdatingState(
+            MeasureViewModel(id: null, lastRestartedOverall: DateTime.now())));
 
   @override
   Stream<MeasureState> mapEventToState(
@@ -67,28 +68,32 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     combine.addAll(measuredReady);
 
     if (combine.length == 0) {
-      yield MeasureReadyState(
-          MeasureViewModel(id: null)); // Если в БД ничего нет, то ReadyState
+      yield MeasureReadyState(MeasureViewModel(
+          id: null,
+          lastRestartedOverall:
+              DateTime.now())); // Если в БД ничего нет, то ReadyState
     } else {
       if (combine.length > 1) {
         throw Exception("Не может быть больше одного актуального измерения");
       }
 
-      final measure = MeasureViewModel.fromEntity(combine.single);
-
-      debugPrint(
-          "Restored sessions by Id ${measure.id}: ${(await _stopwatchRepository.getMeasureSessions(measure.id!)).length}");
+      final measureEntity = combine.single;
 
       final sessions =
-          (await _stopwatchRepository.getMeasureSessions(measure.id!))
+          (await _stopwatchRepository.getMeasureSessions(measureEntity.id))
               .map((session) => MeasureSessionViewModel.fromEntity(session));
 
+      debugPrint("Restored sessions by Id ${measureEntity.id}: $sessions");
+
       final laps =
-          (await _stopwatchRepository.getLapsByMeasureAsync(measure.id!))
+          (await _stopwatchRepository.getLapsByMeasureAsync(measureEntity.id))
               .map((lap) => LapViewModel.fromEntity(lap));
 
-      measure.laps.addAll(laps);
-      measure.sessions.addAll(sessions);
+      final measure = MeasureViewModel.fromEntity(combine.single)
+          .copyWith(laps: laps.toList(), sessions: sessions.toList());
+
+      // measure.laps.addAll(laps);
+      // measure.sessions.addAll(sessions);
 
       debugPrint("Laps added: ${measure.laps.length}");
       measure.laps.forEach((element) {
@@ -115,13 +120,15 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
         yield MeasurePausedState(
             measure); // Если есть в статусе Пауза, то PausedState
         controller.add(0);
+      } else if (measure.status == StopwatchStatus.Ready) {
+        yield MeasureReadyState(measure);
       }
     }
   }
 
   Stream<MeasureState> _mapTickToState(TickEvent tick) async* {
-    state.measure.elapsed = tick.duration; // TODO ?????
-    yield MeasureStartedState(state.measure);
+    //state.measure.elapsed = tick.duration; // TODO ?????
+    yield MeasureStartedState(state.measure.copyWith(elapsed: tick.duration));
   }
 
   Stream<MeasureState> _mapLapAddedToState(LapAddedEvent event) async* {
@@ -129,14 +136,13 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       yield MeasureUpdatingState(state.measure);
 
       // Сбросить счётчик времени круга
-      state.measure.elapsedLap = 0; // TODO Убрать???
+      //state.measure.elapsedLap = 0; // TODO Убрать???
       //state.measure.checkPointLapTicks = await controller.stream.last; //Количество тиков прошедших с начала стрима
 
       final dateNow = DateTime.now();
       //state.measure.lastRestartedLap = dateNow;
 
-      final lapProps =
-          state.measure.getCurrentLapDiffAndOverall(DateTime.now());
+      final lapProps = state.measure.getCurrentLapDiffAndOverall(dateNow);
 
       LapViewModel newLap = LapViewModel(
           id: null,
@@ -144,15 +150,19 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
           order: state.measure.laps.length + 1,
           difference: lapProps[0],
           overall: lapProps[1]);
-      //newLap.comment = "Temp";
 
-      state.measure.laps.add(newLap);
-      newLap.id = await _stopwatchRepository.addNewLapAsync(newLap.toEntity());
+      final lapId =
+          await _stopwatchRepository.addNewLapAsync(newLap.toEntity());
 
-      _updateElapseds(state.measure, dateNow);
+      newLap = newLap.copyWith(id: lapId);
+
+      final updatesElapsedsMeasure = _updateElapseds(state.measure, dateNow);
+
+      final newMeasure = updatesElapsedsMeasure.copyWith(
+          laps: List.from(updatesElapsedsMeasure.laps)..add(newLap));
 
       debugPrint("Before yield MeasureStartedState(state.measure);");
-      yield MeasureStartedState(state.measure);
+      yield MeasureStartedState(newMeasure);
       debugPrint("After yield MeasureStartedState(state.measure);");
     } else {
       throw Exception("Wrong state!");
@@ -165,9 +175,11 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       final nosaveDb = event is MeasureFinishedEvent && !event.saveMeasure;
       yield* _fixStopwatch(StopwatchStatus.Finished,
           finish: event is MeasureFinishedEvent, saveToDatabase: !nosaveDb);
-      yield MeasureReadyState(MeasureViewModel());
+      yield MeasureReadyState(
+          MeasureViewModel(lastRestartedOverall: DateTime.now()));
     } else {
-      yield MeasureReadyState(MeasureViewModel());
+      yield MeasureReadyState(
+          MeasureViewModel(lastRestartedOverall: DateTime.now()));
       //throw Exception("Wrong state!");
     }
   }
@@ -186,25 +198,28 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     if (state is MeasureReadyState || state is MeasurePausedState) {
       yield MeasureUpdatingState(state.measure);
       // Устанавливаем поля в модели, делаем запись в репозитории
-      state.measure.status = StopwatchStatus.Started;
+      //state.measure.status = StopwatchStatus.Started;
       final nowDate = DateTime.now();
 
-      if (state.measure.dateStarted == null) {
-        state.measure.dateStarted = nowDate;
-      }
+      // if (state.measure.dateStarted == null) {
+      //   state.measure.dateStarted = nowDate;
+      // }
 
-      _updateElapseds(state.measure, nowDate);
+      final updateElapsedsMeasure = _updateElapseds(state.measure, nowDate);
 
-      var targetMeasure = state.measure.copyWith();
+      var targetMeasure = updateElapsedsMeasure.copyWith(
+          status: StopwatchStatus.Started,
+          dateCreated:
+              updateElapsedsMeasure.dateStarted == null ? nowDate : null);
 
       // Если сущности не было, то необходимо создать и получить идентификатор
       if (targetMeasure.id == null) {
         final id = await _stopwatchRepository.createNewMeasureAsync();
-        final measure = (await _stopwatchRepository.getMeasuresByIdAsync(id));
+        //final measure = (await _stopwatchRepository.getMeasuresByIdAsync(id));
 
-        debugPrint("id ${id.toString()} measureId ${measure.id.toString()}");
+        //debugPrint("id ${id.toString()} measureId ${measure.id.toString()}");
 
-        targetMeasure.id = id;
+        targetMeasure = targetMeasure.copyWith(id: id); //.id = id;
       }
 
       debugPrint("targetMeasure ${targetMeasure.toString()}");
@@ -213,15 +228,21 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
         final session = MeasureSessionViewModel(
             id: null,
             measureId: targetMeasure.id!,
-            startedOffset: targetMeasure
-                .getElapsedSinceStarted(nowDate)); // TODO id здесь пустой
-        targetMeasure.sessions.add(session); // TODO Unmodifable list!
+            startedOffset: targetMeasure.getElapsedSinceStarted(nowDate));
 
         debugPrint("measureId (not resume) ${session.measureId.toString()}");
 
         // Если в БД есть такая запись - то обновить, иначе создать новую
-        session.id =
+        final sessionId =
             await _stopwatchRepository.addNewMeasureSession(session.toEntity());
+
+        //  session.id =
+        //     await _stopwatchRepository.addNewMeasureSession(session.toEntity());
+
+        final writedSession = session.copyWith(id: sessionId);
+
+        targetMeasure = targetMeasure.copyWith(
+            sessions: List.from(targetMeasure.sessions)..add(writedSession));
       }
 
       _startTicker();
@@ -242,12 +263,17 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     });
   }
 
-  void _updateElapseds(MeasureViewModel measure, DateTime nowDate) {
-    measure.lastRestartedOverall = nowDate;
-    measure.elapsed = measure.getSumOfElapsed(nowDate);
-    measure.elapsedLap = measure.getCurrentLapDiffAndOverall(nowDate)[0];
+  MeasureViewModel _updateElapseds(MeasureViewModel measure, DateTime nowDate) {
+    // measure.lastRestartedOverall = nowDate;
+    // measure.elapsed = measure.getSumOfElapsed(nowDate);
+    // measure.elapsedLap = measure.getCurrentLapDiffAndOverall(nowDate)[0];
 
     debugPrint("After _updateElapseds ${measure.toString()}");
+
+    return measure.copyWith(
+        lastRestartedOverall: nowDate,
+        elapsed: measure.getSumOfElapsed(nowDate),
+        elapsedLap: measure.getCurrentLapDiffAndOverall(nowDate)[0]);
   }
 
   Stream<MeasureState> _fixStopwatch(StopwatchStatus status,
@@ -258,11 +284,12 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
     await _tickerSubscription?.cancel();
 
-    state.measure.status = status;
+    //state.measure.status = status;
     final dateNow = DateTime.now();
 
     // Завершить последний отрезок
-    final lastSession = state.measure.getLastUnfinishedSession();
+    final lastSession = state.measure.getLastUnfinishedSession()?.copyWith(
+        finishedOffset: state.measure.getElapsedSinceStarted(dateNow));
 
     debugPrint("LastUnfinishedSession: " + lastSession.toString());
 
@@ -270,20 +297,22 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       throw Exception("Не обнаружена последняя открытая сессия!");
     }
 
-    if (lastSession != null) {
-      lastSession.finishedOffset =
-          state.measure.getElapsedSinceStarted(dateNow); //dateNow;
-    }
+    // if (lastSession != null) {
+    //   lastSession.finishedOffset =
+    //       state.measure.getElapsedSinceStarted(dateNow); //dateNow;
+    // }
 
     debugPrint("LastUnfinishedSession (updated): " + lastSession.toString());
 
-    _updateElapseds(state.measure, dateNow);
+    final updateElapsedsMeasure =
+        _updateElapseds(state.measure, dateNow).copyWith(status: status);
     debugPrint("state.measure after finish: " + state.measure.toString());
 
     controller.add(0); // Как-бы фиксируем
 
     if (saveToDatabase) {
-      await _stopwatchRepository.updateMeasureAsync(state.measure.toEntity());
+      await _stopwatchRepository
+          .updateMeasureAsync(updateElapsedsMeasure.toEntity());
 
       if (lastSession != null) {
         await _stopwatchRepository.updateMeasureSession(lastSession.toEntity());

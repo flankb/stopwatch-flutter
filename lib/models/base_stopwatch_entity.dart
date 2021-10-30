@@ -1,8 +1,10 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
+@immutable
 abstract class BaseStopwatchEntity with EquatableMixin {
-  int? id;
-  String? comment;
+  final int? id;
+  final String? comment;
 
   BaseStopwatchEntity({this.id, this.comment});
 

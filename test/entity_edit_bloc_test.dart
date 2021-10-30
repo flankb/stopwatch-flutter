@@ -34,7 +34,7 @@ void main() {
               .getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished)))
           .first);
 
-      entityBloc.listen((state) async {
+      entityBloc.stream.listen((state) async {
         debugPrint("Listened: " + state.toString());
         if (counterStates == 2) {
           // Проверим, что сущность изменилась
@@ -54,8 +54,7 @@ void main() {
       });
 
       entityBloc.add(OpenEntityEvent(measure));
-      measure.comment = "Added comment";
-      entityBloc.add(SaveEntityEvent(measure));
+      entityBloc.add(SaveEntityEvent(measure, comment: "Added comment"));
 
       expectLater(_testController.stream, emits(true));
     });
@@ -72,9 +71,7 @@ void main() {
                 .first);
 
         bloc.add(OpenEntityEvent(measure));
-        measure.comment = "100 m";
-
-        bloc.add(SaveEntityEvent(measure));
+        bloc.add(SaveEntityEvent(measure, comment: "100 m"));
       },
       verify: (bloc) async {},
       expect: () => [

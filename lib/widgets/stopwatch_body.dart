@@ -110,7 +110,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
 
                       final delta1 = snapshot.data != null && snapshot.data! > 0
                           ? DateTime.now()
-                              .difference(state.measure.lastRestartedOverall!)
+                              .difference(state.measure.lastRestartedOverall)
                               .inMilliseconds
                           : 0;
                       final overallDifference = state.measure.elapsed +

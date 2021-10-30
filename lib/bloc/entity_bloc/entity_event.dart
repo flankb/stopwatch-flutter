@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:stopwatch/bloc/entity_bloc/bloc.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 
 abstract class EntityEvent extends Equatable {
@@ -7,7 +6,7 @@ abstract class EntityEvent extends Equatable {
   const EntityEvent(this.entity);
 
   @override
-  List<Object> get props => [entity];
+  List<Object?> get props => [entity];
 }
 
 class OpenEntityEvent extends EntityEvent {
@@ -15,5 +14,10 @@ class OpenEntityEvent extends EntityEvent {
 }
 
 class SaveEntityEvent extends EntityEvent {
-  SaveEntityEvent(BaseStopwatchEntity entity) : super(entity);
+  final String? comment;
+
+  SaveEntityEvent(BaseStopwatchEntity entity, {this.comment}) : super(entity);
+
+  @override
+  List<Object?> get props => [entity, comment];
 }

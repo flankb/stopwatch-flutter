@@ -9,32 +9,32 @@ import 'stopwatch_status.dart';
 import 'package:stopwatch/util/math_helper.dart';
 import 'package:collection/collection.dart';
 
+@immutable
 class MeasureViewModel extends BaseStopwatchEntity {
-  int elapsed;
-  int elapsedLap;
-  DateTime? dateStarted;
-  StopwatchStatus status;
-  List<LapViewModel> laps;
-  List<MeasureSessionViewModel> sessions;
+  final int elapsed;
+  final int elapsedLap;
+  final DateTime? dateStarted;
+  final StopwatchStatus status;
+  final List<LapViewModel> laps;
+  final List<MeasureSessionViewModel> sessions;
 
   /// Вспомогательное свойство для динамического расчета истекшего времени
-  DateTime? lastRestartedOverall;
+  final DateTime lastRestartedOverall; //DateTime.now()
 
-  int checkPointLapTicks = 0;
+  final int checkPointLapTicks; //0
 
-  // TODO Что-то придумать с инициализацией идентификатора!!!
-  MeasureViewModel(
-      {int? id,
-      String? comment,
-      this.elapsed = 0,
-      this.elapsedLap = 0,
-      this.laps = const <LapViewModel>[],
-      this.sessions = const <MeasureSessionViewModel>[],
-      this.status = StopwatchStatus.Ready,
-      this.dateStarted})
-      : super(id: id, comment: comment) {
-    this.lastRestartedOverall = lastRestartedOverall ?? DateTime.now();
-  }
+  MeasureViewModel({
+    int? id,
+    String? comment,
+    this.elapsed = 0,
+    this.elapsedLap = 0,
+    this.laps = const <LapViewModel>[],
+    this.sessions = const <MeasureSessionViewModel>[],
+    this.status = StopwatchStatus.Ready,
+    this.dateStarted,
+    required this.lastRestartedOverall,
+    this.checkPointLapTicks = 0,
+  }) : super(id: id, comment: comment);
 
   MeasureViewModel copyWith(
       {int? id,
@@ -44,7 +44,9 @@ class MeasureViewModel extends BaseStopwatchEntity {
       List<LapViewModel>? laps,
       List<MeasureSessionViewModel>? sessions,
       StopwatchStatus? status,
-      DateTime? dateCreated}) {
+      DateTime? dateCreated,
+      DateTime? lastRestartedOverall,
+      int? checkPointLapTicks}) {
     return MeasureViewModel(
         id: id ?? this.id,
         comment: comment ?? this.comment,
@@ -53,7 +55,9 @@ class MeasureViewModel extends BaseStopwatchEntity {
         laps: laps ?? List.from(this.laps),
         sessions: sessions ?? List.from(this.sessions),
         status: status ?? this.status,
-        dateStarted: dateCreated ?? this.dateStarted);
+        dateStarted: dateCreated ?? this.dateStarted,
+        lastRestartedOverall: lastRestartedOverall ?? this.lastRestartedOverall,
+        checkPointLapTicks: checkPointLapTicks ?? this.checkPointLapTicks);
   }
 
   List<String> elapsedTime() {
@@ -138,7 +142,8 @@ class MeasureViewModel extends BaseStopwatchEntity {
         status: StopwatchStatus.values
             .firstWhere((e) => describeEnum(e) == entity.status),
         dateStarted: entity.dateStarted,
-        elapsed: entity.elapsed);
+        elapsed: entity.elapsed,
+        lastRestartedOverall: DateTime.now());
   }
 
   @override

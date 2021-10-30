@@ -49,8 +49,8 @@ void main() {
 
       await _stopwatchRepository.addNewLapAsync(lap);
 
-      var measureViewModel = MeasureViewModel.fromEntity(readyMeasure.single);
-      measureViewModel.dateStarted = DateTime.now();
+      var measureViewModel = MeasureViewModel.fromEntity(readyMeasure.single)
+          .copyWith(dateCreated: DateTime.now());
       await _stopwatchRepository.addNewMeasureSession(MeasureSession(
         startedOffset: measureViewModel.getElapsedSinceStarted(DateTime.now()),
         finishedOffset: measureViewModel

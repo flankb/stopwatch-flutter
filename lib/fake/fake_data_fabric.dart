@@ -31,19 +31,22 @@ class FakeDataFabric {
   }
 
   static List<MeasureViewModel> measuresHistory() {
+    final dateNow = DateTime.now();
     final list = [
       MeasureViewModel(
           id: 2,
           comment: "Пробежка",
           elapsed: 10000,
           status: StopwatchStatus.Finished,
-          dateStarted: DateTime.now()),
+          dateStarted: dateNow,
+          lastRestartedOverall: dateNow),
       MeasureViewModel(
           id: 3,
           comment: "Стометровка",
           elapsed: 25000,
           status: StopwatchStatus.Finished,
-          dateStarted: DateTime.now())
+          dateStarted: dateNow,
+          lastRestartedOverall: dateNow)
     ];
 
     return list;

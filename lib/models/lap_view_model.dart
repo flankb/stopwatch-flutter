@@ -1,14 +1,17 @@
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
+
 import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/util/time_displayer.dart';
 
 import 'stopwatch_proxy_models.dart';
 
+@immutable
 class LapViewModel extends BaseStopwatchEntity {
-  int measureId;
-  int order;
-  int difference;
-  int overall;
+  final int measureId;
+  final int order;
+  final int difference;
+  final int overall;
 
   String differenceTime() {
     return TimeDisplayer.formatBase(Duration(milliseconds: difference));
@@ -63,4 +66,22 @@ class LapViewModel extends BaseStopwatchEntity {
   @override
   List<Object?> get props =>
       super.props..addAll([measureId, order, difference, overall]);
+
+  LapViewModel copyWith({
+    int? id,
+    String? comment,
+    int? measureId,
+    int? order,
+    int? difference,
+    int? overall,
+  }) {
+    return LapViewModel(
+      id: id ?? this.id,
+      comment: comment ?? this.comment,
+      measureId: measureId ?? this.measureId,
+      order: order ?? this.order,
+      difference: difference ?? this.difference,
+      overall: overall ?? this.overall,
+    );
+  }
 }
