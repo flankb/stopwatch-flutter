@@ -33,7 +33,7 @@ class FilterDialog extends StatelessWidget {
 
 // Define a custom Form widget.
 class FilterForm extends StatefulWidget {
-  Filter filter;
+  final Filter filter;
 
   FilterForm({Key? key, required this.filter}) : super(key: key);
 
@@ -56,12 +56,15 @@ class FilterFormState extends State<FilterForm> {
 
   //TextEditingController
 
+  late Filter changedFilter;
+
   @override
   void initState() {
     super.initState();
     debugPrint("init FormState");
     // Создать контроллеры
-    widget.filter = Filter.defaultFilter();
+    //widget.filter = Filter.defaultFilter();
+    changedFilter = widget.filter;
   }
 
   @override
@@ -107,7 +110,10 @@ class FilterFormState extends State<FilterForm> {
                           hintText: S.of(context).comment_contains),
                       onSaved: (val) => setState(() {
                         debugPrint(val);
-                        widget.filter.query = val ?? '';
+                        //widget.filter.query = val ?? '';
+
+                        changedFilter =
+                            changedFilter.copyWith(query: val ?? '');
                       }),
                       /*validator: (value) {
                           if (value.isEmpty) {
@@ -122,7 +128,10 @@ class FilterFormState extends State<FilterForm> {
                     DateTimeField(
                       format: dateFormat,
                       onSaved: (dt) {
-                        widget.filter.dateFrom = dt;
+                        setState(() {
+                          changedFilter =
+                              changedFilter.copyWithNullable(dateFrom: dt);
+                        });
                       },
                       validator: (value) {
                         if (value == null) {
@@ -149,8 +158,10 @@ class FilterFormState extends State<FilterForm> {
                     DateTimeField(
                       format: dateFormat,
                       onSaved: (dt) {
-                        // setState вроде не нужен
-                        widget.filter.dateTo = dt;
+                        setState(() {
+                          changedFilter =
+                              changedFilter.copyWithNullable(dateTo: dt);
+                        });
                       },
                       decoration: InputDecoration(
                           labelText: "${S.of(context).to}:",
@@ -182,7 +193,7 @@ class FilterFormState extends State<FilterForm> {
                               // otherwise.
                               if (_formKey.currentState?.validate() ?? false) {
                                 _formKey.currentState?.save();
-                                Navigator.pop(context, widget.filter);
+                                Navigator.pop(context, changedFilter);
                                 // If the form is valid, display a Snackbar.
                                 //Scaffold.of(context).showSnackBar(SnackBar(content: Text('Обработка данных..')));
                               }
