@@ -100,8 +100,7 @@ void main() {
 
       storageBloc.add(LoadStorageEvent(MeasureViewModel, measureId: null));
 
-      Filter filter = Filter.defaultFilter();
-      filter.query = "сто";
+      Filter filter = Filter.defaultFilter().copyWith(query: 'что');
       storageBloc.add(FilterStorageEvent(MeasureViewModel, filter));
 
       storageBloc.add(CancelFilterEvent(MeasureViewModel));

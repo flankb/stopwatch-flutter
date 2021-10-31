@@ -3,43 +3,30 @@ import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 
 abstract class MeasureState extends Equatable {
   final MeasureViewModel measure;
-  final int version;
-  static int _versionPool = 0;
 
-  @deprecated
-  static int getUpdatedVersion() {
-    _versionPool += 1;
-    return _versionPool;
-  }
-
-  MeasureState(this.measure, this.version);
+  MeasureState(this.measure);
 
   @override
-  List<Object> get props => [version];
+  List<Object> get props => [measure];
 }
 
 class MeasureReadyState extends MeasureState {
-  MeasureReadyState(MeasureViewModel measure)
-      : super(measure, MeasureState.getUpdatedVersion());
+  MeasureReadyState(MeasureViewModel measure) : super(measure);
 }
 
 class MeasureUpdatingState extends MeasureState {
   // Пока можно это состояние присваивать при старте программы перед загрузкой секундомера
-  MeasureUpdatingState(MeasureViewModel measure)
-      : super(measure, MeasureState.getUpdatedVersion());
+  MeasureUpdatingState(MeasureViewModel measure) : super(measure);
 }
 
 class MeasurePausedState extends MeasureState {
-  MeasurePausedState(MeasureViewModel measure)
-      : super(measure, MeasureState.getUpdatedVersion());
+  MeasurePausedState(MeasureViewModel measure) : super(measure);
 }
 
 class MeasureStartedState extends MeasureState {
-  MeasureStartedState(MeasureViewModel measure)
-      : super(measure, MeasureState.getUpdatedVersion());
+  MeasureStartedState(MeasureViewModel measure) : super(measure);
 }
 
 class MeasureFinishedState extends MeasureState {
-  MeasureFinishedState(MeasureViewModel measure)
-      : super(measure, MeasureState.getUpdatedVersion());
+  MeasureFinishedState(MeasureViewModel measure) : super(measure);
 }

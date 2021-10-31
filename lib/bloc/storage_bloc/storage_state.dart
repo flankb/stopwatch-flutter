@@ -3,22 +3,14 @@ import 'package:stopwatch/models/filter.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 
 abstract class StorageState extends Equatable {
-  const StorageState(this.version);
-
-  final int version;
-  static int _versionPool = 0;
-
-  static int getUpdatedVersion() {
-    _versionPool += 1;
-    return _versionPool;
-  }
+  const StorageState();
 
   @override
-  List<Object> get props => [version];
+  List<Object?> get props => [];
 }
 
 class LoadingStorageState extends StorageState {
-  LoadingStorageState() : super(StorageState.getUpdatedVersion());
+  LoadingStorageState() : super();
 }
 
 class AvailableListState extends StorageState {
@@ -27,12 +19,10 @@ class AvailableListState extends StorageState {
   final Filter? lastFilter;
   final bool filtered;
 
-  // Можно здесь же хранить фильтр
-
   @override
-  List<Object> get props => [entities, filtered];
+  List<Object?> get props => [allEntities, entities, lastFilter, filtered];
 
   AvailableListState(this.entities, this.allEntities, this.lastFilter,
       {this.filtered = false})
-      : super(StorageState.getUpdatedVersion());
+      : super();
 }
