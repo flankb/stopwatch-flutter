@@ -11,7 +11,7 @@ import 'history_page.dart';
 class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final debuggable = false;
+    final debuggable = true;
 
     final Uri _emailLaunchUri = Uri(
         scheme: 'mailto',
@@ -114,6 +114,9 @@ class AboutPage extends StatelessWidget {
                         if (res == true) {
                           final rep = StopwatchRepository();
                           await rep.wipeDatabaseDebug();
+
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(SnackBar(content: Text('Wiped!')));
                           // Вайп
                           /*Scaffold.of(context).showSnackBar(SnackBar(
                           content: Text("БД удалена!"),

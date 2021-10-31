@@ -137,13 +137,14 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase>
   }
 
   Future wipeDatabaseDebug() async {
-    final finished =
-        await getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished));
-    await deleteMeasures(finished.map((l) => l.id).toList());
-    /*await delete(measureSessions).go();
+    // final finished =
+    //     await getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished));
+
+    // await deleteMeasures(finished.map((l) => l.id).toList());
+    await delete(measureSessions).go();
     await delete(laps).go();
     await delete(tags).go();
-    await delete(measures).go();*/
+    await delete(measures).go();
   }
 
   dispose() {}
