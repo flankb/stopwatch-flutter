@@ -57,6 +57,10 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     final measuredReady = await _stopwatchRepository
         .getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Ready));
 
+    // TODO При загрузке время круга загружается по нулям, даже если
+    // прошло немного времени круга, при этом при старте счетчик возобновляется как
+    // надо не с нуля
+
     //final measureFinished = await _stopwatchRepository.getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished));
     //MeasureViewModel.finishedMeasuresCount = measureFinished.length;
 
@@ -113,11 +117,11 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
         //debugPrint("In Opened before paused: $measure");
 
-        _updateElapseds(
+        final updatedElapsedsMeasure = _updateElapseds(
             measure, DateTime.now()); //Ticker здесь не инициализирован!!!!
         //debugPrint("Hash code 1: ${measure.hashCode}");
         yield MeasurePausedState(
-            measure); // Если есть в статусе Пауза, то PausedState
+            updatedElapsedsMeasure); // Если есть в статусе Пауза, то PausedState
         controller.add(0);
       } else if (measure.status == StopwatchStatus.Ready) {
         yield MeasureReadyState(measure);
@@ -155,13 +159,13 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
       newLap = newLap.copyWith(id: lapId);
 
-      final updatesElapsedsMeasure = _updateElapseds(state.measure, dateNow);
+      final newMeasure = state.measure
+          .copyWith(laps: List.from(state.measure.laps)..add(newLap));
 
-      final newMeasure = updatesElapsedsMeasure.copyWith(
-          laps: List.from(updatesElapsedsMeasure.laps)..add(newLap));
+      final updatesElapsedsMeasure = _updateElapseds(newMeasure, dateNow);
 
       debugPrint("Before yield MeasureStartedState(state.measure);");
-      yield MeasureStartedState(newMeasure);
+      yield MeasureStartedState(updatesElapsedsMeasure);
       debugPrint("After yield MeasureStartedState(state.measure);");
     } else {
       throw Exception("Wrong state!");

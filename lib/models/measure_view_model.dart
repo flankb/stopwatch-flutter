@@ -21,6 +21,7 @@ class MeasureViewModel extends BaseStopwatchEntity {
   /// Вспомогательное свойство для динамического расчета истекшего времени
   final DateTime lastRestartedOverall; //DateTime.now()
 
+  @deprecated
   final int checkPointLapTicks; //0
 
   MeasureViewModel({
@@ -78,6 +79,7 @@ class MeasureViewModel extends BaseStopwatchEntity {
     return dateNow.difference(dateStarted!).inMilliseconds;
   }
 
+  /// Вычислить все прошедшее время измерения
   int getSumOfElapsed(DateTime dateNow) {
     var elapsed = 0;
 
@@ -101,13 +103,15 @@ class MeasureViewModel extends BaseStopwatchEntity {
     return elapsedAll;
   }
 
+  /// Вернуть два значения:
+  /// Сколько прошло времени для текущего круга
+  /// Сколько всего прошло времени измерения
   List<int> getCurrentLapDiffAndOverall(DateTime dateNow) {
     // Метод должен работать как при завершенной, так и незавершенной сессии
-
     final newOverall = getSumOfElapsed(dateNow).truncateToHundreds();
 
     // Здесь же можно найти разницу с предыдущим кругом
-    final prevLapOverall = laps.any((_) => true) ? laps.last.overall : 0;
+    final prevLapOverall = laps.isNotEmpty ? laps.last.overall : 0;
     final difference = newOverall - prevLapOverall;
 
     return [difference, newOverall];
