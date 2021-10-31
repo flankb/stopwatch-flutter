@@ -18,7 +18,6 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       _stopwatchRepository; // TODO Заменить на интерфейс репозитория (либо на DI)
 
   StreamSubscription<int>? _tickerSubscription;
-  //Stream<int> _tickStream;
   Stream<int> get tickStream => controller.stream;
 
   var controller = new StreamController<int>();
@@ -187,7 +186,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
   Stream<MeasureState> _mapPausedToState(MeasureEvent event) async* {
     if (state is MeasureStartedState) {
       yield* _fixStopwatch(StopwatchStatus.Paused);
-      yield MeasurePausedState(state.measure);
+      //yield MeasurePausedState(state.measure);
     } else {
       throw Exception("Wrong state!");
     }
@@ -279,7 +278,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
   Stream<MeasureState> _fixStopwatch(StopwatchStatus status,
       {bool finish = false, bool saveToDatabase = true}) async* {
     debugPrint("_fixStopwatch before");
-    yield MeasureUpdatingState(state.measure);
+    yield MeasureUpdatingState(state.measure.copyWith());
     debugPrint("_fixStopwatch after");
 
     await _tickerSubscription?.cancel();
@@ -304,15 +303,26 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
     debugPrint("LastUnfinishedSession (updated): " + lastSession.toString());
 
-    final updateElapsedsMeasure =
-        _updateElapseds(state.measure, dateNow).copyWith(status: status);
+    final lastSessIndex = lastSession != null
+        ? state.measure.sessions.indexWhere((s) => s.id == lastSession.id)
+        : null;
+
+    final updateElapsedsMeasure = _updateElapseds(state.measure, dateNow)
+        .copyWith(
+            status: status,
+            sessions: lastSessIndex != null
+                ? (List.from(state.measure.sessions)
+                  ..[lastSessIndex] = lastSession!)
+                : null);
+
+    // Обновить измерительную сессию в измерении!
     debugPrint("state.measure after finish: " + state.measure.toString());
 
-    controller.add(0); // Как-бы фиксируем
+    controller.add(0); // Фиксируем счетчик времени
 
     if (saveToDatabase) {
-      await _stopwatchRepository
-          .updateMeasureAsync(updateElapsedsMeasure.toEntity());
+      await _stopwatchRepository.updateMeasureAsync(
+          updateElapsedsMeasure.toEntity()); // TODO Было вне условия??
 
       if (lastSession != null) {
         await _stopwatchRepository.updateMeasureSession(lastSession.toEntity());
@@ -321,6 +331,11 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       await _stopwatchRepository.deleteMeasures([state.measure.id!]);
     }
 
+    if (status == StopwatchStatus.Paused) {
+      yield MeasurePausedState(updateElapsedsMeasure);
+    } else if (status == StopwatchStatus.Finished) {
+      yield MeasureFinishedState(updateElapsedsMeasure);
+    }
     debugPrint("fixStopwatch finished");
   }
 
