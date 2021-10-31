@@ -14,50 +14,71 @@ void main() {
     late StopwatchFakeRepository repository;
     late EntityBloc entityBloc;
 
-    setUp(() {
+    late MeasureViewModel measure;
+
+    setUp(() async {
       repository = StopwatchFakeRepository(preBuild: true);
       entityBloc = EntityBloc(repository);
+
+      measure = MeasureViewModel.fromEntity((await repository
+              .getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished)))
+          .first);
     });
 
     tearDown(() {
-      entityBloc?.close();
+      entityBloc.close();
     });
 
     test('Initial state test', () {
       expect(entityBloc.state is LoadingEntityState, true);
     });
 
-    test("Full entity bloc test", () async {
-      final _testController = StreamController<bool>();
-      int counterStates = 0;
-      MeasureViewModel measure = MeasureViewModel.fromEntity((await repository
-              .getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished)))
-          .first);
+    // test("Full entity bloc test", () async {
+    //   final _testController = StreamController<bool>();
+    //   int counterStates = 0;
+    //   MeasureViewModel measure = MeasureViewModel.fromEntity((await repository
+    //           .getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished)))
+    //       .first);
 
-      entityBloc.stream.listen((state) async {
-        debugPrint("Listened: " + state.toString());
-        if (counterStates == 2) {
-          // Проверим, что сущность изменилась
-          final measureUpdate =
-              (await repository.getMeasuresByIdAsync(measure.id!));
-          debugPrint("Red entity: " + measureUpdate.toString());
-          expect(measureUpdate.comment == "Added comment", true,
-              reason: "Не обновился комментарий!");
-        }
+    //   entityBloc.stream.listen((state) async {
+    //     debugPrint("Listened: " + state.toString());
+    //     if (counterStates == 2) {
+    //       // Проверим, что сущность изменилась
+    //       final measureUpdate =
+    //           (await repository.getMeasuresByIdAsync(measure.id!));
+    //       debugPrint("Red entity: " + measureUpdate.toString());
+    //       expect(measureUpdate.comment == "Added comment", true,
+    //           reason: "Не обновился комментарий!");
+    //     }
 
-        if (counterStates == 2) {
-          _testController.add(true);
-          _testController.close();
-        }
+    //     if (counterStates == 2) {
+    //       _testController.add(true);
+    //       _testController.close();
+    //     }
 
-        counterStates++;
-      });
+    //     counterStates++;
+    //   });
 
-      entityBloc.add(OpenEntityEvent(measure));
-      entityBloc.add(SaveEntityEvent(measure, comment: "Added comment"));
+    //   entityBloc.add(OpenEntityEvent(measure));
+    //   entityBloc.add(SaveEntityEvent(measure, comment: "Added comment"));
 
-      expectLater(_testController.stream, emits(true));
-    });
+    //   expectLater(_testController.stream, emits(true));
+    // });
+
+    blocTest<EntityBloc, EntityState>(
+        'emit OpenEntityEvent should change state',
+        build: () {
+          return entityBloc;
+        },
+        seed: () => AvailableEntityState(measure),
+        //EntityState.getUpdatedVersion()
+        //AvailableEntityState:AvailableEntityState(2, MeasureViewModel{id: 2, comment: Пробежка,  elapsed: 10000, elapsedLap: 0, dateCreated: 2021-10-31 21:24:03.837296, status: StopwatchSt
+        act: (bloc) {
+          entityBloc
+            ..add(OpenEntityEvent(measure))
+            ..add(SaveEntityEvent(measure, comment: "Added comment"));
+        },
+        expect: () => <EntityState>[]);
 
     blocTest<EntityBloc, EntityState>(
       'States flow entity bloc',

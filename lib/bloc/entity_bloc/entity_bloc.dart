@@ -20,21 +20,25 @@ class EntityBloc extends Bloc<EntityEvent, EntityState> {
     if (event is OpenEntityEvent) {
       yield AvailableEntityState(event.entity);
     } else if (event is SaveEntityEvent) {
+      var entityViewModel;
+
       if (event.entity is LapViewModel) {
-        await stopwatchRepository.updateLapAsync((event.entity as LapViewModel)
-            .copyWith(comment: event.comment)
-            .toEntity());
+        entityViewModel =
+            (event.entity as LapViewModel).copyWith(comment: event.comment);
+
+        await stopwatchRepository.updateLapAsync(entityViewModel.toEntity());
       } else if (event.entity is MeasureViewModel) {
-        await stopwatchRepository.updateMeasureAsync(
-            (event.entity as MeasureViewModel)
-                .copyWith(comment: event.comment)
-                .toEntity());
+        entityViewModel =
+            (event.entity as MeasureViewModel).copyWith(comment: event.comment);
+
+        await stopwatchRepository
+            .updateMeasureAsync(entityViewModel.toEntity());
 
         debugPrint(
             "SaveEntityEvent: ${(event.entity as MeasureViewModel).toEntity().toString()}");
       }
 
-      yield AvailableEntityState(event.entity);
+      yield AvailableEntityState(entityViewModel);
     }
   }
 
