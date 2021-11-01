@@ -77,17 +77,17 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
   }
 
   MeasureSessionViewModel _convertToMeasureSessionViewModel(
-      MeasureSessionsCompanion measureSession) {
+      MeasureSessionsCompanion measureSession, int generatedId) {
     return MeasureSessionViewModel(
-        id: measureSession.id.value,
+        id: generatedId,
         measureId: measureSession.measureId.value,
         startedOffset: measureSession.startedOffset.value,
         finishedOffset: measureSession.finishedOffset.value);
   }
 
-  LapViewModel _convertToLapViewModel(LapsCompanion lap) {
+  LapViewModel _convertToLapViewModel(LapsCompanion lap, int generatedId) {
     return LapViewModel(
-        id: lap.id.value,
+        id: generatedId,
         measureId: lap.measureId.value,
         order: lap.order.value,
         difference: lap.difference.value,
@@ -117,8 +117,8 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
 
   @override
   Future<int> addNewLapAsync(Insertable<Lap> lap) async {
-    final lapViewModel = _convertToLapViewModel(lap as LapsCompanion)
-        .copyWith(id: Random(50).nextInt(2000) + 100);
+    final lapViewModel = _convertToLapViewModel(
+        lap as LapsCompanion, Random(50).nextInt(2000) + 100);
 
     _laps.add(lapViewModel);
     return lapViewModel.id!;
@@ -128,8 +128,8 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
   Future<int> addNewMeasureSession(
       Insertable<MeasureSession> measureSession) async {
     MeasureSessionViewModel session = _convertToMeasureSessionViewModel(
-            measureSession as MeasureSessionsCompanion)
-        .copyWith(id: Random(55).nextInt(2000) + 100);
+        measureSession as MeasureSessionsCompanion,
+        Random(55).nextInt(2000) + 100);
 
     sessions.add(session);
     return session.id!;
@@ -163,7 +163,7 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
     sessions.remove(sessionForUpdate);
 
     sessions.add(_convertToMeasureSessionViewModel(
-        measureSession as MeasureSessionsCompanion));
+        measureSession as MeasureSessionsCompanion, measureSession.id.value));
     return true;
   }
 
@@ -173,7 +173,7 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
         .firstWhere((element) => element.id == (lap as LapsCompanion).id.value);
     _laps.remove(lapForUpdate);
 
-    _laps.add(_convertToLapViewModel(lap as LapsCompanion));
+    _laps.add(_convertToLapViewModel((lap as LapsCompanion), lap.id.value));
   }
 
   @override
