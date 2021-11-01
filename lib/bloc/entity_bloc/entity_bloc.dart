@@ -20,6 +20,7 @@ class EntityBloc extends Bloc<EntityEvent, EntityState> {
     if (event is OpenEntityEvent) {
       yield AvailableEntityState(event.entity);
     } else if (event is SaveEntityEvent) {
+      yield LoadingEntityState();
       var entityViewModel;
 
       if (event.entity is LapViewModel) {
