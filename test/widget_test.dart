@@ -12,17 +12,9 @@ import 'package:metro_appbar/metro_appbar.dart';
 import 'package:stopwatch/widgets/circular.dart';
 
 void main() {
-  //MeasureBloc measureBloc;
+  setUp(() async {});
 
-  setUp(() async {
-    //measureBloc = MeasureBloc(Ticker3(), StopwatchRepository());
-    //setupLocators();
-    //await PrefService.init(prefix: 'pref_'); // Настройки
-  });
-
-  tearDown(() {
-    //measureBloc.close();
-  });
+  tearDown(() {});
 
   testWidgets('Widget test', (WidgetTester tester) async {
     final metroAppBar = MetroAppBar(
