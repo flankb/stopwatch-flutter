@@ -33,81 +33,101 @@ void main() {
     });
 
     test('Initial state test', () {
-      //final initialState = LoadingStorageState();
       expect(storageBloc.state is LoadingStorageState, true);
     });
 
-    //expectLater(actual, matcher) // TODO Асинхронный expect
+    blocTest<StorageBloc, StorageState>(
+        'emit Storage events should change state',
+        build: () {
+          return storageBloc;
+        },
+        act: (bloc) {
+          Filter filter = Filter.defaultFilter().copyWith(query: 'что');
 
-    test("Full storage bloc test", () async {
-      final _testController = StreamController<bool>();
-      int counterStates = 0;
+          bloc
+            ..add(LoadStorageEvent(MeasureViewModel, measureId: null))
+            ..add(FilterStorageEvent(MeasureViewModel, filter))
+            ..add(CancelFilterEvent(MeasureViewModel))
+            ..add(DeleteStorageEvent(<BaseStopwatchEntity>[]));
+        },
+        expect: () => [
+              isA<AvailableListState>(),
+              isA<LoadingStorageState>(),
+              isA<AvailableListState>(),
+              isA<AvailableListState>(),
+              isA<LoadingStorageState>(),
+              isA<AvailableListState>(),
+            ]);
 
-      storageBloc.stream.listen((state) async {
-        debugPrint("Listened: " + state.toString());
-        final availableState = (state is AvailableListState) ? state : null;
+    // test("Full storage bloc test", () async {
+    //   final _testController = StreamController<bool>();
+    //   int counterStates = 0;
 
-        /**
-         * Listened: LoadingStorageState
-            Current state LoadingStorageState Bloc event: LoadStorageEvent
-            Listened: AvailableListState
-            Current state AvailableListState Bloc event: FilterStorageEvent
-            Listened: LoadingStorageState
-            Listened: AvailableListState
-            Current state AvailableListState Bloc event: CancelFilterEvent
-            Listened: AvailableListState
-            Current state AvailableListState Bloc event: DeleteStorageEvent
-            Listened: LoadingStorageState
-            Listened: AvailableListState
-         */
+    //   storageBloc.stream.listen((state) async {
+    //     debugPrint("Listened: " + state.toString());
+    //     final availableState = (state is AvailableListState) ? state : null;
 
-        switch (counterStates) {
-          case 1:
-            // Проверить, что в сотоянии есть загруженные элементы
-            final existsElements =
-                availableState!.entities.any((element) => true);
-            expect(existsElements, true,
-                reason: "В сотоянии нет загруженных элементов");
-            break;
-          case 3:
-            // Проверить, что отфильтровано (перед этим задать фильтр)
-            final filteredEntities = availableState!.entities
-                .where((element) => element.comment!.contains("сто"));
-            final onlyFilteredExists =
-                filteredEntities.length == availableState.entities.length;
-            expect(onlyFilteredExists, true,
-                reason: "Неверное количество отфильтрованных элементов");
+    //     /**
+    //      * Listened: LoadingStorageState
+    //         Current state LoadingStorageState Bloc event: LoadStorageEvent
+    //         Listened: AvailableListState
+    //         Current state AvailableListState Bloc event: FilterStorageEvent
+    //         Listened: LoadingStorageState
+    //         Listened: AvailableListState
+    //         Current state AvailableListState Bloc event: CancelFilterEvent
+    //         Listened: AvailableListState
+    //         Current state AvailableListState Bloc event: DeleteStorageEvent
+    //         Listened: LoadingStorageState
+    //         Listened: AvailableListState
+    //      */
 
-            final stateIsFiltered = availableState.filtered;
-            expect(stateIsFiltered, true, reason: 'Флаг не выставился!');
+    //     switch (counterStates) {
+    //       case 1:
+    //         // Проверить, что в сотоянии есть загруженные элементы
+    //         final existsElements =
+    //             availableState!.entities.any((element) => true);
+    //         expect(existsElements, true,
+    //             reason: "В сотоянии нет загруженных элементов");
+    //         break;
+    //       case 3:
+    //         // Проверить, что отфильтровано (перед этим задать фильтр)
+    //         final filteredEntities = availableState!.entities
+    //             .where((element) => element.comment!.contains("сто"));
+    //         final onlyFilteredExists =
+    //             filteredEntities.length == availableState.entities.length;
+    //         expect(onlyFilteredExists, true,
+    //             reason: "Неверное количество отфильтрованных элементов");
 
-            break;
-          case 6:
-            // Проверить, что есть загруженные элементы
-            final existsElements =
-                availableState!.entities.any((element) => true);
-            expect(existsElements, true,
-                reason: "После удаления нет загруженных элементов!");
-        }
+    //         final stateIsFiltered = availableState.filtered;
+    //         expect(stateIsFiltered, true, reason: 'Флаг не выставился!');
 
-        if (counterStates == 6) {
-          _testController.add(true);
-          _testController.close();
-        }
+    //         break;
+    //       case 6:
+    //         // Проверить, что есть загруженные элементы
+    //         final existsElements =
+    //             availableState!.entities.any((element) => true);
+    //         expect(existsElements, true,
+    //             reason: "После удаления нет загруженных элементов!");
+    //     }
 
-        counterStates++;
-      });
+    //     if (counterStates == 6) {
+    //       _testController.add(true);
+    //       _testController.close();
+    //     }
 
-      storageBloc.add(LoadStorageEvent(MeasureViewModel, measureId: null));
+    //     counterStates++;
+    //   });
 
-      Filter filter = Filter.defaultFilter().copyWith(query: 'что');
-      storageBloc.add(FilterStorageEvent(MeasureViewModel, filter));
+    //   storageBloc.add(LoadStorageEvent(MeasureViewModel, measureId: null));
 
-      storageBloc.add(CancelFilterEvent(MeasureViewModel));
-      storageBloc.add(DeleteStorageEvent(<BaseStopwatchEntity>[]));
+    //   Filter filter = Filter.defaultFilter().copyWith(query: 'что');
+    //   storageBloc.add(FilterStorageEvent(MeasureViewModel, filter));
 
-      expectLater(_testController.stream, emits(true));
-    });
+    //   storageBloc.add(CancelFilterEvent(MeasureViewModel));
+    //   storageBloc.add(DeleteStorageEvent(<BaseStopwatchEntity>[]));
+
+    //   expectLater(_testController.stream, emits(true));
+    // });
 
     blocTest<StorageBloc, StorageState>(
       'States flow',
