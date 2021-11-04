@@ -129,8 +129,8 @@ class FilterFormState extends State<FilterForm> {
                       format: dateFormat,
                       onSaved: (dt) {
                         setState(() {
-                          changedFilter =
-                              changedFilter.copyWithNullable(dateFrom: dt);
+                          changedFilter = changedFilter.copyWithNullable(
+                              dateFrom: dt, dateTo: changedFilter.dateTo);
                         });
                       },
                       validator: (value) {
@@ -159,8 +159,8 @@ class FilterFormState extends State<FilterForm> {
                       format: dateFormat,
                       onSaved: (dt) {
                         setState(() {
-                          changedFilter =
-                              changedFilter.copyWithNullable(dateTo: dt);
+                          changedFilter = changedFilter.copyWithNullable(
+                              dateTo: dt, dateFrom: changedFilter.dateFrom);
                         });
                       },
                       decoration: InputDecoration(

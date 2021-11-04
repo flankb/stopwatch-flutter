@@ -421,7 +421,7 @@ class ListOfMeasures extends StatelessWidget {
           padding: const EdgeInsets.only(top: 6),
           child: ListView.separated(
             physics: ClampingScrollPhysics(),
-            itemCount: availState.entities.length + 1,
+            itemCount: availState.entities.length,
             itemBuilder: (BuildContext context, int index) {
               if (index < availState.entities.length) {
                 BaseStopwatchEntity entity = availState.entities[index];
