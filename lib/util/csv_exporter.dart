@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
@@ -13,7 +13,7 @@ class MeasuresExporter {
   final StopwatchRepository stopwatchRepository;
   final _formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
   MeasuresExporter(this.stopwatchRepository);
-  int lastLApsCount = 0;
+  int lastLapsCount = 0;
 
   Future<String> convertToPlain(List<MeasureViewModel> measures) async {
     StringBuffer plainBody = StringBuffer();
@@ -45,7 +45,7 @@ class MeasuresExporter {
 
       plainBody.writeln("");
 
-      lastLApsCount = laps.length;
+      lastLapsCount = laps.length;
     }));
 
     var plain = plainBody.toString();
@@ -69,7 +69,7 @@ class MeasuresExporter {
       final elapsedTime = element.elapsedTime();
 
       String row =
-          "$formatted\t${elapsedTime[0]},${elapsedTime[1]}\t${element.comment}\t\t\t\t";
+          "$formatted\t${elapsedTime[0]},${elapsedTime[1]}\t${element.comment ?? ''}\t\t\t\t";
       csvBody.writeln(row);
 
       // Загрузить круги для текущего измерения
@@ -81,7 +81,7 @@ class MeasuresExporter {
 
       laps.forEach((lap) {
         String lapRow =
-            "\t\t\t${lap.order}\t${lap.overallTime()},${lap.overallMills()}\t${lap.differenceTime()},${lap.differenceMills()}\t${lap.comment ?? ""}";
+            "\t\t\t${lap.order}\t${lap.overallTime()},${lap.overallMills()}\t${lap.differenceTime()},${lap.differenceMills()}\t${lap.comment ?? ''}";
         //debugPrint("lap: ${lapRow}");
 
         csvBody.writeln(lapRow);

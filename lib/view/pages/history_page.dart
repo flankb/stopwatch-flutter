@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:extended_theme/extended_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,9 +6,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:metro_appbar/metro_appbar.dart';
 import 'package:multiselect_scope/multiselect_scope.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:stopwatch/bloc/storage_bloc/bloc.dart';
-import 'package:stopwatch/constants.dart';
 import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/models/filter.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
