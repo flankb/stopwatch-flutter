@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get_it/get_it.dart';
 import 'package:metro_appbar/metro_appbar.dart';
 import 'package:multiselect_scope/multiselect_scope.dart';
 import 'package:share_plus/share_plus.dart';
@@ -11,12 +10,13 @@ import 'package:stopwatch/bloc/storage_bloc/bloc.dart';
 import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/models/filter.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
-import 'package:stopwatch/service_locator.dart';
+import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 import 'package:stopwatch/theme_data.dart';
 import 'package:stopwatch/util/csv_exporter.dart';
 import 'package:stopwatch/util/time_displayer.dart';
 import 'package:stopwatch/view/dialogs/filter_dialog.dart';
 import 'package:stopwatch/widgets/circular.dart';
+import 'package:stopwatch/widgets/inherited/storage_blocs_provider.dart';
 import 'package:stopwatch/widgets/pair_label_view.dart';
 import 'package:stopwatch/widgets/stopwatch_item_widget.dart';
 import 'entity_edit_page.dart';
@@ -54,9 +54,11 @@ class _HistoryPageState extends State<HistoryPage>
     animation = Tween<double>(begin: 0.5, end: 1.0).animate(
         animationController); //ColorTween(begin: beginColor, end: endColor).animate(controller);
 
-    _storageBloc = GetIt.I.get<StorageBloc>(
-        instanceName:
-            widget.pageType == MeasureViewModel ? MeasuresBloc : LapsBloc);
+    final storageBlocsProvider = StorageBlocsProvider.of(context);
+
+    _storageBloc = widget.pageType == MeasureViewModel
+        ? storageBlocsProvider.measuresBloc
+        : storageBlocsProvider.lapsBloc;
 
     animationController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -331,7 +333,8 @@ class _HistoryPageState extends State<HistoryPage>
                 .entities;
       }
 
-      final exporter = GetIt.I.get<MeasuresExporter>();
+      final exporter =
+          MeasuresExporter(RepositoryProvider.of<StopwatchRepository>(context));
       final entities =
           entitiesToExport.map((e) => e as MeasureViewModel).toList();
 
@@ -345,7 +348,7 @@ class _HistoryPageState extends State<HistoryPage>
           await _share(csv);
           break;
         case ShareMode.File:
-          await GetIt.I.get<MeasuresExporter>().shareFile(csv);
+          await exporter.shareFile(csv);
           break;
       }
     };

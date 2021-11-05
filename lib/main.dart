@@ -4,12 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:get_it/get_it.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:stopwatch/bloc/measure_bloc/bloc.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
-import 'package:stopwatch/service_locator.dart';
 import 'package:stopwatch/view/pages/about_page.dart';
 import 'package:stopwatch/view/pages/settings_page.dart';
 import 'package:stopwatch/widgets/circular.dart';
@@ -22,12 +20,15 @@ import 'package:flutter/foundation.dart';
 import 'package:soundpool/soundpool.dart';
 import 'package:tuple/tuple.dart';
 
+import 'bloc/storage_bloc/bloc.dart';
 import 'constants.dart';
 import 'models/stopwatch_status.dart';
 import 'generated/l10n.dart';
 import 'theme_data.dart';
 import 'util/pref_service.dart';
+import 'util/ticker.dart';
 import 'widgets/inherited/sound_widget.dart';
+import 'widgets/inherited/storage_blocs_provider.dart';
 
 // Рефакторинг
 // https://iirokrankka.com/2018/12/11/splitting-widgets-to-methods-performance-antipattern/
@@ -64,9 +65,9 @@ void main() async {
   // Здесь прочитать какая тема (перед инициализацией приложения)
   final initialTheme = readLastTheme();
 
-  setupLocators();
+  //setupLocators();
 
-  getIt.get<StopwatchRepository>().watchFinishedMeasures(MAX_FREE_MEASURES);
+  //getIt.get<StopwatchRepository>().watchFinishedMeasures(MAX_FREE_MEASURES);
 
   runApp(MyApp(
     initialThemeId: initialTheme,
@@ -79,13 +80,38 @@ void main() async {
 // https://pub.dev/packages/theme_provider
 // https://pub.dev/packages/dynamic_theme
 // https://api.flutter.dev/flutter/widgets/InheritedModel-class.html
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final String initialThemeId;
   //final ThemeController<AppTheme> themeController;
 
   const MyApp({Key? key, required this.initialThemeId}) : super(key: key);
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late StorageBloc measuresBloc;
+  late StorageBloc lapsBloc;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final repository = StopwatchRepository();
+
+    measuresBloc = StorageBloc(repository);
+    lapsBloc = StorageBloc(repository);
+  }
+
+  @override
+  void dispose() {
+    measuresBloc.close();
+    lapsBloc.close();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     //debugPrint("themeController.themeData " + themeController.theme.toString());
@@ -93,23 +119,43 @@ class MyApp extends StatelessWidget {
     //final textTheme = Theme.of(context).textTheme;
 
     return ThemeScope<AppTheme>(
-        themeId: initialThemeId,
+        themeId: widget.initialThemeId,
         availableThemes: appThemeData,
         themeBuilder: (context, appTheme) {
-          return MaterialApp(
-              onGenerateTitle: (BuildContext context) =>
-                  S.of(context).app_title,
-              theme: appTheme.material,
-              localizationsDelegates: [
-                S.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
+          return RepositoryProvider(
+            create: (context) => StopwatchRepository(),
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  // TODO Под вопросом!!!
+                  create: (context) => MeasureBloc(Ticker3(),
+                      RepositoryProvider.of<StopwatchRepository>(context)),
+                ),
+                // BlocProvider(
+                //   create: (context) => StorageBloc(
+                //       RepositoryProvider.of<StopwatchRepository>(context)),
+                // ),
               ],
-              supportedLocales: S.delegate.supportedLocales,
-              home:
-                  MyTabPageStateful() //MyHomePage(title: 'Flutter Demo Home Page'),
-              );
+              child: StorageBlocsProvider(
+                measuresBloc: measuresBloc,
+                lapsBloc: lapsBloc,
+                child: MaterialApp(
+                    onGenerateTitle: (BuildContext context) =>
+                        S.of(context).app_title,
+                    theme: appTheme.material,
+                    localizationsDelegates: [
+                      S.delegate,
+                      GlobalMaterialLocalizations.delegate,
+                      GlobalWidgetsLocalizations.delegate,
+                      GlobalCupertinoLocalizations.delegate,
+                    ],
+                    supportedLocales: S.delegate.supportedLocales,
+                    home:
+                        MyTabPageStateful() //MyHomePage(title: 'Flutter Demo Home Page'),
+                    ),
+              ),
+            ),
+          );
         });
   }
 }
@@ -255,7 +301,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
   _init() {
     captionModel = CaptionModel();
 
-    measureBloc = GetIt.I.get<MeasureBloc>();
+    measureBloc = context.read<MeasureBloc>();
     measureBloc.add(MeasureOpenedEvent());
 
     _soundsLoader = _loadSounds();

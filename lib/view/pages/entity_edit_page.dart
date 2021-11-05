@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 import 'package:stopwatch/bloc/entity_bloc/bloc.dart';
 import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
+import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 
 class EntityEditPage extends StatelessWidget {
   final Type entityType;
@@ -67,7 +67,9 @@ class EditFormState extends State<EditForm> {
   }
 
   _init() {
-    entityBloc = GetIt.I.get<EntityBloc>();
+    entityBloc = EntityBloc(
+        StopwatchRepository()); // TODO Перенести функционал в StorageBloc!
+    //GetIt.I.get<EntityBloc>();
     entityBloc.add(OpenEntityEvent(widget.entity));
 
     textController = new TextEditingController(text: widget.entity.comment);
