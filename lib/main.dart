@@ -20,6 +20,7 @@ import 'package:flutter/foundation.dart';
 import 'package:soundpool/soundpool.dart';
 import 'package:tuple/tuple.dart';
 
+import 'bloc/entity_bloc/bloc.dart';
 import 'bloc/storage_bloc/bloc.dart';
 import 'constants.dart';
 import 'models/stopwatch_status.dart';
@@ -100,8 +101,8 @@ class _MyAppState extends State<MyApp> {
 
     final repository = StopwatchRepository();
 
-    measuresBloc = StorageBloc(repository);
-    lapsBloc = StorageBloc(repository);
+    measuresBloc = StorageBloc(repository, EntityBloc(repository));
+    lapsBloc = StorageBloc(repository, EntityBloc(repository));
   }
 
   @override

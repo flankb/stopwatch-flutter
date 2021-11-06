@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
+import 'package:stopwatch/bloc/entity_bloc/bloc.dart';
+import 'package:stopwatch/models/filter.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 import 'package:stopwatch/models/stopwatch_status.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
@@ -8,8 +10,18 @@ import './bloc.dart';
 
 class StorageBloc extends Bloc<StorageEvent, StorageState> {
   final StopwatchRepository stopwatchRepository;
+  // Компонент редактирования сущности
+  final EntityBloc entityBloc;
 
-  StorageBloc(this.stopwatchRepository) : super(LoadingStorageState());
+  StorageBloc(this.stopwatchRepository, this.entityBloc)
+      : super(LoadingStorageState()) {
+    entityBloc.stream.listen((entityState) => {
+          // Обновим сущность в списках
+          if (entityState is AvailableEntityState &&
+              state is AvailableListState)
+            {add(ApplyChangesEvent((entityState).entity))}
+        });
+  }
 
   @override
   Stream<StorageState> mapEventToState(
@@ -28,7 +40,7 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
         final resultList =
             measures.map((m) => MeasureViewModel.fromEntity(m)).toList();
 
-        yield AvailableListState(resultList, resultList, null);
+        yield AvailableListState(resultList, resultList, Filter.empty());
       } else if (openStorageEvent.entityType == LapViewModel) {
         final laps = (await stopwatchRepository
                 .getLapsByMeasureAsync(openStorageEvent.measureId!))
@@ -37,7 +49,7 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
 
         //await Future.delayed(Duration(milliseconds: 1000));
 
-        yield AvailableListState(laps, laps, null);
+        yield AvailableListState(laps, laps, Filter.empty());
       }
     } else if (event is ClearStorageEvent) {
       // Здесь при необходимости можно удалять элементы из списка
@@ -68,8 +80,8 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
               .toList();
         }
 
-        yield AvailableListState(
-            result.map((e) => e).toList(), availState.allEntities, event.filter,
+        yield AvailableListState(result.map((e) => e).toList(),
+            availState.allEntities, event.filter ?? Filter.empty(),
             filtered: true);
       } else {
         throw Exception("Wrong state for filtering!");
@@ -107,6 +119,22 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
             filtered: availState.filtered);
       } else {
         throw Exception("Wrong state!");
+      }
+    } else if (event is ApplyChangesEvent) {
+      if (state is AvailableListState) {
+        final availState = state as AvailableListState;
+
+        List<BaseStopwatchEntity> updateEntities(
+            List<BaseStopwatchEntity> entities) {
+          final entityIndex =
+              entities.indexWhere((element) => element.id == event.entity.id);
+
+          return List.from(entities)..[entityIndex] = event.entity;
+        }
+
+        yield availState.copyWith(
+            entities: updateEntities(availState.entities),
+            allEntities: updateEntities(availState.allEntities));
       }
     }
   }

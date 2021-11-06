@@ -42,6 +42,4 @@ class EntityBloc extends Bloc<EntityEvent, EntityState> {
       yield AvailableEntityState(entityViewModel);
     }
   }
-
-  void dispose() {}
 }

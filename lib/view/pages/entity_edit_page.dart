@@ -4,8 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stopwatch/bloc/entity_bloc/bloc.dart';
 import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
-import 'package:stopwatch/resources/stopwatch_db_repository.dart';
+import 'package:stopwatch/widgets/inherited/storage_blocs_provider.dart';
 
+/// Виджет ркдактирования измерения или круга
 class EntityEditPage extends StatelessWidget {
   final Type entityType;
   final int entityId;
@@ -21,35 +22,27 @@ class EntityEditPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SafeArea(
-            child: EditForm(
-      entity: entity,
-    )));
+        body:
+            SafeArea(child: _EditForm(entity: entity, entityType: entityType)));
   }
 }
 
 // Define a custom Form widget.
-class EditForm extends StatefulWidget {
+class _EditForm extends StatefulWidget {
   final BaseStopwatchEntity entity;
+  final Type entityType;
 
-  const EditForm({Key? key, required this.entity}) : super(key: key);
+  const _EditForm({Key? key, required this.entity, required this.entityType})
+      : super(key: key);
 
   @override
-  EditFormState createState() {
-    return EditFormState();
+  _EditFormState createState() {
+    return _EditFormState();
   }
 }
 
-// Define a corresponding State class.
-// This class holds data related to the form.
-class EditFormState extends State<EditForm> {
-  // Create a global key that uniquely identifies the Form widget
-  // and allows validation of the form.
-  //
-  // Note: This is a `GlobalKey<FormState>`,
-  // not a GlobalKey<MyCustomFormState>.
-  final _formKey =
-      GlobalKey<FormState>(); // TODO У формы обязательно должен быть ключ!!!
+class _EditFormState extends State<_EditForm> {
+  final _formKey = GlobalKey<FormState>();
 
   late EntityBloc entityBloc;
   late TextEditingController textController;
@@ -57,7 +50,6 @@ class EditFormState extends State<EditForm> {
   @override
   void dispose() {
     super.dispose();
-    entityBloc.dispose();
   }
 
   @override
@@ -67,9 +59,11 @@ class EditFormState extends State<EditForm> {
   }
 
   _init() {
-    entityBloc = EntityBloc(
-        StopwatchRepository()); // TODO Перенести функционал в StorageBloc!
-    //GetIt.I.get<EntityBloc>();
+    final storageBloc = widget.entityType == MeasureViewModel
+        ? StorageBlocsProvider.of(context).measuresBloc
+        : StorageBlocsProvider.of(context).lapsBloc;
+
+    entityBloc = storageBloc.entityBloc;
     entityBloc.add(OpenEntityEvent(widget.entity));
 
     textController = new TextEditingController(text: widget.entity.comment);
@@ -77,7 +71,6 @@ class EditFormState extends State<EditForm> {
 
   @override
   Widget build(BuildContext context) {
-    // Build a Form widget using the _formKey created above.
     return Column(
       children: <Widget>[
         Row(

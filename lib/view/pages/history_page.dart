@@ -246,6 +246,8 @@ class _HistoryPageState extends State<HistoryPage>
                                               final entityToEdit =
                                                   _selectedEntities.single;
 
+                                              _unselectItems(context);
+
                                               await Navigator.push(context,
                                                   MaterialPageRoute(builder:
                                                       (BuildContext context) {
@@ -255,8 +257,6 @@ class _HistoryPageState extends State<HistoryPage>
                                                   entity: entityToEdit,
                                                 );
                                               }));
-
-                                              _unselectItems(context);
                                             },
                                             icon: Icons.edit,
                                             text: S.of(context).edit_app_bar,
@@ -518,16 +518,15 @@ class FilterButtons extends StatelessWidget {
                 height: 62,
                 child: RawMaterialButton(
                   onPressed: () async {
-                    //getIt.get<PurchaserBloc>().queryPurchases(filterIds : {PRO_PACKAGE});
-
                     debugPrint(
                         "Last filter in history page ${availState.lastFilter}");
                     final result = await showDialog(
                         context: context,
                         builder: (context) => FilterDialog(
                               entityType: pageType,
-                              filter: availState.lastFilter ??
-                                  Filter.defaultFilter(),
+                              filter: availState.lastFilter == Filter.empty()
+                                  ? Filter.defaultFilter()
+                                  : availState.lastFilter,
                             ));
 
                     if (result != null) {

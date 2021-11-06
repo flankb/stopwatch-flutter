@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:stopwatch/bloc/entity_bloc/bloc.dart';
 import 'package:stopwatch/bloc/measure_bloc/measure_event.dart';
 import 'package:stopwatch/bloc/storage_bloc/bloc.dart';
 import 'package:stopwatch/models/filter.dart';
@@ -25,7 +26,7 @@ void main() {
 
     setUp(() {
       repository = StopwatchFakeRepository(preBuild: true);
-      storageBloc = StorageBloc(repository);
+      storageBloc = StorageBloc(repository, EntityBloc(repository));
     });
 
     tearDown(() {

@@ -7,10 +7,15 @@ class Filter extends Equatable {
   final String query;
 
   Filter(this.query, {this.dateFrom, this.dateTo});
+
   factory Filter.defaultFilter() {
-    return Filter("",
+    return Filter('',
         dateFrom: DateTime.now().subtract(Duration(days: 30)),
         dateTo: DateTime.now());
+  }
+
+  factory Filter.empty() {
+    return Filter('', dateFrom: null, dateTo: null);
   }
 
   @override

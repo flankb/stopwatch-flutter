@@ -63,6 +63,7 @@ dependencies:
   multiselect_scope: ^0.2.0
   extended_theme: ^0.2.0
   metro_appbar: ^0.2.0
+  collection: ^1.15.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
