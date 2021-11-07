@@ -4,12 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:launch_review/launch_review.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:stopwatch/bloc/measure_bloc/bloc.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
-import 'package:stopwatch/view/pages/about_page.dart';
-import 'package:stopwatch/view/pages/settings_page.dart';
 import 'package:stopwatch/widgets/circular.dart';
 import 'package:stopwatch/widgets/stopwatch_body.dart';
 import 'package:rate_my_app/rate_my_app.dart';
@@ -238,35 +234,35 @@ class _MyTabPageState extends State<MyTabPageStateful>
     );
   }
 
-  void _select(Choice choice) {
-    // Раскомментировать для вызова экрана с отзывом
-    switch (choice.settingsType) {
-      case SettingsType.Review:
-        LaunchReview.launch(
-          androidAppId: "com.garnetjuice.stopwatch",
-          iOSAppId: "585027354",
-        );
-        break;
+  // void _select(Choice choice) {
+  //   // Раскомментировать для вызова экрана с отзывом
+  //   switch (choice.settingsType) {
+  //     case SettingsType.Review:
+  //       LaunchReview.launch(
+  //         androidAppId: "com.garnetjuice.stopwatch",
+  //         iOSAppId: "585027354",
+  //       );
+  //       break;
 
-      case SettingsType.Settings:
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SettingsPage()));
-        break;
+  //     case SettingsType.Settings:
+  //       Navigator.push(
+  //           context, MaterialPageRoute(builder: (context) => SettingsPage()));
+  //       break;
 
-      case SettingsType.About:
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => AboutPage()));
-        break;
+  //     case SettingsType.About:
+  //       Navigator.push(
+  //           context, MaterialPageRoute(builder: (context) => AboutPage()));
+  //       break;
 
-      default:
-        break;
-    }
-    // Causes the app to rebuild with the new _selectedChoice.
-  }
+  //     default:
+  //       break;
+  //   }
+  //   // Causes the app to rebuild with the new _selectedChoice.
+  // }
 
   late CaptionModel captionModel;
 
-  late ItemScrollController _categoryScrollController;
+  //late ItemScrollController _categoryScrollController;
   bool categoryInited = false;
 
   //int _selectedIndex = 0;
@@ -285,7 +281,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
 
     WidgetsBinding.instance?.addObserver(this);
 
-    _categoryScrollController = ItemScrollController();
+    //_categoryScrollController = ItemScrollController();
 
     _init();
     debugPrint('Main initState');
