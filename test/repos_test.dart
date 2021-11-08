@@ -76,15 +76,5 @@ void main() {
           true,
           reason: "Не удалились сущности");
     });
-
-    /*test("WordCategoryRepository test", () async {
-      final categories = await _categoryRepository.getCategoriesAsync();
-      expect(categories.length, greaterThan(0));
-    });
-
-    test("DictParserRepository test", () async {
-      final words = await _wordRepository.getWords();
-      expect(words.length, greaterThan(0));
-    });*/
   });
 }
