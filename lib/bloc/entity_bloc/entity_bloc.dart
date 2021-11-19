@@ -15,13 +15,13 @@ class EntityBloc extends Bloc<EntityEvent, EntityState> {
     EntityEvent event,
   ) async* {
     debugPrint(
-        "Current state ${state.toString()} Bloc event: ${event.toString()}");
+        'Current state ${state.toString()}, Bloc event: ${event.toString()}');
 
     if (event is OpenEntityEvent) {
       yield AvailableEntityState(event.entity);
     } else if (event is SaveEntityEvent) {
       yield LoadingEntityState();
-      var entityViewModel;
+      BaseStopwatchEntity entityViewModel;
 
       if (event.entity is LapViewModel) {
         entityViewModel =

@@ -9,17 +9,17 @@ abstract class EntityState extends Equatable {
 }
 
 class InitialEntityState extends EntityState {
-  InitialEntityState() : super();
+  const InitialEntityState() : super();
 }
 
 class LoadingEntityState extends InitialEntityState {
-  LoadingEntityState() : super();
+  const LoadingEntityState() : super();
 }
 
 class AvailableEntityState extends InitialEntityState {
   final BaseStopwatchEntity entity;
 
-  AvailableEntityState(this.entity) : super();
+  const AvailableEntityState(this.entity) : super();
 
   @override
   List<Object?> get props => super.props..addAll([entity]);

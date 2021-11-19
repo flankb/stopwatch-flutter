@@ -59,6 +59,7 @@ class _EditFormState extends State<_EditForm> {
   }
 
   _init() {
+    // TODO Убрать отсюда в didChangeDependencies! А лучше в BlocProvider
     final storageBloc = widget.entityType == MeasureViewModel
         ? StorageBlocsProvider.of(context).measuresBloc
         : StorageBlocsProvider.of(context).lapsBloc;

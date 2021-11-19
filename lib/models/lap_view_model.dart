@@ -13,55 +13,47 @@ class LapViewModel extends BaseStopwatchEntity {
   final int difference;
   final int overall;
 
-  String differenceTime() {
-    return TimeDisplayer.formatBase(Duration(milliseconds: difference));
-  }
+  String differenceTime() =>
+      TimeDisplayer.formatBase(Duration(milliseconds: difference));
 
-  String overallTime() {
-    return TimeDisplayer.formatBase(Duration(milliseconds: overall));
-  }
+  String overallTime() =>
+      TimeDisplayer.formatBase(Duration(milliseconds: overall));
 
-  String differenceMills() {
-    return TimeDisplayer.formatMills(Duration(milliseconds: difference));
-  }
+  String differenceMills() =>
+      TimeDisplayer.formatMills(Duration(milliseconds: difference));
 
-  String overallMills() {
-    return TimeDisplayer.formatMills(Duration(milliseconds: overall));
-  }
+  String overallMills() =>
+      TimeDisplayer.formatMills(Duration(milliseconds: overall));
 
-  LapViewModel(
-      {int? id,
-      String? comment,
-      required this.measureId,
-      required this.order,
-      this.difference = 0,
-      this.overall = 0})
-      : super(id: id, comment: comment);
+  LapViewModel({
+    required this.measureId,
+    required this.order,
+    int? id,
+    String? comment,
+    this.difference = 0,
+    this.overall = 0,
+  }) : super(id: id, comment: comment);
 
-  LapsCompanion toEntity() {
-    return LapsCompanion(
-        id: id != null ? Value(id!) : Value.absent(),
-        measureId: Value(measureId),
-        order: Value(order),
-        difference: Value(difference),
-        comment: Value(comment),
-        overall: Value(overall));
-  }
+  LapsCompanion toEntity<Lap>() => LapsCompanion(
+      id: id != null ? Value(id!) : const Value.absent(),
+      measureId: Value(measureId),
+      order: Value(order),
+      difference: Value(difference),
+      comment: Value(comment),
+      overall: Value(overall));
 
-  static LapViewModel fromEntity(Lap entity) {
-    return LapViewModel(
+  factory LapViewModel.fromEntity(Lap entity) => LapViewModel(
         id: entity.id,
         measureId: entity.measureId,
         order: entity.order,
         difference: entity.difference,
         comment: entity.comment,
-        overall: entity.overall);
-  }
+        overall: entity.overall,
+      );
 
   @override
-  String toString() {
-    return 'LapViewModel{order: $order, difference: $difference, overall: $overall, comment: $comment}';
-  }
+  String toString() =>
+      'LapViewModel{order: $order, difference: $difference, overall: $overall, comment: $comment}';
 
   @override
   List<Object?> get props =>
@@ -74,14 +66,13 @@ class LapViewModel extends BaseStopwatchEntity {
     int? order,
     int? difference,
     int? overall,
-  }) {
-    return LapViewModel(
-      id: id ?? this.id,
-      comment: comment ?? this.comment,
-      measureId: measureId ?? this.measureId,
-      order: order ?? this.order,
-      difference: difference ?? this.difference,
-      overall: overall ?? this.overall,
-    );
-  }
+  }) =>
+      LapViewModel(
+        id: id ?? this.id,
+        comment: comment ?? this.comment,
+        measureId: measureId ?? this.measureId,
+        order: order ?? this.order,
+        difference: difference ?? this.difference,
+        overall: overall ?? this.overall,
+      );
 }

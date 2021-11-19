@@ -1,8 +1,8 @@
+import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/models/stopwatch_status.dart';
 import 'package:stopwatch/resources/base/base_stopwatch_db_repository.dart';
-import 'package:drift/drift.dart';
 
 part 'stopwatch_db_repository.g.dart';
 
@@ -20,8 +20,8 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase>
 
   late Stream<List<Measure>> watcher;
 
-  watchFinishedMeasures(int limit) {
-    var statement = (select(measures)
+  void watchFinishedMeasures(int limit) {
+    final statement = (select(measures)
       ..where((m) => m.status.equals(describeEnum(StopwatchStatus.Finished)))
       ..limit(limit));
     watcher = statement.watch();
@@ -32,6 +32,7 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase>
     });
   }
 
+  @override
   Future<List<Measure>> getMeasuresByStatusAsync(String status, {int? limit}) {
     var statement = (select(measures)
       ..where((m) => m.status.equals(status))
@@ -45,68 +46,49 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase>
     return statement.get();
   }
 
-  Future<Measure> getMeasuresByIdAsync(int id) {
-    return (select(measures)..where((m) => m.id.equals(id))).getSingle();
-  }
+  @override
+  Future<Measure> getMeasuresByIdAsync(int id) =>
+      (select(measures)..where((m) => m.id.equals(id))).getSingle();
 
-  // returns the generated id
+  @override
   Future<int> createNewMeasureAsync() {
     final measureInsert = MeasuresCompanion.insert(
-        elapsed: const Value(0),
-        dateStarted: const Value(null),
-        status: describeEnum(StopwatchStatus.Ready));
-
-    // Measure measure = Measure(
-    //     id: null,
-    //     elapsed: 0,
-    //     dateStarted: null, //DateTime.now(),
-    //     status: describeEnum(StopwatchStatus.Ready));
+      elapsed: const Value(0),
+      dateStarted: const Value(null),
+      status: describeEnum(StopwatchStatus.Ready),
+    );
 
     return into(measures).insert(measureInsert);
   }
 
-  Future<int> addNewLapAsync(Insertable<Lap> lap) {
-    return into(laps).insert(lap);
-  }
+  @override
+  Future<int> addNewLapAsync(Insertable<Lap> lap) => into(laps).insert(lap);
 
-  Future<int> addNewMeasureSession(Insertable<MeasureSession> measureSession) {
-    return into(measureSessions).insert(measureSession);
-  }
+  @override
+  Future<int> addNewMeasureSession(Insertable<MeasureSession> measureSession) =>
+      into(measureSessions).insert(measureSession);
 
-  Future<List<MeasureSession>> getMeasureSessions(int measureId) {
-    return (select(measureSessions)
-          ..where((m) => m.measureId.equals(measureId)))
-        .get();
-  }
+  @override
+  Future<List<MeasureSession>> getMeasureSessions(int measureId) =>
+      (select(measureSessions)..where((m) => m.measureId.equals(measureId)))
+          .get();
 
-  Future updateMeasureAsync(Insertable<Measure> measure) {
-    //into(measures).insert(measure).
+  @override
+  Future updateMeasureAsync(Insertable<Measure> measure) =>
+      update(measures).replace(measure);
 
-    // using replace will update all fields from the entry that are not marked as a primary key.
-    // it will also make sure that only the entry with the same primary key will be updated.
-    // Here, this means that the row that has the same id as entry will be updated to reflect
-    // the entry's title, content and category. As it set's its where clause automatically, it
-    // can not be used together with where.
-    return update(measures)
-        .replace(measure); //TODO Возможно заменить на insert.replace!
-  }
-
+  @override
   Future<bool> updateMeasureSession(
       Insertable<MeasureSession> measureSession) async {
     debugPrint(
-        "updateMeasureSessionAsync measureSession ${measureSession.toString()}");
+      'updateMeasureSessionAsync measureSession ${measureSession.toString()}',
+    );
 
     return update(measureSessions).replace(measureSession);
   }
 
-  Future updateLapAsync(Insertable<Lap> lap) {
-    // using replace will update all fields from the entry that are not marked as a primary key.
-    // it will also make sure that only the entry with the same primary key will be updated.
-    // Here, this means that the row that has the same id as entry will be updated to reflect
-    // the entry's title, content and category. As it set's its where clause automatically, it
-    // can not be used together with where.
-    return update(laps).replace(lap);
-  }
+  @override
+  Future updateLapAsync(Insertable<Lap> lap) => update(laps).replace(lap);
 
   Future<List<Lap>> getLapsByMeasureAsync(int measureId) {
     return (select(laps)..where((l) => l.measureId.equals(measureId))).get();

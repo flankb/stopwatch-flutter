@@ -15,11 +15,13 @@ class TimeDisplayer {
   }
 
   // Сотые секунды
-  static formatMills(Duration d) => d.toString().split('.')[1].substring(0, 2);
+  static String formatMills(Duration d) =>
+      d.toString().split('.')[1].substring(0, 2);
 
-  static formatAllBeautiful(Duration d) => "${formatBase(d)},${formatMills(d)}";
+  static String formatAllBeautiful(Duration d) =>
+      "${formatBase(d)},${formatMills(d)}";
 
-  static formatAllBeautifulFromMills(int mills) {
+  static String formatAllBeautifulFromMills(int mills) {
     final d = Duration(milliseconds: mills);
     return formatAllBeautiful(d);
   }

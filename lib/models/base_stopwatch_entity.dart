@@ -1,3 +1,4 @@
+//import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
@@ -8,8 +9,8 @@ abstract class BaseStopwatchEntity with EquatableMixin {
 
   BaseStopwatchEntity({this.id, this.comment});
 
+  //UpdateCompanion<T> toEntity<T>();
+
   @override
-  List<Object?> get props {
-    return [id, comment];
-  }
+  List<Object?> get props => [id, comment];
 }

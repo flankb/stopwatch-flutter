@@ -35,7 +35,7 @@ class HistoryPage extends StatefulWidget {
 class _HistoryPageState extends State<HistoryPage>
     with SingleTickerProviderStateMixin {
   late StorageBloc _storageBloc;
-  //StreamController _selectedItemsStreamController;
+  bool loaded = false;
   List<BaseStopwatchEntity> _selectedEntities = <BaseStopwatchEntity>[];
 
   Duration duration = Duration(milliseconds: 800);
@@ -44,29 +44,12 @@ class _HistoryPageState extends State<HistoryPage>
 
   late MultiselectController _multiselectController;
 
-  @override
-  void initState() {
-    super.initState();
-
-    _multiselectController = MultiselectController();
-
-    animationController = AnimationController(duration: duration, vsync: this);
-    animation = Tween<double>(begin: 0.5, end: 1.0).animate(
-        animationController); //ColorTween(begin: beginColor, end: endColor).animate(controller);
-
+  void _initStorage() {
     final storageBlocsProvider = StorageBlocsProvider.of(context);
 
     _storageBloc = widget.pageType == MeasureViewModel
         ? storageBlocsProvider.measuresBloc
         : storageBlocsProvider.lapsBloc;
-
-    animationController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        //animationController.reverse();
-      }
-    });
-
-    animationController.forward();
 
     //_selectedItemsStreamController = StreamController<int>.broadcast();
     // https://github.com/felangel/bloc/issues/74
@@ -98,6 +81,36 @@ class _HistoryPageState extends State<HistoryPage>
     // Сразу же отфильтруем в случае необходимости
     if (wasFiltered) {
       _storageBloc.add(FilterStorageEvent(widget.pageType, previousFilter));
+    }
+
+    loaded = true;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _multiselectController = MultiselectController();
+
+    animationController = AnimationController(duration: duration, vsync: this);
+    animation = Tween<double>(begin: 0.5, end: 1.0).animate(
+        animationController); //ColorTween(begin: beginColor, end: endColor).animate(controller);
+
+    animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        //animationController.reverse();
+      }
+    });
+
+    animationController.forward();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!loaded) {
+      _initStorage();
     }
   }
 

@@ -123,8 +123,8 @@ class MeasureViewModel extends BaseStopwatchEntity {
 
     if (sessions.where((element) => element.finishedOffset == null).length >
         1) {
-      throw new Exception(
-          "Обнаружено более одной измерительной сессии с открытым окончанием!");
+      throw  Exception(
+          'Обнаружено более одной измерительной сессии с открытым окончанием!');
     }
 
     return sessions.lastWhereOrNull((s) => s.finishedOffset == null);
