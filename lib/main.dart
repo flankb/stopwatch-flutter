@@ -164,7 +164,7 @@ class CaptionModel extends Model {
 
   void updateCaption(String caption) {
     _captionValue =
-        caption == '' ? 'ВЕСЬ СЛОВАРЬ' : "#${caption.toUpperCase()}";
+        caption == '' ? 'ВЕСЬ СЛОВАРЬ' : '#${caption.toUpperCase()}';
     notifyListeners();
   }
 
@@ -213,25 +213,21 @@ class _MyTabPageState extends State<MyTabPageStateful>
   void _showDialog(BuildContext context, String message) {
     //await Future.delayed(Duration(seconds: 2));
     // flutter defined function
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: new Text("Alert Dialog title"),
-          content: new Text(message),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            new TextButton(
-              child: new Text("Close"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+    showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              title: const Text('Alert Dialog title'),
+              content: Text(message),
+              actions: <Widget>[
+                // usually buttons at the bottom of the dialog
+                TextButton(
+                  child: const Text('Close'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ));
   }
 
   // void _select(Choice choice) {
@@ -290,12 +286,12 @@ class _MyTabPageState extends State<MyTabPageStateful>
   @override
   void reassemble() {
     super.reassemble();
-    debugPrint('reassemble' + " " + describeEnum(StopwatchStatus.Ready));
+    debugPrint('reassemble ${describeEnum(StopwatchStatus.Ready)}');
 
     _init();
   }
 
-  _init() {
+  void _init() {
     captionModel = CaptionModel();
 
     measureBloc = context.read<MeasureBloc>();
@@ -311,23 +307,17 @@ class _MyTabPageState extends State<MyTabPageStateful>
   Future<Tuple2<Soundpool, List<int>>> _loadSounds() async {
     final pool = Soundpool.fromOptions();
 
-    final soundId1 = await rootBundle
-        .load("assets/sounds/sound1.wav")
-        .then((ByteData soundData) {
-      return pool.load(soundData);
-    });
+    final soundId1 =
+        await rootBundle.load('assets/sounds/sound1.wav').then(pool.load);
 
-    final soundId2 = await rootBundle
-        .load("assets/sounds/sound2.wav")
-        .then((ByteData soundData) {
-      return pool.load(soundData);
-    });
+    final soundId2 =
+        await rootBundle.load('assets/sounds/sound2.wav').then(pool.load);
 
     return Tuple2(pool, [soundId1, soundId2]);
   }
 
   @override
-  void dispose() async {
+  Future<void> dispose() async {
     /*SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
@@ -340,7 +330,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
     super.dispose();
   }
 
-  _showRateDialog(BuildContext context) {
+  void _showRateDialog(BuildContext context) {
     if (rateMyApp.shouldOpenDialog) {
       rateMyApp.showRateDialog(
         context,
@@ -358,13 +348,13 @@ class _MyTabPageState extends State<MyTabPageStateful>
           // The button click listener (useful if you want to cancel the click event).
           switch (button) {
             case RateMyAppDialogButton.rate:
-              print('Clicked on "Rate".');
+              debugPrint('Clicked on "Rate".');
               break;
             case RateMyAppDialogButton.later:
-              print('Clicked on "Later".');
+              debugPrint('Clicked on "Later".');
               break;
             case RateMyAppDialogButton.no:
-              print('Clicked on "No".');
+              debugPrint('Clicked on "No".');
               break;
           }
 
@@ -372,7 +362,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
         },
         // ignoreIOS: false,
         // Set to false if you want to show the native Apple app rating dialog on iOS.
-        dialogStyle: DialogStyle(),
+        dialogStyle: const DialogStyle(),
         // Custom dialog styles.
         onDismissed: () => rateMyApp.callEvent(RateMyAppEventType
             .laterButtonPressed), // Called when the user dismissed the dialog (either by taping outside or by pressing the "back" button).
@@ -393,7 +383,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
     debugPrint('Main page loaded!');
 
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
-      await Future.delayed(Duration(seconds: 2));
+      await Future<void>.delayed(const Duration(seconds: 2));
       _showRateDialog(context);
     });
 
@@ -409,26 +399,27 @@ class _MyTabPageState extends State<MyTabPageStateful>
     // debugPrint("measureBloc == null " + (measureBloc == null).toString());
 
     return Scaffold(
-        body: BlocProvider(
-            create: (BuildContext context) => measureBloc,
-            child: FutureBuilder<Tuple2<Soundpool, List<int>>>(
-                future: _soundsLoader,
-                builder: (context, snapshot) {
-                  return snapshot.hasData
-                      ? SoundWidget(
-                          soundPool: snapshot.data!.item1,
-                          sounds: snapshot.data!.item2,
-                          child: StopwatchBody(
-                            measureBloc: measureBloc,
-                          ),
-                        )
-                      : CenterCircularWidget();
-                })));
+      body: BlocProvider(
+        create: (BuildContext context) => measureBloc,
+        child: FutureBuilder<Tuple2<Soundpool, List<int>>>(
+          future: _soundsLoader,
+          builder: (context, snapshot) => snapshot.hasData
+              ? SoundWidget(
+                  soundPool: snapshot.data!.item1,
+                  sounds: snapshot.data!.item2,
+                  child: StopwatchBody(
+                    measureBloc: measureBloc,
+                  ),
+                )
+              : const CenterCircularWidget(),
+        ),
+      ),
+    );
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    debugPrint("AppLifecycleState " + state.toString());
+    debugPrint('AppLifecycleState $state');
     if (state == AppLifecycleState.inactive) {
       // TODO Сохранить сущности в БД
     }
@@ -441,6 +432,6 @@ class _MyTabPageState extends State<MyTabPageStateful>
   @override
   void afterFirstLayout(BuildContext context) {
     // TODO: implement afterFirstLayout
-    debugPrint("afterFirstLayout");
+    debugPrint('afterFirstLayout');
   }
 }
