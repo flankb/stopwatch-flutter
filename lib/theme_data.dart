@@ -13,8 +13,8 @@ const ColorMagenta = const Color(0xffcc0066);
 
 class AppTheme extends ExtendedTheme {
   final Color shadowColor;
-  final buttonPauseColor;
-  final subtitleColor;
+  final Color buttonPauseColor;
+  final Color subtitleColor;
 
   AppTheme(ThemeData materialTheme,
       {this.shadowColor = const Color(0xff3F3C3C),

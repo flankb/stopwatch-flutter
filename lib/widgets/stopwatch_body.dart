@@ -56,13 +56,13 @@ class _StopwatchBodyState extends State<StopwatchBody>
     _enableWakeLock();
   }
 
-  _initVibratorPossibility() async {
+  Future<void> _initVibratorPossibility() async {
     _existsVibrator = (await Vibration.hasVibrator()) ?? false;
   }
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("StopwatchBody build. Mounted is ${mounted.toString()}");
+    debugPrint('StopwatchBody build. Mounted is ${mounted.toString()}');
 
     // TODO Здесь можно инициализировать WakeLock
 
@@ -77,9 +77,9 @@ class _StopwatchBodyState extends State<StopwatchBody>
      */
 
     return VisibilityDetector(
-      key: Key('STOPWATCH_VISIBILITY_key'),
+      key: const Key('STOPWATCH_VISIBILITY_key'),
       onVisibilityChanged: (VisibilityInfo info) async {
-        var visiblePercentage = info.visibleFraction * 100;
+        final visiblePercentage = info.visibleFraction * 100;
         debugPrint('Widget ${info.key} is $visiblePercentage% visible');
 
         if (visiblePercentage > 50) {
@@ -134,7 +134,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
                                     textBaseline: TextBaseline.ideographic,
                                     children: <Widget>[
                                       Text(
-                                        "${TimeDisplayer.formatBase(d2)},",
+                                        '${TimeDisplayer.formatBase(d2)},',
                                         key: Key('lap_text'),
                                         style: TextStyle(fontSize: 30),
                                       ),
@@ -150,7 +150,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
                                     textBaseline: TextBaseline.ideographic,
                                     children: <Widget>[
                                       Text(
-                                        "${TimeDisplayer.formatBase(d1)},",
+                                        '${TimeDisplayer.formatBase(d1)},',
                                         key: Key('overall_text'),
                                         style: TextStyle(fontSize: 44),
                                       ),
@@ -192,9 +192,9 @@ class _StopwatchBodyState extends State<StopwatchBody>
                     padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
                     child: MeasureLapItem(
                       difference:
-                          "+${lap.differenceTime()},${lap.differenceMills()}",
+                          '+${lap.differenceTime()},${lap.differenceMills()}',
                       order: lap.order,
-                      overall: "${lap.overallTime()},${lap.overallMills()}",
+                      overall: '${lap.overallTime()},${lap.overallMills()}',
                     ),
                   );
                 },
@@ -350,8 +350,8 @@ class _StopwatchBodyState extends State<StopwatchBody>
                       text: S.of(context).review,
                       onPressed: () {
                         LaunchReview.launch(
-                          androidAppId: "com.garnetjuice.stopwatch",
-                          iOSAppId: "585027354",
+                          androidAppId: 'com.garnetjuice.stopwatch',
+                          iOSAppId: '585027354',
                         );
                       },
                     ),
@@ -381,7 +381,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
     // saveMeasure =
     //     saveMeasure && (proOwned || measureCounts < MAX_FREE_MEASURES);
 
-    debugPrint("_isSaveMeasure $saveMeasure");
+    debugPrint('_isSaveMeasure $saveMeasure');
 
     return saveMeasure;
   }

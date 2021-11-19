@@ -8,37 +8,37 @@ class MeasureLapItem extends StatelessWidget {
   final String difference;
   final String overall;
 
-  const MeasureLapItem(
-      {Key? key,
-      required this.order,
-      required this.difference,
-      required this.overall})
-      : super(key: key);
+  const MeasureLapItem({
+    required this.order,
+    required this.difference,
+    required this.overall,
+    Key? key,
+  }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        SizedBox(
-            width: 36,
-            child: Text(
-              "$order.",
-              style: TextStyle(fontSize: 18),
-            )),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text("$difference", style: TextStyle(fontSize: 18)),
-            Text("$overall",
+  Widget build(BuildContext context) => Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(
+              width: 36,
+              child: Text(
+                '$order.',
+                style: const TextStyle(fontSize: 18),
+              )),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(difference, style: const TextStyle(fontSize: 18)),
+              Text(
+                overall,
                 style: TextStyle(
-                    fontSize: 16,
-                    color:
-                        ThemeHolder.themeOf<AppTheme>(context).subtitleColor))
-          ],
-        )
-      ],
-    );
-  }
+                  fontSize: 16,
+                  color: ThemeHolder.themeOf<AppTheme>(context).subtitleColor,
+                ),
+              )
+            ],
+          )
+        ],
+      );
 }

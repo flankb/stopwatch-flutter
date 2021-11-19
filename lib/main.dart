@@ -1,37 +1,31 @@
+import 'dart:async';
+
 import 'package:after_layout/after_layout.dart';
 import 'package:extended_theme/extended_theme.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:rate_my_app/rate_my_app.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:soundpool/soundpool.dart';
 import 'package:stopwatch/bloc/measure_bloc/bloc.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
 import 'package:stopwatch/widgets/circular.dart';
 import 'package:stopwatch/widgets/stopwatch_body.dart';
-import 'package:rate_my_app/rate_my_app.dart';
-import 'package:scoped_model/scoped_model.dart';
-import 'dart:async';
-
-import 'package:flutter/foundation.dart';
-import 'package:soundpool/soundpool.dart';
 import 'package:tuple/tuple.dart';
 
 import 'bloc/entity_bloc/bloc.dart';
 import 'bloc/storage_bloc/bloc.dart';
 import 'constants.dart';
-import 'models/stopwatch_status.dart';
 import 'generated/l10n.dart';
+import 'models/stopwatch_status.dart';
 import 'theme_data.dart';
 import 'util/pref_service.dart';
 import 'util/ticker.dart';
 import 'widgets/inherited/sound_widget.dart';
 import 'widgets/inherited/storage_blocs_provider.dart';
-
-// Рефакторинг
-// https://iirokrankka.com/2018/12/11/splitting-widgets-to-methods-performance-antipattern/
-
-/// Main Rate my app instance.
-//RateMyApp _rateMyApp = RateMyApp();
 
 RateMyApp rateMyApp = RateMyApp(
   preferencesPrefix: 'rateMyApp_',
@@ -57,31 +51,19 @@ void main() async {
 
   await PrefService.instance.init();
 
-  // https://github.com/Skyost/rate_my_app/blob/master/example/lib/main.dart
   await rateMyApp.init();
   // Здесь прочитать какая тема (перед инициализацией приложения)
   final initialTheme = readLastTheme();
 
-  //setupLocators();
-
-  //getIt.get<StopwatchRepository>().watchFinishedMeasures(MAX_FREE_MEASURES);
-
   runApp(MyApp(
     initialThemeId: initialTheme,
-  ));
+  ),);
 }
 
-// Добавление темной темы во Flutter:
-// https://proandroiddev.com/how-to-dynamically-change-the-theme-in-flutter-698bd022d0f0
-// https://resocoder.com/2019/08/09/switch-themes-with-flutter-bloc-dynamic-theming-tutorial-dark-light-theme/
-// https://pub.dev/packages/theme_provider
-// https://pub.dev/packages/dynamic_theme
-// https://api.flutter.dev/flutter/widgets/InheritedModel-class.html
 class MyApp extends StatefulWidget {
   final String initialThemeId;
-  //final ThemeController<AppTheme> themeController;
 
-  const MyApp({Key? key, required this.initialThemeId}) : super(key: key);
+  const MyApp({required this.initialThemeId, Key? key, }) : super(key: key);
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -118,14 +100,9 @@ class _MyAppState extends State<MyApp> {
           child: MultiBlocProvider(
             providers: [
               BlocProvider(
-                // TODO Под вопросом!!!
                 create: (context) => MeasureBloc(Ticker3(),
                     RepositoryProvider.of<StopwatchRepository>(context),),
               ),
-              // BlocProvider(
-              //   create: (context) => StorageBloc(
-              //       RepositoryProvider.of<StopwatchRepository>(context)),
-              // ),
             ],
             child: StorageBlocsProvider(
               measuresBloc: measuresBloc,
@@ -181,15 +158,12 @@ const List<Choice> choices =  <Choice>[
   Choice(title: 'Поиск', icon: Icons.search),
   Choice(
       title: 'Оценить приложение',
-      //icon: Icons.rate_review,
-      settingsType: SettingsType.Review),
+      settingsType: SettingsType.Review,),
   Choice(
       title: 'Настройки',
-      //icon: Icons.settings,
-      settingsType: SettingsType.Settings),
+      settingsType: SettingsType.Settings,),
   Choice(
       title: 'О программе', icon: Icons.info, settingsType: SettingsType.About),
-  //const Choice(title: 'Walk', icon: Icons.directions_walk),
 ];
 
 class MyTabPageStateful extends StatefulWidget {
@@ -199,13 +173,9 @@ class MyTabPageStateful extends StatefulWidget {
 
 class _MyTabPageState extends State<MyTabPageStateful>
     with
-        //AppReviewer,
-        //AutomaticKeepAliveClientMixin,
         WidgetsBindingObserver,
         AfterLayoutMixin<MyTabPageStateful> {
   void _showDialog(BuildContext context, String message) {
-    //await Future.delayed(Duration(seconds: 2));
-    // flutter defined function
     showDialog<void>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -223,39 +193,9 @@ class _MyTabPageState extends State<MyTabPageStateful>
             ),);
   }
 
-  // void _select(Choice choice) {
-  //   // Раскомментировать для вызова экрана с отзывом
-  //   switch (choice.settingsType) {
-  //     case SettingsType.Review:
-  //       LaunchReview.launch(
-  //         androidAppId: "com.garnetjuice.stopwatch",
-  //         iOSAppId: "585027354",
-  //       );
-  //       break;
-
-  //     case SettingsType.Settings:
-  //       Navigator.push(
-  //           context, MaterialPageRoute(builder: (context) => SettingsPage()));
-  //       break;
-
-  //     case SettingsType.About:
-  //       Navigator.push(
-  //           context, MaterialPageRoute(builder: (context) => AboutPage()));
-  //       break;
-
-  //     default:
-  //       break;
-  //   }
-  //   // Causes the app to rebuild with the new _selectedChoice.
-  // }
-
   late CaptionModel captionModel;
 
-  //late ItemScrollController _categoryScrollController;
   bool categoryInited = false;
-
-  //int _selectedIndex = 0;
-
   late Future<Tuple2<Soundpool, List<int>>> _soundsLoader;
 
   late MeasureBloc measureBloc;
@@ -310,17 +250,11 @@ class _MyTabPageState extends State<MyTabPageStateful>
       rateMyApp.showRateDialog(
         context,
         title: S.of(context).review,
-        // The dialog title.
         message: S.of(context).reviewRequestMessage,
-        // The dialog message.
         rateButton: S.of(context).rate,
-        // The dialog "rate" button text.
         noButton: S.of(context).noThanks,
-        // The dialog "no" button text.
         laterButton: S.of(context).later,
-        // The dialog "later" button text.
         listener: (button) {
-          // The button click listener (useful if you want to cancel the click event).
           switch (button) {
             case RateMyAppDialogButton.rate:
               debugPrint('Clicked on "Rate".');
@@ -341,7 +275,6 @@ class _MyTabPageState extends State<MyTabPageStateful>
         // Custom dialog styles.
         onDismissed: () => rateMyApp.callEvent(RateMyAppEventType
             .laterButtonPressed,), // Called when the user dismissed the dialog (either by taping outside or by pressing the "back" button).
-        // actionsBuilder: (_) => [], // This one allows you to use your own buttons.
       );
     }
   }
@@ -377,18 +310,10 @@ class _MyTabPageState extends State<MyTabPageStateful>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     debugPrint('AppLifecycleState $state');
-    if (state == AppLifecycleState.inactive) {
-      // TODO Сохранить сущности в БД
-    }
   }
-
-  //@override
-  // TODO: implement wantKeepAlive
-  //bool get wantKeepAlive => true;
 
   @override
   void afterFirstLayout(BuildContext context) {
-    // TODO: implement afterFirstLayout
     debugPrint('afterFirstLayout');
   }
 }
