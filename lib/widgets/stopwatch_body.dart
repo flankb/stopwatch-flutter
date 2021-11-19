@@ -24,7 +24,10 @@ import 'inherited/sound_widget.dart';
 class StopwatchBody extends StatefulWidget {
   final MeasureBloc measureBloc;
 
-  const StopwatchBody({Key? key, required this.measureBloc}) : super(key: key);
+  const StopwatchBody({
+    required this.measureBloc,
+    Key? key,
+  }) : super(key: key);
 
   @override
   _StopwatchBodyState createState() => _StopwatchBodyState();
@@ -32,7 +35,7 @@ class StopwatchBody extends StatefulWidget {
 
 class _StopwatchBodyState extends State<StopwatchBody>
     with TickerProviderStateMixin {
-  ScrollController _scrollController = new ScrollController();
+  final ScrollController _scrollController = ScrollController();
   late AnimationController _controller;
   late Animation<double> animation;
   bool _existsVibrator = false;
@@ -42,7 +45,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
     super.initState();
 
     _controller = AnimationController(
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         upperBound: 150,
         lowerBound: 0,
         vsync: this);
@@ -63,18 +66,6 @@ class _StopwatchBodyState extends State<StopwatchBody>
   @override
   Widget build(BuildContext context) {
     debugPrint('StopwatchBody build. Mounted is ${mounted.toString()}');
-
-    // TODO Здесь можно инициализировать WakeLock
-
-    //List<LapViewModel> items = FakeDataFabric.mainPageLaps();
-
-    /*
-    key: Key('my-widget-key'),
-      onVisibilityChanged: (VisibilityInfo info) {
-        var visiblePercentage = info.visibleFraction * 100;
-        debugPrint('Widget ${info.key} is $visiblePercentage% visible');
-      },
-     */
 
     return VisibilityDetector(
       key: const Key('STOPWATCH_VISIBILITY_key'),
@@ -100,71 +91,64 @@ class _StopwatchBodyState extends State<StopwatchBody>
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: StreamBuilder<int>(
-                    initialData: 0,
-                    stream: widget.measureBloc.tickStream,
-                    builder: (context, snapshot) {
-                      /*if (snapshot.data == -1) {
-                        debugPrint("Hash code 2: ${state.measure.hashCode}");
-                        debugPrint("StreamBuilder ok! Measure ${state.measure} LastRestarted ${state.measure.lastRestartedOverall}");
-                      }*/
+                  initialData: 0,
+                  stream: widget.measureBloc.tickStream,
+                  builder: (context, snapshot) {
+                    final delta1 = snapshot.data != null && snapshot.data! > 0
+                        ? DateTime.now()
+                            .difference(state.measure.lastRestartedOverall)
+                            .inMilliseconds
+                        : 0;
+                    final overallDifference = state.measure.elapsed +
+                        delta1; // TODO elapsed не сбрасывается
+                    final lapDifference = state.measure.elapsedLap + delta1;
 
-                      final delta1 = snapshot.data != null && snapshot.data! > 0
-                          ? DateTime.now()
-                              .difference(state.measure.lastRestartedOverall)
-                              .inMilliseconds
-                          : 0;
-                      final overallDifference = state.measure.elapsed +
-                          delta1; // TODO elapsed не сбрасывается
-                      final lapDifference = state.measure.elapsedLap + delta1;
+                    final d1 = Duration(milliseconds: overallDifference);
+                    final d2 = Duration(milliseconds: lapDifference);
 
-                      final d1 = Duration(milliseconds: overallDifference);
-                      final d2 = Duration(milliseconds: lapDifference);
-
-                      return AnimatedBuilder(
-                          animation: _controller,
-                          builder: (context, widget) {
-                            return Transform.translate(
-                              offset: Offset(0 + _controller.value, 0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.baseline,
-                                    textBaseline: TextBaseline.ideographic,
-                                    children: <Widget>[
-                                      Text(
-                                        '${TimeDisplayer.formatBase(d2)},',
-                                        key: Key('lap_text'),
-                                        style: TextStyle(fontSize: 30),
-                                      ),
-                                      Text(
-                                        TimeDisplayer.formatMills(d2),
-                                        style: TextStyle(fontSize: 20),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.baseline,
-                                    textBaseline: TextBaseline.ideographic,
-                                    children: <Widget>[
-                                      Text(
-                                        '${TimeDisplayer.formatBase(d1)},',
-                                        key: Key('overall_text'),
-                                        style: TextStyle(fontSize: 44),
-                                      ),
-                                      Text(
-                                        TimeDisplayer.formatMills(d1),
-                                        style: TextStyle(fontSize: 32),
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                            );
-                          });
-                    }),
+                    return AnimatedBuilder(
+                      animation: _controller,
+                      builder: (context, widget) => Transform.translate(
+                        offset: Offset(0 + _controller.value, 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.ideographic,
+                              children: <Widget>[
+                                Text(
+                                  '${TimeDisplayer.formatBase(d2)},',
+                                  key: const Key('lap_text'),
+                                  style: const TextStyle(fontSize: 30),
+                                ),
+                                Text(
+                                  TimeDisplayer.formatMills(d2),
+                                  style: const TextStyle(fontSize: 20),
+                                )
+                              ],
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.ideographic,
+                              children: <Widget>[
+                                Text(
+                                  '${TimeDisplayer.formatBase(d1)},',
+                                  key: const Key('overall_text'),
+                                  style: const TextStyle(fontSize: 44),
+                                ),
+                                Text(
+                                  TimeDisplayer.formatMills(d1),
+                                  style: const TextStyle(fontSize: 32),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
             if (state is MeasurePausedState)
@@ -175,9 +159,10 @@ class _StopwatchBodyState extends State<StopwatchBody>
                       Duration(milliseconds: state.measure.elapsed)),
                   textAlign: TextAlign.left,
                   style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.bold),
+                    fontSize: 16,
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             Expanded(
@@ -214,18 +199,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
                         child: RawMaterialButton(
-                          key: Key('start_button'),
-                          //enableFeedback: false
-                          child: Padding(
-                            padding: EdgeInsets.all(0),
-                            child: Text(
-                              state is MeasureStartedState
-                                  ? S.of(context).pause
-                                  : S.of(context).start,
-                              style:
-                                  TextStyle(fontSize: 28, color: Colors.white),
-                            ),
-                          ),
+                          key: const Key('start_button'),
                           onPressed: () {
                             if (state is MeasureReadyState ||
                                 state is MeasurePausedState) {
@@ -240,8 +214,19 @@ class _StopwatchBodyState extends State<StopwatchBody>
                           fillColor: state is MeasureStartedState
                               ? Colors.red
                               : Theme.of(context).primaryColor,
-                          shape: RoundedRectangleBorder(
+                          shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(12)),
+                          ),
+                          //enableFeedback: false
+                          child: Padding(
+                            padding: EdgeInsets.zero,
+                            child: Text(
+                              state is MeasureStartedState
+                                  ? S.of(context).pause
+                                  : S.of(context).start,
+                              style: const TextStyle(
+                                  fontSize: 28, color: Colors.white),
+                            ),
                           ),
                         ),
                       )),
@@ -250,13 +235,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(4, 8, 8, 8),
                         child: RawMaterialButton(
-                          key: Key('lap_button'),
-                          child: Padding(
-                            padding: EdgeInsets.all(0),
-                            child: Text(S.of(context).lap,
-                                style: TextStyle(
-                                    fontSize: 28, color: Colors.black)),
-                          ),
+                          key: const Key('lap_button'),
                           onPressed: state is MeasureStartedState
                               ? () async {
                                   widget.measureBloc.add(LapAddedEvent());
@@ -273,19 +252,21 @@ class _StopwatchBodyState extends State<StopwatchBody>
                                       curve: Curves.easeOut,
                                     );
                                   });
-
-                                  /*
-                                    if (_controller.isCompleted) {
-                                      _controller.reverse();
-                                    } else {
-                                      _controller.forward();
-                                    }
-                                   */
                                 }
                               : null,
                           fillColor: Colors.yellowAccent,
-                          shape: RoundedRectangleBorder(
+                          shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(12)),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.zero,
+                            child: Text(
+                              S.of(context).lap,
+                              style: const TextStyle(
+                                fontSize: 28,
+                                color: Colors.black,
+                              ),
+                            ),
                           ),
                         ),
                       ))
@@ -293,7 +274,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
               ),
             ),
             Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                padding: EdgeInsets.zero,
                 child: MetroAppBar(
                   height: 60,
                   primaryCommands: [
@@ -303,12 +284,9 @@ class _StopwatchBodyState extends State<StopwatchBody>
                       color: Theme.of(context).textTheme.bodyText1!.color,
                       onPressed: () {
                         //final measureCounts = state.measure.finishedMeasuresCount;
-                        bool saveMeasure = PrefService.instance.sharedPrefs
+                        final saveMeasure = PrefService.instance.sharedPrefs
                                 .getBool(PREF_SAVE_MEASURES) ??
                             true;
-                        //final proOwned = snapshot.data.skuIsAcknowledged(PRO_PACKAGE);
-                        //saveMeasure = saveMeasure && (proOwned || measureCounts <= MAX_FREE_MEASURES);
-
                         BlocProvider.of<MeasureBloc>(context)
                             .add(MeasureFinishedEvent(saveMeasure));
 
@@ -324,13 +302,15 @@ class _StopwatchBodyState extends State<StopwatchBody>
                       text: S.of(context).history,
                       color: Theme.of(context).textTheme.bodyText1!.color,
                       onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (BuildContext context) {
-                          return HistoryPage(
-                            pageType: MeasureViewModel,
-                            entityId: null,
-                          );
-                        }));
+                        Navigator.push<void>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => HistoryPage(
+                              pageType: MeasureViewModel,
+                              entityId: null,
+                            ),
+                          ),
+                        );
                       },
                     ),
                     PrimaryCommand(
@@ -338,7 +318,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
                       text: S.of(context).settings,
                       color: Theme.of(context).textTheme.bodyText1!.color,
                       onPressed: () {
-                        Navigator.push(context,
+                        Navigator.push<void>(context,
                             MaterialPageRoute(builder: (BuildContext context) {
                           return SettingsPage();
                         }));
@@ -358,7 +338,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
                     SecondaryCommand(
                         text: S.of(context).about,
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(
+                          Navigator.push<void>(context, MaterialPageRoute(
                               builder: (BuildContext context) {
                             return AboutPage();
                           }));
@@ -392,17 +372,17 @@ class _StopwatchBodyState extends State<StopwatchBody>
     super.dispose();
   }
 
-  _vibrate() async {
+  Future<void> _vibrate() async {
     final vibration =
         PrefService.instance.sharedPrefs.getBool(PREF_VIBRATION) ?? true;
     if (vibration) {
       if (_existsVibrator) {
-        Vibration.vibrate(duration: 50);
+        await Vibration.vibrate(duration: 50);
       }
     }
   }
 
-  _playSound(BuildContext context, int soundId) {
+  void _playSound(BuildContext context, int soundId) {
     final sound = PrefService.instance.sharedPrefs.getBool(PREF_SOUND) ?? true;
 
     if (sound) {
@@ -411,7 +391,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
     }
   }
 
-  _enableWakeLock() async {
+  Future<void> _enableWakeLock() async {
     debugPrint('Start wakelock enabling!');
 
     if (PrefService.instance.sharedPrefs.getBool(PREF_KEEP_SCREEN_AWAKE) ??
@@ -423,10 +403,10 @@ class _StopwatchBodyState extends State<StopwatchBody>
     }
   }
 
-  _disableWakelock() async {
+  Future<void> _disableWakelock() async {
     debugPrint('Start wakelock disabling!');
 
-    if ((await Wakelock.enabled)) {
+    if (await Wakelock.enabled) {
       await Wakelock.disable();
       debugPrint('Wakelock disabled!');
     }
