@@ -8,38 +8,39 @@ import './bloc.dart';
 class EntityBloc extends Bloc<EntityEvent, EntityState> {
   final StopwatchRepository stopwatchRepository;
 
-  EntityBloc(this.stopwatchRepository) : super(LoadingEntityState());
+  EntityBloc(this.stopwatchRepository) : super(const LoadingEntityState());
 
   @override
   Stream<EntityState> mapEventToState(
     EntityEvent event,
   ) async* {
     debugPrint(
-        'Current state ${state.toString()}, Bloc event: ${event.toString()}');
+      'Current state ${state.toString()}, Bloc event: ${event.toString()}',
+    );
 
     if (event is OpenEntityEvent) {
       yield AvailableEntityState(event.entity);
     } else if (event is SaveEntityEvent) {
-      yield LoadingEntityState();
-      BaseStopwatchEntity entityViewModel;
+      yield const LoadingEntityState();
 
       if (event.entity is LapViewModel) {
-        entityViewModel =
+        final lapViewModel =
             (event.entity as LapViewModel).copyWith(comment: event.comment);
 
-        await stopwatchRepository.updateLapAsync(entityViewModel.toEntity());
+        await stopwatchRepository.updateLapAsync(lapViewModel.toEntity());
+
+        yield AvailableEntityState(lapViewModel);
       } else if (event.entity is MeasureViewModel) {
-        entityViewModel =
+        final measureViewModel =
             (event.entity as MeasureViewModel).copyWith(comment: event.comment);
 
         await stopwatchRepository
-            .updateMeasureAsync(entityViewModel.toEntity());
+            .updateMeasureAsync(measureViewModel.toEntity());
 
         debugPrint(
-            "SaveEntityEvent: ${(event.entity as MeasureViewModel).toEntity().toString()}");
+            'SaveEntityEvent: ${(event.entity as MeasureViewModel).toEntity().toString()}');
+        yield AvailableEntityState(measureViewModel);
       }
-
-      yield AvailableEntityState(entityViewModel);
     }
   }
 }

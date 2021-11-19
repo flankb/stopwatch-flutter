@@ -90,9 +90,9 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase>
   @override
   Future updateLapAsync(Insertable<Lap> lap) => update(laps).replace(lap);
 
-  Future<List<Lap>> getLapsByMeasureAsync(int measureId) {
-    return (select(laps)..where((l) => l.measureId.equals(measureId))).get();
-  }
+  @override
+  Future<List<Lap>> getLapsByMeasureAsync(int measureId) =>
+      (select(laps)..where((l) => l.measureId.equals(measureId))).get();
 
   Future deleteMeasures(List<int> measureIds) async {
     final lapsToDelete =
@@ -103,7 +103,7 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase>
             .get())
         .map((e) => e.id);
 
-    return transaction(() async {
+    return transaction<void>(() async {
       // Удалить круги
       await (delete(laps)..where((l) => l.id.isIn(lapsToDelete))).go();
       // Удалить изм. сессии
@@ -114,9 +114,7 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase>
     });
   }
 
-  Future deleteAllMeasuresDebug() {
-    return delete(measures).go();
-  }
+  Future deleteAllMeasuresDebug() => delete(measures).go();
 
   Future wipeDatabaseDebug() async {
     // final finished =
@@ -128,6 +126,4 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase>
     await delete(tags).go();
     await delete(measures).go();
   }
-
-  dispose() {}
 }

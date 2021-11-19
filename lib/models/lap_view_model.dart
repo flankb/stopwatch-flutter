@@ -34,13 +34,14 @@ class LapViewModel extends BaseStopwatchEntity {
     this.overall = 0,
   }) : super(id: id, comment: comment);
 
-  LapsCompanion toEntity<Lap>() => LapsCompanion(
-      id: id != null ? Value(id!) : const Value.absent(),
-      measureId: Value(measureId),
-      order: Value(order),
-      difference: Value(difference),
-      comment: Value(comment),
-      overall: Value(overall));
+  LapsCompanion toEntity() => LapsCompanion(
+        id: id != null ? Value(id!) : const Value.absent(),
+        measureId: Value(measureId),
+        order: Value(order),
+        difference: Value(difference),
+        comment: Value(comment),
+        overall: Value(overall),
+      );
 
   factory LapViewModel.fromEntity(Lap entity) => LapViewModel(
         id: entity.id,
