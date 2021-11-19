@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:extended_theme/extended_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -13,67 +11,37 @@ import '../theme_data.dart';
 class StopwatchItem extends StatefulWidget {
   final BaseStopwatchEntity entity;
   final int index;
-  //final ValueChanged<Tuple2<BaseStopwatchEntity, bool>> selectedEvent;
-  //final StreamController<int> selectionListController;
 
   // Сделать данный класс Generic ?
-  const StopwatchItem({Key? key, required this.entity, required this.index})
-      : super(key: key);
+  const StopwatchItem({
+    required this.entity,
+    required this.index,
+    Key? key,
+  }) : super(key: key);
 
   @override
-  _StopwatchItemState createState() {
-    return _StopwatchItemState();
-  }
+  _StopwatchItemState createState() => _StopwatchItemState();
 }
 
 class _StopwatchItemState extends State<StopwatchItem>
     with AutomaticKeepAliveClientMixin {
-  //bool isSelected = false;
-  //bool anybodySelected = false;
-
   @override
   void initState() {
     super.initState();
-    _init();
 
-    debugPrint("initState ${widget.key}");
-    // TODO initState заново вызывается при прокрутке, нужно где-то хранить состояние выделенных элементов (Статический кэш)??
-    // TODO С wantKeepAlive = true кэш не нужен
+    debugPrint('initState ${widget.key}');
   }
 
   @override
   void reassemble() {
     super.reassemble();
-    //_init();
   }
-
-  _init() {
-    // widget.selectionListController.stream.asBroadcastStream().listen((event) {
-    //   if (event == 0) {
-    //     if (this.mounted) {
-    //       this.setState(() {
-    //         isSelected = false;
-    //         anybodySelected = false;
-    //       });
-    //     }
-    //   }
-    //   else{
-    //     if (this.mounted) {
-    //       this.setState(() {
-    //         anybodySelected = true;
-    //       });
-    //     }
-    //   }
-    // });
-  }
-
-  static Random r = Random(42);
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
 
-    debugPrint("buildState ${widget.key}");
+    debugPrint('buildState ${widget.key}');
 
     final entityIsMeasure = widget.entity is MeasureViewModel;
 
@@ -88,7 +56,7 @@ class _StopwatchItemState extends State<StopwatchItem>
     final elapsedString =
         TimeDisplayer.formatAllBeautiful(Duration(milliseconds: elapsed));
     final differenceString = difference != null
-        ? "+${TimeDisplayer.formatAllBeautiful(Duration(milliseconds: difference))}"
+        ? '+${TimeDisplayer.formatAllBeautiful(Duration(milliseconds: difference))}'
         : null;
 
     final date = entityIsMeasure
@@ -114,11 +82,15 @@ class _StopwatchItemState extends State<StopwatchItem>
           }
         else if (widget.entity.runtimeType == MeasureViewModel)
           {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (BuildContext context) {
-              return HistoryPage(
-                  pageType: LapViewModel, entityId: widget.entity);
-            }))
+            Navigator.push<void>(
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext context) => HistoryPage(
+                  pageType: LapViewModel,
+                  entityId: widget.entity,
+                ),
+              ),
+            )
           }
       },
       child: Container(
@@ -129,67 +101,68 @@ class _StopwatchItemState extends State<StopwatchItem>
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              !entityIsMeasure
-                  ? SizedBox(
-                      width: 32,
-                      child: Text(
-                        "${(widget.entity as LapViewModel).order.toString()}. ",
-                        style: TextStyle(
-                          fontSize: 18,
-                          height: 1.0,
-                        ),
-                      ),
-                    )
-                  : SizedBox(),
+              if (!entityIsMeasure)
+                SizedBox(
+                  width: 32,
+                  child: Text(
+                    '${(widget.entity as LapViewModel).order.toString()}. ',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      height: 1,
+                    ),
+                  ),
+                ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   if (difference != null)
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Text(differenceString!,
-                          style: TextStyle(
-                            fontSize: 18,
-                            height: 1.0,
-                          )),
-                    ),
-                  Text(elapsedString,
-                      style: TextStyle(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Text(
+                        differenceString!,
+                        style: const TextStyle(
                           fontSize: 18,
-                          height: 1.0,
-                          color: entityIsMeasure
-                              ? Theme.of(context).textTheme.bodyText1!.color
-                              : ThemeHolder.of<AppTheme>(context)
-                                  .theme
-                                  .subtitleColor)),
-                  SizedBox(height: 6),
-                  widget.entity.comment != null
-                      ? Text(
-                          widget.entity.comment ??
-                              "Нет комментария", // ?? "Нет комментария",
-                          style: TextStyle(
-                              fontSize: 18,
-                              height: 1.0,
-                              color: widget.entity.comment == null
-                                  ? ThemeHolder.of<AppTheme>(context)
-                                      .theme
-                                      .subtitleColor
-                                  : Theme.of(context)
-                                      .textTheme
-                                      .subtitle2!
-                                      .color),
-                        )
-                      : SizedBox(),
-                  SizedBox(height: 0),
-                  date != null
-                      ? Text(
-                          TimeDisplayer.formatDate(date, context: context),
-                          style: TextStyle(
-                              color: ThemeHolder.of<AppTheme>(context)
-                                  .theme
-                                  .subtitleColor),
-                        )
-                      : SizedBox()
+                          height: 1,
+                        ),
+                      ),
+                    ),
+                  Text(
+                    elapsedString,
+                    style: TextStyle(
+                      fontSize: 18,
+                      height: 1,
+                      color: entityIsMeasure
+                          ? Theme.of(context).textTheme.bodyText1!.color
+                          : ThemeHolder.of<AppTheme>(context)
+                              .theme
+                              .subtitleColor,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  if (widget.entity.comment != null)
+                    Text(
+                      widget.entity.comment ??
+                          'Нет комментария', // ?? "Нет комментария",
+                      style: TextStyle(
+                        fontSize: 18,
+                        height: 1,
+                        color: widget.entity.comment == null
+                            ? ThemeHolder.of<AppTheme>(context)
+                                .theme
+                                .subtitleColor
+                            : Theme.of(context).textTheme.subtitle2!.color,
+                      ),
+                    ),
+                  const SizedBox(height: 0),
+                  if (date != null)
+                    Text(
+                      TimeDisplayer.formatDate(date, context: context),
+                      style: TextStyle(
+                        color: ThemeHolder.of<AppTheme>(context)
+                            .theme
+                            .subtitleColor,
+                      ),
+                    )
                 ],
               ),
             ],
