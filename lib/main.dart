@@ -110,51 +110,44 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    //debugPrint("themeController.themeData " + themeController.theme.toString());
-
-    //final textTheme = Theme.of(context).textTheme;
-
-    return ThemeScope<AppTheme>(
-        themeId: widget.initialThemeId,
-        availableThemes: appThemeData,
-        themeBuilder: (context, appTheme) {
-          return RepositoryProvider(
-            create: (context) => StopwatchRepository(),
-            child: MultiBlocProvider(
-              providers: [
-                BlocProvider(
-                  // TODO Под вопросом!!!
-                  create: (context) => MeasureBloc(Ticker3(),
-                      RepositoryProvider.of<StopwatchRepository>(context)),
-                ),
-                // BlocProvider(
-                //   create: (context) => StorageBloc(
-                //       RepositoryProvider.of<StopwatchRepository>(context)),
-                // ),
-              ],
-              child: StorageBlocsProvider(
-                measuresBloc: measuresBloc,
-                lapsBloc: lapsBloc,
-                child: MaterialApp(
-                    onGenerateTitle: (BuildContext context) =>
-                        S.of(context).app_title,
-                    theme: appTheme.material,
-                    localizationsDelegates: [
-                      S.delegate,
-                      GlobalMaterialLocalizations.delegate,
-                      GlobalWidgetsLocalizations.delegate,
-                      GlobalCupertinoLocalizations.delegate,
-                    ],
-                    supportedLocales: S.delegate.supportedLocales,
-                    home:
-                        MyTabPageStateful() //MyHomePage(title: 'Flutter Demo Home Page'),
-                    ),
+  Widget build(BuildContext context) => ThemeScope<AppTheme>(
+      themeId: widget.initialThemeId,
+      availableThemes: appThemeData,
+      themeBuilder: (context, appTheme) => RepositoryProvider(
+          create: (context) => StopwatchRepository(),
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                // TODO Под вопросом!!!
+                create: (context) => MeasureBloc(Ticker3(),
+                    RepositoryProvider.of<StopwatchRepository>(context),),
               ),
+              // BlocProvider(
+              //   create: (context) => StorageBloc(
+              //       RepositoryProvider.of<StopwatchRepository>(context)),
+              // ),
+            ],
+            child: StorageBlocsProvider(
+              measuresBloc: measuresBloc,
+              lapsBloc: lapsBloc,
+              child: MaterialApp(
+                  onGenerateTitle: (BuildContext context) =>
+                      S.of(context).app_title,
+                  theme: appTheme.material,
+                  localizationsDelegates: const [
+                    S.delegate,
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  supportedLocales: S.delegate.supportedLocales,
+                  home:
+                      MyTabPageStateful() //MyHomePage(title: 'Flutter Demo Home Page'),
+                  ),
             ),
-          );
-        });
-  }
+          ),
+        );
+      );
 }
 
 class CaptionModel extends Model {
@@ -183,18 +176,18 @@ class Choice {
 
 enum SettingsType { None, Settings, Review, About }
 
-const List<Choice> choices = const <Choice>[
+const List<Choice> choices =  <Choice>[
   //const Choice(title: 'Car', icon: Icons.directions_car),
-  const Choice(title: 'Поиск', icon: Icons.search),
-  const Choice(
+  Choice(title: 'Поиск', icon: Icons.search),
+  Choice(
       title: 'Оценить приложение',
       //icon: Icons.rate_review,
       settingsType: SettingsType.Review),
-  const Choice(
+  Choice(
       title: 'Настройки',
       //icon: Icons.settings,
       settingsType: SettingsType.Settings),
-  const Choice(
+  Choice(
       title: 'О программе', icon: Icons.info, settingsType: SettingsType.About),
   //const Choice(title: 'Walk', icon: Icons.directions_walk),
 ];
@@ -227,7 +220,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
                   },
                 ),
               ],
-            ));
+            ),);
   }
 
   // void _select(Choice choice) {
@@ -270,14 +263,7 @@ class _MyTabPageState extends State<MyTabPageStateful>
   @override
   void initState() {
     super.initState();
-
-    /*SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp
-    ]);*/
-
     WidgetsBinding.instance?.addObserver(this);
-
-    //_categoryScrollController = ItemScrollController();
 
     _init();
     debugPrint('Main initState');
@@ -300,10 +286,6 @@ class _MyTabPageState extends State<MyTabPageStateful>
     _soundsLoader = _loadSounds();
   }
 
-  /*Soundpool _pool;
-  int _soundId1;
-  int _soundId2;*/
-
   Future<Tuple2<Soundpool, List<int>>> _loadSounds() async {
     final pool = Soundpool.fromOptions();
 
@@ -318,13 +300,6 @@ class _MyTabPageState extends State<MyTabPageStateful>
 
   @override
   Future<void> dispose() async {
-    /*SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);*/
-
     WidgetsBinding.instance?.removeObserver(this);
     await measureBloc.close();
     super.dispose();
@@ -365,18 +340,11 @@ class _MyTabPageState extends State<MyTabPageStateful>
         dialogStyle: const DialogStyle(),
         // Custom dialog styles.
         onDismissed: () => rateMyApp.callEvent(RateMyAppEventType
-            .laterButtonPressed), // Called when the user dismissed the dialog (either by taping outside or by pressing the "back" button).
+            .laterButtonPressed,), // Called when the user dismissed the dialog (either by taping outside or by pressing the "back" button).
         // actionsBuilder: (_) => [], // This one allows you to use your own buttons.
       );
     }
   }
-
-  /*
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -386,17 +354,6 @@ class _MyTabPageState extends State<MyTabPageStateful>
       await Future<void>.delayed(const Duration(seconds: 2));
       _showRateDialog(context);
     });
-
-    //final tabsTemplate = ['КАТЕГОРИИ', 'ВЕСЬ СЛОВАРЬ'];
-
-    // Подсказки по разметке:
-    // https://medium.com/flutter-community/flutter-expanded-widget-e203590f00cf
-
-    // BlocProvider.of<FilteredTodosBloc>(context).add(FilterUpdated(filter));
-
-    //(child: StopwatchBody()),
-
-    // debugPrint("measureBloc == null " + (measureBloc == null).toString());
 
     return Scaffold(
       body: BlocProvider(
