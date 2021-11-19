@@ -11,14 +11,15 @@ import 'history_page.dart';
 class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final debuggable = true;
+    const debuggable = true;
 
-    final Uri _emailLaunchUri = Uri(
-        scheme: 'mailto',
-        path: 'everyapp@yandex.ru',
-        queryParameters: {
-          'subject': 'Message about stopwatch (Flutter) program'
-        });
+    final _emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: 'everyapp@yandex.ru',
+      queryParameters: <String, dynamic>{
+        'subject': 'Message about stopwatch (Flutter) program'
+      },
+    );
 
     final infoFuture = PackageInfo.fromPlatform();
 
@@ -30,34 +31,35 @@ class AboutPage extends StatelessWidget {
             PageCaption(caption: S.of(context).about),
             Expanded(
               child: Container(
-                  margin:
-                      const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+                  margin: const EdgeInsets.only(left: 16, right: 16, top: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(S.of(context).stopwatch,
-                          style: TextStyle(fontSize: 20)),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16.0),
+                      Text(
+                        S.of(context).stopwatch,
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 16),
                         child: Text(
                           'Copyright © 2020 Garnet Juice',
                           style: TextStyle(fontSize: 18),
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
+                        padding: const EdgeInsets.only(top: 8),
                         child: FutureBuilder<PackageInfo>(
-                            future: infoFuture,
-                            builder: (context, snapshot) {
-                              return Text(
-                                  snapshot.hasData
-                                      ? '${S.of(context).version} ${snapshot.data?.version}'
-                                      : '',
-                                  style: TextStyle(fontSize: 20));
-                            }),
+                          future: infoFuture,
+                          builder: (context, snapshot) => Text(
+                            snapshot.hasData
+                                ? '${S.of(context).version} ${snapshot.data?.version}'
+                                : '',
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                        ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
+                        padding: const EdgeInsets.only(top: 8),
                         child: GestureDetector(
                           onTap: () {
                             launch(_emailLaunchUri.toString());
@@ -65,9 +67,10 @@ class AboutPage extends StatelessWidget {
                           child: Text(
                             'everyapp@yandex.ru',
                             style: TextStyle(
-                                decoration: TextDecoration.underline,
-                                color: Theme.of(context).primaryColor,
-                                fontSize: 18),
+                              decoration: TextDecoration.underline,
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 18,
+                            ),
                           ),
                         ),
                       )
@@ -78,65 +81,66 @@ class AboutPage extends StatelessWidget {
               Row(
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8),
                     child: RawMaterialButton(
                       padding: const EdgeInsets.all(16),
-                      child: Text("Удалить БД"),
                       fillColor: Colors.amber,
                       onPressed: () async {
-                        final res = await showDialog(
-                            context: context,
-                            builder: (ctx) => new Dialog(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Text("Вайпнуть БД?"),
-                                      Row(
-                                        children: <Widget>[
-                                          RawMaterialButton(
-                                            child: Text("ДА"),
-                                            onPressed: () {
-                                              Navigator.pop(context, true);
-                                            },
-                                          ),
-                                          RawMaterialButton(
-                                            child: Text("Нет"),
-                                            onPressed: () {
-                                              Navigator.pop(context, false);
-                                            },
-                                          )
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ));
+                        final res = await showDialog<bool>(
+                          context: context,
+                          builder: (ctx) => Dialog(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                const Text('Do you want clear DB?'),
+                                Row(
+                                  children: <Widget>[
+                                    RawMaterialButton(
+                                      child: const Text('Yes'),
+                                      onPressed: () {
+                                        Navigator.pop(context, true);
+                                      },
+                                    ),
+                                    RawMaterialButton(
+                                      child: const Text('No'),
+                                      onPressed: () {
+                                        Navigator.pop(context, false);
+                                      },
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        );
 
-                        if (res == true) {
+                        if (res ?? false) {
                           final rep = StopwatchRepository();
                           await rep.wipeDatabaseDebug();
 
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(SnackBar(content: Text('Wiped!')));
-                          // Вайп
-                          /*Scaffold.of(context).showSnackBar(SnackBar(
-                          content: Text("БД удалена!"),
-                        ));*/ //TODO Валится из-за вложенных Scafoldов
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Wiped!'),
+                            ),
+                          );
                         }
                         //BlocProvider.of<MeasureBloc>(context).add(MeasureOpenedEvent());
                       },
+                      child: const Text('Удалить БД'),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8),
                     child: RawMaterialButton(
-                        child: Text("Посмотреть БД"),
-                        padding: const EdgeInsets.all(16),
-                        fillColor: Colors.green,
-                        onPressed: () {
-                          //final db = MyDatabase(); //This should be a singleton
-                          // Navigator.of(context).push(MaterialPageRoute(
-                          //     builder: (context) => MoorDbViewer(db)));
-                        }),
+                      padding: const EdgeInsets.all(16),
+                      fillColor: Colors.green,
+                      onPressed: () {
+                        //final db = MyDatabase(); //This should be a singleton
+                        // Navigator.of(context).push(MaterialPageRoute(
+                        //     builder: (context) => MoorDbViewer(db)));
+                      },
+                      child: const Text('Посмотреть БД'),
+                    ),
                   )
                 ],
               )

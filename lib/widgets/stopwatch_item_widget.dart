@@ -12,7 +12,6 @@ class StopwatchItem extends StatefulWidget {
   final BaseStopwatchEntity entity;
   final int index;
 
-  // Сделать данный класс Generic ?
   const StopwatchItem({
     required this.entity,
     required this.index,
