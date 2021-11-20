@@ -10,13 +10,14 @@ abstract class EntityEvent extends Equatable {
 }
 
 class OpenEntityEvent extends EntityEvent {
-  OpenEntityEvent(BaseStopwatchEntity entity) : super(entity);
+  const OpenEntityEvent(BaseStopwatchEntity entity) : super(entity);
 }
 
 class SaveEntityEvent extends EntityEvent {
   final String? comment;
 
-  SaveEntityEvent(BaseStopwatchEntity entity, {this.comment}) : super(entity);
+  const SaveEntityEvent(BaseStopwatchEntity entity, {this.comment})
+      : super(entity);
 
   @override
   List<Object?> get props => [entity, comment];
