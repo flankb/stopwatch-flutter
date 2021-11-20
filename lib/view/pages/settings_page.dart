@@ -41,7 +41,7 @@ class _SettingsPageState extends State<SettingsPage> {
     theme = _sharedPrefs.getString(PREF_THEME) ?? GreenLight;
   }
 
-  _writeBoolValue(String key, bool value) {}
+  void _writeBoolValue(String key, bool value) {}
 
   @override
   Widget build(BuildContext context) {
@@ -62,14 +62,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 ],
               ),*/
           Expanded(
-            child: FutureBuilder(
-                future: _initPrefsAction,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState != ConnectionState.done) {
-                    return CenterCircularWidget();
-                  }
+            child: FutureBuilder<void>(
+              future: _initPrefsAction,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState != ConnectionState.done) {
+                  return const CenterCircularWidget();
+                }
 
-                  return Column(children: [
+                return Column(
+                  children: [
                     SwitchListTile(
                       title: Text(S.of(context).sound),
                       value: sound,
@@ -140,18 +141,23 @@ class _SettingsPageState extends State<SettingsPage> {
                             BlueDark: '${S.current.breeze} $twilight',
                             GreenLight: '${S.current.cedar} $sunrise',
                             GreenDark: '${S.current.cedar} $twilight'
-                          }.entries.map<DropdownMenuItem<String>>(
-                              (MapEntry<String, String> entry) {
-                            return DropdownMenuItem<String>(
-                              value: entry.key,
-                              child: Text(entry.value),
-                            );
-                          }).toList(),
+                          }
+                              .entries
+                              .map<DropdownMenuItem<String>>(
+                                (MapEntry<String, String> entry) =>
+                                    DropdownMenuItem<String>(
+                                  value: entry.key,
+                                  child: Text(entry.value),
+                                ),
+                              )
+                              .toList(),
                         ),
                       ),
                     )
-                  ]);
-                }),
+                  ],
+                );
+              },
+            ),
           ),
         ],
       ),

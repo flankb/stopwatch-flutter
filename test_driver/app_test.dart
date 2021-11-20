@@ -18,14 +18,14 @@ void main() {
 
     // Close the connection to the driver after the tests have completed.
     tearDownAll(() async {
-      driver.close();
+      await driver.close();
     });
 
     test('Start test', () async {
       // First, tap the button.
       await driver.tap(buttonFinder);
 
-      await Future.delayed(Duration(milliseconds: 1000));
+      await Future<void>.delayed(const Duration(milliseconds: 1000));
 
       // Then, verify the counter text is incremented by 1.
       expect((await driver.getText(textFinder)).contains('1'), true);

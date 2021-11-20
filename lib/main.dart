@@ -144,7 +144,7 @@ class CaptionModel extends Model {
 
 class Choice {
   const Choice(
-      {required this.title, this.icon, this.settingsType = SettingsType.None});
+      {required this.title, this.icon, this.settingsType = SettingsType.None,});
 
   final String title;
   final IconData? icon;
@@ -163,7 +163,7 @@ const List<Choice> choices =  <Choice>[
       title: 'Настройки',
       settingsType: SettingsType.Settings,),
   Choice(
-      title: 'О программе', icon: Icons.info, settingsType: SettingsType.About),
+      title: 'О программе', icon: Icons.info, settingsType: SettingsType.About,),
 ];
 
 class MyTabPageStateful extends StatefulWidget {
@@ -175,23 +175,6 @@ class _MyTabPageState extends State<MyTabPageStateful>
     with
         WidgetsBindingObserver,
         AfterLayoutMixin<MyTabPageStateful> {
-  void _showDialog(BuildContext context, String message) {
-    showDialog<void>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-              title: const Text('Alert Dialog title'),
-              content: Text(message),
-              actions: <Widget>[
-                // usually buttons at the bottom of the dialog
-                TextButton(
-                  child: const Text('Close'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),);
-  }
 
   late CaptionModel captionModel;
 
