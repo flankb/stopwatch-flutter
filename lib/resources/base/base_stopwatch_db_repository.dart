@@ -1,4 +1,3 @@
-
 import 'package:stopwatch/model/database_models.dart';
 
 abstract class BaseStopwatchRepository {

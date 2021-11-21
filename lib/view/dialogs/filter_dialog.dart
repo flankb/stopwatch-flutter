@@ -9,67 +9,53 @@ class FilterDialog extends StatelessWidget {
   final Type entityType;
   final Filter filter;
 
-  const FilterDialog({Key? key, required this.entityType, required this.filter})
-      : super(key: key);
+  const FilterDialog({
+    required this.entityType,
+    required this.filter,
+    Key? key,
+  }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    // Обернуть в Dialog??? Либо в AlertDialog
-    // https://medium.com/flutterpub/flutter-alert-dialog-to-custom-dialog-966195157da8
-    // https://medium.com/@excogitatr/custom-dialog-in-flutter-d00e0441f1d5
-
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      elevation: 0.0,
-      backgroundColor: Colors.transparent,
-      child: FilterForm(
-        filter: filter,
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: FilterForm(
+          filter: filter,
+        ),
+      );
 }
 
 // Define a custom Form widget.
 class FilterForm extends StatefulWidget {
   final Filter filter;
 
-  FilterForm({Key? key, required this.filter}) : super(key: key);
+  const FilterForm({
+    required this.filter,
+    Key? key,
+  }) : super(key: key);
 
   @override
-  FilterFormState createState() {
-    return FilterFormState();
-  }
+  FilterFormState createState() => FilterFormState();
 }
 
-// Define a corresponding State class.
-// This class holds data related to the form.
 class FilterFormState extends State<FilterForm> {
-  // Create a global key that uniquely identifies the Form widget
-  // and allows validation of the form.
-  //
-  // Note: This is a `GlobalKey<FormState>`,
-  // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
-  //Filter _filter; // TODO Это поле можно передавать через конструктор и хранить его в BLoC'е
-
-  //TextEditingController
 
   late Filter changedFilter;
 
   @override
   void initState() {
     super.initState();
-    debugPrint("init FormState");
-    // Создать контроллеры
-    //widget.filter = Filter.defaultFilter();
+    debugPrint('init FormState');
     changedFilter = widget.filter;
   }
 
   @override
   Widget build(BuildContext context) {
-    Locale myLocale = Localizations.localeOf(context);
+    final myLocale = Localizations.localeOf(context);
     final dateFormat = DateFormat.yMMMMd(myLocale.languageCode);
 
     // Build a Form widget using the _formKey created above.
@@ -78,51 +64,45 @@ class FilterFormState extends State<FilterForm> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Container(
-            decoration: new BoxDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).bottomAppBarColor,
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(8),
+              // ignore: prefer_const_literals_to_create_immutables
               boxShadow: [
-                BoxShadow(
+                const BoxShadow(
                   color: Colors.black26,
-                  blurRadius: 10.0,
-                  offset: const Offset(0.0, 10.0),
+                  blurRadius: 10,
+                  offset: Offset(0, 10),
                 ),
               ],
             ),
             child: Form(
               key: _formKey,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
                       S.of(context).measures_filter,
-                      style: TextStyle(fontSize: 18),
+                      style: const TextStyle(fontSize: 18),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     TextFormField(
                       initialValue: widget.filter.query,
                       decoration: InputDecoration(
-                          hintText: S.of(context).comment_contains),
+                        hintText: S.of(context).comment_contains,
+                      ),
                       onSaved: (val) => setState(() {
                         debugPrint(val);
-                        //widget.filter.query = val ?? '';
-
                         changedFilter =
                             changedFilter.copyWith(query: val ?? '');
                       }),
-                      /*validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Поле не может быть пустым!';
-                          }
-                          return null;
-                        },*/
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 6,
                     ),
                     DateTimeField(
@@ -130,7 +110,9 @@ class FilterFormState extends State<FilterForm> {
                       onSaved: (dt) {
                         setState(() {
                           changedFilter = changedFilter.copyWithNullable(
-                              dateFrom: dt, dateTo: changedFilter.dateTo);
+                            dateFrom: dt,
+                            dateTo: changedFilter.dateTo,
+                          );
                         });
                       },
                       validator: (value) {
@@ -140,19 +122,19 @@ class FilterFormState extends State<FilterForm> {
                         return null;
                       },
                       decoration: InputDecoration(
-                          labelText: "${S.of(context).from}:",
-                          labelStyle:
-                              TextStyle(color: Theme.of(context).accentColor)),
+                        labelText: '${S.of(context).from}:',
+                        labelStyle: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary),
+                      ),
                       initialValue: widget.filter.dateFrom,
-                      onShowPicker: (context, currentValue) {
-                        return showDatePicker(
-                            context: context,
-                            firstDate: DateTime(1900),
-                            initialDate: currentValue ?? DateTime.now(),
-                            lastDate: DateTime(2100));
-                      },
+                      onShowPicker: (context, currentValue) => showDatePicker(
+                        context: context,
+                        firstDate: DateTime(1900),
+                        initialDate: currentValue ?? DateTime.now(),
+                        lastDate: DateTime(2100),
+                      ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 6,
                     ),
                     DateTimeField(
@@ -160,13 +142,16 @@ class FilterFormState extends State<FilterForm> {
                       onSaved: (dt) {
                         setState(() {
                           changedFilter = changedFilter.copyWithNullable(
-                              dateTo: dt, dateFrom: changedFilter.dateFrom);
+                            dateTo: dt,
+                            dateFrom: changedFilter.dateFrom,
+                          );
                         });
                       },
                       decoration: InputDecoration(
-                          labelText: "${S.of(context).to}:",
-                          labelStyle:
-                              TextStyle(color: Theme.of(context).accentColor)),
+                        labelText: '${S.of(context).to}:',
+                        labelStyle: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary),
+                      ),
                       initialValue: widget.filter.dateTo,
                       validator: (value) {
                         if (value == null) {
@@ -174,36 +159,31 @@ class FilterFormState extends State<FilterForm> {
                         }
                         return null;
                       },
-                      onShowPicker: (context, currentValue) {
-                        return showDatePicker(
-                            context: context,
-                            firstDate: DateTime(1900),
-                            initialDate: currentValue ?? DateTime.now(),
-                            lastDate: DateTime(2100));
-                      },
+                      onShowPicker: (context, currentValue) => showDatePicker(
+                        context: context,
+                        firstDate: DateTime(1900),
+                        initialDate: currentValue ?? DateTime.now(),
+                        lastDate: DateTime(2100),
+                      ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           RawMaterialButton(
                             onPressed: () {
-                              // Validate returns true if the form is valid, or false
-                              // otherwise.
                               if (_formKey.currentState?.validate() ?? false) {
                                 _formKey.currentState?.save();
                                 Navigator.pop(context, changedFilter);
-                                // If the form is valid, display a Snackbar.
-                                //Scaffold.of(context).showSnackBar(SnackBar(content: Text('Обработка данных..')));
                               }
                             },
                             child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(8),
                               child: Text(S.of(context).save),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 16,
                           ),
                           RawMaterialButton(
@@ -211,7 +191,7 @@ class FilterFormState extends State<FilterForm> {
                               Navigator.pop(context);
                             },
                             child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(8),
                               child: Text(S.of(context).cancel),
                             ),
                           )
