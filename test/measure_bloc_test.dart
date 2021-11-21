@@ -53,7 +53,7 @@ void main() {
         await Future<void>.delayed(const Duration(seconds: 1));
         bloc
           ..add(MeasurePausedEvent())
-          ..add(MeasureFinishedEvent(true));
+          ..add(MeasureFinishedEvent(saveMeasure: true));
       },
       verify: (bloc) async {
         debugPrint('VERIFY');
@@ -89,7 +89,7 @@ void main() {
         await Future<void>.delayed(const Duration(seconds: 1));
         measureBloc
           ..add(MeasurePausedEvent())
-          ..add(MeasureFinishedEvent(true));
+          ..add(MeasureFinishedEvent(saveMeasure: true));
       },
       expect: () => [
         isA<MeasureUpdatingState>(),
@@ -228,7 +228,7 @@ void main() {
       },
       act: (bloc) async {
         await Future<void>.delayed(const Duration(seconds: 1));
-        bloc.add(MeasureFinishedEvent(true));
+        bloc.add(MeasureFinishedEvent(saveMeasure: true));
       },
       seed: () => MeasureStartedState(
         MeasureViewModel(

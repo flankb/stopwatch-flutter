@@ -11,11 +11,12 @@ class MeasureSessionViewModel with EquatableMixin {
   final int startedOffset;
   final int? finishedOffset;
 
-  MeasureSessionViewModel(
-      {this.id,
-      required this.measureId,
-      required this.startedOffset,
-      this.finishedOffset});
+  MeasureSessionViewModel({
+    required this.measureId,
+    required this.startedOffset,
+    this.id,
+    this.finishedOffset,
+  });
 
   MeasureSessionsCompanion toEntity() {
     return MeasureSessionsCompanion(

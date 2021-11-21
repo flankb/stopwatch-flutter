@@ -24,7 +24,7 @@ class MeasurePausedEvent extends MeasureBaseEvent {}
 class MeasureFinishedEvent extends MeasureBaseEvent {
   final bool saveMeasure;
 
-  MeasureFinishedEvent(this.saveMeasure);
+  MeasureFinishedEvent({required this.saveMeasure});
 }
 
 class LapAddedEvent extends MeasureBaseEvent {}

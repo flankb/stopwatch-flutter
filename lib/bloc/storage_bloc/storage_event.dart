@@ -14,7 +14,7 @@ class LoadStorageEvent extends StorageEvent {
   final Type entityType;
   final int? measureId;
 
-  LoadStorageEvent(this.entityType, {required this.measureId});
+  const LoadStorageEvent(this.entityType, {required this.measureId});
 
   @override
   List<Object?> get props => [entityType, measureId];
@@ -31,23 +31,23 @@ class RequestEditEvent extends StorageEvent {
 class DeleteStorageEvent extends StorageEvent {
   final List<BaseStopwatchEntity> entitiesForDelete;
 
-  DeleteStorageEvent(this.entitiesForDelete);
+  const DeleteStorageEvent(this.entitiesForDelete);
 }
 
 class FilterStorageEvent extends StorageEvent {
   final Filter? filter;
   final Type entityType;
 
-  FilterStorageEvent(this.entityType, this.filter);
+  const FilterStorageEvent(this.entityType, this.filter);
 }
 
 class CancelFilterEvent extends StorageEvent {
   final Type entityType;
 
-  CancelFilterEvent(this.entityType);
+  const CancelFilterEvent(this.entityType);
 }
 
 class ApplyChangesEvent extends StorageEvent {
   final BaseStopwatchEntity entity;
-  ApplyChangesEvent(this.entity);
+  const ApplyChangesEvent(this.entity);
 }

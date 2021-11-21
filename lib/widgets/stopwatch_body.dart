@@ -80,157 +80,160 @@ class _StopwatchBodyState extends State<StopwatchBody>
         }
       },
       child: BlocBuilder<MeasureBloc, MeasureState>(
-          builder: (BuildContext context, MeasureState state) {
-        final mediaQueryOrientation = MediaQuery.of(context).orientation;
+        builder: (BuildContext context, MeasureState state) {
+          final mediaQueryOrientation = MediaQuery.of(context).orientation;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 32, 0, 0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: StreamBuilder<int>(
-                  initialData: 0,
-                  stream: widget.measureBloc.tickStream,
-                  builder: (context, snapshot) {
-                    final delta1 = snapshot.data != null && snapshot.data! > 0
-                        ? DateTime.now()
-                            .difference(state.measure.lastRestartedOverall)
-                            .inMilliseconds
-                        : 0;
-                    final overallDifference = state.measure.elapsed +
-                        delta1; // TODO elapsed не сбрасывается
-                    final lapDifference = state.measure.elapsedLap + delta1;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 32, 0, 0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: StreamBuilder<int>(
+                    initialData: 0,
+                    stream: widget.measureBloc.tickStream,
+                    builder: (context, snapshot) {
+                      final delta1 = snapshot.data != null && snapshot.data! > 0
+                          ? DateTime.now()
+                              .difference(state.measure.lastRestartedOverall)
+                              .inMilliseconds
+                          : 0;
+                      final overallDifference = state.measure.elapsed +
+                          delta1; // TODO elapsed не сбрасывается
+                      final lapDifference = state.measure.elapsedLap + delta1;
 
-                    final d1 = Duration(milliseconds: overallDifference);
-                    final d2 = Duration(milliseconds: lapDifference);
+                      final d1 = Duration(milliseconds: overallDifference);
+                      final d2 = Duration(milliseconds: lapDifference);
 
-                    return AnimatedBuilder(
-                      animation: _controller,
-                      builder: (context, widget) => Transform.translate(
-                        offset: Offset(0 + _controller.value, 0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.baseline,
-                              textBaseline: TextBaseline.ideographic,
-                              children: <Widget>[
-                                Text(
-                                  '${TimeDisplayer.formatBase(d2)},',
-                                  key: const Key('lap_text'),
-                                  style: const TextStyle(fontSize: 30),
-                                ),
-                                Text(
-                                  TimeDisplayer.formatMills(d2),
-                                  style: const TextStyle(fontSize: 20),
-                                )
-                              ],
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.baseline,
-                              textBaseline: TextBaseline.ideographic,
-                              children: <Widget>[
-                                Text(
-                                  '${TimeDisplayer.formatBase(d1)},',
-                                  key: const Key('overall_text'),
-                                  style: const TextStyle(fontSize: 44),
-                                ),
-                                Text(
-                                  TimeDisplayer.formatMills(d1),
-                                  style: const TextStyle(fontSize: 32),
-                                )
-                              ],
-                            )
-                          ],
+                      return AnimatedBuilder(
+                        animation: _controller,
+                        builder: (context, widget) => Transform.translate(
+                          offset: Offset(0 + _controller.value, 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.ideographic,
+                                children: <Widget>[
+                                  Text(
+                                    '${TimeDisplayer.formatBase(d2)},',
+                                    key: const Key('lap_text'),
+                                    style: const TextStyle(fontSize: 30),
+                                  ),
+                                  Text(
+                                    TimeDisplayer.formatMills(d2),
+                                    style: const TextStyle(fontSize: 20),
+                                  )
+                                ],
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.ideographic,
+                                children: <Widget>[
+                                  Text(
+                                    '${TimeDisplayer.formatBase(d1)},',
+                                    key: const Key('overall_text'),
+                                    style: const TextStyle(fontSize: 44),
+                                  ),
+                                  Text(
+                                    TimeDisplayer.formatMills(d1),
+                                    style: const TextStyle(fontSize: 32),
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
                         ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              if (state is MeasurePausedState)
+                Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Text(
+                    TimeDisplayer.humanFormat(
+                        Duration(milliseconds: state.measure.elapsed)),
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              Expanded(
+                flex: 3,
+                child: ListView.builder(
+                  itemCount: state.measure.laps.length,
+                  controller: _scrollController,
+                  itemBuilder: (BuildContext context, int index) {
+                    final lap = state.measure.laps[index];
+
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+                      child: MeasureLapItem(
+                        difference:
+                            '+${lap.differenceTime()},${lap.differenceMills()}',
+                        order: lap.order,
+                        overall: '${lap.overallTime()},${lap.overallMills()}',
                       ),
                     );
                   },
                 ),
               ),
-            ),
-            if (state is MeasurePausedState)
-              Padding(
-                padding: const EdgeInsets.only(left: 16),
-                child: Text(
-                  TimeDisplayer.humanFormat(
-                      Duration(milliseconds: state.measure.elapsed)),
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold,
-                  ),
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight:
+                      mediaQueryOrientation == Orientation.portrait ? 150 : 70,
+                  //minHeight: 100
                 ),
-              ),
-            Expanded(
-              flex: 3,
-              child: ListView.builder(
-                itemCount: state.measure.laps.length,
-                controller: _scrollController,
-                itemBuilder: (BuildContext context, int index) {
-                  final lap = state.measure.laps[index];
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
+                          child: RawMaterialButton(
+                            key: const Key('start_button'),
+                            onPressed: () {
+                              if (state is MeasureReadyState ||
+                                  state is MeasurePausedState) {
+                                widget.measureBloc.add(MeasureStartedEvent());
+                              } else if (state is MeasureStartedState) {
+                                widget.measureBloc.add(MeasurePausedEvent());
+                              }
 
-                  return Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
-                    child: MeasureLapItem(
-                      difference:
-                          '+${lap.differenceTime()},${lap.differenceMills()}',
-                      order: lap.order,
-                      overall: '${lap.overallTime()},${lap.overallMills()}',
-                    ),
-                  );
-                },
-              ),
-            ),
-            ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight:
-                    mediaQueryOrientation == Orientation.portrait ? 150 : 70,
-                //minHeight: 100
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
-                        child: RawMaterialButton(
-                          key: const Key('start_button'),
-                          onPressed: () {
-                            if (state is MeasureReadyState ||
-                                state is MeasurePausedState) {
-                              widget.measureBloc.add(MeasureStartedEvent());
-                            } else if (state is MeasureStartedState) {
-                              widget.measureBloc.add(MeasurePausedEvent());
-                            }
-
-                            _playSound(context, 0);
-                            _vibrate();
-                          },
-                          fillColor: state is MeasureStartedState
-                              ? Colors.red
-                              : Theme.of(context).primaryColor,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(12)),
-                          ),
-                          //enableFeedback: false
-                          child: Padding(
-                            padding: EdgeInsets.zero,
-                            child: Text(
-                              state is MeasureStartedState
-                                  ? S.of(context).pause
-                                  : S.of(context).start,
-                              style: const TextStyle(
-                                  fontSize: 28, color: Colors.white),
+                              _playSound(context, 0);
+                              _vibrate();
+                            },
+                            fillColor: state is MeasureStartedState
+                                ? Colors.red
+                                : Theme.of(context).primaryColor,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12)),
+                            ),
+                            //enableFeedback: false
+                            child: Padding(
+                              padding: EdgeInsets.zero,
+                              child: Text(
+                                state is MeasureStartedState
+                                    ? S.of(context).pause
+                                    : S.of(context).start,
+                                style: const TextStyle(
+                                  fontSize: 28,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      )),
-                  Expanded(
+                        )),
+                    Expanded(
                       flex: 1,
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(4, 8, 8, 8),
@@ -240,6 +243,8 @@ class _StopwatchBodyState extends State<StopwatchBody>
                               ? () async {
                                   widget.measureBloc.add(LapAddedEvent());
                                   _playSound(context, 1);
+
+                                  // ignore: unawaited_futures
                                   _vibrate();
 
                                   WidgetsBinding.instance
@@ -269,11 +274,12 @@ class _StopwatchBodyState extends State<StopwatchBody>
                             ),
                           ),
                         ),
-                      ))
-                ],
+                      ),
+                    )
+                  ],
+                ),
               ),
-            ),
-            Padding(
+              Padding(
                 padding: EdgeInsets.zero,
                 child: MetroAppBar(
                   height: 60,
@@ -283,12 +289,12 @@ class _StopwatchBodyState extends State<StopwatchBody>
                       text: S.of(context).reset,
                       color: Theme.of(context).textTheme.bodyText1!.color,
                       onPressed: () {
-                        //final measureCounts = state.measure.finishedMeasuresCount;
                         final saveMeasure = PrefService.instance.sharedPrefs
                                 .getBool(PREF_SAVE_MEASURES) ??
                             true;
-                        BlocProvider.of<MeasureBloc>(context)
-                            .add(MeasureFinishedEvent(saveMeasure));
+                        BlocProvider.of<MeasureBloc>(context).add(
+                          MeasureFinishedEvent(saveMeasure: saveMeasure),
+                        );
 
                         if (_controller.isCompleted) {
                           _controller.reverse();
@@ -305,7 +311,8 @@ class _StopwatchBodyState extends State<StopwatchBody>
                         Navigator.push<void>(
                           context,
                           MaterialPageRoute(
-                            builder: (BuildContext context) => HistoryPage(
+                            builder: (BuildContext context) =>
+                                const HistoryPage(
                               pageType: MeasureViewModel,
                               entityId: null,
                             ),
@@ -318,10 +325,12 @@ class _StopwatchBodyState extends State<StopwatchBody>
                       text: S.of(context).settings,
                       color: Theme.of(context).textTheme.bodyText1!.color,
                       onPressed: () {
-                        Navigator.push<void>(context,
-                            MaterialPageRoute(builder: (BuildContext context) {
-                          return SettingsPage();
-                        }));
+                        Navigator.push<void>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => SettingsPage(),
+                          ),
+                        );
                       },
                     ),
                   ],
@@ -336,38 +345,28 @@ class _StopwatchBodyState extends State<StopwatchBody>
                       },
                     ),
                     SecondaryCommand(
-                        text: S.of(context).about,
-                        onPressed: () {
-                          Navigator.push<void>(context, MaterialPageRoute(
-                              builder: (BuildContext context) {
-                            return AboutPage();
-                          }));
-                        })
+                      text: S.of(context).about,
+                      onPressed: () {
+                        Navigator.push<void>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => AboutPage(),
+                          ),
+                        );
+                      },
+                    )
                   ],
-                ))
-          ],
-        );
-      }),
+                ),
+              )
+            ],
+          );
+        },
+      ),
     );
   }
 
-  bool _isSaveMeasure() {
-    // final measureCounts = getIt
-    //     .get<StopwatchRepository>()
-    //     .guaranteedAmountOfFinishedMeasures; // TODO Плохо здесь ссылаться на репозиторий!
-    bool saveMeasure =
-        PrefService.instance.sharedPrefs.getBool(PREF_SAVE_MEASURES) ?? true;
-    // final proOwned = snapshot.data.productIsAcknowledged(PRO_PACKAGE);
-    // saveMeasure =
-    //     saveMeasure && (proOwned || measureCounts < MAX_FREE_MEASURES);
-
-    debugPrint('_isSaveMeasure $saveMeasure');
-
-    return saveMeasure;
-  }
-
   @override
-  void dispose() async {
+  Future<void> dispose() async {
     await _disableWakelock();
     super.dispose();
   }

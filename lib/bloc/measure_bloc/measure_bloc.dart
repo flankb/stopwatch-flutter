@@ -22,8 +22,11 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
   StreamController<int> controller = StreamController<int>();
   MeasureBloc(this._ticker, this._stopwatchRepository)
-      : super(MeasureUpdatingState(
-            MeasureViewModel(id: null, lastRestartedOverall: DateTime.now())));
+      : super(
+          MeasureUpdatingState(
+            MeasureViewModel(id: null, lastRestartedOverall: DateTime.now()),
+          ),
+        );
 
   @override
   Stream<MeasureState> mapEventToState(
@@ -106,8 +109,6 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
         yield MeasureReadyState(measure);
         add(MeasureStartedEvent(resume: true));
       } else if (measure.status == StopwatchStatus.Paused) {
-        // TODO Повнимательнее с паттерном BLoC, нужно очень четко следить за состоянием
-
         //debugPrint("In Opened before paused: $measure");
 
         final updatedElapsedsMeasure = _updateElapseds(
@@ -167,8 +168,11 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     if (state is MeasureStartedState || state is MeasurePausedState) {
       // Не сохранять в БД, если это MeasureFinishedEvent и там указана соотв. настройка
       final nosaveDb = event is MeasureFinishedEvent && !event.saveMeasure;
-      yield* _fixStopwatch(StopwatchStatus.Finished,
-          finish: event is MeasureFinishedEvent, saveToDatabase: !nosaveDb);
+      yield* _fixStopwatch(
+        StopwatchStatus.Finished,
+        finish: event is MeasureFinishedEvent,
+        saveToDatabase: !nosaveDb,
+      );
       yield MeasureReadyState(
         MeasureViewModel(lastRestartedOverall: DateTime.now()),
       );
@@ -188,8 +192,10 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     }
   }
 
-  Stream<MeasureState> _mapStartedToState(MeasureEvent event,
-      {bool resume = false}) async* {
+  Stream<MeasureState> _mapStartedToState(
+    MeasureEvent event, {
+    bool resume = false,
+  }) async* {
     if (state is MeasureReadyState || state is MeasurePausedState) {
       yield MeasureUpdatingState(state.measure);
       // Устанавливаем поля в модели, делаем запись в репозитории
@@ -198,9 +204,9 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       final updateElapsedsMeasure = _updateElapseds(state.measure, nowDate);
 
       var targetMeasure = updateElapsedsMeasure.copyWith(
-          status: StopwatchStatus.Started,
-          dateCreated:
-              updateElapsedsMeasure.dateStarted == null ? nowDate : null);
+        status: StopwatchStatus.Started,
+        dateCreated: updateElapsedsMeasure.dateStarted == null ? nowDate : null,
+      );
 
       // Если сущности не было, то необходимо создать и получить идентификатор
       if (targetMeasure.id == null) {
@@ -228,7 +234,8 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
         final writedSession = session.copyWith(id: sessionId);
 
         targetMeasure = targetMeasure.copyWith(
-            sessions: List.from(targetMeasure.sessions)..add(writedSession));
+          sessions: List.from(targetMeasure.sessions)..add(writedSession),
+        );
       }
 
       _startTicker();
@@ -275,7 +282,8 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
     // Завершить последний отрезок
     final lastSession = state.measure.getLastUnfinishedSession()?.copyWith(
-        finishedOffset: state.measure.getElapsedSinceStarted(dateNow));
+          finishedOffset: state.measure.getElapsedSinceStarted(dateNow),
+        );
 
     debugPrint('LastUnfinishedSession: $lastSession');
 

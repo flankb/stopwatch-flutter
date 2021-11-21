@@ -33,7 +33,7 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
       {int? limit}) async {
     return _measures
         .where((element) => describeEnum(element.status) == status)
-        .map((e) => _convertToMeasure(e))
+        .map(_convertToMeasure)
         .toList();
   }
 
@@ -65,35 +65,35 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
         finishedOffset: msc.finishedOffset);
   }
 
-  MeasureViewModel _convertToMeasureViewModel(MeasuresCompanion mc) {
-    return MeasureViewModel(
+  MeasureViewModel _convertToMeasureViewModel(MeasuresCompanion mc) =>
+      MeasureViewModel(
         id: mc.id.value,
         comment: mc.comment.value,
         status: StopwatchStatus.values
             .firstWhere((es) => describeEnum(es) == mc.status.value),
         dateStarted: mc.dateStarted.value,
         elapsed: mc.elapsed.value,
-        lastRestartedOverall: DateTime.now());
-  }
+        lastRestartedOverall: DateTime.now(),
+      );
 
   MeasureSessionViewModel _convertToMeasureSessionViewModel(
-      MeasureSessionsCompanion measureSession, int generatedId) {
-    return MeasureSessionViewModel(
+          MeasureSessionsCompanion measureSession, int generatedId) =>
+      MeasureSessionViewModel(
         id: generatedId,
         measureId: measureSession.measureId.value,
         startedOffset: measureSession.startedOffset.value,
-        finishedOffset: measureSession.finishedOffset.value);
-  }
+        finishedOffset: measureSession.finishedOffset.value,
+      );
 
-  LapViewModel _convertToLapViewModel(LapsCompanion lap, int generatedId) {
-    return LapViewModel(
+  LapViewModel _convertToLapViewModel(LapsCompanion lap, int generatedId) =>
+      LapViewModel(
         id: generatedId,
         measureId: lap.measureId.value,
         order: lap.order.value,
         difference: lap.difference.value,
         comment: lap.comment.value,
-        overall: lap.overall.value);
-  }
+        overall: lap.overall.value,
+      );
 
   @override
   Future<Measure> getMeasuresByIdAsync(int id) async {
@@ -104,7 +104,7 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
 
   @override
   Future<int> createNewMeasureAsync() async {
-    Measure measure = Measure(
+    final measure = Measure(
         id: Random(43).nextInt(2000) + 100,
         elapsed: 0,
         dateStarted: null, //DateTime.now(),
@@ -127,21 +127,21 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
   @override
   Future<int> addNewMeasureSession(
       Insertable<MeasureSession> measureSession) async {
-    MeasureSessionViewModel session = _convertToMeasureSessionViewModel(
-        measureSession as MeasureSessionsCompanion,
-        Random(55).nextInt(2000) + 100);
+    final session = _convertToMeasureSessionViewModel(
+      measureSession as MeasureSessionsCompanion,
+      Random(55).nextInt(2000) + 100,
+    );
 
     sessions.add(session);
     return session.id!;
   }
 
   @override
-  Future<List<MeasureSession>> getMeasureSessions(int measureId) async {
-    return sessions
-        .where((element) => element.measureId == measureId)
-        .map((e) => _convertToMeasureSession(e))
-        .toList();
-  }
+  Future<List<MeasureSession>> getMeasureSessions(int measureId) async =>
+      sessions
+          .where((element) => element.measureId == measureId)
+          .map(_convertToMeasureSession)
+          .toList();
 
   @override
   Future updateMeasureAsync(Insertable<Measure> measure) async {
@@ -150,7 +150,7 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
     _measures.remove(measureForUpdate);
 
     final viewModel = _convertToMeasureViewModel(measure as MeasuresCompanion);
-    debugPrint("Converted from entity: " + viewModel.toString());
+    debugPrint('Converted from entity: $viewModel');
 
     _measures.add(viewModel);
   }
@@ -158,12 +158,18 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
   @override
   Future<bool> updateMeasureSession(
       Insertable<MeasureSession> measureSession) async {
-    final sessionForUpdate = sessions.firstWhere((element) =>
-        element.id == (measureSession as MeasureSessionsCompanion).id.value);
-    sessions.remove(sessionForUpdate);
-
-    sessions.add(_convertToMeasureSessionViewModel(
-        measureSession as MeasureSessionsCompanion, measureSession.id.value));
+    final sessionForUpdate = sessions.firstWhere(
+      (element) =>
+          element.id == (measureSession as MeasureSessionsCompanion).id.value,
+    );
+    sessions
+      ..remove(sessionForUpdate)
+      ..add(
+        _convertToMeasureSessionViewModel(
+          measureSession as MeasureSessionsCompanion,
+          measureSession.id.value,
+        ),
+      );
     return true;
   }
 
@@ -180,7 +186,7 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
   Future<List<Lap>> getLapsByMeasureAsync(int measureId) async {
     return _laps
         .where((element) => element.measureId == measureId)
-        .map((e) => _convertToLap(e))
+        .map(_convertToLap)
         .toList();
   }
 

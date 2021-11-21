@@ -6,39 +6,34 @@ class Filter extends Equatable {
   final DateTime? dateTo;
   final String query;
 
-  Filter(this.query, {this.dateFrom, this.dateTo});
+  const Filter(this.query, {this.dateFrom, this.dateTo});
 
-  factory Filter.defaultFilter() {
-    return Filter('',
-        dateFrom: DateTime.now().subtract(Duration(days: 30)),
-        dateTo: DateTime.now());
-  }
+  factory Filter.defaultFilter() => Filter(
+        '',
+        dateFrom: DateTime.now().subtract(const Duration(days: 30)),
+        dateTo: DateTime.now(),
+      );
 
-  factory Filter.empty() {
-    return Filter('', dateFrom: null, dateTo: null);
-  }
+  factory Filter.empty() => const Filter('', dateFrom: null, dateTo: null);
 
   @override
-  String toString() {
-    return 'Filter{dateFrom: $dateFrom, dateTo: $dateTo, query: $query}';
-  }
+  String toString() =>
+      'Filter{dateFrom: $dateFrom, dateTo: $dateTo, query: $query}';
 
   @override
   List<Object?> get props => [dateFrom, dateTo, query];
 
-  Filter copyWithNullable({DateTime? dateFrom, DateTime? dateTo}) {
-    return Filter(query, dateFrom: dateFrom, dateTo: dateTo);
-  }
+  Filter copyWithNullable({DateTime? dateFrom, DateTime? dateTo}) =>
+      Filter(query, dateFrom: dateFrom, dateTo: dateTo);
 
   Filter copyWith({
     DateTime? dateFrom,
     DateTime? dateTo,
     String? query,
-  }) {
-    return Filter(
-      query ?? this.query,
-      dateFrom: dateFrom ?? this.dateFrom,
-      dateTo: dateTo ?? this.dateTo,
-    );
-  }
+  }) =>
+      Filter(
+        query ?? this.query,
+        dateFrom: dateFrom ?? this.dateFrom,
+        dateTo: dateTo ?? this.dateTo,
+      );
 }
