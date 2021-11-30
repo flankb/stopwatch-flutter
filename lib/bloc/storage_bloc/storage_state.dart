@@ -11,7 +11,7 @@ abstract class StorageState extends Equatable {
 }
 
 class LoadingStorageState extends StorageState {
-  LoadingStorageState() : super();
+  const LoadingStorageState() : super();
 }
 
 class AvailableListState extends StorageState {
@@ -23,21 +23,23 @@ class AvailableListState extends StorageState {
   @override
   List<Object?> get props => [allEntities, entities, lastFilter, filtered];
 
-  AvailableListState(this.entities, this.allEntities, this.lastFilter,
-      {this.filtered = false})
-      : super();
+  const AvailableListState(
+    this.entities,
+    this.allEntities,
+    this.lastFilter, {
+    this.filtered = false,
+  }) : super();
 
   AvailableListState copyWith({
     List<BaseStopwatchEntity>? allEntities,
     List<BaseStopwatchEntity>? entities,
     Filter? lastFilter,
     bool? filtered,
-  }) {
-    return AvailableListState(
-      allEntities ?? this.allEntities,
-      entities ?? this.entities,
-      lastFilter ?? this.lastFilter,
-      filtered: filtered ?? this.filtered,
-    );
-  }
+  }) =>
+      AvailableListState(
+        allEntities ?? this.allEntities,
+        entities ?? this.entities,
+        lastFilter ?? this.lastFilter,
+        filtered: filtered ?? this.filtered,
+      );
 }

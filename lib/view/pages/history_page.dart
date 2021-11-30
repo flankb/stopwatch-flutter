@@ -252,7 +252,7 @@ class _HistoryPageState extends State<HistoryPage>
                                       _exportToCsvButtonPrimary(
                                         context,
                                         existsMeasures,
-                                        shareMode: ShareMode.File,
+                                        shareMode: ShareMode.file,
                                       )
                                     else
                                       const SizedBox(),
@@ -328,10 +328,11 @@ class _HistoryPageState extends State<HistoryPage>
                             ],
                           ),
                           FilterButtons(
-                              pageIsLap: pageIsLap,
-                              availState: availState,
-                              storageBloc: _storageBloc,
-                              pageType: widget.pageType)
+                            pageIsLap: pageIsLap,
+                            availState: availState,
+                            storageBloc: _storageBloc,
+                            pageType: widget.pageType,
+                          )
                         ],
                       );
                     },
@@ -348,11 +349,11 @@ class _HistoryPageState extends State<HistoryPage>
   PrimaryCommand _exportToCsvButtonPrimary(
     BuildContext context,
     bool enabled, {
-    ShareMode shareMode = ShareMode.Email,
+    ShareMode shareMode = ShareMode.email,
   }) {
     final icon =
-        shareMode == ShareMode.Email ? Icons.share : Icons.insert_drive_file;
-    final tooltip = shareMode == ShareMode.Email
+        shareMode == ShareMode.email ? Icons.share : Icons.insert_drive_file;
+    final tooltip = shareMode == ShareMode.email
         ? S.of(context).share_app_bar
         : S.of(context).to_csv_app_bar;
     Future<void> command() async {
@@ -369,16 +370,16 @@ class _HistoryPageState extends State<HistoryPage>
       final entities =
           entitiesToExport.map((e) => e as MeasureViewModel).toList();
 
-      final csv = shareMode == ShareMode.Email
+      final csv = shareMode == ShareMode.email
           ? await exporter.convertToPlain(entities)
           : await exporter.convertToCsv(entities);
       _unselectItems(context);
 
       switch (shareMode) {
-        case ShareMode.Email:
+        case ShareMode.email:
           await _share(csv);
           break;
-        case ShareMode.File:
+        case ShareMode.file:
           await exporter.shareFile(csv);
           break;
       }
@@ -548,7 +549,8 @@ class FilterButtons extends StatelessWidget {
                     }
                   },
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(31)),
+                    borderRadius: BorderRadius.circular(31),
+                  ),
                   elevation: 6,
                   fillColor: Theme.of(context).primaryColor,
                   child: Padding(
@@ -645,7 +647,7 @@ class PurchaseBanner extends StatelessWidget {
       );
 }
 
-enum ShareMode { Email, File }
+enum ShareMode { email, file }
 
 class ExportToCsvButton extends StatelessWidget {
   @override

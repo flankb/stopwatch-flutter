@@ -39,7 +39,7 @@ RateMyApp rateMyApp = RateMyApp(
 
 String readLastTheme() {
   final themeStr =
-      PrefService.instance.sharedPrefs.getString(PREF_THEME) ?? GreenLight;
+      PrefService.instance.sharedPrefs.getString(prefTheme) ?? GreenLight;
 
   debugPrint('Readed last theme:$themeStr');
   return themeStr;
@@ -55,15 +55,20 @@ void main() async {
   // Здесь прочитать какая тема (перед инициализацией приложения)
   final initialTheme = readLastTheme();
 
-  runApp(MyApp(
-    initialThemeId: initialTheme,
-  ),);
+  runApp(
+    MyApp(
+      initialThemeId: initialTheme,
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
   final String initialThemeId;
 
-  const MyApp({required this.initialThemeId, Key? key, }) : super(key: key);
+  const MyApp({
+    required this.initialThemeId,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -93,15 +98,17 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) => ThemeScope<AppTheme>(
-      themeId: widget.initialThemeId,
-      availableThemes: appThemeData,
-      themeBuilder: (context, appTheme) => RepositoryProvider(
+        themeId: widget.initialThemeId,
+        availableThemes: appThemeData,
+        themeBuilder: (context, appTheme) => RepositoryProvider(
           create: (context) => StopwatchRepository(),
           child: MultiBlocProvider(
             providers: [
               BlocProvider(
-                create: (context) => MeasureBloc(Ticker3(),
-                    RepositoryProvider.of<StopwatchRepository>(context),),
+                create: (context) => MeasureBloc(
+                  Ticker3(),
+                  RepositoryProvider.of<StopwatchRepository>(context),
+                ),
               ),
             ],
             child: StorageBlocsProvider(
@@ -123,7 +130,7 @@ class _MyAppState extends State<MyApp> {
                   ),
             ),
           ),
-        );
+        ),
       );
 }
 
@@ -143,27 +150,35 @@ class CaptionModel extends Model {
 }
 
 class Choice {
-  const Choice(
-      {required this.title, this.icon, this.settingsType = SettingsType.None,});
+  const Choice({
+    required this.title,
+    this.icon,
+    this.settingsType = SettingsType.none,
+  });
 
   final String title;
   final IconData? icon;
   final SettingsType settingsType;
 }
 
-enum SettingsType { None, Settings, Review, About }
+enum SettingsType { none, settings, review, about }
 
-const List<Choice> choices =  <Choice>[
+const List<Choice> choices = <Choice>[
   //const Choice(title: 'Car', icon: Icons.directions_car),
   Choice(title: 'Поиск', icon: Icons.search),
   Choice(
-      title: 'Оценить приложение',
-      settingsType: SettingsType.Review,),
+    title: 'Оценить приложение',
+    settingsType: SettingsType.review,
+  ),
   Choice(
-      title: 'Настройки',
-      settingsType: SettingsType.Settings,),
+    title: 'Настройки',
+    settingsType: SettingsType.settings,
+  ),
   Choice(
-      title: 'О программе', icon: Icons.info, settingsType: SettingsType.About,),
+    title: 'О программе',
+    icon: Icons.info,
+    settingsType: SettingsType.about,
+  ),
 ];
 
 class MyTabPageStateful extends StatefulWidget {
@@ -172,10 +187,7 @@ class MyTabPageStateful extends StatefulWidget {
 }
 
 class _MyTabPageState extends State<MyTabPageStateful>
-    with
-        WidgetsBindingObserver,
-        AfterLayoutMixin<MyTabPageStateful> {
-
+    with WidgetsBindingObserver, AfterLayoutMixin<MyTabPageStateful> {
   late CaptionModel captionModel;
 
   bool categoryInited = false;
@@ -256,8 +268,9 @@ class _MyTabPageState extends State<MyTabPageStateful>
         // Set to false if you want to show the native Apple app rating dialog on iOS.
         dialogStyle: const DialogStyle(),
         // Custom dialog styles.
-        onDismissed: () => rateMyApp.callEvent(RateMyAppEventType
-            .laterButtonPressed,), // Called when the user dismissed the dialog (either by taping outside or by pressing the "back" button).
+        onDismissed: () => rateMyApp.callEvent(
+          RateMyAppEventType.laterButtonPressed,
+        ), // Called when the user dismissed the dialog (either by taping outside or by pressing the "back" button).
       );
     }
   }

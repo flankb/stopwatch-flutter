@@ -5,19 +5,16 @@ class StorageBlocsProvider extends InheritedWidget {
   final StorageBloc measuresBloc;
   final StorageBloc lapsBloc;
 
-  StorageBlocsProvider({
-    Key? key,
+  const StorageBlocsProvider({
     required this.measuresBloc,
     required this.lapsBloc,
     required Widget child,
+    Key? key,
   }) : super(key: key, child: child);
 
   @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
-    return false;
-  }
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;
 
-  static StorageBlocsProvider of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<StorageBlocsProvider>()!;
-  }
+  static StorageBlocsProvider of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<StorageBlocsProvider>()!;
 }

@@ -22,9 +22,7 @@ class MillisDateConverter extends TypeConverter<DateTime, int> {
   }
 
   @override
-  int? mapToSql(DateTime? value) {
-    return value?.millisecondsSinceEpoch;
-  }
+  int? mapToSql(DateTime? value) => value?.millisecondsSinceEpoch;
 }
 
 class Laps extends Table {
@@ -41,16 +39,15 @@ class Laps extends Table {
 class MeasureSessions extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get measureId => integer().named('measure_id').customConstraint(
-      'REFERENCES measures(id) ON DELETE CASCADE')(); // TODO ON DELETE CASCADE Не работает!!!
-  //DateTimeColumn get started => dateTime()();
-  //DateTimeColumn get finished => dateTime().nullable()();
+        'REFERENCES measures(id) ON DELETE CASCADE',
+      )(); // ON DELETE CASCADE Не работает!!!
   IntColumn get startedOffset => integer()();
   IntColumn get finishedOffset => integer().nullable()();
 }
 
 class Measures extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get elapsed => integer().withDefault(Constant(0))();
+  IntColumn get elapsed => integer().withDefault(const Constant(0))();
   //DateTimeColumn get dateCreated => dateTime()();
   IntColumn get dateStarted =>
       integer().nullable().map(const MillisDateConverter())();
@@ -65,22 +62,17 @@ class Tags extends Table {
   TextColumn get name => text().customConstraint('UNIQUE')();
 }
 
-LazyDatabase _openConnection() {
-  // the LazyDatabase util lets us find the right location for the file async.
-  return LazyDatabase(() async {
-    // put the database file, called db.sqlite here, into the documents folder
-    // for your app.
-    final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, DATABASE_NAME));
-    return NativeDatabase(file);
-  });
-}
+LazyDatabase _openConnection() => LazyDatabase(() async {
+      // put the database file, called db.sqlite here, into the documents folder
+      // for your app.
+      final dbFolder = await getApplicationDocumentsDirectory();
+      final file = File(p.join(dbFolder.path, databaseName));
+      return NativeDatabase(file);
+    });
 
 @DriftDatabase(tables: [Laps, Measures, MeasureSessions, Tags])
 class MyDatabase extends _$MyDatabase {
-  factory MyDatabase() {
-    return _instance;
-  }
+  factory MyDatabase() => _instance;
 
   MyDatabase.fromCustomExecutor(QueryExecutor e) : super(e);
 

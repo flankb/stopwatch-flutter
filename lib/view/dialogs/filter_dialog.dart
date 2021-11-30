@@ -150,7 +150,8 @@ class FilterFormState extends State<FilterForm> {
                       decoration: InputDecoration(
                         labelText: '${S.of(context).to}:',
                         labelStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary),
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
                       ),
                       initialValue: widget.filter.dateTo,
                       validator: (value) {

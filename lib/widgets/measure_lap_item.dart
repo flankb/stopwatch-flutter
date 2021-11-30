@@ -20,11 +20,12 @@ class MeasureLapItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           SizedBox(
-              width: 36,
-              child: Text(
-                '$order.',
-                style: const TextStyle(fontSize: 18),
-              )),
+            width: 36,
+            child: Text(
+              '$order.',
+              style: const TextStyle(fontSize: 18),
+            ),
+          ),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,

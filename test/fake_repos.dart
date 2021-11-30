@@ -1,15 +1,15 @@
 // Fake class
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
+import 'package:mockito/mockito.dart';
 import 'package:stopwatch/fake/fake_data_fabric.dart';
 import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 import 'package:stopwatch/models/stopwatch_status.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
-import 'package:mockito/mockito.dart';
-import 'package:collection/collection.dart';
 
 class StopwatchFakeRepository extends Fake implements StopwatchRepository {
   late List<MeasureViewModel> _measures;
@@ -18,9 +18,9 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
 
   StopwatchFakeRepository({bool preBuild = false}) {
     if (preBuild) {
-      _measures = FakeDataFabric.measuresHistory();
-      _laps = FakeDataFabric.lapsHistory();
-      sessions = FakeDataFabric.sessionsHistory();
+      _measures = measuresHistory();
+      _laps = lapsHistory();
+      sessions = sessionsHistory();
     } else {
       _measures = <MeasureViewModel>[];
       _laps = <LapViewModel>[];
@@ -29,41 +29,39 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
   }
 
   @override
-  Future<List<Measure>> getMeasuresByStatusAsync(String status,
-      {int? limit}) async {
-    return _measures
-        .where((element) => describeEnum(element.status) == status)
-        .map(_convertToMeasure)
-        .toList();
-  }
+  Future<List<Measure>> getMeasuresByStatusAsync(
+    String status, {
+    int? limit,
+  }) async =>
+      _measures
+          .where((element) => describeEnum(element.status) == status)
+          .map(_convertToMeasure)
+          .toList();
 
-  // TODO Refactor this methods!
-  Measure _convertToMeasure(MeasureViewModel measureViewModel) {
-    return Measure(
+  Measure _convertToMeasure(MeasureViewModel measureViewModel) => Measure(
         id: measureViewModel.id!,
         comment: measureViewModel.comment,
-        status: (describeEnum(measureViewModel.status)),
+        status: describeEnum(measureViewModel.status),
         dateStarted: measureViewModel.dateStarted,
-        elapsed: measureViewModel.elapsed);
-  }
+        elapsed: measureViewModel.elapsed,
+      );
 
-  Lap _convertToLap(LapViewModel lapViewModel) {
-    return Lap(
+  Lap _convertToLap(LapViewModel lapViewModel) => Lap(
         id: lapViewModel.id!,
         measureId: lapViewModel.measureId,
         order: lapViewModel.order,
         difference: lapViewModel.difference,
         comment: lapViewModel.comment,
-        overall: lapViewModel.overall);
-  }
+        overall: lapViewModel.overall,
+      );
 
-  MeasureSession _convertToMeasureSession(MeasureSessionViewModel msc) {
-    return MeasureSession(
+  MeasureSession _convertToMeasureSession(MeasureSessionViewModel msc) =>
+      MeasureSession(
         id: msc.id!,
         measureId: msc.measureId,
         startedOffset: msc.startedOffset,
-        finishedOffset: msc.finishedOffset);
-  }
+        finishedOffset: msc.finishedOffset,
+      );
 
   MeasureViewModel _convertToMeasureViewModel(MeasuresCompanion mc) =>
       MeasureViewModel(
@@ -77,7 +75,9 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
       );
 
   MeasureSessionViewModel _convertToMeasureSessionViewModel(
-          MeasureSessionsCompanion measureSession, int generatedId) =>
+    MeasureSessionsCompanion measureSession,
+    int generatedId,
+  ) =>
       MeasureSessionViewModel(
         id: generatedId,
         measureId: measureSession.measureId.value,
@@ -146,7 +146,8 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
   @override
   Future updateMeasureAsync(Insertable<Measure> measure) async {
     final measureForUpdate = _measures.firstWhere(
-        (element) => element.id == (measure as MeasuresCompanion).id.value);
+      (element) => element.id == (measure as MeasuresCompanion).id.value,
+    );
     _measures.remove(measureForUpdate);
 
     final viewModel = _convertToMeasureViewModel(measure as MeasuresCompanion);
@@ -177,25 +178,23 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
   Future updateLapAsync(Insertable<Lap> lap) async {
     final lapForUpdate = _laps
         .firstWhere((element) => element.id == (lap as LapsCompanion).id.value);
-    _laps.remove(lapForUpdate);
-
-    _laps.add(_convertToLapViewModel((lap as LapsCompanion), lap.id.value));
+    _laps
+      ..remove(lapForUpdate)
+      ..add(_convertToLapViewModel(lap as LapsCompanion, lap.id.value));
   }
 
   @override
-  Future<List<Lap>> getLapsByMeasureAsync(int measureId) async {
-    return _laps
-        .where((element) => element.measureId == measureId)
-        .map(_convertToLap)
-        .toList();
-  }
+  Future<List<Lap>> getLapsByMeasureAsync(int measureId) async => _laps
+      .where((element) => element.measureId == measureId)
+      .map(_convertToLap)
+      .toList();
 
   @override
   Future deleteMeasures(List<int> measureIds) async {
-    measureIds.forEach((element) {
+    for (final element in measureIds) {
       _measures.removeWhere((m) => m.id == element);
       sessions.removeWhere((s) => s.measureId == element);
       _laps.removeWhere((l) => l.measureId == element);
-    });
+    }
   }
 }
