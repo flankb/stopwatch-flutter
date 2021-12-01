@@ -124,8 +124,7 @@ class _MyAppState extends State<MyApp> {
                   GlobalCupertinoLocalizations.delegate,
                 ],
                 supportedLocales: S.delegate.supportedLocales,
-                home:
-                    MyTabPageStateful(), //MyHomePage(title: 'Flutter Demo Home Page'),
+                home: MainPage(), //MyHomePage(title: 'Flutter Demo Home Page'),
               ),
             ),
           ),
@@ -165,13 +164,13 @@ const List<Choice> choices = <Choice>[
   ),
 ];
 
-class MyTabPageStateful extends StatefulWidget {
+class MainPage extends StatefulWidget {
   @override
   _MyTabPageState createState() => _MyTabPageState();
 }
 
-class _MyTabPageState extends State<MyTabPageStateful>
-    with WidgetsBindingObserver, AfterLayoutMixin<MyTabPageStateful> {
+class _MyTabPageState extends State<MainPage>
+    with WidgetsBindingObserver, AfterLayoutMixin<MainPage> {
   bool categoryInited = false;
   late Future<Tuple2<Soundpool, List<int>>> _soundsLoader;
 
