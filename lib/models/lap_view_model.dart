@@ -13,17 +13,13 @@ class LapViewModel extends BaseStopwatchEntity {
   final int difference;
   final int overall;
 
-  String differenceTime() =>
-      TimeDisplayer.formatBase(Duration(milliseconds: difference));
+  String differenceTime() => formatBase(Duration(milliseconds: difference));
 
-  String overallTime() =>
-      TimeDisplayer.formatBase(Duration(milliseconds: overall));
+  String overallTime() => formatBase(Duration(milliseconds: overall));
 
-  String differenceMills() =>
-      TimeDisplayer.formatMills(Duration(milliseconds: difference));
+  String differenceMills() => formatMills(Duration(milliseconds: difference));
 
-  String overallMills() =>
-      TimeDisplayer.formatMills(Duration(milliseconds: overall));
+  String overallMills() => formatMills(Duration(milliseconds: overall));
 
   LapViewModel({
     required this.measureId,

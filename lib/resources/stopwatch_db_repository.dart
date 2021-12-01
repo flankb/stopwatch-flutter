@@ -79,7 +79,8 @@ class StopwatchRepository extends DatabaseAccessor<MyDatabase>
 
   @override
   Future<bool> updateMeasureSession(
-      Insertable<MeasureSession> measureSession) async {
+    Insertable<MeasureSession> measureSession,
+  ) async {
     debugPrint(
       'updateMeasureSessionAsync measureSession ${measureSession.toString()}',
     );

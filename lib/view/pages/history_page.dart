@@ -146,7 +146,7 @@ class _HistoryPageState extends State<HistoryPage>
                 final pageIsLap = widget.pageType == LapViewModel;
 
                 final overallElapsed = pageIsLap
-                    ? TimeDisplayer.formatAllBeautifulFromMills(
+                    ? formatAllBeautifulFromMills(
                         (widget.entityId as MeasureViewModel?)?.elapsed ?? 0,
                       )
                     : '';
@@ -154,7 +154,7 @@ class _HistoryPageState extends State<HistoryPage>
                     ? (widget.entityId as MeasureViewModel?)?.comment ?? ''
                     : '';
                 final createDate = pageIsLap
-                    ? TimeDisplayer.formatDate(
+                    ? formatDate(
                         (widget.entityId as MeasureViewModel?)!.dateStarted!,
                         context: context,
                       )

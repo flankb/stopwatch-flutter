@@ -52,10 +52,9 @@ class _StopwatchItemState extends State<StopwatchItem>
             ? (widget.entity as LapViewModel).overall
             : 0;
 
-    final elapsedString =
-        TimeDisplayer.formatAllBeautiful(Duration(milliseconds: elapsed));
+    final elapsedString = formatAllBeautiful(Duration(milliseconds: elapsed));
     final differenceString = difference != null
-        ? '+${TimeDisplayer.formatAllBeautiful(Duration(milliseconds: difference))}'
+        ? '+${formatAllBeautiful(Duration(milliseconds: difference))}'
         : null;
 
     final date = entityIsMeasure
@@ -155,7 +154,7 @@ class _StopwatchItemState extends State<StopwatchItem>
                   const SizedBox(height: 0),
                   if (date != null)
                     Text(
-                      TimeDisplayer.formatDate(date, context: context),
+                      formatDate(date, context: context),
                       style: TextStyle(
                         color: ThemeHolder.of<AppTheme>(context)
                             .theme

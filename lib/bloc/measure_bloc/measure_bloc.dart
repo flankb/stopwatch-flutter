@@ -83,7 +83,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
       final sessions =
           (await _stopwatchRepository.getMeasureSessions(measureEntity.id))
-              .map(MeasureSessionViewModel.fromEntity);
+              .map((m) => MeasureSessionViewModel.fromEntity(m));
 
       debugPrint('Restored sessions by Id ${measureEntity.id}: $sessions');
 

@@ -6,10 +6,8 @@ class PrefService {
 
   PrefService._();
 
-  static PrefService get instance {
-    if (_instance == null) {
-      _instance = PrefService._();
-    }
+  factory PrefService.getInstance() {
+    _instance ??= PrefService._();
 
     return _instance!;
   }

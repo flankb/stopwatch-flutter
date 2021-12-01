@@ -18,43 +18,38 @@ class MeasureSessionViewModel with EquatableMixin {
     this.finishedOffset,
   });
 
-  MeasureSessionsCompanion toEntity() {
-    return MeasureSessionsCompanion(
-        id: id != null ? Value(id!) : Value.absent(),
+  MeasureSessionsCompanion toEntity() => MeasureSessionsCompanion(
+        id: id != null ? Value(id!) : const Value.absent(),
         measureId: Value(measureId),
         startedOffset: Value(startedOffset),
-        finishedOffset: Value(finishedOffset));
-  }
+        finishedOffset: Value(finishedOffset),
+      );
 
-  static MeasureSessionViewModel fromEntity(MeasureSession entity) {
-    return MeasureSessionViewModel(
+  factory MeasureSessionViewModel.fromEntity(MeasureSession entity) =>
+      MeasureSessionViewModel(
         id: entity.id,
         measureId: entity.measureId,
         startedOffset: entity.startedOffset,
-        finishedOffset: entity.finishedOffset);
-  }
+        finishedOffset: entity.finishedOffset,
+      );
 
   @override
-  String toString() {
-    return 'MeasureSessionViewModel{id: $id, measureId: $measureId, started: $startedOffset, finished: $finishedOffset}';
-  }
+  String toString() =>
+      'MeasureSessionViewModel{id: $id, measureId: $measureId, started: $startedOffset, finished: $finishedOffset}';
 
   @override
-  List<Object?> get props {
-    return [id, measureId, startedOffset, finishedOffset];
-  }
+  List<Object?> get props => [id, measureId, startedOffset, finishedOffset];
 
   MeasureSessionViewModel copyWith({
     int? id,
     int? measureId,
     int? startedOffset,
     int? finishedOffset,
-  }) {
-    return MeasureSessionViewModel(
-      id: id ?? this.id,
-      measureId: measureId ?? this.measureId,
-      startedOffset: startedOffset ?? this.startedOffset,
-      finishedOffset: finishedOffset ?? this.finishedOffset,
-    );
-  }
+  }) =>
+      MeasureSessionViewModel(
+        id: id ?? this.id,
+        measureId: measureId ?? this.measureId,
+        startedOffset: startedOffset ?? this.startedOffset,
+        finishedOffset: finishedOffset ?? this.finishedOffset,
+      );
 }

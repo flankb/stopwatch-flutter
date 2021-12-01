@@ -38,7 +38,8 @@ class EntityBloc extends Bloc<EntityEvent, EntityState> {
             .updateMeasureAsync(measureViewModel.toEntity());
 
         debugPrint(
-            'SaveEntityEvent: ${(event.entity as MeasureViewModel).toEntity().toString()}');
+          'SaveEntityEvent: ${(event.entity as MeasureViewModel).toEntity().toString()}',
+        );
         yield AvailableEntityState(measureViewModel);
       }
     }

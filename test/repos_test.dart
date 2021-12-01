@@ -1,7 +1,7 @@
+import 'package:drift/native.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/native.dart';
 import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/models/measure_view_model.dart';
 import 'package:stopwatch/models/stopwatch_status.dart';
@@ -25,9 +25,9 @@ void main() {
       database.close();
     });
 
-    test("FloorRepository test", () async {});
+    test('FloorRepository test', () async {});
 
-    test("Repo test", () async {
+    test('Repo test', () async {
       await _stopwatchRepository.createNewMeasureAsync();
 
       final readyMeasure = await _stopwatchRepository
@@ -36,20 +36,20 @@ void main() {
 
       expect(readyMeasure.single.status == describeEnum(StopwatchStatus.Ready),
           true,
-          reason: "Не создалось измерение со статусом Ready!");
+          reason: 'Не создалось измерение со статусом Ready!');
 
       final measureId = readyMeasure.single.id;
 
       final measureById =
           await _stopwatchRepository.getMeasuresByIdAsync(measureId);
-      expect(measureId, equals(measureById.id), reason: "Id неверный!");
+      expect(measureId, equals(measureById.id), reason: 'Id неверный!');
 
-      Lap lap = Lap(
+      final lap = Lap(
           order: 1, measureId: measureId, id: 1, difference: 10, overall: 10);
 
       await _stopwatchRepository.addNewLapAsync(lap);
 
-      var measureViewModel = MeasureViewModel.fromEntity(readyMeasure.single)
+      final measureViewModel = MeasureViewModel.fromEntity(readyMeasure.single)
           .copyWith(dateCreated: DateTime.now());
       await _stopwatchRepository.addNewMeasureSession(MeasureSession(
         startedOffset: measureViewModel.getElapsedSinceStarted(DateTime.now()),
@@ -62,8 +62,11 @@ void main() {
       var laps = await _stopwatchRepository.getLapsByMeasureAsync(measureId);
       var sessions = await _stopwatchRepository.getMeasureSessions(measureId);
 
-      expect(laps.length == 1 && sessions.length == 1, true,
-          reason: "Не добавились круги или сессии");
+      expect(
+        laps.length == 1 && sessions.length == 1,
+        true,
+        reason: 'Не добавились круги или сессии',
+      );
 
       await _stopwatchRepository.deleteMeasures([measureId]);
 
@@ -72,9 +75,8 @@ void main() {
       laps = await _stopwatchRepository.getLapsByMeasureAsync(measureId);
       sessions = await _stopwatchRepository.getMeasureSessions(measureId);
 
-      expect(measures.length == 0 && laps.length == 0 && sessions.length == 0,
-          true,
-          reason: "Не удалились сущности");
+      expect(measures.isEmpty && laps.isEmpty && sessions.isEmpty, true,
+          reason: 'Не удалились сущности');
     });
   });
 }

@@ -34,11 +34,11 @@ class _SettingsPageState extends State<SettingsPage> {
   Future _initPrefs() async {
     _sharedPrefs = await SharedPreferences.getInstance();
 
-    sound = _sharedPrefs.getBool(PREF_SOUND) ?? true;
-    vibration = _sharedPrefs.getBool(PREF_VIBRATION) ?? true;
-    keepScreenAwake = _sharedPrefs.getBool(PREF_KEEP_SCREEN_AWAKE) ?? false;
-    persistMeasure = _sharedPrefs.getBool(PREF_SAVE_MEASURES) ?? true;
-    theme = _sharedPrefs.getString(PREF_THEME) ?? GreenLight;
+    sound = _sharedPrefs.getBool(prefSound) ?? true;
+    vibration = _sharedPrefs.getBool(prefVibration) ?? true;
+    keepScreenAwake = _sharedPrefs.getBool(prefKeepScreenAwake) ?? false;
+    persistMeasure = _sharedPrefs.getBool(prefSaveMeasures) ?? true;
+    theme = _sharedPrefs.getString(prefTheme) ?? greenLight;
   }
 
   void _writeBoolValue(String key, bool value) {}
@@ -77,7 +77,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       onChanged: (bool value) {
                         setState(() {
                           sound = value;
-                          _writeBoolValue(PREF_SOUND, value);
+                          _writeBoolValue(prefSound, value);
                         });
                       },
                     ),
@@ -87,7 +87,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       onChanged: (bool value) {
                         setState(() {
                           vibration = value;
-                          _writeBoolValue(PREF_VIBRATION, value);
+                          _writeBoolValue(prefVibration, value);
                         });
                       },
                     ),
@@ -97,7 +97,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       onChanged: (bool value) {
                         setState(() {
                           keepScreenAwake = value;
-                          _writeBoolValue(PREF_KEEP_SCREEN_AWAKE, value);
+                          _writeBoolValue(prefKeepScreenAwake, value);
                         });
                       },
                     ),
@@ -107,7 +107,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       onChanged: (bool value) {
                         setState(() {
                           persistMeasure = value;
-                          _writeBoolValue(PREF_SAVE_MEASURES, value);
+                          _writeBoolValue(prefSaveMeasures, value);
                         });
                       },
                     ),
@@ -128,19 +128,19 @@ class _SettingsPageState extends State<SettingsPage> {
                           onChanged: (String? newValue) {
                             setState(() {
                               theme = newValue!;
-                              _sharedPrefs.setString(PREF_THEME, newValue);
+                              _sharedPrefs.setString(prefTheme, newValue);
                               ThemeHolder.of<AppTheme>(context)
                                   .updateThemeById(newValue);
                               // Обновить тему
                             });
                           },
                           items: <String, String>{
-                            MagentaLight: '${S.current.magenta} $sunrise',
-                            MagentaDark: '${S.current.magenta} $twilight',
-                            BlueLight: '${S.current.breeze} $sunrise',
-                            BlueDark: '${S.current.breeze} $twilight',
-                            GreenLight: '${S.current.cedar} $sunrise',
-                            GreenDark: '${S.current.cedar} $twilight'
+                            magentaLight: '${S.current.magenta} $sunrise',
+                            magentaDark: '${S.current.magenta} $twilight',
+                            blueLight: '${S.current.breeze} $sunrise',
+                            blueDark: '${S.current.breeze} $twilight',
+                            greenLight: '${S.current.cedar} $sunrise',
+                            greenDark: '${S.current.cedar} $twilight'
                           }
                               .entries
                               .map<DropdownMenuItem<String>>(

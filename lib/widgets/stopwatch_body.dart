@@ -118,12 +118,12 @@ class _StopwatchBodyState extends State<StopwatchBody>
                                 textBaseline: TextBaseline.ideographic,
                                 children: <Widget>[
                                   Text(
-                                    '${TimeDisplayer.formatBase(d2)},',
+                                    '${formatBase(d2)},',
                                     key: const Key('lap_text'),
                                     style: const TextStyle(fontSize: 30),
                                   ),
                                   Text(
-                                    TimeDisplayer.formatMills(d2),
+                                    formatMills(d2),
                                     style: const TextStyle(fontSize: 20),
                                   )
                                 ],
@@ -133,12 +133,12 @@ class _StopwatchBodyState extends State<StopwatchBody>
                                 textBaseline: TextBaseline.ideographic,
                                 children: <Widget>[
                                   Text(
-                                    '${TimeDisplayer.formatBase(d1)},',
+                                    '${formatBase(d1)},',
                                     key: const Key('overall_text'),
                                     style: const TextStyle(fontSize: 44),
                                   ),
                                   Text(
-                                    TimeDisplayer.formatMills(d1),
+                                    formatMills(d1),
                                     style: const TextStyle(fontSize: 32),
                                   )
                                 ],
@@ -155,8 +155,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
                 Padding(
                   padding: const EdgeInsets.only(left: 16),
                   child: Text(
-                    TimeDisplayer.humanFormat(
-                        Duration(milliseconds: state.measure.elapsed)),
+                    humanFormat(Duration(milliseconds: state.measure.elapsed)),
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontSize: 16,
@@ -289,8 +288,9 @@ class _StopwatchBodyState extends State<StopwatchBody>
                       text: S.of(context).reset,
                       color: Theme.of(context).textTheme.bodyText1!.color,
                       onPressed: () {
-                        final saveMeasure = PrefService.instance.sharedPrefs
-                                .getBool(PREF_SAVE_MEASURES) ??
+                        final saveMeasure = PrefService.getInstance()
+                                .sharedPrefs
+                                .getBool(prefSaveMeasures) ??
                             true;
                         BlocProvider.of<MeasureBloc>(context).add(
                           MeasureFinishedEvent(saveMeasure: saveMeasure),
@@ -373,7 +373,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
 
   Future<void> _vibrate() async {
     final vibration =
-        PrefService.instance.sharedPrefs.getBool(PREF_VIBRATION) ?? true;
+        PrefService.getInstance().sharedPrefs.getBool(prefVibration) ?? true;
     if (vibration) {
       if (_existsVibrator) {
         await Vibration.vibrate(duration: 50);
@@ -382,7 +382,8 @@ class _StopwatchBodyState extends State<StopwatchBody>
   }
 
   void _playSound(BuildContext context, int soundId) {
-    final sound = PrefService.instance.sharedPrefs.getBool(PREF_SOUND) ?? true;
+    final sound =
+        PrefService.getInstance().sharedPrefs.getBool(prefSound) ?? true;
 
     if (sound) {
       final s = SoundWidget.of(context);
@@ -393,7 +394,7 @@ class _StopwatchBodyState extends State<StopwatchBody>
   Future<void> _enableWakeLock() async {
     debugPrint('Start wakelock enabling!');
 
-    if (PrefService.instance.sharedPrefs.getBool(PREF_KEEP_SCREEN_AWAKE) ??
+    if (PrefService.getInstance().sharedPrefs.getBool(prefKeepScreenAwake) ??
         false) {
       if (!(await Wakelock.enabled)) {
         await Wakelock.enable();

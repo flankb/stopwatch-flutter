@@ -14,7 +14,7 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
   final EntityBloc entityBloc;
 
   StorageBloc(this.stopwatchRepository, this.entityBloc)
-      : super(LoadingStorageState()) {
+      : super(const LoadingStorageState()) {
     entityBloc.stream.listen(
       (entityState) => {
         // Обновим сущность в списках
@@ -39,7 +39,8 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
       if (openStorageEvent.entityType == MeasureViewModel) {
         final measures = await stopwatchRepository
             .getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Finished));
-        final resultList = measures.map(MeasureViewModel.fromEntity).toList();
+        final resultList =
+            measures.map((e) => MeasureViewModel.fromEntity(e)).toList();
 
         yield AvailableListState(resultList, resultList, Filter.empty());
       } else if (openStorageEvent.entityType == LapViewModel) {
@@ -52,11 +53,11 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
       }
     } else if (event is ClearStorageEvent) {
       // Здесь при необходимости можно удалять элементы из списка
-      yield LoadingStorageState();
+      yield const LoadingStorageState();
     } else if (event is FilterStorageEvent) {
       if (state is AvailableListState) {
         final availState = state as AvailableListState;
-        yield LoadingStorageState();
+        yield const LoadingStorageState();
 
         var result = availState.entities;
 
@@ -98,16 +99,19 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
       // Получить текущее состояние (а именно списки и тип сущности) (должно быть только Available)
       if (state is AvailableListState) {
         final availState = state as AvailableListState;
-        yield AvailableListState(availState.allEntities, availState.allEntities,
-            availState.lastFilter,
-            filtered: false);
+        yield AvailableListState(
+          availState.allEntities,
+          availState.allEntities,
+          availState.lastFilter,
+          filtered: false,
+        );
       } else {
         throw Exception('Wrong state!');
       }
     } else if (event is DeleteStorageEvent) {
       if (state is AvailableListState) {
         final availState = state as AvailableListState;
-        yield LoadingStorageState();
+        yield const LoadingStorageState();
         var entities = availState.entities;
         entities = entities
             .toSet()

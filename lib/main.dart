@@ -39,7 +39,7 @@ RateMyApp rateMyApp = RateMyApp(
 
 String readLastTheme() {
   final themeStr =
-      PrefService.instance.sharedPrefs.getString(prefTheme) ?? GreenLight;
+      PrefService.getInstance().sharedPrefs.getString(prefTheme) ?? greenLight;
 
   debugPrint('Readed last theme:$themeStr');
   return themeStr;
@@ -49,7 +49,7 @@ void main() async {
   WidgetsFlutterBinding
       .ensureInitialized(); // This allows to use async methods in the main method without any problem.
 
-  await PrefService.instance.init();
+  await PrefService.getInstance().init();
 
   await rateMyApp.init();
   // Здесь прочитать какая тема (перед инициализацией приложения)
