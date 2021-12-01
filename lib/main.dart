@@ -115,19 +115,19 @@ class _MyAppState extends State<MyApp> {
               measuresBloc: measuresBloc,
               lapsBloc: lapsBloc,
               child: MaterialApp(
-                  onGenerateTitle: (BuildContext context) =>
-                      S.of(context).app_title,
-                  theme: appTheme.material,
-                  localizationsDelegates: const [
-                    S.delegate,
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                    GlobalCupertinoLocalizations.delegate,
-                  ],
-                  supportedLocales: S.delegate.supportedLocales,
-                  home:
-                      MyTabPageStateful() //MyHomePage(title: 'Flutter Demo Home Page'),
-                  ),
+                onGenerateTitle: (BuildContext context) =>
+                    S.of(context).app_title,
+                theme: appTheme.material,
+                localizationsDelegates: const [
+                  S.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: S.delegate.supportedLocales,
+                home:
+                    MyTabPageStateful(), //MyHomePage(title: 'Flutter Demo Home Page'),
+              ),
             ),
           ),
         ),

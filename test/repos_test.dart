@@ -62,10 +62,11 @@ void main() {
         MeasureSession(
           startedOffset:
               measureViewModel.getElapsedSinceStarted(DateTime.now()),
-          finishedOffset:
-              measureViewModel.getElapsedSinceStarted(DateTime.now().add(
-            const Duration(seconds: 23),
-          )),
+          finishedOffset: measureViewModel.getElapsedSinceStarted(
+            DateTime.now().add(
+              const Duration(seconds: 23),
+            ),
+          ),
           measureId: measureId,
           id: 1,
         ),

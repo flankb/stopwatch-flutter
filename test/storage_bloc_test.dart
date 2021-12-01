@@ -13,7 +13,9 @@ import 'package:stopwatch/models/stopwatch_status.dart';
 import 'fake_repos.dart';
 
 Future<bool> existsMeasure(
-    StopwatchFakeRepository repository, StopwatchStatus status) async {
+  StopwatchFakeRepository repository,
+  StopwatchStatus status,
+) async {
   final measures =
       await repository.getMeasuresByStatusAsync(describeEnum(status));
   return measures.isNotEmpty;
@@ -86,8 +88,11 @@ void main() {
             .where((element) => element.comment!.contains('сто'));
         final onlyFilteredExists =
             filteredEntities.length == availableState.entities.length;
-        expect(onlyFilteredExists, true,
-            reason: 'Wrong count of filtered elements!');
+        expect(
+          onlyFilteredExists,
+          true,
+          reason: 'Wrong count of filtered elements!',
+        );
 
         final stateIsFiltered = availableState.filtered;
         expect(stateIsFiltered, true, reason: 'Flag not appear!');

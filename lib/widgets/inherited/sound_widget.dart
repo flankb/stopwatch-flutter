@@ -4,21 +4,17 @@ import 'package:soundpool/soundpool.dart';
 class SoundWidget extends InheritedWidget {
   final Soundpool soundPool;
   final List<int> sounds;
-  //final Widget child;
 
-  SoundWidget(
-      {required this.soundPool,
-      required this.sounds,
-      required Widget child,
-      Key? key})
-      : super(child: child, key: key);
+  const SoundWidget({
+    required this.soundPool,
+    required this.sounds,
+    required Widget child,
+    Key? key,
+  }) : super(child: child, key: key);
 
   @override
-  bool updateShouldNotify(SoundWidget oldWidget) {
-    return true;
-  }
+  bool updateShouldNotify(SoundWidget oldWidget) => true;
 
-  static SoundWidget? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<SoundWidget>();
-  }
+  static SoundWidget? of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<SoundWidget>();
 }

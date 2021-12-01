@@ -124,7 +124,8 @@ class FilterFormState extends State<FilterForm> {
                       decoration: InputDecoration(
                         labelText: '${S.of(context).from}:',
                         labelStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary),
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
                       ),
                       initialValue: widget.filter.dateFrom,
                       onShowPicker: (context, currentValue) => showDatePicker(

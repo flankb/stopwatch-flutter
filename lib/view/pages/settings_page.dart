@@ -49,119 +49,120 @@ class _SettingsPageState extends State<SettingsPage> {
     final twilight = S.current.twilight;
 
     return Scaffold(
-        body: SafeArea(
-      child: Column(
-        children: <Widget>[
-          // Заголовок
-          PageCaption(caption: S.of(context).settings),
-          /*Row(
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            // Заголовок
+            PageCaption(caption: S.of(context).settings),
+            /*Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   BackButton(),
                   Text(S.of(context).settings, style: TextStyle(fontSize: 36),)
                 ],
               ),*/
-          Expanded(
-            child: FutureBuilder<void>(
-              future: _initPrefsAction,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState != ConnectionState.done) {
-                  return const CenterCircularWidget();
-                }
+            Expanded(
+              child: FutureBuilder<void>(
+                future: _initPrefsAction,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.done) {
+                    return const CenterCircularWidget();
+                  }
 
-                return Column(
-                  children: [
-                    SwitchListTile(
-                      title: Text(S.of(context).sound),
-                      value: sound,
-                      onChanged: (bool value) {
-                        setState(() {
-                          sound = value;
-                          _writeBoolValue(prefSound, value);
-                        });
-                      },
-                    ),
-                    SwitchListTile(
-                      title: Text(S.of(context).vibration),
-                      value: vibration,
-                      onChanged: (bool value) {
-                        setState(() {
-                          vibration = value;
-                          _writeBoolValue(prefVibration, value);
-                        });
-                      },
-                    ),
-                    SwitchListTile(
-                      title: Text(S.of(context).keep_screen_on),
-                      value: keepScreenAwake,
-                      onChanged: (bool value) {
-                        setState(() {
-                          keepScreenAwake = value;
-                          _writeBoolValue(prefKeepScreenAwake, value);
-                        });
-                      },
-                    ),
-                    SwitchListTile(
-                      title: Text(S.of(context).save_measures),
-                      value: persistMeasure,
-                      onChanged: (bool value) {
-                        setState(() {
-                          persistMeasure = value;
-                          _writeBoolValue(prefSaveMeasures, value);
-                        });
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: DropdownButton<String>(
-                          value: theme,
-                          icon: const Icon(Icons.arrow_downward),
-                          iconSize: 24,
-                          elevation: 16,
-                          // style: const TextStyle(color: Colors.deepPurple),
-                          // underline: Container(
-                          //   height: 2,
-                          //   color: Colors.deepPurpleAccent,
-                          // ),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              theme = newValue!;
-                              _sharedPrefs.setString(prefTheme, newValue);
-                              ThemeHolder.of<AppTheme>(context)
-                                  .updateThemeById(newValue);
-                              // Обновить тему
-                            });
-                          },
-                          items: <String, String>{
-                            magentaLight: '${S.current.magenta} $sunrise',
-                            magentaDark: '${S.current.magenta} $twilight',
-                            blueLight: '${S.current.breeze} $sunrise',
-                            blueDark: '${S.current.breeze} $twilight',
-                            greenLight: '${S.current.cedar} $sunrise',
-                            greenDark: '${S.current.cedar} $twilight'
-                          }
-                              .entries
-                              .map<DropdownMenuItem<String>>(
-                                (MapEntry<String, String> entry) =>
-                                    DropdownMenuItem<String>(
-                                  value: entry.key,
-                                  child: Text(entry.value),
-                                ),
-                              )
-                              .toList(),
-                        ),
+                  return Column(
+                    children: [
+                      SwitchListTile(
+                        title: Text(S.of(context).sound),
+                        value: sound,
+                        onChanged: (bool value) {
+                          setState(() {
+                            sound = value;
+                            _writeBoolValue(prefSound, value);
+                          });
+                        },
                       ),
-                    )
-                  ],
-                );
-              },
+                      SwitchListTile(
+                        title: Text(S.of(context).vibration),
+                        value: vibration,
+                        onChanged: (bool value) {
+                          setState(() {
+                            vibration = value;
+                            _writeBoolValue(prefVibration, value);
+                          });
+                        },
+                      ),
+                      SwitchListTile(
+                        title: Text(S.of(context).keep_screen_on),
+                        value: keepScreenAwake,
+                        onChanged: (bool value) {
+                          setState(() {
+                            keepScreenAwake = value;
+                            _writeBoolValue(prefKeepScreenAwake, value);
+                          });
+                        },
+                      ),
+                      SwitchListTile(
+                        title: Text(S.of(context).save_measures),
+                        value: persistMeasure,
+                        onChanged: (bool value) {
+                          setState(() {
+                            persistMeasure = value;
+                            _writeBoolValue(prefSaveMeasures, value);
+                          });
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: DropdownButton<String>(
+                            value: theme,
+                            icon: const Icon(Icons.arrow_downward),
+                            iconSize: 24,
+                            elevation: 16,
+                            // style: const TextStyle(color: Colors.deepPurple),
+                            // underline: Container(
+                            //   height: 2,
+                            //   color: Colors.deepPurpleAccent,
+                            // ),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                theme = newValue!;
+                                _sharedPrefs.setString(prefTheme, newValue);
+                                ThemeHolder.of<AppTheme>(context)
+                                    .updateThemeById(newValue);
+                                // Обновить тему
+                              });
+                            },
+                            items: <String, String>{
+                              magentaLight: '${S.current.magenta} $sunrise',
+                              magentaDark: '${S.current.magenta} $twilight',
+                              blueLight: '${S.current.breeze} $sunrise',
+                              blueDark: '${S.current.breeze} $twilight',
+                              greenLight: '${S.current.cedar} $sunrise',
+                              greenDark: '${S.current.cedar} $twilight'
+                            }
+                                .entries
+                                .map<DropdownMenuItem<String>>(
+                                  (MapEntry<String, String> entry) =>
+                                      DropdownMenuItem<String>(
+                                    value: entry.key,
+                                    child: Text(entry.value),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                      )
+                    ],
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ));
+    );
   }
 }
 
