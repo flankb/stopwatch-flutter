@@ -105,10 +105,11 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
   @override
   Future<int> createNewMeasureAsync() async {
     final measure = Measure(
-        id: Random(43).nextInt(2000) + 100,
-        elapsed: 0,
-        dateStarted: null, //DateTime.now(),
-        status: describeEnum(StopwatchStatus.Ready));
+      id: Random(43).nextInt(2000) + 100,
+      elapsed: 0,
+      dateStarted: null, //DateTime.now(),
+      status: describeEnum(StopwatchStatus.Ready),
+    );
 
     _measures.add(MeasureViewModel.fromEntity(measure));
 
@@ -118,7 +119,9 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
   @override
   Future<int> addNewLapAsync(Insertable<Lap> lap) async {
     final lapViewModel = _convertToLapViewModel(
-        lap as LapsCompanion, Random(50).nextInt(2000) + 100);
+      lap as LapsCompanion,
+      Random(50).nextInt(2000) + 100,
+    );
 
     _laps.add(lapViewModel);
     return lapViewModel.id!;
@@ -126,7 +129,8 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
 
   @override
   Future<int> addNewMeasureSession(
-      Insertable<MeasureSession> measureSession) async {
+    Insertable<MeasureSession> measureSession,
+  ) async {
     final session = _convertToMeasureSessionViewModel(
       measureSession as MeasureSessionsCompanion,
       Random(55).nextInt(2000) + 100,
@@ -158,7 +162,8 @@ class StopwatchFakeRepository extends Fake implements StopwatchRepository {
 
   @override
   Future<bool> updateMeasureSession(
-      Insertable<MeasureSession> measureSession) async {
+    Insertable<MeasureSession> measureSession,
+  ) async {
     final sessionForUpdate = sessions.firstWhere(
       (element) =>
           element.id == (measureSession as MeasureSessionsCompanion).id.value,

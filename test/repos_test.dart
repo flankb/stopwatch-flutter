@@ -34,9 +34,11 @@ void main() {
           .getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Ready));
       //readyMeasure.single.dateStarted = DateTime.now();
 
-      expect(readyMeasure.single.status == describeEnum(StopwatchStatus.Ready),
-          true,
-          reason: 'Не создалось измерение со статусом Ready!');
+      expect(
+        readyMeasure.single.status == describeEnum(StopwatchStatus.Ready),
+        true,
+        reason: 'Не создалось измерение со статусом Ready!',
+      );
 
       final measureId = readyMeasure.single.id;
 
@@ -45,19 +47,29 @@ void main() {
       expect(measureId, equals(measureById.id), reason: 'Id неверный!');
 
       final lap = Lap(
-          order: 1, measureId: measureId, id: 1, difference: 10, overall: 10);
+        order: 1,
+        measureId: measureId,
+        id: 1,
+        difference: 10,
+        overall: 10,
+      );
 
       await _stopwatchRepository.addNewLapAsync(lap);
 
       final measureViewModel = MeasureViewModel.fromEntity(readyMeasure.single)
           .copyWith(dateCreated: DateTime.now());
-      await _stopwatchRepository.addNewMeasureSession(MeasureSession(
-        startedOffset: measureViewModel.getElapsedSinceStarted(DateTime.now()),
-        finishedOffset: measureViewModel
-            .getElapsedSinceStarted(DateTime.now().add(Duration(seconds: 23))),
-        measureId: measureId,
-        id: 1,
-      ));
+      await _stopwatchRepository.addNewMeasureSession(
+        MeasureSession(
+          startedOffset:
+              measureViewModel.getElapsedSinceStarted(DateTime.now()),
+          finishedOffset:
+              measureViewModel.getElapsedSinceStarted(DateTime.now().add(
+            const Duration(seconds: 23),
+          )),
+          measureId: measureId,
+          id: 1,
+        ),
+      );
 
       var laps = await _stopwatchRepository.getLapsByMeasureAsync(measureId);
       var sessions = await _stopwatchRepository.getMeasureSessions(measureId);
@@ -75,8 +87,11 @@ void main() {
       laps = await _stopwatchRepository.getLapsByMeasureAsync(measureId);
       sessions = await _stopwatchRepository.getMeasureSessions(measureId);
 
-      expect(measures.isEmpty && laps.isEmpty && sessions.isEmpty, true,
-          reason: 'Не удалились сущности');
+      expect(
+        measures.isEmpty && laps.isEmpty && sessions.isEmpty,
+        true,
+        reason: 'Не удалились сущности',
+      );
     });
   });
 }

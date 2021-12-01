@@ -92,79 +92,77 @@ class _StopwatchItemState extends State<StopwatchItem>
           }
       },
       child: Container(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-          color: itemIsSelected
-              ? Theme.of(context).primaryColor
-              : Colors.transparent,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              if (!entityIsMeasure)
-                SizedBox(
-                  width: 32,
-                  child: Text(
-                    '${(widget.entity as LapViewModel).order.toString()}. ',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      height: 1,
-                    ),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+        color: itemIsSelected
+            ? Theme.of(context).primaryColor
+            : Colors.transparent,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            if (!entityIsMeasure)
+              SizedBox(
+                width: 32,
+                child: Text(
+                  '${(widget.entity as LapViewModel).order.toString()}. ',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    height: 1,
                   ),
                 ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  if (difference != null)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Text(
-                        differenceString!,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          height: 1,
-                        ),
+              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                if (difference != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Text(
+                      differenceString!,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        height: 1,
                       ),
                     ),
+                  ),
+                Text(
+                  elapsedString,
+                  style: TextStyle(
+                    fontSize: 18,
+                    height: 1,
+                    color: entityIsMeasure
+                        ? Theme.of(context).textTheme.bodyText1!.color
+                        : ThemeHolder.of<AppTheme>(context).theme.subtitleColor,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                if (widget.entity.comment != null)
                   Text(
-                    elapsedString,
+                    widget.entity.comment ??
+                        'Нет комментария', // ?? "Нет комментария",
                     style: TextStyle(
                       fontSize: 18,
                       height: 1,
-                      color: entityIsMeasure
-                          ? Theme.of(context).textTheme.bodyText1!.color
-                          : ThemeHolder.of<AppTheme>(context)
+                      color: widget.entity.comment == null
+                          ? ThemeHolder.of<AppTheme>(context)
                               .theme
-                              .subtitleColor,
+                              .subtitleColor
+                          : Theme.of(context).textTheme.subtitle2!.color,
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  if (widget.entity.comment != null)
-                    Text(
-                      widget.entity.comment ??
-                          'Нет комментария', // ?? "Нет комментария",
-                      style: TextStyle(
-                        fontSize: 18,
-                        height: 1,
-                        color: widget.entity.comment == null
-                            ? ThemeHolder.of<AppTheme>(context)
-                                .theme
-                                .subtitleColor
-                            : Theme.of(context).textTheme.subtitle2!.color,
-                      ),
+                const SizedBox(height: 0),
+                if (date != null)
+                  Text(
+                    formatDate(date, context: context),
+                    style: TextStyle(
+                      color:
+                          ThemeHolder.of<AppTheme>(context).theme.subtitleColor,
                     ),
-                  const SizedBox(height: 0),
-                  if (date != null)
-                    Text(
-                      formatDate(date, context: context),
-                      style: TextStyle(
-                        color: ThemeHolder.of<AppTheme>(context)
-                            .theme
-                            .subtitleColor,
-                      ),
-                    )
-                ],
-              ),
-            ],
-          )),
+                  )
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 

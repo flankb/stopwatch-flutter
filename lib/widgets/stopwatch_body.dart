@@ -45,10 +45,11 @@ class _StopwatchBodyState extends State<StopwatchBody>
     super.initState();
 
     _controller = AnimationController(
-        duration: const Duration(milliseconds: 300),
-        upperBound: 150,
-        lowerBound: 0,
-        vsync: this);
+      duration: const Duration(milliseconds: 300),
+      upperBound: 150,
+      lowerBound: 0,
+      vsync: this,
+    );
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _controller.reverse();
@@ -194,44 +195,44 @@ class _StopwatchBodyState extends State<StopwatchBody>
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     Expanded(
-                        flex: 1,
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
-                          child: RawMaterialButton(
-                            key: const Key('start_button'),
-                            onPressed: () {
-                              if (state is MeasureReadyState ||
-                                  state is MeasurePausedState) {
-                                widget.measureBloc.add(MeasureStartedEvent());
-                              } else if (state is MeasureStartedState) {
-                                widget.measureBloc.add(MeasurePausedEvent());
-                              }
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
+                        child: RawMaterialButton(
+                          key: const Key('start_button'),
+                          onPressed: () {
+                            if (state is MeasureReadyState ||
+                                state is MeasurePausedState) {
+                              widget.measureBloc.add(MeasureStartedEvent());
+                            } else if (state is MeasureStartedState) {
+                              widget.measureBloc.add(MeasurePausedEvent());
+                            }
 
-                              _playSound(context, 0);
-                              _vibrate();
-                            },
-                            fillColor: state is MeasureStartedState
-                                ? Colors.red
-                                : Theme.of(context).primaryColor,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(12)),
-                            ),
-                            //enableFeedback: false
-                            child: Padding(
-                              padding: EdgeInsets.zero,
-                              child: Text(
-                                state is MeasureStartedState
-                                    ? S.of(context).pause
-                                    : S.of(context).start,
-                                style: const TextStyle(
-                                  fontSize: 28,
-                                  color: Colors.white,
-                                ),
+                            _playSound(context, 0);
+                            _vibrate();
+                          },
+                          fillColor: state is MeasureStartedState
+                              ? Colors.red
+                              : Theme.of(context).primaryColor,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                          ),
+                          //enableFeedback: false
+                          child: Padding(
+                            padding: EdgeInsets.zero,
+                            child: Text(
+                              state is MeasureStartedState
+                                  ? S.of(context).pause
+                                  : S.of(context).start,
+                              style: const TextStyle(
+                                fontSize: 28,
+                                color: Colors.white,
                               ),
                             ),
                           ),
-                        )),
+                        ),
+                      ),
+                    ),
                     Expanded(
                       flex: 1,
                       child: Padding(

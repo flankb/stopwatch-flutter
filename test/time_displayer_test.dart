@@ -28,8 +28,11 @@ void main() {
       ];
 
       list.asMap().forEach((index, value) {
-        expect(value, equals(texts[index]),
-            reason: 'Неверное представление $value');
+        expect(
+          value,
+          equals(texts[index]),
+          reason: 'Неверное представление $value',
+        );
       });
     });
   });
