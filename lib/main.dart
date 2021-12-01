@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:rate_my_app/rate_my_app.dart';
-import 'package:scoped_model/scoped_model.dart';
 import 'package:soundpool/soundpool.dart';
 import 'package:stopwatch/bloc/measure_bloc/bloc.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
@@ -134,21 +133,6 @@ class _MyAppState extends State<MyApp> {
       );
 }
 
-class CaptionModel extends Model {
-  String _captionValue = 'ЗАГРУЗКА...';
-
-  String get caption => _captionValue;
-
-  void updateCaption(String caption) {
-    _captionValue =
-        caption == '' ? 'ВЕСЬ СЛОВАРЬ' : '#${caption.toUpperCase()}';
-    notifyListeners();
-  }
-
-  static CaptionModel of(BuildContext context) =>
-      ScopedModel.of<CaptionModel>(context);
-}
-
 class Choice {
   const Choice({
     required this.title,
@@ -188,8 +172,6 @@ class MyTabPageStateful extends StatefulWidget {
 
 class _MyTabPageState extends State<MyTabPageStateful>
     with WidgetsBindingObserver, AfterLayoutMixin<MyTabPageStateful> {
-  late CaptionModel captionModel;
-
   bool categoryInited = false;
   late Future<Tuple2<Soundpool, List<int>>> _soundsLoader;
 
@@ -213,8 +195,6 @@ class _MyTabPageState extends State<MyTabPageStateful>
   }
 
   void _init() {
-    captionModel = CaptionModel();
-
     measureBloc = context.read<MeasureBloc>();
     measureBloc.add(MeasureOpenedEvent());
 

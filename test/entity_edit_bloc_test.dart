@@ -57,7 +57,8 @@ void main() {
       act: (bloc) async {
         final measure = MeasureViewModel.fromEntity(
           (await repository.getMeasuresByStatusAsync(
-                  describeEnum(StopwatchStatus.Finished)))
+            describeEnum(StopwatchStatus.Finished),
+          ))
               .first,
         );
 

@@ -25,7 +25,6 @@ dependencies:
   #toast: ^0.1.5
   fluttertoast: ^8.0.8
   path_provider: ^2.0.5
-  scoped_model: ^2.0.0-nullsafety.0
   rate_my_app: ^1.1.1
   launch_review: ^3.0.1
   #preferences: ^5.0.2
