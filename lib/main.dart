@@ -45,7 +45,7 @@ String readLastTheme() {
   return themeStr;
 }
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding
       .ensureInitialized(); // This allows to use async methods in the main method without any problem.
 
