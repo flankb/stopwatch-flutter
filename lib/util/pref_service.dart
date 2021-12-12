@@ -14,7 +14,7 @@ class PrefService {
 
   SharedPreferences get sharedPrefs => _prefs;
 
-  Future init() async {
+  Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
   }
 }
