@@ -2,12 +2,7 @@ import 'package:extended_theme/extended_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-const greenLight = 'AppTheme.GreenLight';
-const greenDark = 'AppTheme.GreenDark';
-const blueLight = 'AppTheme.BlueLight';
-const blueDark = 'AppTheme.BlueDark';
-const magentaLight = 'AppTheme.MagentaLight';
-const magentaDark = 'AppTheme.MagentaDark';
+import 'constants.dart';
 
 const colorMagenta = Color(0xffcc0066);
 
@@ -16,11 +11,12 @@ class AppTheme extends ExtendedTheme {
   final Color buttonPauseColor;
   final Color subtitleColor;
 
-  AppTheme(ThemeData materialTheme,
-      {this.shadowColor = const Color(0xff3F3C3C),
-      this.buttonPauseColor = Colors.black,
-      this.subtitleColor = const Color(0xffE6E6E6),})
-      : super(material: materialTheme);
+  AppTheme(
+    ThemeData materialTheme, {
+    this.shadowColor = const Color(0xff3F3C3C),
+    this.buttonPauseColor = Colors.black,
+    this.subtitleColor = const Color(0xffE6E6E6),
+  }) : super(material: materialTheme);
 }
 
 ThemeData baseTheme = ThemeData(

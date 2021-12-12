@@ -31,6 +31,7 @@ class _SettingsPageState extends State<SettingsPage> {
     _initPrefsAction = _initPrefs();
   }
 
+  // TODO Убрать из виджета!
   Future _initPrefs() async {
     _sharedPrefs = await SharedPreferences.getInstance();
 
@@ -41,6 +42,7 @@ class _SettingsPageState extends State<SettingsPage> {
     theme = _sharedPrefs.getString(prefTheme) ?? greenLight;
   }
 
+  // TODO Убрать из виджета! (Заменить на Bloc)
   void _writeBoolValue(String key, bool value) {}
 
   @override
@@ -120,11 +122,6 @@ class _SettingsPageState extends State<SettingsPage> {
                             icon: const Icon(Icons.arrow_downward),
                             iconSize: 24,
                             elevation: 16,
-                            // style: const TextStyle(color: Colors.deepPurple),
-                            // underline: Container(
-                            //   height: 2,
-                            //   color: Colors.deepPurpleAccent,
-                            // ),
                             onChanged: (String? newValue) {
                               setState(() {
                                 theme = newValue!;
