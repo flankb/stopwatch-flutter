@@ -16,10 +16,13 @@ import 'package:stopwatch/widgets/stopwatch_body.dart';
 import 'package:tuple/tuple.dart';
 
 import 'bloc/entity_bloc/bloc.dart';
+import 'bloc/settings_bloc/settings_bloc.dart';
 import 'bloc/storage_bloc/bloc.dart';
 import 'constants.dart';
 import 'generated/l10n.dart';
 import 'models/stopwatch_status.dart';
+import 'resources/base/base_settings_repository.dart';
+import 'resources/settings_repository.dart';
 import 'theme_data.dart';
 import 'util/pref_service.dart';
 import 'util/ticker.dart';
@@ -36,36 +39,18 @@ RateMyApp rateMyApp = RateMyApp(
   appStoreIdentifier: '585027354',
 );
 
-String readLastTheme() {
-  final themeStr =
-      PrefService.getInstance().sharedPrefs.getString(prefTheme) ?? greenLight;
-
-  debugPrint('Readed last theme:$themeStr');
-  return themeStr;
-}
-
 Future<void> main() async {
   WidgetsFlutterBinding
       .ensureInitialized(); // This allows to use async methods in the main method without any problem.
-
-  await PrefService.getInstance().init();
-
   await rateMyApp.init();
-  // Здесь прочитать какая тема (перед инициализацией приложения)
-  final initialTheme = readLastTheme();
 
   runApp(
-    MyApp(
-      initialThemeId: initialTheme,
-    ),
+    const MyApp(),
   );
 }
 
 class MyApp extends StatefulWidget {
-  final String initialThemeId;
-
   const MyApp({
-    required this.initialThemeId,
     Key? key,
   }) : super(key: key);
 
@@ -96,38 +81,48 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
-  Widget build(BuildContext context) => ThemeScope<AppTheme>(
-        themeId: widget.initialThemeId,
-        availableThemes: appThemeData,
-        themeBuilder: (context, appTheme) => RepositoryProvider(
-          create: (context) => StopwatchRepository(),
-          child: MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (context) => MeasureBloc(
-                  Ticker3(),
-                  RepositoryProvider.of<StopwatchRepository>(context),
+  Widget build(BuildContext context) => BlocProvider(
+        create: (context) =>
+            SettingsBloc(SettingsRepository())..add(LoadSettingsEvent()),
+        child: BlocBuilder<SettingsBloc, SettingsState>(
+          builder: (context, state) => state is SettingsUpdatingState
+              ? const CenterCircularWidget()
+              : ThemeScope<AppTheme>(
+                  themeId: (state as SettingsLoadedState)
+                      .getSettingsValue(prefTheme),
+                  availableThemes: appThemeData,
+                  themeBuilder: (context, appTheme) => RepositoryProvider(
+                    create: (context) => StopwatchRepository(),
+                    child: MultiBlocProvider(
+                      providers: [
+                        BlocProvider(
+                          create: (context) => MeasureBloc(
+                            Ticker3(),
+                            RepositoryProvider.of<StopwatchRepository>(context),
+                          ),
+                        ),
+                      ],
+                      child: StorageBlocsProvider(
+                        measuresBloc: measuresBloc,
+                        lapsBloc: lapsBloc,
+                        child: MaterialApp(
+                          onGenerateTitle: (BuildContext context) =>
+                              S.of(context).app_title,
+                          theme: appTheme.material,
+                          localizationsDelegates: const [
+                            S.delegate,
+                            GlobalMaterialLocalizations.delegate,
+                            GlobalWidgetsLocalizations.delegate,
+                            GlobalCupertinoLocalizations.delegate,
+                          ],
+                          supportedLocales: S.delegate.supportedLocales,
+                          home:
+                              MainPage(), //MyHomePage(title: 'Flutter Demo Home Page'),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ],
-            child: StorageBlocsProvider(
-              measuresBloc: measuresBloc,
-              lapsBloc: lapsBloc,
-              child: MaterialApp(
-                onGenerateTitle: (BuildContext context) =>
-                    S.of(context).app_title,
-                theme: appTheme.material,
-                localizationsDelegates: const [
-                  S.delegate,
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                supportedLocales: S.delegate.supportedLocales,
-                home: MainPage(), //MyHomePage(title: 'Flutter Demo Home Page'),
-              ),
-            ),
-          ),
         ),
       );
 }
@@ -147,7 +142,6 @@ class Choice {
 enum SettingsType { none, settings, review, about }
 
 const List<Choice> choices = <Choice>[
-  //const Choice(title: 'Car', icon: Icons.directions_car),
   Choice(title: 'Поиск', icon: Icons.search),
   Choice(
     title: 'Оценить приложение',
@@ -260,7 +254,9 @@ class _MyTabPageState extends State<MainPage>
 
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
       await Future<void>.delayed(const Duration(seconds: 2));
-      _showRateDialog(context);
+      if (mounted) {
+        _showRateDialog(context);
+      }
     });
 
     return Scaffold(

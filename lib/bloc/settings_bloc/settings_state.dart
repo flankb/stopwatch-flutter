@@ -3,6 +3,8 @@ part of 'settings_bloc.dart';
 abstract class SettingsState extends Equatable {
   const SettingsState();
 
+  T? getSettingsValue<T>(String key) => null;
+
   @override
   List<Object> get props => [];
 }
@@ -14,6 +16,7 @@ class SettingsLoadedState extends SettingsState {
 
   const SettingsLoadedState({this.settings = const <String, dynamic>{}});
 
+  @override
   T? getSettingsValue<T>(String key) {
     if (!settings.containsKey(key)) {
       return null;

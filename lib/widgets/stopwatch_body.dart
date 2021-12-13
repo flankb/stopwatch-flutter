@@ -6,6 +6,7 @@ import 'package:launch_review/launch_review.dart';
 import 'package:metro_appbar/metro_appbar.dart';
 import 'package:stopwatch/bloc/measure_bloc/bloc.dart';
 import 'package:stopwatch/bloc/measure_bloc/measure_event.dart';
+import 'package:stopwatch/bloc/settings_bloc/settings_bloc.dart';
 import 'package:stopwatch/constants.dart';
 import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
@@ -289,10 +290,12 @@ class _StopwatchBodyState extends State<StopwatchBody>
                       text: S.of(context).reset,
                       color: Theme.of(context).textTheme.bodyText1!.color,
                       onPressed: () {
-                        final saveMeasure = PrefService.getInstance()
-                                .sharedPrefs
-                                .getBool(prefSaveMeasures) ??
+                        final saveMeasure = context
+                                .read<SettingsBloc>()
+                                .state
+                                .getSettingsValue<bool>(prefSaveMeasures) ??
                             true;
+
                         BlocProvider.of<MeasureBloc>(context).add(
                           MeasureFinishedEvent(saveMeasure: saveMeasure),
                         );
@@ -373,8 +376,12 @@ class _StopwatchBodyState extends State<StopwatchBody>
   }
 
   Future<void> _vibrate() async {
-    final vibration =
-        PrefService.getInstance().sharedPrefs.getBool(prefVibration) ?? true;
+    final vibration = context
+            .read<SettingsBloc>()
+            .state
+            .getSettingsValue<bool>(prefVibration) ??
+        true;
+
     if (vibration) {
       if (_existsVibrator) {
         await Vibration.vibrate(duration: 50);
@@ -384,7 +391,8 @@ class _StopwatchBodyState extends State<StopwatchBody>
 
   void _playSound(BuildContext context, int soundId) {
     final sound =
-        PrefService.getInstance().sharedPrefs.getBool(prefSound) ?? true;
+        context.read<SettingsBloc>().state.getSettingsValue<bool>(prefSound) ??
+            true;
 
     if (sound) {
       final s = SoundWidget.of(context);
@@ -395,8 +403,13 @@ class _StopwatchBodyState extends State<StopwatchBody>
   Future<void> _enableWakeLock() async {
     debugPrint('Start wakelock enabling!');
 
-    if (PrefService.getInstance().sharedPrefs.getBool(prefKeepScreenAwake) ??
-        false) {
+    final wakelock = context
+            .read<SettingsBloc>()
+            .state
+            .getSettingsValue<bool>(prefKeepScreenAwake) ??
+        false;
+
+    if (wakelock) {
       if (!(await Wakelock.enabled)) {
         await Wakelock.enable();
         debugPrint('Wakelock enabled!');

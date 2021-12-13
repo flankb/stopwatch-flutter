@@ -1,12 +1,11 @@
-import 'package:extended_theme/extended_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stopwatch/bloc/settings_bloc/settings_bloc.dart';
 import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/widgets/circular.dart';
 
 import '../../constants.dart';
-import '../../theme_data.dart';
 import 'history_page.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -15,153 +14,110 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  late bool sound;
-  late bool vibration;
-  late bool keepScreenAwake;
-  late bool persistMeasure;
-  late String theme;
-
-  late Future _initPrefsAction;
-  late SharedPreferences _sharedPrefs;
-
   @override
   void initState() {
     super.initState();
-
-    _initPrefsAction = _initPrefs();
   }
 
-  // TODO Убрать из виджета!
-  Future _initPrefs() async {
-    _sharedPrefs = await SharedPreferences.getInstance();
-
-    sound = _sharedPrefs.getBool(prefSound) ?? true;
-    vibration = _sharedPrefs.getBool(prefVibration) ?? true;
-    keepScreenAwake = _sharedPrefs.getBool(prefKeepScreenAwake) ?? false;
-    persistMeasure = _sharedPrefs.getBool(prefSaveMeasures) ?? true;
-    theme = _sharedPrefs.getString(prefTheme) ?? greenLight;
+  void _writeBoolValue(BuildContext context, String key, bool value) {
+    context.read<SettingsBloc>().add(SetSettingsEvent(key, value));
   }
-
-  // TODO Убрать из виджета! (Заменить на Bloc)
-  void _writeBoolValue(String key, bool value) {}
 
   @override
-  Widget build(BuildContext context) {
-    final sunrise = S.current.sunrise;
-    final twilight = S.current.twilight;
+  Widget build(BuildContext context) => Scaffold(
+        body: SafeArea(
+          child: Column(
+            children: <Widget>[
+              // Заголовок
+              PageCaption(caption: S.of(context).settings),
+              Expanded(
+                child: BlocBuilder<SettingsBloc, SettingsState>(
+                  builder: (context, state) {
+                    if (state is SettingsUpdatingState) {
+                      return const CenterCircularWidget();
+                    }
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            // Заголовок
-            PageCaption(caption: S.of(context).settings),
-            /*Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  BackButton(),
-                  Text(S.of(context).settings, style: TextStyle(fontSize: 36),)
-                ],
-              ),*/
-            Expanded(
-              child: FutureBuilder<void>(
-                future: _initPrefsAction,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState != ConnectionState.done) {
-                    return const CenterCircularWidget();
-                  }
+                    final settingsState = state as SettingsLoadedState;
 
-                  return Column(
-                    children: [
-                      SwitchListTile(
-                        title: Text(S.of(context).sound),
-                        value: sound,
-                        onChanged: (bool value) {
-                          setState(() {
-                            sound = value;
-                            _writeBoolValue(prefSound, value);
-                          });
-                        },
-                      ),
-                      SwitchListTile(
-                        title: Text(S.of(context).vibration),
-                        value: vibration,
-                        onChanged: (bool value) {
-                          setState(() {
-                            vibration = value;
-                            _writeBoolValue(prefVibration, value);
-                          });
-                        },
-                      ),
-                      SwitchListTile(
-                        title: Text(S.of(context).keep_screen_on),
-                        value: keepScreenAwake,
-                        onChanged: (bool value) {
-                          setState(() {
-                            keepScreenAwake = value;
-                            _writeBoolValue(prefKeepScreenAwake, value);
-                          });
-                        },
-                      ),
-                      SwitchListTile(
-                        title: Text(S.of(context).save_measures),
-                        value: persistMeasure,
-                        onChanged: (bool value) {
-                          setState(() {
-                            persistMeasure = value;
-                            _writeBoolValue(prefSaveMeasures, value);
-                          });
-                        },
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: DropdownButton<String>(
-                            value: theme,
-                            icon: const Icon(Icons.arrow_downward),
-                            iconSize: 24,
-                            elevation: 16,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                theme = newValue!;
-                                _sharedPrefs.setString(prefTheme, newValue);
-                                ThemeHolder.of<AppTheme>(context)
-                                    .updateThemeById(newValue);
-                                // Обновить тему
-                              });
-                            },
-                            items: <String, String>{
-                              magentaLight: '${S.current.magenta} $sunrise',
-                              magentaDark: '${S.current.magenta} $twilight',
-                              blueLight: '${S.current.breeze} $sunrise',
-                              blueDark: '${S.current.breeze} $twilight',
-                              greenLight: '${S.current.cedar} $sunrise',
-                              greenDark: '${S.current.cedar} $twilight'
-                            }
-                                .entries
-                                .map<DropdownMenuItem<String>>(
-                                  (MapEntry<String, String> entry) =>
-                                      DropdownMenuItem<String>(
-                                    value: entry.key,
-                                    child: Text(entry.value),
-                                  ),
-                                )
-                                .toList(),
-                          ),
+                    return Column(
+                      children: [
+                        SwitchListTile(
+                          title: Text(S.of(context).sound),
+                          value: settingsState.getSettingsValue(prefSound)!,
+                          onChanged: (bool value) {
+                            _writeBoolValue(context, prefSound, value);
+                          },
                         ),
-                      )
-                    ],
-                  );
-                },
+                        SwitchListTile(
+                          title: Text(S.of(context).vibration),
+                          value: settingsState.getSettingsValue(prefVibration)!,
+                          onChanged: (bool value) {
+                            _writeBoolValue(context, prefVibration, value);
+                          },
+                        ),
+                        SwitchListTile(
+                          title: Text(S.of(context).keep_screen_on),
+                          value: settingsState
+                              .getSettingsValue(prefKeepScreenAwake)!,
+                          onChanged: (bool value) {
+                            _writeBoolValue(
+                                context, prefKeepScreenAwake, value);
+                          },
+                        ),
+                        SwitchListTile(
+                          title: Text(S.of(context).save_measures),
+                          value:
+                              settingsState.getSettingsValue(prefSaveMeasures)!,
+                          onChanged: (bool value) {
+                            _writeBoolValue(context, prefSaveMeasures, value);
+                          },
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: DropdownButton<String>(
+                              value: state.getSettingsValue(prefTheme),
+                              icon: const Icon(Icons.arrow_downward),
+                              iconSize: 24,
+                              elevation: 16,
+                              onChanged: (String? newValue) {
+                                if (newValue != null) {
+                                  context.read<SettingsBloc>().add(
+                                      SetSettingsEvent(prefTheme, newValue));
+                                }
+                              },
+                              items: <String, String>{
+                                magentaLight: '${S.current.magenta} ',
+                                magentaDark: '${S.current.magenta} ',
+                                blueLight: '${S.current.breeze} ',
+                                blueDark: '${S.current.breeze} ',
+                                greenLight: '${S.current.cedar} ',
+                                greenDark: '${S.current.cedar} '
+                              }
+                                  .entries
+                                  .map<DropdownMenuItem<String>>(
+                                    (MapEntry<String, String> entry) =>
+                                        DropdownMenuItem<String>(
+                                      value: entry.key,
+                                      child: Text(entry.value),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          ),
+                        )
+                      ],
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
 }
+
 
 /*
 Мажента свет
