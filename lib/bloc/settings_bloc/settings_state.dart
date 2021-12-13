@@ -17,6 +17,9 @@ class SettingsLoadedState extends SettingsState {
   const SettingsLoadedState({this.settings = const <String, dynamic>{}});
 
   @override
+  List<Object> get props => [settings];
+
+  @override
   T? getSettingsValue<T>(String key) {
     if (!settings.containsKey(key)) {
       return null;
