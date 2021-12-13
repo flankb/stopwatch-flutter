@@ -88,12 +88,18 @@ class _SettingsPageState extends State<SettingsPage> {
                                 }
                               },
                               items: <String, String>{
-                                magentaLight: '${S.current.magenta} ',
-                                magentaDark: '${S.current.magenta} ',
-                                blueLight: '${S.current.breeze} ',
-                                blueDark: '${S.current.breeze} ',
-                                greenLight: '${S.current.cedar} ',
-                                greenDark: '${S.current.cedar} '
+                                magentaLight:
+                                    '${S.current.magenta} (${S.current.sunrise})',
+                                magentaDark:
+                                    '${S.current.magenta} (${S.current.twilight})',
+                                blueLight:
+                                    '${S.current.breeze} (${S.current.sunrise})',
+                                blueDark:
+                                    '${S.current.breeze} (${S.current.twilight})',
+                                greenLight:
+                                    '${S.current.cedar} (${S.current.sunrise})',
+                                greenDark:
+                                    '${S.current.cedar} (${S.current.twilight})'
                               }
                                   .entries
                                   .map<DropdownMenuItem<String>>(
