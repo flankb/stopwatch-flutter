@@ -11,7 +11,7 @@ import 'history_page.dart';
 class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    const debuggable = true;
+    const debuggable = false;
 
     final _emailLaunchUri = Uri(
       scheme: 'mailto',
