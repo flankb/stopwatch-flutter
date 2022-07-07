@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 import 'package:stopwatch/models/stopwatch_status.dart';
@@ -26,33 +24,56 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
           MeasureUpdatingState(
             MeasureViewModel(id: null, lastRestartedOverall: DateTime.now()),
           ),
-        );
+        ) {
+    on<MeasureEvent>((event, emitter) {
+      debugPrint(
+        'Current state ${state.toString()} Bloc event: ${event.toString()}',
+      );
 
-  @override
-  Stream<MeasureState> mapEventToState(
-    MeasureEvent event,
-  ) async* {
-    debugPrint(
-      'Current state ${state.toString()} Bloc event: ${event.toString()}',
-    );
-
-    if (event is TickEvent) {
-      yield* _mapTickToState(event);
-    } else if (event is MeasureOpenedEvent) {
-      yield* _mapOpenedToState(event);
-    } else if (event is MeasureStartedEvent) {
-      yield* _mapStartedToState(event, resume: event.resume);
-    } else if (event is MeasurePausedEvent) {
-      yield* _mapPausedToState(event);
-    } else if (event is MeasureFinishedEvent) {
-      yield* _mapFinishedToState(event);
-    } else if (event is LapAddedEvent) {
-      yield* _mapLapAddedToState(event);
-    }
+      if (event is TickEvent) {
+        _mapTickToState(event, emitter);
+      } else if (event is MeasureOpenedEvent) {
+        _mapOpenedToState(event, emitter);
+      } else if (event is MeasureStartedEvent) {
+        _mapStartedToState(event, emitter);
+      } else if (event is MeasurePausedEvent) {
+        _mapPausedToState(event, emitter);
+      } else if (event is MeasureFinishedEvent) {
+        _mapFinishedToState(event, emitter);
+      } else if (event is LapAddedEvent) {
+        _mapLapAddedToState(event, emitter);
+      }
+    });
   }
 
-  Stream<MeasureState> _mapOpenedToState(MeasureOpenedEvent event) async* {
-    yield MeasureUpdatingState(state.measure);
+  // @override
+  // Stream<MeasureState> mapEventToState(
+  //   MeasureEvent event,
+  // ) async* {
+  //   debugPrint(
+  //     'Current state ${state.toString()} Bloc event: ${event.toString()}',
+  //   );
+
+  //   if (event is TickEvent) {
+  //     yield* _mapTickToState(event);
+  //   } else if (event is MeasureOpenedEvent) {
+  //     yield* _mapOpenedToState(event);
+  //   } else if (event is MeasureStartedEvent) {
+  //     yield* _mapStartedToState(event, resume: event.resume);
+  //   } else if (event is MeasurePausedEvent) {
+  //     yield* _mapPausedToState(event);
+  //   } else if (event is MeasureFinishedEvent) {
+  //     yield* _mapFinishedToState(event);
+  //   } else if (event is LapAddedEvent) {
+  //     yield* _mapLapAddedToState(event);
+  //   }
+  // }
+
+  Future<void> _mapOpenedToState(
+    MeasureOpenedEvent event,
+    Emitter<MeasureState> emitter,
+  ) async {
+    emitter(MeasureUpdatingState(state.measure));
     // Прочитать измерение с БД со всеми кругами и сессиями
     final measuresStarted = await _stopwatchRepository
         .getMeasuresByStatusAsync(describeEnum(StopwatchStatus.Started));
@@ -68,10 +89,12 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     ];
 
     if (combine.isEmpty) {
-      yield MeasureReadyState(
-        MeasureViewModel(
-          id: null,
-          lastRestartedOverall: DateTime.now(),
+      emitter(
+        MeasureReadyState(
+          MeasureViewModel(
+            id: null,
+            lastRestartedOverall: DateTime.now(),
+          ),
         ),
       ); // Если в БД ничего нет, то ReadyState
     } else {
@@ -106,7 +129,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
       if (measure.status == StopwatchStatus.Started) {
         // Если есть в статусе Запущено, то ReadyState, а затем в add(startEvent)
-        yield MeasureReadyState(measure);
+        emitter(MeasureReadyState(measure));
         add(MeasureStartedEvent(resume: true));
       } else if (measure.status == StopwatchStatus.Paused) {
         //debugPrint("In Opened before paused: $measure");
@@ -116,23 +139,27 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
           DateTime.now(),
         ); //Ticker здесь не инициализирован!!!!
         //debugPrint("Hash code 1: ${measure.hashCode}");
-        yield MeasurePausedState(
-          updatedElapsedsMeasure,
+        emitter(
+          MeasurePausedState(
+            updatedElapsedsMeasure,
+          ),
         ); // Если есть в статусе Пауза, то PausedState
         controller.add(0);
       } else if (measure.status == StopwatchStatus.Ready) {
-        yield MeasureReadyState(measure);
+        emitter(MeasureReadyState(measure));
       }
     }
   }
 
-  Stream<MeasureState> _mapTickToState(TickEvent tick) async* {
-    yield MeasureStartedState(state.measure.copyWith(elapsed: tick.duration));
+  void _mapTickToState(TickEvent tick, Emitter<MeasureState> emitter) {
+    emitter(
+        MeasureStartedState(state.measure.copyWith(elapsed: tick.duration)));
   }
 
-  Stream<MeasureState> _mapLapAddedToState(LapAddedEvent event) async* {
+  Future<void> _mapLapAddedToState(
+      LapAddedEvent event, Emitter<MeasureState> emitter) async {
     if (state is MeasureStartedState) {
-      yield MeasureUpdatingState(state.measure);
+      emitter(MeasureUpdatingState(state.measure));
 
       final dateNow = DateTime.now();
 
@@ -157,47 +184,73 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       final updatesElapsedsMeasure = _updateElapseds(newMeasure, dateNow);
 
       debugPrint('Before yield MeasureStartedState(state.measure);');
-      yield MeasureStartedState(updatesElapsedsMeasure);
+      emitter(MeasureStartedState(updatesElapsedsMeasure));
       debugPrint('After yield MeasureStartedState(state.measure);');
     } else {
       throw Exception('Wrong state!');
     }
   }
 
-  Stream<MeasureState> _mapFinishedToState(MeasureEvent event) async* {
+  Future<void> _mapFinishedToState(
+    MeasureEvent event,
+    Emitter<MeasureState> emitter,
+  ) async {
     if (state is MeasureStartedState || state is MeasurePausedState) {
       // Не сохранять в БД, если это MeasureFinishedEvent и там указана соотв. настройка
       final nosaveDb = event is MeasureFinishedEvent && !event.saveMeasure;
-      yield* _fixStopwatch(
-        StopwatchStatus.Finished,
-        finish: event is MeasureFinishedEvent,
-        saveToDatabase: !nosaveDb,
+
+      await emitter.forEach(
+        _fixStopwatch(
+          StopwatchStatus.Finished,
+          finish: event is MeasureFinishedEvent,
+          saveToDatabase: !nosaveDb,
+        ),
+        onData: (MeasureState state) => state,
       );
-      yield MeasureReadyState(
-        MeasureViewModel(lastRestartedOverall: DateTime.now()),
+
+      // yield* _fixStopwatch(
+      //   StopwatchStatus.Finished,
+      //   finish: event is MeasureFinishedEvent,
+      //   saveToDatabase: !nosaveDb,
+      // );
+      emitter(
+        MeasureReadyState(
+          MeasureViewModel(lastRestartedOverall: DateTime.now()),
+        ),
       );
     } else {
-      yield MeasureReadyState(
-        MeasureViewModel(lastRestartedOverall: DateTime.now()),
+      emitter(
+        MeasureReadyState(
+          MeasureViewModel(lastRestartedOverall: DateTime.now()),
+        ),
       );
       //throw Exception("Wrong state!");
     }
   }
 
-  Stream<MeasureState> _mapPausedToState(MeasureEvent event) async* {
+  Future<void> _mapPausedToState(
+    MeasureEvent event,
+    Emitter<MeasureState> emitter,
+  ) async {
     if (state is MeasureStartedState) {
-      yield* _fixStopwatch(StopwatchStatus.Paused);
+      await emitter.forEach(
+        _fixStopwatch(StopwatchStatus.Paused),
+        onData: (MeasureState state) => state,
+      );
+
+      //yield* _fixStopwatch(StopwatchStatus.Paused);
     } else {
       throw Exception('Wrong state!');
     }
   }
 
-  Stream<MeasureState> _mapStartedToState(
-    MeasureEvent event, {
+  Future<void> _mapStartedToState(
+    MeasureEvent event,
+    Emitter<MeasureState> emitter, {
     bool resume = false,
-  }) async* {
+  }) async {
     if (state is MeasureReadyState || state is MeasurePausedState) {
-      yield MeasureUpdatingState(state.measure);
+      emitter(MeasureUpdatingState(state.measure));
       // Устанавливаем поля в модели, делаем запись в репозитории
       final nowDate = DateTime.now();
 
@@ -243,7 +296,7 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
       // Обновить статус измерения в БД, тогда не нужно будет делать событие снэпшота
       await _stopwatchRepository.updateMeasureAsync(targetMeasure.toEntity());
 
-      yield MeasureStartedState(targetMeasure);
+      emitter(MeasureStartedState(targetMeasure));
     } else {
       throw Exception('Wrong state! $state');
     }
