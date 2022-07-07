@@ -38,8 +38,7 @@ RateMyApp rateMyApp = RateMyApp(
 );
 
 Future<void> main() async {
-  WidgetsFlutterBinding
-      .ensureInitialized(); // This allows to use async methods in the main method without any problem.
+  WidgetsFlutterBinding.ensureInitialized();
   await rateMyApp.init();
 
   runApp(
