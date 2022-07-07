@@ -12,13 +12,22 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
   SettingsBloc(SettingsRepository repository)
       : _repository = repository,
-        super(SettingsUpdatingState());
+        super(SettingsUpdatingState()) {
+    on<SettingsEvent>((event, emitter) {
+      if (event is LoadSettingsEvent) {
+        _mapLoadSettingsToState(event, state, emitter);
+      } else if (event is SetSettingsEvent) {
+        _mapSetSettingsToState(event, state, emitter);
+      }
+    });
+  }
 
-  Stream<SettingsState> _mapLoadSettingsToState(
+  Future<void> _mapLoadSettingsToState(
     LoadSettingsEvent event,
     SettingsState state,
-  ) async* {
-    yield SettingsUpdatingState();
+    Emitter<SettingsState> emitter,
+  ) async {
+    emitter(SettingsUpdatingState());
 
     await _repository.loadSettings();
 
@@ -30,12 +39,13 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       prefTheme: _repository.getString(prefTheme) ?? greenLight
     };
 
-    yield SettingsLoadedState(settings: settings);
+    emitter(SettingsLoadedState(settings: settings));
   }
 
-  SettingsState _mapSetSettingsToState(
+  void _mapSetSettingsToState(
     SetSettingsEvent event,
     SettingsState state,
+    Emitter<SettingsState> emitter,
   ) {
     if (state is SettingsLoadedState) {
       if (event.value is String) {
@@ -47,18 +57,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       final settings = Map<String, dynamic>.from(state.settings)
         ..[event.key] = event.value;
 
-      return state.copyWith(settings: settings);
+      emitter(state.copyWith(settings: settings));
     }
 
-    return state;
-  }
-
-  @override
-  Stream<SettingsState> mapEventToState(SettingsEvent event) async* {
-    if (event is LoadSettingsEvent) {
-      yield* _mapLoadSettingsToState(event, state);
-    } else if (event is SetSettingsEvent) {
-      yield _mapSetSettingsToState(event, state);
-    }
+    emitter(state);
   }
 }
