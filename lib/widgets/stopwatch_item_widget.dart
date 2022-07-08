@@ -1,6 +1,5 @@
 import 'package:extended_theme/extended_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:multiselect_scope/multiselect_scope.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 import 'package:stopwatch/util/time_displayer.dart';

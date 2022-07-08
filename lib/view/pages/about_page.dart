@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:package_info/package_info.dart';
 import 'package:stopwatch/generated/l10n.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';

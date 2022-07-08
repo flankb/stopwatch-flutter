@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stopwatch/bloc/settings_bloc/settings_bloc.dart';
 import 'package:stopwatch/generated/l10n.dart';
@@ -61,7 +60,10 @@ class _SettingsPageState extends State<SettingsPage> {
                               .getSettingsValue(prefKeepScreenAwake)!,
                           onChanged: (bool value) {
                             _writeBoolValue(
-                                context, prefKeepScreenAwake, value);
+                              context,
+                              prefKeepScreenAwake,
+                              value,
+                            );
                           },
                         ),
                         SwitchListTile(
@@ -84,7 +86,8 @@ class _SettingsPageState extends State<SettingsPage> {
                               onChanged: (String? newValue) {
                                 if (newValue != null) {
                                   context.read<SettingsBloc>().add(
-                                      SetSettingsEvent(prefTheme, newValue));
+                                        SetSettingsEvent(prefTheme, newValue),
+                                      );
                                 }
                               },
                               items: <String, String>{

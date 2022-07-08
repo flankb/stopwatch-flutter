@@ -1,5 +1,4 @@
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:stopwatch/generated/l10n.dart';

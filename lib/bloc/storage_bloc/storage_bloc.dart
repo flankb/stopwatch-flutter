@@ -28,7 +28,8 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
           final openStorageEvent = event;
           if (openStorageEvent.entityType == MeasureViewModel) {
             final measures = await stopwatchRepository.getMeasuresByStatusAsync(
-                describeEnum(StopwatchStatus.Finished));
+              describeEnum(StopwatchStatus.Finished),
+            );
             final resultList =
                 measures.map((e) => MeasureViewModel.fromEntity(e)).toList();
 

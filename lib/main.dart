@@ -170,7 +170,7 @@ class _MyTabPageState extends State<MainPage>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
 
     _init();
     debugPrint('Main initState');
@@ -205,7 +205,7 @@ class _MyTabPageState extends State<MainPage>
 
   @override
   Future<void> dispose() async {
-    WidgetsBinding.instance?.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     await measureBloc.close();
     super.dispose();
   }
@@ -249,7 +249,7 @@ class _MyTabPageState extends State<MainPage>
   Widget build(BuildContext context) {
     debugPrint('Main page loaded!');
 
-    WidgetsBinding.instance?.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future<void>.delayed(const Duration(seconds: 2));
       if (mounted) {
         _showRateDialog(context);

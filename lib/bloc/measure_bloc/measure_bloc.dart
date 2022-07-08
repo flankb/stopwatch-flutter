@@ -158,7 +158,8 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
 
   void _mapTickToState(TickEvent tick, Emitter<MeasureState> emitter) {
     emitter(
-        MeasureStartedState(state.measure.copyWith(elapsed: tick.duration)));
+      MeasureStartedState(state.measure.copyWith(elapsed: tick.duration)),
+    );
   }
 
   Future<void> _mapLapAddedToState(
