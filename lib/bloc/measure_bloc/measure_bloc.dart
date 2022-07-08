@@ -51,29 +51,6 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
     );
   }
 
-  // @override
-  // Stream<MeasureState> mapEventToState(
-  //   MeasureEvent event,
-  // ) async* {
-  //   debugPrint(
-  //     'Current state ${state.toString()} Bloc event: ${event.toString()}',
-  //   );
-
-  //   if (event is TickEvent) {
-  //     yield* _mapTickToState(event);
-  //   } else if (event is MeasureOpenedEvent) {
-  //     yield* _mapOpenedToState(event);
-  //   } else if (event is MeasureStartedEvent) {
-  //     yield* _mapStartedToState(event, resume: event.resume);
-  //   } else if (event is MeasurePausedEvent) {
-  //     yield* _mapPausedToState(event);
-  //   } else if (event is MeasureFinishedEvent) {
-  //     yield* _mapFinishedToState(event);
-  //   } else if (event is LapAddedEvent) {
-  //     yield* _mapLapAddedToState(event);
-  //   }
-  // }
-
   Future<void> _mapOpenedToState(
     MeasureOpenedEvent event,
     Emitter<MeasureState> emitter,
