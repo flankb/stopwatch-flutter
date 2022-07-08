@@ -5,11 +5,12 @@ import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mockito/mockito.dart';
-import 'fake_data_fabric.dart';
 import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 import 'package:stopwatch/models/stopwatch_status.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';
+
+import 'fake_data_fabric.dart';
 
 class StopwatchFakeRepository extends Fake implements StopwatchRepository {
   late List<MeasureViewModel> _measures;

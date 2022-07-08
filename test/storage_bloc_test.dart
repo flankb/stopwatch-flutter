@@ -1,15 +1,13 @@
-import 'dart:async';
-
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stopwatch/bloc/entity_bloc/bloc.dart';
 import 'package:stopwatch/bloc/storage_bloc/bloc.dart';
-import 'package:stopwatch/fake/fake_data_fabric.dart';
 import 'package:stopwatch/models/filter.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 import 'package:stopwatch/models/stopwatch_status.dart';
 
+import 'fake_data_fabric.dart';
 import 'fake_repos.dart';
 
 Future<bool> existsMeasure(
