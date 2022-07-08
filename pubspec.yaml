@@ -22,17 +22,13 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  #toast: ^0.1.5
   fluttertoast: ^8.0.8
   path_provider: ^2.0.5
   rate_my_app: ^1.1.1
   launch_review: ^3.0.1
-  #preferences: ^5.0.2
   sqflite: ^2.0.0+4
   path: ^1.8.0
   shared_preferences: ^2.0.8
-  #simple_search_bar: ^0.1.7
-  #flutter_widgets: ^0.1.12
   after_layout: ^1.1.0
   scrollable_positioned_list: ^0.2.2
   indexed_list_view: ^2.0.1
@@ -44,14 +40,11 @@ dependencies:
   flutter_bloc: ^8.0.1
   csv: ^5.0.0
   datetime_picker_formfield: ^2.0.0
-  #moor_db_viewer: ^4.4.0
   tuple: ^2.0.0
-  #get_it: ^7.2.0
   soundpool: ^2.2.0
   vibration: ^1.7.4-nullsafety.0
   validators: ^3.0.0
   flutter_email_sender: ^5.0.2
-  #esys_flutter_share: ^1.0.2
   share_plus: ^3.0.4
   google_fonts: ^2.1.0
   wakelock: ^0.5.6
@@ -68,7 +61,6 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.3
   bloc_concurrency: ^0.2.0
-  #sqflite_common_ffi: ^2.1.0
 
 dev_dependencies:
   flutter_test:
