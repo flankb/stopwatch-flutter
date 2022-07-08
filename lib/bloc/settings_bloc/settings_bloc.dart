@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:stopwatch/resources/settings_repository.dart';
 
@@ -13,13 +14,16 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   SettingsBloc(SettingsRepository repository)
       : _repository = repository,
         super(SettingsUpdatingState()) {
-    on<SettingsEvent>((event, emitter) {
-      if (event is LoadSettingsEvent) {
-        _mapLoadSettingsToState(event, state, emitter);
-      } else if (event is SetSettingsEvent) {
-        _mapSetSettingsToState(event, state, emitter);
-      }
-    });
+    on<SettingsEvent>(
+      (event, emitter) async {
+        if (event is LoadSettingsEvent) {
+          await _mapLoadSettingsToState(event, state, emitter);
+        } else if (event is SetSettingsEvent) {
+          _mapSetSettingsToState(event, state, emitter);
+        }
+      },
+      transformer: sequential(),
+    );
   }
 
   Future<void> _mapLoadSettingsToState(

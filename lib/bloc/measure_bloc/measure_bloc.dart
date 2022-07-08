@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter/foundation.dart';
 import 'package:stopwatch/model/database_models.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
@@ -25,25 +27,28 @@ class MeasureBloc extends Bloc<MeasureEvent, MeasureState> {
             MeasureViewModel(id: null, lastRestartedOverall: DateTime.now()),
           ),
         ) {
-    on<MeasureEvent>((event, emitter) {
-      debugPrint(
-        'Current state ${state.toString()} Bloc event: ${event.toString()}',
-      );
+    on<MeasureEvent>(
+      (event, emitter) async {
+        debugPrint(
+          'Current state ${state.toString()} Bloc event: ${event.toString()}',
+        );
 
-      if (event is TickEvent) {
-        _mapTickToState(event, emitter);
-      } else if (event is MeasureOpenedEvent) {
-        _mapOpenedToState(event, emitter);
-      } else if (event is MeasureStartedEvent) {
-        _mapStartedToState(event, emitter);
-      } else if (event is MeasurePausedEvent) {
-        _mapPausedToState(event, emitter);
-      } else if (event is MeasureFinishedEvent) {
-        _mapFinishedToState(event, emitter);
-      } else if (event is LapAddedEvent) {
-        _mapLapAddedToState(event, emitter);
-      }
-    });
+        if (event is TickEvent) {
+          _mapTickToState(event, emitter);
+        } else if (event is MeasureOpenedEvent) {
+          await _mapOpenedToState(event, emitter);
+        } else if (event is MeasureStartedEvent) {
+          await _mapStartedToState(event, emitter);
+        } else if (event is MeasurePausedEvent) {
+          await _mapPausedToState(event, emitter);
+        } else if (event is MeasureFinishedEvent) {
+          await _mapFinishedToState(event, emitter);
+        } else if (event is LapAddedEvent) {
+          await _mapLapAddedToState(event, emitter);
+        }
+      },
+      transformer: sequential(),
+    );
   }
 
   // @override
