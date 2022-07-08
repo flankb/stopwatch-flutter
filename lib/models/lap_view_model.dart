@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 
-import 'package:stopwatch/model/database_models.dart';
+import 'package:stopwatch/models/database/database_models.dart';
 import 'package:stopwatch/util/time_displayer.dart';
 
 import 'stopwatch_proxy_models.dart';

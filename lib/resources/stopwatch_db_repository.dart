@@ -1,8 +1,10 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
-import 'package:stopwatch/model/database_models.dart';
+import 'package:stopwatch/models/database/database_models.dart';
 import 'package:stopwatch/models/stopwatch_status.dart';
 import 'package:stopwatch/resources/base/base_stopwatch_db_repository.dart';
+
+import '../models/database/database_models.dart';
 
 part 'stopwatch_db_repository.g.dart';
 

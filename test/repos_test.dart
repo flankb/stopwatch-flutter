@@ -2,7 +2,7 @@ import 'package:drift/native.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:stopwatch/model/database_models.dart';
+import 'package:stopwatch/models/database/database_models.dart';
 import 'package:stopwatch/models/measure_view_model.dart';
 import 'package:stopwatch/models/stopwatch_status.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';

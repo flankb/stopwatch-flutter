@@ -5,7 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mockito/mockito.dart';
-import 'package:stopwatch/model/database_models.dart';
+import 'package:stopwatch/models/database/database_models.dart';
 import 'package:stopwatch/models/stopwatch_proxy_models.dart';
 import 'package:stopwatch/models/stopwatch_status.dart';
 import 'package:stopwatch/resources/stopwatch_db_repository.dart';

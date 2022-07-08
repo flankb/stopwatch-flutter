@@ -1,4 +1,4 @@
-import 'package:stopwatch/model/database_models.dart';
+import '../../models/database/database_models.dart';
 
 abstract class BaseStopwatchRepository {
   Future<Measure> getMeasuresByIdAsync(int id);
