@@ -12,9 +12,9 @@ class EntityBloc extends Bloc<EntityEvent, EntityState> {
   EntityBloc(this.stopwatchRepository) : super(const LoadingEntityState()) {
     on<EntityEvent>(
       (event, emitter) async {
-        debugPrint(
-          'Current state ${state.toString()}, Bloc event: ${event.toString()}',
-        );
+        // debugPrint(
+        //   'Current state ${state.toString()}, Bloc event: ${event.toString()}',
+        // );
 
         if (event is OpenEntityEvent) {
           emitter(AvailableEntityState(event.entity));

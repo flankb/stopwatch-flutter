@@ -18,9 +18,10 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
       : super(const LoadingStorageState()) {
     on<StorageEvent>(
       (event, emitter) async {
-        debugPrint(
-          'Current state ${state.toString()} Bloc event: ${event.toString()}',
-        );
+        // debugPrint(
+        //   'Current state ${state.toString()} Bloc event: ${event.toString()}',
+        // );
+
         // Для каждого события что-то делаем и возвращаем состояние
         if (event is LoadStorageEvent) {
           //  Данное событие должно срабатывать только один раз при загрузке списка
