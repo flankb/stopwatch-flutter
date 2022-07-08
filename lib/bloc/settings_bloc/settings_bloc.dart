@@ -62,6 +62,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         ..[event.key] = event.value;
 
       emitter(state.copyWith(settings: settings));
+      return;
     }
 
     emitter(state);
